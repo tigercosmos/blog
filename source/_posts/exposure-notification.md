@@ -62,6 +62,8 @@ Goole 與 Apple  共同研發的這套技術叫做「[保護隱私的接觸追�
 
 開發者可以根據 [API 規範](https://developer.apple.com/documentation/exposurenotification)來開發 App，所以「台灣社交距離」背後的程式碼不外乎就是這些 API，不過「台灣社交距離」在其程式裡面的任何地方都完全沒有提及它使用的是這套 API。
 
+> 2021.7.22 補充：台灣社交距離原始碼已開源。[IOS 原始碼](https://github.com/ailabstw/social-distancing-ios)
+
 Apple 官方甚至有將他們如何實現接觸通知系統的[開放原始碼釋出](https://developer.apple.com/exposure-notification/)。
 
 節錄一下原始碼裡面 README 的 Overview 給大家看看：
