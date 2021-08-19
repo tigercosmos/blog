@@ -9,7 +9,7 @@ des: "CPU 與 GPU 在計算浮點數 (floating-point number) 時會有差異，�
 
 CPU 與 GPU 在計算浮點數 (floating-point number) 時會有差異。
 
-雖然之前就略有耳聞，但一直沒體會過，近日我在設計[交大平行程式](https://nctu-sslab.github.io/PP-f20/)課程的作業的時候，就被深深教訓了一番，果然還是要踩過雷才會真的懂。
+雖然之前就略有耳聞，但一直沒體會過，近日我在設計[交大平行程式](https://nycu-sslab.github.io/PP-f20/)課程的作業的時候，就被深深教訓了一番，果然還是要踩過雷才會真的懂。
 
 問題是這樣的，我打算讓學生用 CUDA 去算 [Mandelbrot set](https://zh.wikipedia.org/wiki/%E6%9B%BC%E5%BE%B7%E5%8D%9A%E9%9B%86%E5%90%88) (曼德博集合)。這是一種在複數平面上組成碎形的點的集，可以透過不斷迭代來取得平面座標的數值。
 
