@@ -182,7 +182,7 @@
     <div class="post-content">
         <h2 id="簡介"><a class="header-anchor" href="#簡介">¶ </a>簡介</h2>
 <p>CPU 與 GPU 在計算浮點數 (floating-point number) 時會有差異。</p>
-<p>雖然之前就略有耳聞，但一直沒體會過，近日我在設計<a target="_blank" rel="noopener" href="https://nctu-sslab.github.io/PP-f20/">交大平行程式</a>課程的作業的時候，就被深深教訓了一番，果然還是要踩過雷才會真的懂。</p>
+<p>雖然之前就略有耳聞，但一直沒體會過，近日我在設計<a target="_blank" rel="noopener" href="https://nycu-sslab.github.io/PP-f20/">交大平行程式</a>課程的作業的時候，就被深深教訓了一番，果然還是要踩過雷才會真的懂。</p>
 <p>問題是這樣的，我打算讓學生用 CUDA 去算 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%9B%BC%E5%BE%B7%E5%8D%9A%E9%9B%86%E5%90%88">Mandelbrot set</a> (曼德博集合)。這是一種在複數平面上組成碎形的點的集，可以透過不斷迭代來取得平面座標的數值。</p>
 <p><img src="https://user-images.githubusercontent.com/18013815/101222730-6112a080-36c5-11eb-8c17-631e7c03d62e.png" alt="Mandelbrot set"></p>
 <p>之前作業已經有出過 CPU 版本要學生用 std::thread 去加速，那時候比對正確性方式就是提供一個單執行緒版本去和多執行緒版本做比對，因此打算我沿用之前的框架，讓這次 GPU 跑的版本跟用 CPU 跑版本做比對。</p>
