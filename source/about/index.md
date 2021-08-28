@@ -12,7 +12,7 @@ Liu was born in Taipei, Taiwan. He is currently studying for an M.S. degree in C
 
 Liu’s research interests mainly focus on system software and high-performance programming. Liu loves sharing. He teaches coding, writes articles, and gives talks. He participates in many open source projects. He believes sharing makes the world a better place.
 
-I am seeking for an opportunity to work overseas. Please check [my resume](https://drive.google.com/file/d/1o93zj1vDewf9ziA2hV40i9nsywMvJkq5/view?usp=sharing).
+I am seeking for an opportunity to work overseas. Please check [my resume](https://github.com/tigercosmos/resume/raw/master/resume.pdf).
 
 ## Liu's Social Media
 
