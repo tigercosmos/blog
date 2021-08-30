@@ -1,7 +1,7 @@
 ---
 title: 計算攝影學 (Computational Photography) 簡介
-date: 2021-03-22 14:00:00
-tags: []
+date: 2021-06-03 14:00:00
+tags: [computational photography, ]
 des: ""
 ---
 
@@ -73,8 +73,6 @@ des: ""
 
 你可以藉由非線性的轉換函數來做到非常多的變化，但是就會使得處理變得複雜，而人們並不擅長這種複雜的工作，幸運的是我們可以藉由數值方法或是神經網路來做到，他們做到一樣的事情，但卻簡單了許多！
 
-## Automation and Dreams of a "Masterpiece" Button
-
 ## 自動化調整與「一鍵完成」的夢想
 
 當大家都習慣使用濾鏡之後，我們甚至直接把濾鏡直接整合進相機裡面了。誰是第一個想到把濾鏡放進相機的人已經不可考了，不過我們可以得知早在 iOS 5.0 發布的 2011 年，我們已經可以在裡面看到[「自動增強圖片」公開的 API]((https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_autoadjustment/ci_autoadjustmentSAVE.html))。看來賈伯斯在公開 API 之前早就察覺到濾鏡已經被使用多久了。
@@ -82,8 +80,6 @@ des: ""
 自動化調整圖片在做的事情跟我們使用圖片編輯軟體做的事其實一模一樣，基本上就是修正光線和陰影，增加一些亮度，移除紅眼，修正臉部的顏色等，而使用者根本不會想到這個「神奇的加強版相機」其實背後靠的僅僅就是幾行的程式碼。
 
  ![ML Enhance in Pixelmator](https://i.vas3k.ru/865.jpg) 
-
-Today, the battles for the Masterpiece button have moved to the machine learning field. Tired of playing with tone-mapping everyone rushed to the hype train [CNN's and GAN's](http://vas3k.com/blog/machine_learning/) and started, forcing computers to move the sliders for us. In other words, to use an input image to determine a set of optimal parameters that will bring the given image closer to a particular subjective understanding of "good photography". Check out how it's implemented in [Pixelmator Pro](https://www.pixelmator.com/pro/machine-learning/) and other editors who's luring you with their fancy "ML" features stated on a landing page. It doesn't always work well, as you can guess. But you can always take the datasets and train your own network to beat these guys, using the links below. Or not.
 
 時至今日，「一鍵生成」的戰爭已經轉移至機器學習的領域了。已經厭倦做一堆風格轉換映射的操作的人們，開始轉向 [CNN 和 GAN 的懷抱](http://vas3k.com/blog/machine_learning/)，讓電腦自己去幫我們去調整修圖滑桿。換句話說，我們給機器一張圖片，他會自己去決定各種光學的參數，讓生成的圖片去接近我們所認知的「好的照片」。你可以上 Photoshop 或 Pixelmator Pro 之類的影片編輯軟體的官方網頁，看看他們如何用最新的機器學習特色功能來吸引你買單。你大概可以猜到機器學習不會永遠都行的通，但你永遠可以透過使用一堆資料集來訓練你自己的機器學習模型來做到更好。下面的一些資源也許對你有幫助，或是沒有 XD
 
@@ -93,96 +89,85 @@ Today, the battles for the Masterpiece button have moved to the machine learning
 
 # 堆疊(Stacking)：智慧手機 90% 的功臣 
 
-True computational photography began with stacking — a method of combining several photos on top of each other. It's not a big deal for a smartphone to shoot a dozen pics in half a second. There're no slow mechanical parts in their cameras: the aperture is fixed, and there is an electronic shutter instead of the "moving curtain". The processor simply tells the sensor how many microseconds it should catch the wild photons, and reads the result.
+真正的計算攝影學來自於堆疊(Stacking)——一種將好幾張照片一張張疊在一起的技術。對於智慧手機來說，一秒內拍下幾十張照片輕而一舉。因為手機內部的機構沒有任何使快門變慢的部分，像是光圈都是固定的，並且是採用電子快門 (相較於傳統的機械快門)。處理器只需要各素感應器他應該要收多收毫秒的光子，然後我們就得到一張照片了。
 
-真正的計算攝影學來自於堆疊(Stacking)，一種將好幾張照片一張張疊在一起的技術。
+技術上來說，手機可以像是拍影片一般的速度去照相(我們一般不會用 60fps 去照相對吧？)，它甚至也可以用照片的高畫質去錄影(一般錄影 4k (4000 萬像素) 已經很高畫質了，但相片動輒一億畫畫素)，但這樣做都會增加資料傳輸和處理器的負擔，因此軟體終究會因為硬體而有限制。
 
-Technically, the phone can shoot photos at a speed of the video, and it can shoot video in a photo resolution, but all that is slowed down to the speed of the bus and processor. Therefore, there is always a software limitation.
+Stacking 技術已經發展有一段時間了。 甚至發明者的爸爸們也使用 Photoshop 7.0 的插件來收集一些瘋狂銳化的 HDR 照片或製作 18000x600 像素的全景圖，而且…沒人知道下一步該怎麼做。美好的探索時光。
 
-Stacking has been with us for a while. Even the founders' fathers used plugins for Photoshop 7.0 to gather some crazy-sharpened HDR photos or to make a panorama of 18000x600 pixels, and… no one figured out what to do with them next. Good wild times.
+現今人們將其稱為「[epsilon photography](https://en.wikipedia.org/wiki/Epsilon_photography) (微調攝影)」，這意味著我們不斷更改相機參數（曝光、聚焦或位置）並合成出一張原本單靠單次拍攝不可能得到的照片。 但在實踐中，我們稱這技術為堆疊。如今，所有行動裝置相機的創新中有 90％ 都基於此。
 
-Now, as grown-ups, we call it "[epsilon photography](https://en.wikipedia.org/wiki/Epsilon_photography)", which means changing one of the camera parameters (exposure, focus, or position) and putting images together to get something that couldn't be captured in one shot. Although, in practice, we call it stacking. Nowadays, 90% of all mobile camera innovations are based on it.
+![](https://i.vas3k.ru/85d.jpeg) 
 
- ![](https://i.vas3k.ru/85d.jpeg) 
+雖然有很多人不在乎，但這對於理解整個行動裝置攝影卻至關重要：**現代的智慧型手機相機一打開就開始拍照**。 這滿有道理的，畢竟它要在螢幕上顯示圖像給你看。 除了不斷拍照外，它還將高解析度圖片保存在系統的循環緩衝區中，並將它們存儲幾秒鐘。
 
-There's a thing many people don't care, but it's crucial for understanding the entire mobile photography: **Modern smartphone camera starts taking photos as soon as you open it**. Which is logical, since it should show the image on screen somehow. But in addition to that, it saves high-resolution images to its cyclic buffer and stores them for a couple more seconds. No, not only for NSA.
+> 當您點擊「拍攝照片」按鈕時，實際上已經手機早就拍攝了照片，相機其實只是使用緩衝區中的最後一張照片
 
-> When you tap "take a photo" button, the photo has actually already been taken, and the camera is just using the last picture from the buffer
+如今，這就是任何手機相機的運作方式，至少高階智慧型手機是這樣。緩沖不僅可以實現零[快門延遲](https://en.wikipedia.org/wiki/Shutter_lag) (按下快門到真的拍下照片的時間差)，這是攝影師期望已久的功能，有時甚至希望快門延遲可以是負的。透過按下按鈕，手機可以瀏覽過去，從緩衝區中去撈 5-10 張最後的照片，並開始對其進行瘋狂地分析和組合。所以我們甚至不再需要使用高動態範圍成像 (HDR) 或夜間模式，手機軟體會從緩衝區去處理好這些照片，用戶甚至都不會意識到拍的照片是被加工過的。 
 
-That's how any mobile camera works today. At least the top ones. Buffering allows implementing not only zero [shutter lag](https://en.wikipedia.org/wiki/Shutter_lag), which photographers begged for so long, but even a negative one. By pressing the button, the smartphone looks in the past, unloads 5-10 last photos from the buffer and starts to analyze and combine them furiously. No longer need to wait till phone snaps shots for HDR or a night mode — let's simply pick them up from the buffer, the user won't even realize.
+事實上，這就是現在 iPhone 或 Pixel 在做的事情。
 
-In fact, that's how Live Photos are implemented in iPhones.
+![](https://i.vas3k.ru/88j.jpg) 
 
-
-
- ![](https://i.vas3k.ru/88j.jpg) 
-
-
-
-## Exposure Stacking<br><small>HDR and brightness control</small>
+## 曝光疊加 (Exposure Stacking)：高動態範圍成像 (HDR) 與光線控制
 
  ![](https://i.vas3k.ru/85x.jpg) 
 
-The old and hot topic is whether the camera sensors [can capture the entire brightness range available to our eyes](https://www.cambridgeincolour.com/tutorials/cameras-vs-human-eye.htm). Some people say no, as the eye can see up to 25 [f-stops](https://en.wikipedia.org/wiki/F-number) and even the top full-frame sensor can be stretched out to a maximum of 14. Others call the comparison incorrect, since our eyes are assisted by the brain, which automatically adjusts your pupils and completes the image with its neural networks. So the instantaneous dynamic range of the eye is actually no more than 10-14 f-stops. Too hard. Let's leave these disputes to scientists.
 
-The fact remains — taking pictures of friends against a bright sky, without HDR, with any mobile camera, you get either a natural sky and dark faces of friends, or natural faces, but completely burned sky.
+一個存在已久的熱門話題是相機傳感器是否[可以捕捉我們眼睛可以看見的整個亮度範圍](https://www.cambridgeincolour.com/tutorials/cameras-vs-human-eye.htm)。 有人說不行，因為眼睛最多可以看到 25 個 [f-stops](https://en.wikipedia.org/wiki/F-number)，甚至頂級的全畫幅傳感器也就最大達到 14。其他人則覺得不正確，因為我們的眼睛是由大腦輔助的，大腦會自動調整您的瞳孔並通過其神經網絡完成圖像。所以眼睛的瞬時動態範圍實際上不超過10-14 f-stops。太難了！讓我們把這些爭論留給科學家。 
 
-The solution was found a long time ago — to expand the brightness range using HDR (High-dynamic-range) process. When we can't get a wide range of brightness right away, we can do it in three steps (or more). We can shoot several pictures with different exposure — "normal" one, brighter, and darker one. Then we can fill in the shady spots using the bright photo, and restore overexposed spots from the dark one.
+但問題依舊存在—當你使用任何手機拍攝背對藍天的朋友時，如果沒有使用 HDR，你要馬得到一個清楚的天空但朋友是黑的，又或者朋友是清楚的但天空卻過曝了。
 
-One last thing needs to be done here is solving the problem of automatic bracketing. How far do we shift the exposure of each photo so as not to overdo it? However, any second-year tech student can do it today using some Python libraries.
+人們很久以前就找到了解決方案——使用 HDR（高動態範圍）擴大亮度範圍。當我們不能立即取得大範圍的亮度時，我們可以分三步（或更多）來完成。我們可以用不同的曝光拍攝幾張照片——「正常」的、更亮的、更暗的各一張。然後我們可以用明亮的照片填充陰影的部分，並從較暗的照片中恢復過度曝光的區域。
+
+這裡需要做的最後一件事是解決自動包圍的問題。我們需要將每張照片的曝光量如何分配調整，以免有過度曝光？然而，今天任何理工生都可以使用一些 Python 程式碼來做到這一點。
 
  ![](https://i.vas3k.ru/86t.jpg) 
 
-The latest iPhone, Pixel and Galaxy turn on HDR mode automatically when a simple algorithm inside their cameras detects you're shooting on a sunny day. You can even see how the phone switches to buffer mode to save shifted images — fps drops down, and the picture on the screen becomes juicier. That moment of switching is every time clearly visible on my iPhone X. Take a closer look at your smartphone next time.
+當最新款 iPhone、Pixel 和 Galaxy 相機內的簡單算法檢測到您在晴天拍攝時，它們會自動開啟 HDR 模式。您甚至可以看到手機如何切換到緩沖模式 (Buffer Mode) 以保存移動的圖像——此時 FPS 下降，螢幕上的圖片變得更加生動。每次切換的瞬間在我的 iPhone X 上都清晰可見。下次仔細看看你的智能手機！
 
 .block-side.block-side__right.width-25  ![](https://i.vas3k.ru/87u.png)  
 
-The main disadvantage of HDR with exposure bracketing is its incredible uselessness in poor lighting. Even in the light of a home lamp, the images come out so dark that even the machine cannot level and stack them together. To solve the problem, Google announced a different approach to HDR in a Nexus smartphone back to 2013. It was using time stacking.
+帶有包圍曝光的 HDR 的主要缺點是它在光線不足的情況下令人難以置信的毫無用武之地。 即使在家用燈的光線下，照片仍然很暗，甚至手機也無法將它們調整堆疊在一起。為了解決這個問題，谷歌早在 2013 年就在 Nexus 智能手機中宣布了一種不同的 HDR 方法。它使用時間疊加 (Time Stacking)。
 
-
-
-
-
-## Time Stacking<br><small>Long exposure and time lapse</small>
+## 時間疊加 (Time Stacking)：長時曝光與時間流逝
 
  ![](https://i.vas3k.ru/85v.jpg) 
 
-Time stacking allows you to get a long exposure look with a series of short shots. This approach pioneered by the guys, who liked to take pictures of star trails in the night sky. Even with a tripod, it was impossible to shot such pictures by opening the shutter once for two hours. You had to calculate all the settings beforehand, and the slightest shaking would spoil the whole shot. So they decided to divide the process into a few minute intervals and stack the pictures together later in Photoshop.
+時間疊加可讓您透過一系列短時間曝光的照片獲得長曝光效果。這種方法是由喜歡拍攝夜空中星跡照片的天文愛好者們首創的。即使使用三腳架，也無法做到打開快門兩個小時來拍攝這樣的照片。您必須事先計算所有設置，任何輕微的晃動都會破壞整個拍攝結果。所以他們決定將這個過程分成好多個幾分鐘的照片，然後在 Photoshop 中將圖片堆疊在一起。 
 
  ![These star patterns are always glued together from a series of photos. That make it easier to control exposure](https://i.vas3k.ru/86u.jpg) 
 
-Thus, the camera never was shooting with a long exposure; we simulated the effect by combining several consecutive shots. Smartphones have a lot of apps using this trick for a long time, but now almost every manufacturer added it to standard camera tools.
+因此，相機從來沒有長時間曝光拍攝過。我們透過組合幾個連續鏡頭來模擬效果。長期以來，手機上有很多應用程式都在使用這個技巧，但現在幾乎每個製造商都將其添加到標準相機工具中。
 
  ![A long exposure made of iPhone's Live Photo in 3 clicks](https://i.vas3k.ru/86f.jpg) 
 
-Let's get back to Google and its night-time HDR. It turned out that using time bracketing you can create a decent HDR in the dark. This technology appeared in Nexus 5 for the first time and was called HDR+. The technology is still so popular that [it is even praised](https://www.youtube.com/watch?v=iLtWyLVjDg0&t=0) in the latest Pixel presentation.
+讓我們回到 Google 和它的夜間 HDR。事實證明，使用時間包圍可以在黑暗中創建一個不錯的 HDR。 這項技術首次出現在 Nexus 5 中，被稱為 HDR+。 該技術仍然十分受歡迎，以至於在最新的 Pixel 演示文稿中 [它甚至受到稱讚](https://www.youtube.com/watch?v=iLtWyLVjDg0&t=0)。 
 
-HDR+ works quite simple: once the camera detects that you're shooting in the dark, it takes the last 8-15 RAW photos out of the buffer out and stacks them on top of each other. This way, the algorithm collects more information about the dark areas of the shot to minimize the noise — pixels, when due to some reasons the camera screwed up and failed to catch some photons on each particular frame.
+HDR+ 的工作非常簡單：一旦相機檢測到您在黑暗中拍攝，它就會從緩衝區中取出最後 8-15 張 RAW 照片並將它們堆疊在一起。這樣，演算法會收集更多關於鏡頭暗區的訊息，以最大限度地減少噪點像素，避免某些原因導致相機出錯並且未能在每個特定幀上捕捉到光子。
 
-Imagine that: you have no idea how [capybara](https://en.wikipedia.org/wiki/Capybara) looks like, so you decided to ask five people about it. Their stories would be roughly the same, but each will mention any unique detail, and so you'd gather more information than if asking only one person. Same happens with pixels on photo. More information — more clarity and less noise.
+想像一下：你不知道 [Capybara](https://en.wikipedia.org/wiki/Capybara) 長什麼樣，所以你決定問五個人。他們的故事大致相同，但每個人都會提到任何獨特的細節，因此與僅詢問一個人相比，您可以獲得更多資訊。照片上的像素也會發生同樣的情況。更多資訊、更清晰、噪點更少。
 
-📝 [HDR+: Low Light and High Dynamic Range photography in the Google Camera App](https://ai.googleblog.com/2014/10/hdr-low-light-and-high-dynamic-range.html ".block-link")
+📝 [HDR+: Low Light and High Dynamic Range photography in the Google Camera App](https://ai.googleblog.com/2014/10/hdr-low-light-and-high-dynamic-range.html)
 
-Combining the images captured from the same point gives the same fake long exposure effect as in the example with the stars above. Exposure of dozens of pictures is summarized, and errors on one picture are minimized on the other. Imagine how many times you would have to slam the shutter in your DSLR to achieve this.
+組合從同一點捕獲的圖像會產生與上面帶有星星的示例中相同的假長曝光效果。幾十張照片的曝光匯總，一張照片的錯誤在另一張照片上被最小化。想像一下，要實現這一點，您需要在數碼單反相機中猛按快門多少次。
 
  ![Pixel ad that glorifies HDR+ and Night Sight](https://i.vas3k.ru/86g.jpg) 
 
-Only one thing left, and this is an automatic color casting. Shots taken in the dark usually have broken color balance (yellowish or greenish), so we need to fix it manually. In earlier versions of HDR+, the issue was resolved by simple auto-toning fix, à la Instagram filters. Later, they brought a neural network to the rescue.
+只剩下一件事，就是自動色彩空間映射。在黑暗中拍攝的照片通常會破壞色彩平衡（偏黃或偏綠），因此我們需要手動修復。在早期版本的 HDR+ 中，這個問題是透過簡單的自動色調修復解決的，就像 Instagram 濾鏡一樣。後來，他們使用了神經網絡來復原色彩。
 
-That's how [Night Sight](https://www.blog.google/products/pixel/see-light-night-sight/) was born — "the night photography" technology in Pixel 2, 3, and later. The description says *"machine learning techniques built on top of HDR+ that make Night Sight work"*. In fact, it's just a fancy name for a neural network and all the  HDR+ post-processing steps. The machine was trained on "before" and "after" dataset of photos to make one beautiful image out of a set of dark and dirty ones.
+[Night Sight 技術](https://www.blog.google/products/pixel/see-light-night-sight/) 就是這樣誕生的——Pixel 2、3 和更高版本中的「夜間攝影」技術。描述說「HDR+ 是建立在機器學習技術之上」。事實上，它只是神經網絡和所有 HDR+ 後處理步驟的一個花哨名稱。機器接受了「之前」和「之後」照片數據集的訓練，以從一組黑暗和遭亂的照片中製作出一張漂亮的圖像。
 
  ![](https://i.vas3k.ru/88k.jpg) 
 
-This dataset, by the way, was made public. Maybe Apple guys will take it and finally teach their "world-best cameras" to shoot in the dark?
+順便說一下，這個數據集是公開的。 也許蘋果公司的人會接受它並最終教他們“世界上最好的相機”在黑暗中拍攝？
 
-Also, Night Sight calculates the [motion vector](https://en.wikipedia.org/wiki/Optical_flow) of the objects in the shot to normalize the blurring, that's for sure will appear in a long exposure. Thus, the smartphone can take sharp parts from other shots and stack them.
+269 / 5000
+Translation results
+此外，Night Sight 計算鏡頭中物體的 [運動矢量](https://en.wikipedia.org/wiki/Optical_flow) 以標準化模糊，這肯定會出現在長時間曝光中。 因此，智能手機可以從其他鏡頭中取出鋒利的部分並將它們堆疊起來。 .
 
 📝 [Night Sight: Seeing in the Dark on Pixel Phones](https://ai.googleblog.com/2018/11/night-sight-seeing-in-dark-on-pixel.html ".block-link")
 📝 [Introducing the HDR+ Burst Photography Dataset](https://ai.googleblog.com/2018/02/introducing-hdr-burst-photography.html ".block-link")
-
-
-
-
 
 
 ## Motion Stacking<br><small>Panorama, super-zoom and noise control</small>
