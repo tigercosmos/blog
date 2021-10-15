@@ -1,15 +1,15 @@
 ---
 title: 2021 米蘭理工交換教戰手冊—出國前準備篇
 date: 2021-10-04 14:00:00
-tags: [義大利, Italy, 米蘭, Milan, 米蘭理工, polimi]
+tags: [義大利, Italy, 米蘭, Milan, 米蘭理工, polimi, 米蘭理工交換教戰手冊]
 des: "本文介紹交換到米蘭理工出國前需要準備的事項"
 ---
 
-本文介紹交換到米蘭理工（Politecnico di Milano, 簡稱 Polimi）要準備和注意的各種事項，其中大部分內容適用各位要去米蘭唸書的同學，本篇著重在出國前要做什麼準備。
+[本系列文](/tags/米蘭理工交換教戰手冊/)介紹交換到米蘭理工（Politecnico di Milano, 簡稱 Polimi）要準備和注意的各種事項，其中大部分內容適用各位要去米蘭唸書的同學，本篇著重在出國前要做什麼準備。
 
-本文致敬學妹黃柏雅去年寫的文章「[2020 義大利米蘭理工大學 Politecnico di Milano 教戰手冊](https://medium.com/@alexis.n.d/e3bd731ba3e3)」，感謝她的文章以及我出國前的各種協助。大家可以將此文和本文對照閱讀。
+此系列致敬學妹黃柏雅去年寫的文章「[2020 義大利米蘭理工大學 Politecnico di Milano 教戰手冊](https://medium.com/@alexis.n.d/e3bd731ba3e3)」，感謝她的文章以及我出國前的各種協助。大家可以將此文和本文對照閱讀。
 
-本系列預計分為三大部分：出國前準備、抵達米蘭後、米蘭理工概況，後面兩篇之後會慢慢寫完。
+本系列預計分為三大部分：出國前準備（本文）、[抵達米蘭與生存](/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/)、米蘭理工概況。
 
 ![Boscal Vertical](https://user-images.githubusercontent.com/18013815/135850732-f65fbc48-c316-4bc7-9b02-aecc5f4eddb1.png)
 (Boscal Vertical 為米蘭著名建築之一)
