@@ -135,7 +135,7 @@ $$
 $$
 \mathbf B = {\mathbf A}^{-T} {\mathbf A}^{-1} = 
 \begin{bmatrix}
-    B_{11} &B_{21} &B_{13} \\\\
+    B_{11} &B_{12} &B_{13} \\\\
     B_{12} &B_{22} &B_{23} \\\\
     B_{13} &B_{23} &B_{33}
 \end{bmatrix}
