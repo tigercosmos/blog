@@ -72,7 +72,7 @@ KIT 就是居留證的一大包資料，應該是每個郵局（Poste italiane�
 填寫好 KIT 之後，就要去郵局辦理居留證，不是每間郵局都有，去的時候可以先問一下群組大家去過那邊辦過，這邊提供可以辦理的幾家供參考：
 
 - Rovereto 站附近的：Via Luigi Varanini, 28, 20127 Milano MI
-- Cordusio 站附近的：Via Cordusio, 4, 20123 Milano MI ( 建議搭到 Cordusio 站更近 )
+- Cordusio 站附近的：Via Cordusio, 4, 20123 Milano MI
 - Centrale FS 站附近的：Via Francesco Algarotti, 1, 20124 Milano MI
 
 我自己是去 Rovereto 附近的那一個，我的學伴推薦我去這家，我的體驗感覺還行，這家有人會說英文，不過我在辦理的時候是沒有靠講英文的人幫忙。
