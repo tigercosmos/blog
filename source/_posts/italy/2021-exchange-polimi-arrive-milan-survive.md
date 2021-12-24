@@ -7,7 +7,7 @@ des: "本文介紹交換到米蘭，抵達米蘭要辦的事項，以及如何�
 
 [本系列文](/tags/米蘭理工交換教戰手冊/)介紹交換到米蘭理工（Politecnico di Milano, 簡稱 Polimi）要準備和注意的各種事項，其中大部分內容適用各位要去米蘭唸書的同學，本篇著重抵達米蘭後要做辦理哪些事項（前半部），以及如何在米蘭生存（後半部）。
 
-本系列預計分為三大部分：[出國前準備](/post/2021/10/italy/2021-exchange-polimi/)、抵達米蘭與生存（本文）、米蘭理工概況。
+本系列分為三大部分：[出國前準備](/post/2021/10/italy/2021-exchange-polimi/)、抵達米蘭與生存（本文）、[米蘭理工概況與心得](/post/2021/12/italy/2021-exchange-polimi-school/)。
 
 ![Cover Image](https://user-images.githubusercontent.com/18013815/137555764-26753cc6-2cc6-444b-8760-19aa85be1f64.png)
 （在 Sforzesco Castle 裡面一個水池旁）

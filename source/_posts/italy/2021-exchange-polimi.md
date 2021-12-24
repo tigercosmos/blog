@@ -9,7 +9,7 @@ des: "本文介紹交換到米蘭理工出國前需要準備的事項"
 
 此系列致敬學妹黃柏雅去年寫的文章「[2020 義大利米蘭理工大學 Politecnico di Milano 教戰手冊](https://medium.com/@alexis.n.d/e3bd731ba3e3)」，感謝她的文章以及我出國前的各種協助。大家可以將此文和本文對照閱讀。
 
-本系列預計分為三大部分：出國前準備（本文）、[抵達米蘭與生存](/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/)、米蘭理工概況。
+本系列分為三大部分：出國前準備（本文）、[抵達米蘭與生存](/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/)、[米蘭理工概況與心得](/post/2021/12/italy/2021-exchange-polimi-school/)。
 
 ![Boscal Vertical](https://user-images.githubusercontent.com/18013815/135850732-f65fbc48-c316-4bc7-9b02-aecc5f4eddb1.png)
 (Boscal Vertical 為米蘭著名建築之一)
