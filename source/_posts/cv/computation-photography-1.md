@@ -131,6 +131,8 @@ Stacking 技術其實已經發展有一段時間了。一些人會使用 Photosh
 
 帶有包圍曝光的 HDR 的主要缺點是它在光線不足的情況下令人難以置信的毫無用武之地。 即使在家用燈的光線下，照片仍然很暗，甚至手機也無法將它們調整堆疊在一起。為了解決這個問題，谷歌早在 2013 年就在 Nexus 智能手機中宣布了一種不同的 HDR 方法。它使用時間疊加 (Time Stacking)。
 
+📝 [What Is HDR: Concepts, Standards, and Related Aspects](https://www.videoproc.com/resource/high-dynamic-range.htm)
+
 ## 時間疊加 (Time Stacking)：長時曝光與時間流逝
 
  ![](https://i.vas3k.ru/85v.jpg) 
