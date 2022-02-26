@@ -193,7 +193,7 @@ KIT 就是居留證的一大包資料，應該是每個郵局（Poste italiane�
 ![探索建築](https://user-images.githubusercontent.com/18013815/137562341-1912f608-03b1-4c58-98af-f00051fa05f8.png)
 （有次跟念建築的烏克蘭女生在市區到處拍建築）
 
-這邊有很多博物館，可以去辦一張[博物館通行卡](https://www.abbonamentomusei.it/)，學生辦只要 30 歐，一年內米蘭內幾乎大部分博物館美術館都可以任意參觀，可以說是非常划算。
+這邊有很多博物館，可以去辦一張 [Abbonamento Musei 博物館通行卡](https://www.abbonamentomusei.it/)，學生辦只要 30 歐，一年內倫巴比地區（米蘭、Monza、Como、Lecco、甚至義大利最大的湖 Garda 湖邊的 [Sirmione](https://goo.gl/maps/MiCQiTqCxeU5KWq17))內幾乎大部分博物館美術館都可以任意參觀，可以說是非常划算，其中包含米蘭最有名的 Doumo di Milano，光 Doumo 門票就 15 歐了，剛來的時候不知道還傻傻買票，應該早點辦卡。要辦卡的話，可以去 Doumo 旁邊的[二十世紀博物館](https://goo.gl/maps/NZ6kieh6XMDShaJw6)，就會看到大大的牌子可以辦。
 
 最後一個是我個人最愛的興趣，我喜歡拍照，所以我會隨身帶著相機，不管是人像、人文、建築我都喜歡拍，我覺得最驕傲的地方不是別人稱讚我的程式寫的好，而是念建築或設計的朋友說我拍照拍的好！
 
