@@ -168,6 +168,7 @@ KIT 就是居留證的一大包資料，應該是每個郵局（Poste italiane�
 ![my bike](https://user-images.githubusercontent.com/18013815/137563289-e53d051b-bfef-4ea1-81fe-4da5fa68a5cd.png)
 （我在這邊的腳踏車）
 
+搭火車買票用 App 「Trainline」買，不只義大利能用，其他歐洲國家有時也可以直接買，還可以刷 Apple Pay 很方便。記得要裝「Trenit!」 App，可以查義大利火車狀況，有沒有罷工或誤點多少都會寫一清二楚，另外有時候趕時間想先知道月台數字也可以查，尤其義大利火車常常誤點，有次換車只有 30 秒時間，不先查好根本沒辦法一下車就跑到正確的月台。
 
 ### 2.5 育
 
