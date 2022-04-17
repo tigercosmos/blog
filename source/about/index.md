@@ -29,7 +29,7 @@ I am seeking for an opportunity to work overseas. Please check [my resume](https
 - YouTube Teaching Channel: [Coding Neutrino—微中子的程式教學](https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ).
   I teach computer science and programming.
 - YouTube Life Channel: [Neutrino Life 微中子的生活頻道](https://www.youtube.com/channel/UCAcBvq5pQvy7RXkFq5a9LGA)
-- Email: phy.tiger@gmail.com, acliu@cs.nctu.edu.tw
+- Email: phy.tiger@gmail.com, acliu@cs.nycu.edu.tw
 
 ---
 
