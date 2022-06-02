@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh, en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="工作,軟體工程師,日本," />
+    <meta name="description"
+        content="這篇文章分享身為一個沒任何日本背景的海外新人，在三個月期間找日本東京軟體工程師職缺的經驗。" />
+    <title>Neutrino&#39;s Blog: 2022 海外新卒找日本東京軟體工程師工作經驗分享 </title>
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-84804118-3"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-84804118-3');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+    <link href="https://unpkg.com/octomments/build/ocs-ui.min.css" rel="stylesheet">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6206289145662773"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+        <h3 class="invisibile">
+            <a href="/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        2022 海外新卒找日本東京軟體工程師工作經驗分享
+    </h2>
+    <ul class="post-date">
+        <li>
+            2022-06-03
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+    </ul>
+    <div class="post-content">
+        <p><img src="https://user-images.githubusercontent.com/18013815/171749459-e4a66d19-478a-43f7-80e8-6ee693b87d27.png" alt="Tokyo"><br>
+(Tokyo, credit to <a target="_blank" rel="noopener" href="https://www.flickr.com/photos/143951935@N07/28350408591">Derrick Brutel</a>, under CC BY-SA 2.0)</p>
+<p>我在碩三的時候去米蘭交換，其中一個目的便是了解自己是否會喜歡在國外工作。就結論來說我認為米蘭也許不是一個我最想工作的地點，但無庸置疑讓我體驗了在國外工作以及了解文化多樣性是怎樣一回事，我了解到自己會想出國工作，我想出去闖蕩，喜歡接受文化衝擊，想要挑戰自我。</p>
+<p>2022 年初又發了意料之外的事情，我在米蘭交了一個日本女友，本來畢業是想去歐洲找工作，這下目標變成去日本東京找工作了。我從不擔心在國外找不到工作，軟體工程師基本上哪裡都有工作，而且只需會講英文就好了，我在米蘭的時候就有試試水溫找軟體開發的兼職缺，不到一個月就順利找到，更讓我堅信自己在哪都能找到工作。</p>
+<p>說一下我個人背景，交大資工所、碩士研究平行化 JavaScript 程式的 Offloading（廣義來說偏系統軟體）、台大生機系，不會說日文，因為去義大利交換過，義大利文沒學會倒是講了不少英文，所以英文程度還可以。沒有日本學歷、不會說日文（N6 水準，日文溝通的工作的基本門檻是 N2），沒有正職工作經驗，以外在條件來說想在日本找工作非常不利，因為及使日本喜歡收外國工程師，也只是喜歡直接挖資深工程師，何況我一點日本相關背景也沒有，有誰要用一個外國新人？</p>
+<p>2022 年三月我從米蘭回台灣，一邊弄畢業一邊開始找東京的工作。五月初我從交大畢業，五月中旬拿到滿意的 Offer，最後五月底飛去科隆度假。經歷快三個月的過程，我最後幸運地拿到並選擇了 Mujin Corp. 非常好的 Offer。這篇文章分享我回台灣三個月期間找東京軟體工程師職缺的心得。當初不僅旁人都不看好，我自己也一直抱著懷疑，但即使在這樣條件下，最後我還是幸運的找到了工作，相信我的經驗應該可以給相同背景的同學當作參考。</p>
+<h2 id="日本新卒概述"><a class="header-anchor" href="#日本新卒概述">¶ </a>日本新卒概述</h2>
+<p>日本大學社會新鮮人稱做新卒，一般來說新卒找工作都是前一年先拿「內定」，然後隔年上工，概念上很像台灣的校園招募，只是台灣的校園招募比較常見是下學期開始，也就是大約距離畢業半年前找到工作，或著甚至畢業後才開始找工作也很常見。</p>
+<p>由於日本畢業季是四月，所以一般公司的內定招募大概也是從前一年的三月開始，另外大約十月的時候也會有一波招聘但名額會比較少。不過由於我們是外國人，所以日本人玩的新卒招募我們大概也不太有幫助，但一些大企業像是樂天、Line、Mercari 等公司在招日本新人的同時，也會釋出專門給外國人新人的缺，所以想進有收外國人的日本大企業的話，時間點也要注意。</p>
+<p>如果是走外商招募、獵人頭、或是 LinkedIn 上職缺，就比較沒有時間的差別。外商基本上新人大概沒機會，我自己的感受是外商 title 沒有掛上 new grad 都不用妄想，甚至就算收 new grad 也輪不到海外的新人。獵人頭我也有諮詢過，但結論是我認為獵人頭對新人來說一點幫助也沒有，獵人頭主要還是鎖定資深工程師，新人要馬是沒有工作機會，要馬就是不屑理你。我覺得最有用的還是 LinkedIn，會把職缺放上 LinkedIn 的公司不管是大公司或小新創，都是比較願意收外國人的，我大多數的面試機會也都是從 LinkedIn 來的。另外一些管道像是日本的求職平台（Quitta Jobs、Findy 等），雖然有些平台聽說也很樂於收外國人，但基本上這一類的平台是給會日文的人準備的，所以我用了一下就直接放棄。最後就是內推管道，如果有認識外國工程師或是台灣在日的工程師，可以請他們幫忙內推，但整體來說，海外新人就算被內推大概也是直接被刷掉（也有可能是我條件差）。</p>
+<p>為了方便區分公司的薪水行情，以下簡單介紹一下日本軟體工程師行情。一般日本大學畢業生拿的薪水大約一年四百萬日圓，像是 Sony 或 Softbank 等普通日本公司開給資工新人的薪水大約這個價，姑且稱為均標。比較好一點的公司，例如 Rakuten 或 Line 會開到五百多萬日幣，再好一點的公司像是 Mercari 會開到六百多萬日幣，姑且稱這個為高標，再甚者，如果開的起七八九百萬日幣以上，就是頂標了，一般普通的日本工程師大約要工作四五年才有機會到頂標的薪水。整體情況跟台灣有點像，台灣大部分的工程師起薪大約一百萬台幣左右，但台清交資工畢業去竹科第一年就有機會年薪一百五以上，所以起薪跟學歷和能力還是有關係的。</p>
+<h2 id="履歷"><a class="header-anchor" href="#履歷">¶ </a>履歷</h2>
+<p>履歷是找工作的關鍵。因為我都是找英文職缺，所以履歷就採英文履歷的標準寫法，如果找日文職缺，日本的履歷寫法又非常不一樣了。我有習慣把 Resume 不同版本都放 Github 留檔，所以大家可以參考一下我當時的履歷長什麼樣（<a target="_blank" rel="noopener" href="https://github.com/tigercosmos/resume/blob/40188f8f58ee86b1e4f1590bc2ba96b20f6071c1/resume.pdf">Link</a>），關於怎麼寫履歷網路上已經有非常多資源，我就不老生常談。不過履歷我前前後後修了超過一個多月，過程中有一直給學長姐還有老師審視，一直修到我滿意的版本。</p>
+<p>雖然已經很多前輩提醒過了，但我還是要再次提醒，履歷寫什麼真的就會被問什麼，不熟的東西不要放，放上去的東西就要有辦法講的天花亂墜。大多數況下，我的履歷寫的內容都會被問，有時候還會被問比較早期的經驗，因為已經很久遠了，那時候沒準備，回答起來也是很卡，此外先前我把自己 C++ 的程度定義在 Proficient，但後來被考幾次之後，索性改成 Experienced，某個語言或技術沒寫超過十萬行有意義的程式碼，或是貢獻過超大型專案（百萬行等級）之前，都不要說自己「會」比較好。</p>
+<h2 id="面試"><a class="header-anchor" href="#面試">¶ </a>面試</h2>
+<p>如果想找英文職缺的軟體工程師，至少英文不能講太差對吧（笑）。我覺得以資工的訓練來說，通常我們英文不會太差，畢竟寫程式本身就是英文，第一手網路資源往往也是英文，平常有參加開源專案或是一些國際社群也會用英文溝通，但我覺得台灣人聽讀基本上沒問題，但要開口就困難了，因為台灣沒有講英文的環境。英文要能說的順就是要刻意練習吧，我是因為去米蘭交換，都在跟外國人混，每天都在講英文，雖然不是講麼高深厲害的英文，但至少可以善用兩千單順暢無阻的表達自己的想法和意見。</p>
+<p>我自己面試的經驗，大多數情況招外國人的英文職缺，裡面工程師也都是外國人，講英文其實講得很舒服，大多數英文程度都比我還很好多，少數情況面試對像是日本人，這些日本人也都有留學經驗，英文講的也不差，不過也有一些例外，如果一家公司想收外國人英文又講的不好，基本上就會直接被我排除了。我認為英文溝通最困難的部分是聊一些政治、文化、興趣或是辯論或談判，相較之下用英文去講自己的學經歷和「程式怎麼動」是非常簡單的話題，我相信只要多練習，不用到托福 100 都可以講得很順暢。</p>
+<p>正常日本面試是一定要穿得很正式得體，所以一開始我面試的時候還會至少穿個襯衫，後來我發現面試官基本上都外國人，大家也都很隨性的，即使對像是日本人也是比較歐美風格，所以面試的時候就隨便穿就可以了。</p>
+<p>之前永昱有建議我要同時找國內公司，就算不當保底也可以當練手，因為在沒面試經驗情況下去找國外工作很容易被電，其實滿合理的，一間公司要用外國人的話，人選自然必須是高過於一般水準。但其實我隨便丟基本上都沒拿到台灣的面試機會，不過就算有拿到面試，基本上心態也不正確，後來我覺得有點沒必要，如果像我一樣已經一心只想出國的人，台灣的缺就不用丟了，除非是國外或台灣都可以的人，則可以都試試。</p>
+<p>面試過程中有陸陸續續刷了一些 LeetCode，不超過 30 題，主要都是 Easy 搭配一些 Medium 和兩三題 Hard。整體下來 LeetCode 類型的白板題只有少數公司會考，我感覺我刷 LeetCode 沒啥實質幫助，但對於維持寫程式手感還是有不少幫助。一些公司考實作能力，比方說現場實作一個簡單的 LRU Cache，或是出作業回去做，像是寫一個功能完整的 Restful Server，或是考你會不會讀程式碼，可以說經歷不同的面試真的大開眼界，所以主要還是考長時間的實力累積，不是短時間衝刺能準備的。</p>
+<p>關於準備面試，jserv 開的「<a target="_blank" rel="noopener" href="https://www.youtube.com/c/GUTS4tech/videos">資訊科技產業專案設</a>」看了我覺得挺有幫助的，我覺得或多或少都能從中提取經驗。另外我覺得多找老師、學長姐或朋友請教和討論也非常有幫助。</p>
+<p>一個感觸很深的部分是，不管我有多少實習經驗，或是做過多少 Side Projects，雖然有總比沒有好，但事實就是這些對於公司而言都是家家酒，正職需要的經驗和 know-how 遠遠比那些小專案能學的還多，像是我過去寫了一些 C++，但那些對於資深工程師來說就是 hello world 而已，或是我的研究是平行化 JavaScript，但我對 Parallelism 和 Concurrency 了解的也只有皮毛。所以我很同意永昱說的，事實上我就等於什麼都不會，不用想著自己會什麼，因為實際上如果一家公司願意收一個新人，那看中的絕對不是他目前會什麼，怎樣說服對方自己是一個受過資工紮實訓練的畢業生以及展現自己的潛力比較重要。</p>
+<p>整體來說面試就是不斷學習吧，面試個五六次之後，我連一些適性問題都可以輕鬆回答，一開始我覺得最困難的問題莫過於「為什麼想來日本」，我總不能說因為我女友在日本吧 😂。後來我想出了一套強而有力的說詞，我自己都覺得沒破綻，簡單來說就是想出國看看，日本有很多朋友，日本離台灣很進隨時可以回家看父母，從小就喜歡日本文化等等如此這般，總之是一個不會被質疑的好理由。我覺得面試就是多是幾次就會越來越順了，我大概投了二三十家公司之後才終於拿到第一個面試，前面就算有回應也都是書審直接拒絕，找工作真的要沉住氣，開始拿到第一個面試之後狀況就會慢慢好起來的。</p>
+<h2 id="找工作過程"><a class="header-anchor" href="#找工作過程">¶ </a>找工作過程</h2>
+<p>以下簡述我找工作各公司的經歷，雖然我研究所是系統軟體研究室，但我主要都鎖定 Full Stack Engineer 或 Backend Engineer，只有這兩個職稱有拿到面試機會，其他我也投了亂七八糟的 Developer 或 Engineer 都是沒消息。以下介紹都是我至少有拿到面試機會，或是我覺得值得提的公司，更多是投了完全沒消息或被拒絕的公司，除了幾個有名的大公司我是直接去官網看職缺，大部分都是每天滑 LinkedIn 看有什麼工作機會。</p>
+<h3 id="平淡無奇的失敗案例"><a class="header-anchor" href="#平淡無奇的失敗案例">¶ </a>平淡無奇的失敗案例</h3>
+<p><a target="_blank" rel="noopener" href="https://www.mercari.com/">Mercari</a>、<a target="_blank" rel="noopener" href="https://linecorp.com/ja/career/newgrads/">Line</a>、<a target="_blank" rel="noopener" href="https://global.rakuten.com/corp/careers/">Rakuten</a> 是幾個知名收外國人的企業，新人基本上都有機會。Mercari 從三月就開始新卒招募，其中包括外國人，我線上測驗一題都沒寫出來直接被淘汰。Line 我三月底投了外國人新人缺，四月底收到線上測驗考題，五月中通知可以進入下一階段面試，但這時我已經接了 Mujin Offer ，就直接放棄面試，我覺得 Line 感覺拖拖拉拉的，我女友投日本新卒的設計職缺也是流程拖很慢。Rakuten 我忘記是那個方式進入到面試流程，因為我網站投、<a target="_blank" rel="noopener" href="https://job.connectiu.com/">Connect Job</a> 上面也有投，台灣的獵人頭也有丟，總之後來有拿到一個 Rakuten 的 Junior 職缺面試，面試流程跟<a target="_blank" rel="noopener" href="https://kai-chin.medium.com/%E6%97%A5%E6%9C%AC%E6%A8%82%E5%A4%A9%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E9%9D%A2%E8%A9%A6%E5%88%86%E4%BA%AB-2021-rakuten-software-engineer-interview-515a71d63355">這篇文章</a>講的一樣，先是一題超級 Easy 的線上題目，我覺得完全沒有鑒別度，然後總共兩關只聊天的面試，第一關是三個外國工程師問一些履歷相關的經驗，第二關則是兩個日本主管發問，有問一些背景相關，更多是適性問題，像是怎樣去學習新知，碰到問題怎樣解決這種，我第二關回答的時候講的挺順的，我本來以為穩了，不過最後樂天沒被錄取，我也不知道原因。</p>
+<p>Amazon 和 IBM 我不管怎麼投就是沒有回應，嘗試各種職缺，甚至還找了內推都沒用。<a target="_blank" rel="noopener" href="https://www.smartnews.com/en/">SmartNews</a> 找了內推也沒下文。<a target="_blank" rel="noopener" href="https://www.teamlab.art/">TeamLabs</a> 寫完線上測驗也是無聲卡。<a target="_blank" rel="noopener" href="https://hennge.com/global/">Hennge</a> 應該是不錯的公司，但是他們要求新人要先參加他們全職實習計畫才考慮收為正職，後來拿到因為已經找到工作就直接不考慮，不過他們的實習計畫每年有好幾梯次，有考慮未來去日本發展的學弟妹可以趁早做規劃。<a target="_blank" rel="noopener" href="https://ridge-i.com/en/">Ridge-I</a> 這家公司要先考線上測驗，三題 Easy 題，我甚至半小時就寫完，結果結果線上測驗沒通過，我也是整個傻眼完全不懂為啥。<a target="_blank" rel="noopener" href="https://ascent.ai/">Ascent Robotics</a> 是做工廠機器人相關，跟外國 CEO 談完之後，就被無聲卡了。<a target="_blank" rel="noopener" href="https://www.preferred.jp/en/">Preferred Network</a> 要先寫線上測驗，但他的題目太鳥（太複雜且沒意義），我直接放棄不做。<a target="_blank" rel="noopener" href="https://www.nablas.com/">NABLAS Inc.</a> 是一間很像國網中心的 AI 研究導向公司，公司就直接設在東大對面，我覺得是一間挺好的公司，想鑽研 AI 技術或是高性能計算都可以考慮，第一輪面試是了解公司概況，二面會有一個三小時技術面試，然後就會決定是否錄取，薪水應該介於高標左右，但我那時候已經拿到 Mujin Offer 就直接放棄二面了。此外，我也有遇到一些很鳥的公司，像是 CEO 英文不好還想收外國人（重點是那是英文缺），或是 CEO 自己都不會介紹自己的公司，如果 CEO 自己都不能賣自己的公司，我不知道要應徵者怎樣去想進那家公司，也有一些公司只開的起不足六百萬，這些都直接被我淘汰。</p>
+<p>順帶一提，過程中投了台灣外商 N 公司想說當練手，結果被電爆，我投了平行化相關的職缺，我以為會像一般的考法就是考考演算法，結果先考 C++ 類別基本操作的除錯，然後考 OpenMP 使用，我回答不出來所以提前結束面試，原本似乎還會被問 GPU 程式設計的問題。我覺得我的程度完全沒被考出來，在我認知中 OpenMP 要用的時候不就是查一下語法，GPU 計算我每次也是抄範例來改。最好笑的是，最後考官問我是不是沒修過平行程式，好險他沒仔細看我履歷，如果他知道我是平行程式助教，還拿到傑出助教獎，不知道作何感想，也好險他沒認真看履歷，不然不就丟了我教授的臉了。另外 N 公司的小主管面試的時候也不開鏡頭，我第一次看到這麼不禮貌的面試官，過程中還一直催說這題一般人大概 10 分鐘可以解出來之類的，那次體驗是我這次找工作下來最差的。</p>
+<h3 id="值得說的失敗案例"><a class="header-anchor" href="#值得說的失敗案例">¶ </a>值得說的失敗案例</h3>
+<p><a target="_blank" rel="noopener" href="https://www.japancv.co.jp/en/company/">Japan Computer Vision</a> 是我找工作過程中第一個拿到的面試機會，是在「矽谷輕鬆談」的 Slack Channel 找到台灣的工程師幫忙內推。那時候我投了非常多公司都沒下文，因為這個內推拿到了第一個日本的面試機會，讓我信心增加許多。這家公司很好玩的地方是，明明是日本公司，但裡面都是講中文的工程師，後來發現這種現象在日本不少見，可能是中國人遍布全世界的關係吧。應徵職缺是 Full Stack Engineer，一面是兩個前端工程師考 JavaScript 的一些特性和操作，二面是兩個後端工程師一個考 DP 一個考實作實現多執行序操作的 Key Value 資料結構。兩次面試我都沒表現好，我碩論都在研究 JavaScript 但是我發現我懂得 JS 還是比較片面，然後演算法一向是我的弱點，被考 DP 直接掛，雖然後來我依舊始終沒去練 DP 就是了 🤪。這家公司是軟體銀行底下的新創，我感覺應該是滿不錯的公司，職缺沒有直接招新卒，新人如果能進去薪水應該是高標到頂標之間。</p>
+<p><a target="_blank" rel="noopener" href="https://boostdraft.com/">Boostdraft</a> 是一家規模六七人的新創公司，主要產品是給律師用的法律文件專屬編輯器，我認為這是非常有前景的產品。我總共面了三次，第一次跟 CEO 聊天，第二次 CEO 考偏字串處理的演算法，被問了一個我沒想過的問題，如果我要寫測試要怎樣設計測試才能最有效驗證程式的正確性，這不單單只是回答寫 Unittest 而已的問題，第三次則是由另外一個工程師考演算法。第三次面完之後我就被拒絕了，我想這家公司還是想收資深工程師來當即戰力吧，我是相當看好這家公司的前景，程度夠強的人也許可以考慮看看，薪水我猜應該是高標左右。</p>
+<p><a target="_blank" rel="noopener" href="https://www.asprova.com/en/">Asprova</a> 是一家做工廠人力排程軟體的公司，新卒起薪頂標之上（八百萬到一千萬），可以參考<a target="_blank" rel="noopener" href="https://vocus.cc/article/6195ffd2fd89780001cff507">這篇</a>和<a target="_blank" rel="noopener" href="https://www.1point3acres.com/bbs/thread-830074-1-1.html">這篇</a>文章。這家公司的人英文都不好，雖然願意招收不會日本的外國人，但最好有日文底子或是抱著之後一定要學會日文的心態。面試這家我是挺感動的，我的面試流程跟網路上分享的都不一樣，一面就是直接跟主管面，主管基本上不會英文，我跟他大多數時間是靠 DeepL 翻譯溝通，因為溝通效率有點差，我跟他總共面了快三個半個小時，是我有史以來單一個人面試時間最長的，過程中考了閱讀程式碼的考題，給了一大串程式碼，讓我花半小時看去分析這段程式碼的記憶體配置。主管人挺好的，可以看得出他求才若渴，即使有語言障礙也被深深打動。後來我又面了兩次，或著說跟兩個不同的工程師聊天了兩次，一次是中國人一次是新加坡人，主管好像交代他們只需要跟我聊天不需要考 Coding。我認為 Asprova 對面試者是非常有誠意的，願意花很多時間去跟你聊天，我也在聊天過程中知道這間公司不適合我，後來就婉拒後續面試了。簡單來說我考量點有兩個，一個是這家公司產品偏向成熟，目前主要都是偏向維護，比較少創新，另一方面這家公司需要講日文，我認為溝通都有障礙的情況下很難把事情做好。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cogent.co.jp/en/">Cogent Lab</a> 是一間應用 AI 來處理文件有點規模的新創公司，這家公司也都是外國人，英文都偏英式。一面簡單跟工程師聊天聊了一下背景，接下來出了一份作業，簡單來說是用 Node.js 實作一個 Restful Server，在做這份作業時要考慮一下系統架構，包含要支援多執行序、串接 DBMS、加入 Message Queue 等等，對方給了兩週的實作時間，實際上我大概花了三四天，並且在這份作業中第一次接觸 Docker Compose，我寫的作業可以在<a target="_blank" rel="noopener" href="https://github.com/tigercosmos/thumbnail-server">這邊</a>參考。二面就是直接針對實作來做討論，我覺得是好玩的，針對架構做討論，然後被要求做當場一些修改，或是去修正沒想到的錯誤，我覺得比起直接被考演算法，這種考實作系統的考法對我來說比較沒壓力，兩小時算是很輕鬆的度過。不過二面完之後就收到拒絕信，有可能是我寫的作業程度不夠，或是我有那邊不合格吧，但我感覺主要原因還是他們比較想收資深工程師。</p>
+<p><a target="_blank" rel="noopener" href="https://paidy.com/">Paidy</a> 是一家做金融支付的公司，這家也都是外國人，我面試的 Backend Engineer，一面跟主管聊天了解一下彼此背景，然後對方出了一份作業，也是實現一個 Restful Server，然後要求要用 Rust 和 Functional Programming 來實作，我大學之後就再也沒寫過 Rust 了，而且我以前寫 Rust 的時候也沒寫多執行序程式，寫這一份作業對我來說還是有趣的，我等於學習了怎麼用 Rust 去寫並行程式，我對<a target="_blank" rel="noopener" href="https://github.com/tigercosmos/simple_restaurant">我寫的作業</a>還是挺滿意的，雖然我覺得我的 Rust 應該寫的很爛，然後可能 FP 大概也沒怎麼用，但以一個專案來說應該是完整的，功能都正常運作，還附帶完整的測試。這時候其實我已經拿到 Mujin Offer，但因為我覺得這作業挺好玩的，我還是花了不少時間把作業寫完，不過交了之後目前還沒收到任何回覆。這家我感覺應該也是挺值得加入的公司，有規模的金融公司的 Backend 絕對不會無聊，背後技術主要是 Rust + Go，我猜薪水應該也給到高標到頂標左右。</p>
+<h3 id="拿到-Offer-的案例"><a class="header-anchor" href="#拿到-Offer-的案例">¶ </a>拿到 Offer 的案例</h3>
+<p><a target="_blank" rel="noopener" href="https://monoid.co.jp/">Monoid</a> 是一間軟體顧問公司，是由一群中國留學生所創，正職員工五人，成立沒幾年靠著接案營收達兩億日圓，成員學歷都挺高的，新創小公司能有這麼高的營收我覺得他們絕對有一定本事。面試就一關，大約一小時多，問了一些基礎的程式觀念和演算法而已，剩下時間都在了解公司，我其實有點訝異流程這麼快，但他們好像已經先調查過我，包含我寫的 Blog 和 Github，所以面試可能只是做最後確認。面試完不久我就收到正式 Offer，薪水為高標水準，這家公司願意接受 Offer Compete，他們似乎開的起更高，有點不怕開不起薪水，只怕你不夠格的味道。我滿感謝這家公司的，我五月初收到 Offer 後瞬間讓我充滿信心，因為不論如何這下我已經確定能去日本工作，何況薪水還挺好的。</p>
+<p><a target="_blank" rel="noopener" href="https://mujin-corp.com/">Mujin Corp.</a> 是做工廠機器人的控制器和管理平台的公司，我一開始應徵的是 Full Stack Engineer 後來經 HR 協調改成 Backend System Engineer。一面是跟 HR 聊天了解一下公司，中間大約等了兩個禮拜，我還以為這家沒了，結果好像是他們內部溝通流程的問題，接著二面試跟部門主管面試，直接省去寒暄廢話，一開始就直接考 C++，只考了如何實現 LRU Cache，我感覺並沒有太大的困難和陷阱，程式考試大概 40 分鐘就結束了，接下來我大概跟主管聊了 40 分鐘了解他們的技術以及我能在裡面做什麼以及學什麼。二面結束之後有一個回家作業，有 48 小時可以去完成。我覺得二面算是普通程度和個性測驗，關鍵是接下來的作業，這份作業我認為鑒別度十分強，我自己都一度想放棄覺得會被淘汰。簡單介紹一下這個作業，他們公司內部有用到一個機器人相關開源專案，作業的第一步是想辦法把這個專案 Build 起來，困難點是這個專案不是 Tensorflow、Chromium 之類的專案，有一大堆文件可以查，這個專案基本上他的文件就是程式碼本身，我被規定在指定的 OS 上去把他編譯出來，過程中會遇到一大堆編譯錯誤，我必須靠著經驗去摸索還有排解各種問題，作業說明也只有簡單一句話說想辦法把他編譯好，有點像在公司被丟了一份工作，要在沒人指導和幫助的情況下，獨立搞定出來，過程中我一度卡了七八個小時完全沒進展（要知道我只有 48 小時），真的會讓人很想放棄，所幸後來還是搞定了。想辦法編譯出來之後，接下來就是簡單實作一個 Restful Server，然後會需要用到前面編譯的程式來做一些工作。可以說編譯的部分就是整個作業最難的地方，後面的 Server 實作反而沒啥難度。從本來都快放棄，到後來提早交卷，主管似乎很滿意我的作業成果，原本可能還會有個面試討論作業內容，但似乎就直接跳過，順利拿到了 Offer，Mujin 一開始 HR 就有跟我說新人起薪大約六百到九百萬，我實際拿到的 Offer 也確實有頂標，還有其他附帶好處，例如加入 Mujin 申請永久居留直接加 20 分（日本申請永久居留有一個分數表，滿 70 分工作滿三年可以拿永居，滿 80 分甚至一年可以拿永居），而且在 Mujin 我就可以繼續做系統軟體，整體而言我都覺得是非常好的機會，於是拿到 Offer 不久就直接簽了。</p>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
+<p>目前我在德國度假，回過頭看，這一切都非常不可思議，若不是因為女友關係，我也從沒想過人生第一份正職就直接在東京開始作為一個沒有任何有利背景的海外新卒，我很幸運能在三個月內找到滿意的 Offer，我曾經想過為了能在日本工作，就算薪水只有均標到高標之間也可以，但最終很高興能遇到賞識我的公司並給了待遇很好的 Offer。</p>
+<p>我覺得有時候就是要勇敢去做，所有人聽到我一個新卒想要在日本找到工作都覺得沒什麼希望，但即使看起來沒什麼希望，我相信只要義無反顧的往前衝就會有機會。我也很慶幸自己專業是資工，找的職位是軟體工程師，我相信當今世界，只要有心，任何地方都找的到軟體工程師的職位，這也是我找工作過程中最大的優勢。</p>
+<p>找工作的過程中我也學到很多，不管是怎樣面對外國人的面試，或是在寫不同公司的作業，我特別喜歡出有趣作業的公司，這讓我很享受求職的過程，不僅寫的開心也學到新的東西，我也很感謝過程中有提點我不足的面試官，讓我可以持續的改進。</p>
+<p>現在唯一一個小小擔憂的點是上工預計是三個月後，我只希望這段期間不要有任何變數，讓我可以順利上工開始東京的生活。最後希望這篇文章能幫到日後也像我一樣想要去日本找軟體工程師職缺的新人，</p>
+
+    </div>
+    
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/tags/%E5%B7%A5%E4%BD%9C/">
+                工作
+            </a>,&nbsp;
+        
+            <a href="/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB/">
+                軟體工程師
+            </a>,&nbsp;
+        
+            <a href="/tags/%E6%97%A5%E6%9C%AC/">
+                日本
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+<!-- <hr class="hr-color"> -->
+
+<!-- <p class="post-end-line">Ad</p>
+<p class="post-end-line-small">This may help me earn some money. (Of course you can <a href="/donation/">donate me</a> directly)</p> -->
+
+<!-- <ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6206289145662773"
+     data-ad-slot="6052934851"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+</script> -->
+
+<!-- <hr class="hr-color">
+<p class="post-end-line">Comments</p> -->
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E6%9C%AC%E6%96%B0%E5%8D%92%E6%A6%82%E8%BF%B0"><span class="toc-text">日本新卒概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B1%A5%E6%AD%B7"><span class="toc-text">履歷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%A2%E8%A9%A6"><span class="toc-text">面試</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%BE%E5%B7%A5%E4%BD%9C%E9%81%8E%E7%A8%8B"><span class="toc-text">找工作過程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B3%E6%B7%A1%E7%84%A1%E5%A5%87%E7%9A%84%E5%A4%B1%E6%95%97%E6%A1%88%E4%BE%8B"><span class="toc-text">平淡無奇的失敗案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%80%BC%E5%BE%97%E8%AA%AA%E7%9A%84%E5%A4%B1%E6%95%97%E6%A1%88%E4%BE%8B"><span class="toc-text">值得說的失敗案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0-Offer-%E7%9A%84%E6%A1%88%E4%BE%8B"><span class="toc-text">拿到 Offer 的案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    <li>
+      <a href="/post/2022/06/japan/new-grad-find-swe-job-in-japan/">
+        2022 海外新卒找日本東京軟體工程師工作經驗分享
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2022/05/autobiography/nctu-6/">
+        交大觀察與心得(六)：碩三畢業
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2022/04/story/japanese-girlfriend/">
+        突如其來在米蘭與櫻花妹展開不可思議的戀愛故事
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2021/12/italy/2021-exchange-polimi-school/">
+        2021 米蘭理工交換教戰手冊—米蘭理工概況與心得
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/">
+        2021 米蘭理工交換教戰手冊—抵達米蘭與生存篇
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2021/10/italy/2021-exchange-polimi/">
+        2021 米蘭理工交換教戰手冊—出國前準備篇
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2021/09/italy/first-two-days-milan/">
+        出發到抵達米蘭頭兩天雜記
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2021/08/italy/apply-visa/">
+        如何在台灣申請義大利學生簽證
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2021/08/autobiography/nctu-5/">
+        交大觀察與心得(五)：碩二下—科技X藝術
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2021/06/js/js-array-for-methods/">
+        JavaScript 遍歷 Array 的四種方法：for、for-in、for-of、forEach()
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2021/" rel="tag">2021</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/30-%E5%A4%A9-javascript-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E/" rel="tag">30 天 javascript 從入門到進階</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular-2-%E4%B9%8B-30-%E5%A4%A9%E9%82%81%E5%90%91%E7%A5%9E%E4%B9%8E%E5%85%B6%E6%8A%80%E4%B9%8B%E8%B7%AF/" rel="tag">angular 2 之 30 天邁向神乎其技之路</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/boost/" rel="tag">boost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cgi/" rel="tag">cgi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpu-spec/" rel="tag">cpu spec</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/facebook/" rel="tag">facebook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/italy/" rel="tag">italy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/milan/" rel="tag">milan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sharedarraybuffer/" rel="tag">sharedarraybuffer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vocabulary-titan/" rel="tag">vocabulary titan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xr-%E5%B0%88%E9%A1%8C/" rel="tag">xr 專題</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular/" rel="tag">angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular-5/" rel="tag">angular 5</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular2/" rel="tag">angular2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomics/" rel="tag">atomics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/beginner/" rel="tag">beginner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bot/" rel="tag">bot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bottender/" rel="tag">bottender</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/browser-architecture/" rel="tag">browser architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chaos/" rel="tag">chaos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chatbot/" rel="tag">chatbot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/" rel="tag">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudmosa/" rel="tag">cloudmosa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coscup/" rel="tag">coscup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covid-19/" rel="tag">covid-19</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deep-learning-hardware/" rel="tag">deep learning hardware</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/front-end-development/" rel="tag">front end development</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github-app/" rel="tag">github app</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/growing-up/" rel="tag">growing up</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/how-things-work/" rel="tag">how things work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inference/" rel="tag">inference</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/intern/" rel="tag">intern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/key-point/" rel="tag">key point</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/let-s-build-a-dbms/" rel="tag">let's build a dbms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/line-bot/" rel="tag">line bot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/localization/" rel="tag">localization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mobile-device/" rel="tag">mobile device</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mozilla/" rel="tag">mozilla</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mozilla-taiwan/" rel="tag">mozilla taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/new-year-resolution/" rel="tag">new year resolution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/paper/" rel="tag">paper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance-analysis/" rel="tag">performance analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/polimi/" rel="tag">polimi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/probot/" rel="tag">probot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/puffin-browser/" rel="tag">puffin browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/puffin-os-phone/" rel="tag">puffin os phone</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pull-request/" rel="tag">pull request</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/relational-database/" rel="tag">relational database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/revision-control/" rel="tag">revision control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rust-taiwan/" rel="tag">rust taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/science/" rel="tag">science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/side-project/" rel="tag">side project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sir/" rel="tag">sir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/socket/" rel="tag">socket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software/" rel="tag">software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-engineering/" rel="tag">software engineering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stellarsql/" rel="tag">stellarsql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/story/" rel="tag">story</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/the-clean-coder/" rel="tag">the clean coder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tpu/" rel="tag">tpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traditional-chinese/" rel="tag">traditional chinese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visa/" rel="tag">visa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/weather-bot/" rel="tag">weather bot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A4%E5%A4%A7%E8%A7%80%E5%AF%9F%E8%88%87%E5%BF%83%E5%BE%97/" rel="tag">交大觀察與心得</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A4%E5%A4%A7%E8%AA%B2%E7%A8%8B/" rel="tag">交大課程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A4%E5%A4%A7%E8%B3%87%E5%B7%A5%E6%89%80/" rel="tag">交大資工所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BE%86%E5%81%9A%E5%80%8B%E7%B6%B2%E8%B7%AF%E7%80%8F%E8%A6%BD%E5%99%A8%E5%90%A7%EF%BC%81/" rel="tag">來做個網路瀏覽器吧！</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%82%B3%E6%9F%93%E7%97%85/" rel="tag">傳染病</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%A8%E7%90%83%E9%9B%86%E6%80%9D%E8%AB%96%E5%A3%87/" rel="tag">全球集思論壇</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%AC%E5%85%B1%E8%A1%9B%E7%94%9F/" rel="tag">公共衛生</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%AC%E5%8F%B8/" rel="tag">公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%87%BD%E5%BC%8F/" rel="tag">函式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8A%A9%E6%95%99/" rel="tag">助教</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B0%E5%A4%A7%E7%B6%B2%E5%AA%92%E6%89%80/" rel="tag">台大網媒所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B0%E5%A4%A7%E8%A7%80%E5%AF%9F%E8%88%87%E5%BF%83%E5%BE%97/" rel="tag">台大觀察與心得</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9C%8B%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">國網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E6%9C%AC%E7%B4%A0%E9%A4%8A/" rel="tag">基本素養</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E5%AD%B8/" rel="tag">大學</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E5%AD%B8%E7%94%9F%E6%B4%BB/" rel="tag">大學生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E6%B0%A3/" rel="tag">大氣</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A5%B3%E5%8F%8B/" rel="tag">女友</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%B8%E7%BF%92%E6%8C%87%E5%8D%97/" rel="tag">學習指南</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E7%90%AA%E5%85%92/" rel="tag">安琪兒</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B0%88%E6%A1%88/" rel="tag">專案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C%E7%92%B0%E5%A2%83/" rel="tag">工作環境</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B8%83%E6%9C%97%E9%81%8B%E5%8B%95/" rel="tag">布朗運動</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B3%E8%A1%8C%E7%A8%8B%E5%BC%8F/" rel="tag">平行程式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BF%85%E4%BF%AE%E8%AA%B2/" rel="tag">必修課</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%82%85%E8%AE%80%E6%BA%90%E7%A2%BC/" rel="tag">悅讀源碼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%83%B3%E6%B3%95/" rel="tag">想法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A5%E8%A7%B8%E9%80%9A%E7%9F%A5%E7%B3%BB%E7%B5%B1/" rel="tag">接觸通知系統</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A8%E7%94%84/" rel="tag">推甄</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%85%E4%BA%8B/" rel="tag">故事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%85%E5%AE%AE/" rel="tag">故宮</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B0%E5%B9%B4%E6%96%B0%E5%B8%8C%E6%9C%9B/" rel="tag">新年新希望</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%A1%E7%B3%BB%E9%81%B8%E6%93%87/" rel="tag">校系選擇</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%9D%E4%BB%B6%E5%88%A4%E6%96%B7/" rel="tag">條件判斷</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E7%8E%87/" rel="tag">機率</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AA%94%E6%A1%88%E8%AE%80%E5%AF%AB/" rel="tag">檔案讀寫</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B0%A3%E8%B1%A1%E5%96%B5/" rel="tag">氣象喵</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B0%A3%E8%B1%A1%E6%A9%9F%E5%99%A8%E4%BA%BA/" rel="tag">氣象機器人</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E5%A7%8B%E7%A2%BC/" rel="tag">源始碼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%80%8F%E8%A6%BD%E5%99%A8/" rel="tag">瀏覽器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%A9%E4%BB%B6/" rel="tag">物件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%8D%8E%E5%AD%B8%E9%87%91/" rel="tag">獎學金</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%8E%89%E5%B1%B1%E5%9F%B9%E8%82%B2%E5%82%91%E5%87%BA%E4%BA%BA%E6%89%8D%E7%8D%8E%E5%AD%B8%E9%87%91/" rel="tag">玉山培育傑出人才獎學金</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%8E%89%E5%B1%B1%E6%96%87%E6%95%99/" rel="tag">玉山文教</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%A9%9F/" rel="tag">生機</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9C%81%E6%80%9D/" rel="tag">省思</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%94%E7%A9%B6%E6%89%80/" rel="tag">研究所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%A9%E5%A3%AB/" rel="tag">碩士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%B8/" rel="tag">科學</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%B8%E7%8F%AD/" rel="tag">科學班</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%B1%95/" rel="tag">科展</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A8%8B%E5%BC%8F/" rel="tag">程式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88%E5%85%A5%E9%96%80/" rel="tag">程式設計入門</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%86%E8%A8%98/" rel="tag">筆記</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B0%BD%E8%AD%89/" rel="tag">簽證</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B1%B3%E8%98%AD/" rel="tag">米蘭</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B1%B3%E8%98%AD%E7%90%86%E5%B7%A5/" rel="tag">米蘭理工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B1%B3%E8%98%AD%E7%90%86%E5%B7%A5%E4%BA%A4%E6%8F%9B%E6%95%99%E6%88%B0%E6%89%8B%E5%86%8A/" rel="tag">米蘭理工交換教戰手冊</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B4%85%E9%BB%91%E6%A8%B9/" rel="tag">紅黑樹</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BE%8E%E8%A1%93%E7%A4%BE/" rel="tag">美術社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BE%A9%E5%A4%A7%E5%88%A9/" rel="tag">義大利</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E5%BA%8F/" rel="tag">自序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86/" rel="tag">自然語言處理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%BA%E7%81%A3%E9%87%91%E8%9E%8D%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">臺灣金融科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%9D%E8%A1%93/" rel="tag">藝術</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B3%87%E8%A8%8A%E5%B7%A5%E7%A8%8B/" rel="tag">資訊工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B/" rel="tag">軟體工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB/" rel="tag">軟體工程師</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%B4%E5%9C%88/" rel="tag">迴圈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%90%B5%E4%BA%BA%E8%B3%BD/" rel="tag">鐵人賽</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%96%8B%E6%BA%90/" rel="tag">開源</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%A8%E7%AD%86/" rel="tag">隨筆</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB%E8%88%87%E7%89%B9%E6%95%88/" rel="tag">電腦動畫與特效</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%BB%E8%85%A6%E8%A6%96%E8%A6%BA/" rel="tag">電腦視覺</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%A9%A6/" rel="tag">面試</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%AB%98%E4%B8%AD/" rel="tag">高中</a></li></ul>
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
