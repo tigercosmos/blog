@@ -4,7 +4,7 @@ date: 2020-02-07 15:01:00
 tags: [JavaScript, web, web worker, SharedArrayBuffer, atomics, 平行化]
 ---
 
-JavaScript 是執行時只會用單執行緒，即便 JavaScript 大量使用並行（Concurrency）機制，像是各種 Event Handler，依舊還是只有一個執行緒，於是這樣大大限制計算的效能。解套辦法是在 JavaScript 上撰寫平行程式，使用 [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)、 [SharedArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) 和 [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics)。
+JavaScript 是執行時只會用單執行緒，即便 JavaScript 大量使用並行（Concurrency）機制，像是各種 Event Handler，依舊還是只有一個執行緒，於是這樣大大限制計算的效能。解套辦法是在 JavaScript 上撰寫平行程式，使用 [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)、 [SharedArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) 和 [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics)。
 
 <!-- more --> 
 Web Worker 讓你這個網頁可以開啟其他執行緒來做事，但因為每個 Worker 彼此資料是獨立的，想要共用的話還需要搭配 `SharedArrayBuffer` 共享記憶體，並透過 `Atomics` 來確保資料正確。本文先介紹 Web Worker，然後分別介紹 `SharedArrayBuffer` 和 `Atomics`，最後演示如何結合使用。

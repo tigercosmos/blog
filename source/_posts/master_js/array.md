@@ -92,7 +92,7 @@ console.log(names);
 執行 `ex2.js`：
 
 ```py
-$ node ex2.js
+$ node ex2.js
 [ 'Jenny', 'Tiger', 'Leo' ]
 [ 'Lucy', 'Tiger', 'Leo' ]
 ```
@@ -114,7 +114,7 @@ console.log(names);
 執行 `ex3.js`：
 
 ```py
-$ node ex2.js
+$ node ex2.js
 [ 'Jenny', 'Tiger', 'Leo' ]
 [ 'Cat', 'Dog' ]
 ```
@@ -237,7 +237,7 @@ for(let i = 0; i < arr1.length; i++) {
 
 我們直接用迴圈一個一個複製，因為單一變數複製時，記憶體會是不一樣的。`arr2` 原本是空的，我們直接對 `arr2[i]` 位置操作，可以直接讓沒有元素的位置有東西。
 
-要注意的是，如果陣列原本是空的 `[]`，直接在編號 `i` 位置插入值的話，陣列就會變成長度 `i`，中間會是 `undefined`。
+要注意的是，如果陣列原本是空的 `[]`，直接在編號 `i` 位置插入值的話，陣列就會變成長度 `i`，中間會是 `undefined`。
 
 例如：
 
@@ -307,7 +307,7 @@ console.log(names);
 執行 `ex5.js`：
 
 ```py
-$ node ex2.js
+$ node ex2.js
 [ 'A', 'B' ]       // 原本的
 [ 'A', 'B', 'D' ]  // 後面加入 D 後
 [ 'A', 'B' ]       // 移除最後面的元素後

@@ -112,6 +112,6 @@ Chrome 和 Firefox 都保留至少兩個 Register 給原本的 JS 引擎使用�
 
 總結，WASM 因為不成熟的 Register allocator 和 Code generator，以致於效能上比較差。但是這可能是一個 Tradeoff，因為 Clang 會花比較多時間去編譯和優化，而瀏覽器需要即時快速的編譯和執行。
 
-這篇論文中漏掉討論的部分是，像在 Firefox 中，WASM 有兩個引擎處理，一個是針對 Stream 去編譯，另一個是拿到所有 Code 後去優化編譯。當後者編譯完成後，會直接取代前者。在這篇論文中，無法得知 Firefox 的實驗數據是根據那個引擎的結果。
+這篇論文中漏掉討論的部分是，像在 Firefox 中，WASM 有兩個引擎處理，一個是針對 Stream 去編譯，另一個是拿到所有 Code 後去優化編譯。當後者編譯完成後，會直接取代前者。在這篇論文中，無法得知 Firefox 的實驗數據是根據那個引擎的結果。
 
 WebAssembly 比 Native Code 慢有幾個先天限制，WASM 必須檢查 Stack overflow、Indirect call 檢查、JS 引擎保留 Register，這些都導致比較大的 Code 數量，就會跑得比較慢。未來也許可以把檢查放在編譯時檢查，就能省下不少執行時負擔，此外 WASM 終究需要和 JS 互動，彼此耦合的負擔如何降到最低也是可研究方向。
