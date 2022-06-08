@@ -236,7 +236,7 @@ names[0] = &quot;Lucy&quot;;
 console.log(names);
 </code></pre>
 <p>執行 <code>ex2.js</code>：</p>
-<pre><code class="language-py">$ node ex2.js
+<pre><code class="language-py">$ node ex2.js
 [ 'Jenny', 'Tiger', 'Leo' ]
 [ 'Lucy', 'Tiger', 'Leo' ]
 </code></pre>
@@ -250,7 +250,7 @@ names = [&quot;Cat&quot;, &quot;Dog&quot;];
 console.log(names);
 </code></pre>
 <p>執行 <code>ex3.js</code>：</p>
-<pre><code class="language-py">$ node ex2.js
+<pre><code class="language-py">$ node ex2.js
 [ 'Jenny', 'Tiger', 'Leo' ]
 [ 'Cat', 'Dog' ]
 </code></pre>
@@ -327,7 +327,7 @@ for(let i = 0; i &lt; arr1.length; i++) &#123;
 &#125;
 </code></pre>
 <p>我們直接用迴圈一個一個複製，因為單一變數複製時，記憶體會是不一樣的。<code>arr2</code> 原本是空的，我們直接對 <code>arr2[i]</code> 位置操作，可以直接讓沒有元素的位置有東西。</p>
-<p>要注意的是，如果陣列原本是空的 <code>[]</code>，直接在編號 <code>i</code> 位置插入值的話，陣列就會變成長度 <code>i</code>，中間會是 <code>undefined</code>。</p>
+<p>要注意的是，如果陣列原本是空的 <code>[]</code>，直接在編號 <code>i</code> 位置插入值的話，陣列就會變成長度 <code>i</code>，中間會是 <code>undefined</code>。</p>
 <p>例如：</p>
 <pre><code class="language-js">const arr = [];
 
@@ -373,7 +373,7 @@ names.unshift(&quot;K&quot;); // 從前插入
 console.log(names);
 </code></pre>
 <p>執行 <code>ex5.js</code>：</p>
-<pre><code class="language-py">$ node ex2.js
+<pre><code class="language-py">$ node ex2.js
 [ 'A', 'B' ]       // 原本的
 [ 'A', 'B', 'D' ]  // 後面加入 D 後
 [ 'A', 'B' ]       // 移除最後面的元素後
