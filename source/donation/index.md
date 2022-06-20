@@ -21,10 +21,15 @@ date: 2020-04-11 00:00:00
 
 ### 銀行轉帳
 
-您可以透過**玉山銀行**轉帳
+國內您可以透過**玉山銀行**轉帳
 - 手動輸入： 808 玉山銀行 0462979185426 金額：45
 - 玉山 App 掃碼︰
 <img src="https://user-images.githubusercontent.com/18013815/118236826-252c0480-b4c9-11eb-856d-b907dcc3a989.png" width="200px">
+
+如果人在國外可以轉入 **Revolut**，歐盟內免手續費
+- *Beneficiary*: An-Chi Liu
+- *IBAN*: LT13 3250 0148 8958 7620
+- *BIC*: REVOLT21
 
 ### Paypal
 

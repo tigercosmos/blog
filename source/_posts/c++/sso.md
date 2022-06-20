@@ -1,7 +1,7 @@
 ---
 title: C++ 短字串最佳化（Short String Optimization）
 date: 2022-06-12 15:00:00
-tags: [c++, string, sso]
+tags: [c++, string, sso, optimization]
 des: "本文簡單介紹 C++ 短字串最佳化（Short String Optimization）"
 ---
 
