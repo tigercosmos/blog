@@ -55,7 +55,7 @@ $ docker pull ubuntu:latest
 接著我們要進入 Docker 的工作環境，此外我們將與 Docker 共享剛剛 pull 下來的工作目錄。
 
 ```shell
-$ docker run -ti --rm --cap-add=SYS_PTRACE -v ./shared_folder_local:/shared_folder_docker ubuntu
+$ docker run -ti --rm --cap-add=SYS_PTRACE -v /shared_folder_local_full_path:/shared_folder_docker_full_path ubuntu
 ```
 
 指令說明：
@@ -63,7 +63,7 @@ $ docker run -ti --rm --cap-add=SYS_PTRACE -v ./shared_folder_local:/shared_fold
 - `run`：啟動，後面可以接參數，最後要指令要哪個 Docker Image，此範例中是 `ubuntu`
 - `-ti`：在 Docker 中可以用互動模式
 - `--rm`：每次關閉 Docker 恢復原狀 (例如新 apt install 東西會消失，但共享資料夾不會)。
-- `-v`：共享資料夾，用法為 `<本地資料夾>:<共享在 Docker 裡面絕對路徑>`。注意：若是 Windows 下安裝 Docker，請直接分享整個 C 碟 (直接指定資料夾路徑會無效)，Windows 會跳出訊息問你要不要分享，請點確認。
+- `-v`：共享資料夾，用法為 `<本地資料夾絕對路徑>:<共享在 Docker 裡面絕對路徑>`。注意：若是 Windows 下安裝 Docker，請直接分享整個 C 碟 (直接指定資料夾路徑會無效)，Windows 會跳出訊息問你要不要分享，請點確認。
 
 共享資料夾的幾個好處是，你可以在你本來的環境開發，最後做確認時再進 Docker 確認可以順利編譯執行就好；同時，你可以在你電腦中用你喜歡的 IDE 去撰寫程式，因為共享資料夾，你在 IDE 改動的檔案 Docker 可以直接看到，不然你在 Docker 中大概只剩 Vim 可以用了。
 
@@ -80,10 +80,10 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 c3f279d17e0a        ubuntu:12.04        /bin/bash           7 days ago          Up 25 hours                            desperate_dubinsky
 197387f1b436        ubuntu:12.04        /bin/bash           7 days ago          Up 25 hours                            focused_hamilton
 
-$ docker commit c3f279d17e0a  svendowideit/testimage:version3
+$ docker commit c3f279d17e0a  myimage:version1
 f5283438590d
 
-$ docker run svendowideit/testimage:version3
+$ docker run myimage:version1
 ```
 
 更多指令可以參考 [Docker 文件](https://docs.docker.com/engine/reference/commandline/docker/)。
