@@ -86,4 +86,10 @@ f5283438590d
 $ docker run myimage:version1
 ```
 
+有時候會想要同時有好幾個 Shell 操作同一個 Container，這時候可以執行：
+
+```
+$ docker exec -it <container> bash
+```
+
 更多指令可以參考 [Docker 文件](https://docs.docker.com/engine/reference/commandline/docker/)。
