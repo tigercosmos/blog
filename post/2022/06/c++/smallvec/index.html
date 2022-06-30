@@ -253,6 +253,9 @@ BENCHMARK(StdVector);
 </code></pre>
 <p>64bits,i3-10100,GCC11.2 執行環境下得到下圖（越低越好），證實 Small Vector 在少量元素的操作下確實會比 Vector 來的有效率，大概快了 2.6 倍，主要就是因為 Vector 需要多花分配新的 Heap 記憶體的時間。</p>
 <p><img src="https://user-images.githubusercontent.com/18013815/174789476-7c2693bd-55b1-47cd-a588-2be5c36d8dbc.png" alt="comparison between small vector and std vector"></p>
+<blockquote>
+<p>關於 Small Vector 效能分析，楊志璿有提供<a target="_blank" rel="noopener" href="https://hackmd.io/@25077667/r1uUxVY59">更詳細的討論</a>，有興趣可以參考！</p>
+</blockquote>
 <h2 id="完整版-Small-Vector"><a class="header-anchor" href="#完整版-Small-Vector">¶ </a>完整版 Small Vector</h2>
 <p>簡單版的 Small Vector 已經證實了效能確實會比較好，我就順手練習把完整的 Small Vector 也實作出來。</p>
 <p>完整的程式碼可以在文末點開檢視，或是去 <a target="_blank" rel="noopener" href="https://gist.github.com/tigercosmos/4d939e90a350071424567b8ed4d9a378">Gist 下載</a>。</p>
