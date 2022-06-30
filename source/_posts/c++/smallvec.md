@@ -93,6 +93,8 @@ BENCHMARK(StdVector);
 
 ![comparison between small vector and std vector](https://user-images.githubusercontent.com/18013815/174789476-7c2693bd-55b1-47cd-a588-2be5c36d8dbc.png)
 
+> 關於 Small Vector 效能分析，楊志璿有提供[更詳細的討論](https://hackmd.io/@25077667/r1uUxVY59)，有興趣可以參考！
+
 ## 完整版 Small Vector
 
 簡單版的 Small Vector 已經證實了效能確實會比較好，我就順手練習把完整的 Small Vector 也實作出來。
