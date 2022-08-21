@@ -7,6 +7,10 @@ des: "這篇文章記錄了從拿到日本工作 Offer 後，去日本之前以�
 
 這篇文章記錄了從拿到日本工作 Offer 後，去日本之前以及抵達日本之後的各種手續流程。包含申請在留許可、受付濟證、入境簽證，在留卡登記住址、住民票、個人編號、駕照、銀行帳戶等等。分享主要是以我在東京的經驗為主，日本各地可能多少會有點差別。
 
+![浅草寺 雷門](https://user-images.githubusercontent.com/18013815/185803054-3f6f80d2-846c-4716-8e2c-3bc9abe28b88.png)
+
+（浅草寺 雷門, from [Wikipedia](https://commons.wikimedia.org/wiki/File:Senso-ji_Kaminarimon_201503a.jpg), CC BY-SA 3.0）
+
 ## 去日本之前
 
 談好工作之後，首先就是簽工作合約，接著會有背景調查，然後就會開始跑在留許可（Certificate of Eligibility, CoE），取得 CoE 之後，公司會幫你申請受付濟證（ERFS Certificate），有 CoE 和 ERFS 才能在日台交流協會申請簽證。
