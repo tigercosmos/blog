@@ -6,13 +6,13 @@ date: 2019-11-19 11:38:12
 
 ## Who is Liu, An-Chi
 
-Hello, this website is authored by Liu, An-Chi. His Chinese name is 劉安齊 (pronounce: 劉/liú/ 安/ān/ 齊/chí/). Liu is a software engineer, and he is well known as the ID @tigercosmos in open source communities.
+Hello, this website is authored by Liu, An-Chi. His Chinese name is 劉安齊 (pronounce: 劉/liú/ 安/ān/ 齊/chí/). Liu is a software engineer at Mujin, Inc. in Tokyo, and he is well known as the ID @tigercosmos in open source communities.
 
 Liu was born in Taipei, Taiwan. He obtained an M.S. degree in Computer Science at National Yang Ming Chiao Tung University (NYCU) in 2022, Taiwan. He holds a B.S. degree in Bio-Industrial Mechatronics Engineering from National Taiwan University (NTU) in 2019.
 
 Liu’s research interests mainly focus on system software and high-performance programming. Liu loves sharing. He teaches coding, writes articles, and gives talks. He participates in many open source projects. He believes sharing makes the world a better place.
 
-I am seeking for an opportunity to work overseas. Please download [my resume](https://github.com/tigercosmos/resume/raw/master/resume.pdf).
+You may want to refer to [my resume](https://github.com/tigercosmos/resume/raw/master/resume.pdf).
 
 ## Liu's Social Media
 
