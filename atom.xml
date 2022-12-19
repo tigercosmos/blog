@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://tigercosmos.xyz/"/>
-  <updated>2022-12-17T12:47:20.780Z</updated>
+  <updated>2022-12-19T12:27:48.448Z</updated>
   <id>https://tigercosmos.xyz/</id>
   
   <author>
@@ -17,11 +17,40 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>如何在 Cmake 中引入 Header-Only Library</title>
+    <link href="https://tigercosmos.xyz/post/2022/12/c++/cmake-include-header-only-library/"/>
+    <id>https://tigercosmos.xyz/post/2022/12/c++/cmake-include-header-only-library/</id>
+    <published>2022-12-19T07:00:00.000Z</published>
+    <updated>2022-12-19T12:27:48.448Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;在 C++ 開發環境中，Header-Only Library 是一種很長見的形式，好處是想要使用該函示庫（Library）的時候，只需要 &lt;code&gt;include&lt;/code&gt; 標頭檔（&lt;code&gt;.h&lt;/code&gt;,
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
+    
+      <category term="cmake" scheme="https://tigercosmos.xyz/tags/cmake/"/>
+    
+      <category term="header-only" scheme="https://tigercosmos.xyz/tags/header-only/"/>
+    
+  </entry>
+  
+  <entry>
     <title>2022 赴日本東京工作全方位教戰手冊</title>
     <link href="https://tigercosmos.xyz/post/2022/08/japan/before-work-in-japan/"/>
     <id>https://tigercosmos.xyz/post/2022/08/japan/before-work-in-japan/</id>
     <published>2022-08-18T17:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -51,7 +80,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/c++/smallvec/"/>
     <id>https://tigercosmos.xyz/post/2022/06/c++/smallvec/</id>
     <published>2022-06-22T07:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.776Z</updated>
+    <updated>2022-12-19T12:27:48.448Z</updated>
     
     <summary type="html">
     
@@ -69,11 +98,11 @@
     
       <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
     
+      <category term="optimization" scheme="https://tigercosmos.xyz/tags/optimization/"/>
+    
       <category term="small vector" scheme="https://tigercosmos.xyz/tags/small-vector/"/>
     
       <category term="vector" scheme="https://tigercosmos.xyz/tags/vector/"/>
-    
-      <category term="optimization" scheme="https://tigercosmos.xyz/tags/optimization/"/>
     
   </entry>
   
@@ -82,7 +111,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/c++/sso/"/>
     <id>https://tigercosmos.xyz/post/2022/06/c++/sso/</id>
     <published>2022-06-12T07:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.776Z</updated>
+    <updated>2022-12-19T12:27:48.448Z</updated>
     
     <summary type="html">
     
@@ -100,11 +129,11 @@
     
       <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
     
-      <category term="optimization" scheme="https://tigercosmos.xyz/tags/optimization/"/>
-    
       <category term="string" scheme="https://tigercosmos.xyz/tags/string/"/>
     
       <category term="sso" scheme="https://tigercosmos.xyz/tags/sso/"/>
+    
+      <category term="optimization" scheme="https://tigercosmos.xyz/tags/optimization/"/>
     
   </entry>
   
@@ -113,7 +142,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/japan/new-grad-find-swe-job-in-japan/"/>
     <id>https://tigercosmos.xyz/post/2022/06/japan/new-grad-find-swe-job-in-japan/</id>
     <published>2022-06-02T17:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -142,7 +171,7 @@
     <link href="https://tigercosmos.xyz/post/2022/05/autobiography/nctu-6/"/>
     <id>https://tigercosmos.xyz/post/2022/05/autobiography/nctu-6/</id>
     <published>2022-05-19T16:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.776Z</updated>
+    <updated>2022-12-19T12:27:48.448Z</updated>
     
     <summary type="html">
     
@@ -175,7 +204,7 @@
     <link href="https://tigercosmos.xyz/post/2022/04/story/japanese-girlfriend/"/>
     <id>https://tigercosmos.xyz/post/2022/04/story/japanese-girlfriend/</id>
     <published>2022-04-08T10:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.784Z</updated>
+    <updated>2022-12-19T12:27:48.456Z</updated>
     
     <summary type="html">
     
@@ -207,7 +236,7 @@
     <link href="https://tigercosmos.xyz/post/2021/12/italy/2021-exchange-polimi-school/"/>
     <id>https://tigercosmos.xyz/post/2021/12/italy/2021-exchange-polimi-school/</id>
     <published>2021-12-24T08:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -244,7 +273,7 @@
     <link href="https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/"/>
     <id>https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/</id>
     <published>2021-10-15T17:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -281,7 +310,7 @@
     <link href="https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi/"/>
     <id>https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi/</id>
     <published>2021-10-04T06:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -318,7 +347,7 @@
     <link href="https://tigercosmos.xyz/post/2021/09/italy/first-two-days-milan/"/>
     <id>https://tigercosmos.xyz/post/2021/09/italy/first-two-days-milan/</id>
     <published>2021-09-20T01:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -349,7 +378,7 @@
     <link href="https://tigercosmos.xyz/post/2021/08/italy/apply-visa/"/>
     <id>https://tigercosmos.xyz/post/2021/08/italy/apply-visa/</id>
     <published>2021-08-13T15:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -376,7 +405,7 @@
     <link href="https://tigercosmos.xyz/post/2021/08/autobiography/nctu-5/"/>
     <id>https://tigercosmos.xyz/post/2021/08/autobiography/nctu-5/</id>
     <published>2021-08-05T16:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.776Z</updated>
+    <updated>2022-12-19T12:27:48.448Z</updated>
     
     <summary type="html">
     
@@ -411,7 +440,7 @@
     <link href="https://tigercosmos.xyz/post/2021/06/js/js-array-for-methods/"/>
     <id>https://tigercosmos.xyz/post/2021/06/js/js-array-for-methods/</id>
     <published>2021-06-11T23:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -444,7 +473,7 @@
     <link href="https://tigercosmos.xyz/post/2021/06/cv/computation-photography-1/"/>
     <id>https://tigercosmos.xyz/post/2021/06/cv/computation-photography-1/</id>
     <published>2021-06-03T04:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.448Z</updated>
     
     <summary type="html">
     
@@ -482,7 +511,7 @@
     <link href="https://tigercosmos.xyz/post/2021/05/exposure-notification/"/>
     <id>https://tigercosmos.xyz/post/2021/05/exposure-notification/</id>
     <published>2021-05-13T15:25:00.000Z</published>
-    <updated>2022-12-17T12:47:20.780Z</updated>
+    <updated>2022-12-19T12:27:48.452Z</updated>
     
     <summary type="html">
     
@@ -512,7 +541,7 @@
     <link href="https://tigercosmos.xyz/post/2021/05/system/reentrant-and-thread-safe-code/"/>
     <id>https://tigercosmos.xyz/post/2021/05/system/reentrant-and-thread-safe-code/</id>
     <published>2021-05-09T22:20:08.000Z</published>
-    <updated>2022-12-17T12:47:20.784Z</updated>
+    <updated>2022-12-19T12:27:48.456Z</updated>
     
     <summary type="html">
     
@@ -544,7 +573,7 @@
     <link href="https://tigercosmos.xyz/post/2021/05/story/ta-of-parallel-programming-course/"/>
     <id>https://tigercosmos.xyz/post/2021/05/story/ta-of-parallel-programming-course/</id>
     <published>2021-05-03T18:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.784Z</updated>
+    <updated>2022-12-19T12:27:48.456Z</updated>
     
     <summary type="html">
     
@@ -580,7 +609,7 @@
     <link href="https://tigercosmos.xyz/post/2021/01/autobiography/nctu-4/"/>
     <id>https://tigercosmos.xyz/post/2021/01/autobiography/nctu-4/</id>
     <published>2021-01-27T06:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.772Z</updated>
+    <updated>2022-12-19T12:27:48.448Z</updated>
     
     <summary type="html">
     
@@ -621,7 +650,7 @@
     <link href="https://tigercosmos.xyz/post/2021/01/story/physics-dream/"/>
     <id>https://tigercosmos.xyz/post/2021/01/story/physics-dream/</id>
     <published>2021-01-04T22:25:00.000Z</published>
-    <updated>2022-12-17T12:47:20.784Z</updated>
+    <updated>2022-12-19T12:27:48.456Z</updated>
     
     <summary type="html">
     
@@ -640,37 +669,6 @@
       <category term="physics" scheme="https://tigercosmos.xyz/tags/physics/"/>
     
       <category term="story" scheme="https://tigercosmos.xyz/tags/story/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>2021 新年新希望—落實刻意練習演算法</title>
-    <link href="https://tigercosmos.xyz/post/2021/01/2021-new-year-resolution/"/>
-    <id>https://tigercosmos.xyz/post/2021/01/2021-new-year-resolution/</id>
-    <published>2021-01-04T18:00:00.000Z</published>
-    <updated>2022-12-17T12:47:20.768Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/18013815/103565542-73b60a80-4efb-11eb-9f1d-1a56062deb43.png&quot; alt=&quot;2021
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="new year resolution" scheme="https://tigercosmos.xyz/tags/new-year-resolution/"/>
-    
-      <category term="想法" scheme="https://tigercosmos.xyz/tags/%E6%83%B3%E6%B3%95/"/>
-    
-      <category term="新年新希望" scheme="https://tigercosmos.xyz/tags/%E6%96%B0%E5%B9%B4%E6%96%B0%E5%B8%8C%E6%9C%9B/"/>
-    
-      <category term="2021" scheme="https://tigercosmos.xyz/tags/2021/"/>
     
   </entry>
   
