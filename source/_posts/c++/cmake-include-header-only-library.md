@@ -9,6 +9,8 @@ des: "本文介紹如何在 Cmake 中引入 Header-Only Library"
 
 一些比較知名的專案像是 [RapidJson](https://github.com/Tencent/rapidjson) 或 [Eigen](https://eigen.tuxfamily.org/dox/GettingStarted.html) 都是 Header-Only Library，那我們如何使用 Cmake 去把 Header-Only Library 加入到專案中呢？以下是簡單範例。
 
+![Cover Image](https://user-images.githubusercontent.com/18013815/208432889-84323b86-e97e-4a74-9cc7-87c299045d5a.png)
+
 ## 引入 RapidJson 的專案
 
 假設你要用 RapidJson，以下是典型的 Cmake 專案的設置
