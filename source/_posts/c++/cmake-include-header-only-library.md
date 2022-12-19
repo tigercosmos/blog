@@ -5,7 +5,7 @@ tags: [c++, cmake, header-only, ]
 des: "本文介紹如何在 Cmake 中引入 Header-Only Library"
 ---
 
-在 C++ 開發環境中，Header-Only Library 是一種很長見的形式，好處是想要使用該函示庫（Library）的時候，只需要 `include` 標頭檔（`.h`, `.hpp`）即可，不需要額外去編譯函示庫或是去連結函示目的物件（Object, `.o`, `.so`），幫我們簡化了建構（Build）的複雜度，同時因為只給你標頭檔，每次都會是自己編譯，所以也比較容跨平台。不過反之就會有編譯出來的程式碼比較肥大，編譯時間比較久等等的壞處（兩者都是因為你直接把函示庫的程式碼直接嵌入到你的程式碼中）。
+在 C++ 開發環境中，Header-Only Library 是一種很常見的形式，好處是想要使用該函示庫（Library）的時候，只需要 `include` 標頭檔（`.h`, `.hpp`）即可，不需要額外去編譯函示庫或是去連結函示目的物件（Object, `.o`, `.so`），幫我們簡化了建構（Build）的複雜度，同時因為只給你標頭檔，每次都會是自己編譯，所以也比較容跨平台。不過反之就會有編譯出來的程式碼比較肥大，編譯時間比較久等等的壞處（兩者都是因為你直接把函示庫的程式碼直接嵌入到你的程式碼中）。
 
 一些比較知名的專案像是 [RapidJson](https://github.com/Tencent/rapidjson) 或 [Eigen](https://eigen.tuxfamily.org/dox/GettingStarted.html) 都是 Header-Only Library，那我們如何使用 Cmake 去把 Header-Only Library 加入到專案中呢？以下是簡單範例。
 
