@@ -104,3 +104,8 @@ add_dependencies(my_project rapidjson)
 ```
 
 接下來你應該可以引用和編譯 RapidJson 相關的程式碼了！
+
+## 參考資料
+
+- [Add RapidJSON with CMake](https://www.jibbow.com/posts/rapidjson-cmake/)
+- [Stake Overflow: Benefits of header-only libraries](https://stackoverflow.com/questions/12671383/benefits-of-header-only-libraries)
