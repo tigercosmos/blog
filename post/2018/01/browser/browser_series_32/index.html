@@ -99,7 +99,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
@@ -228,7 +228,7 @@
 <p>能源模型應該也很有趣，剛剛是考慮處理速度變快，改成消耗能源就好。不過作者沒有針對這部份做測試，只有提出來而已。但是能源對手機瀏覽器應該就很重要了，以後可以做做看。</p>
 <p>接著是效能能源模型，兩著接考慮的情況下，我們以能源不超過某個上限的情況下，決定效能最佳的那個。當全部不符合的時候，就認定執行緒1為最佳。最後結論是標籤 1, 2 和 4 分別為 317 (59.25%), 50 (9.34%) 和 168 (31.40%)。</p>
 <hr>
-<p>接著來看特徵值和效能§、能源(e)的關聯（p2 是效能模型 2 執行緒的意思，以此類推）：<br>
+<p>接著來看特徵值和效能(p)、能源(e)的關聯（p2 是效能模型 2 執行緒的意思，以此類推）：<br>
 <img src="https://user-images.githubusercontent.com/18013815/35143636-22395076-fd3d-11e7-990f-a8a2c09f6bc8.png" alt=""><br>
 然後發現  tree-depth 和 max-avg-width-ratio 幾乎沒影響，相關係數不足 0.1，所以就被排除掉。</p>
 <p>接著用 90-10% 資料-測試的比例，將測資分成十組，每組約55個樣本，然後用三種機器學習的模型來測：</p>

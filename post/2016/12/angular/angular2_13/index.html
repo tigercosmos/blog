@@ -99,7 +99,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
@@ -231,13 +231,13 @@ export class CardComponent &#123;<br>
 <pre><code>&lt;!-- app.component.html --&gt;
 <p>&lt;h1&gt;Single slot transclusion&lt;/h1&gt;<br>
 &lt;card header=&quot;my header&quot; footer=&quot;my footer&quot;&gt;<br>
-&lt;!-- 放入要嵌入的動態內容 --&gt;<br>
+&lt;!-- 放入要嵌入的動態內容 –&gt;<br>
 &lt;div class=&quot;card-block&quot;&gt;<br>
 &lt;h4 class=&quot;card-title&quot;&gt;You can put any content here&lt;/h4&gt;<br>
 &lt;p class=&quot;card-text&quot;&gt;For example this line of text and&lt;/p&gt;<br>
 &lt;a href=&quot;#&quot; class=&quot;btn btn-primary&quot;&gt;This button&lt;/a&gt;<br>
 &lt;/div&gt;<br>
-&lt;!-- 結束 --&gt;<br>
+&lt;!-- 結束 –&gt;<br>
 &lt;card&gt;<br>
 </code></pre></p>
 <p>&#x6211;&#x5011;&#x53EF;&#x4EE5;&#x5728; <code>AppComponent</code> &#x76F4;&#x63A5;&#x4F7F;&#x7528; <code>card</code>&#x3002;<code>&lt;card&gt;</code> &#x88E1;&#x9762;&#x653E;&#x5165;&#x6211;&#x5011;&#x8981;&#x7684;&#x5167;&#x5BB9;&#xFF0C;&#x5C31;&#x6703;&#x81EA;&#x5DF1;&#x5D4C;&#x5165;&#x9032; <code>card</code> &#x4E86;&#x3002;</p>
@@ -342,13 +342,13 @@ schemas:      [ NO_ERRORS_SCHEMA ] // 增加這行<br>
 <pre><code>&lt;!-- card.component.html --&gt;
 <p>&lt;div class=&quot;card&quot;&gt;<br>
 &lt;div class=&quot;card-header&quot;&gt;<br>
-&lt;!-- header slot here --&gt;<br>
+&lt;!-- header slot here –&gt;<br>
 &lt;ng-content select=&quot;card-header&quot;&gt;&lt;/ng-content&gt;<br>
 &lt;/div&gt;<br>
-&lt;!-- body slot here --&gt;<br>
+&lt;!-- body slot here –&gt;<br>
 &lt;ng-content select=&quot;card-body&quot;&gt;&lt;/ng-content&gt;<br>
 &lt;div class=&quot;card-footer&quot;&gt;<br>
-&lt;!-- footer --&gt;<br>
+&lt;!-- footer –&gt;<br>
 &lt;ng-content select=&quot;card-footer&quot;&gt;&lt;/ng-content&gt;<br>
 &lt;/div&gt;<br>
 &lt;/div&gt;<br>

@@ -99,7 +99,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
@@ -410,7 +410,7 @@ server.listen(5000, () =&gt; &#123;
 <p>值得一提的是，台灣的氣象測站真的很密，台灣的氣象測站大約有四百個，但是如果換在國外的話，一個台灣大小的區域，可能只有一個測站。所以國外服務商的氣象資訊常常都是使用內插外插來取得近似值，換言之就是很不精確啦！但台灣因為太密了，直接找最近的測站的數據就好，而且很準！</p>
 <h3 id="地名處理"><a class="header-anchor" href="#地名處理">¶ </a>地名處理</h3>
 <p>由於中文字整串黏在一起的特性，要能準確判斷他是不是地名，不能直接用這樣判斷：</p>
-<p><code class="gt iw ix iy iz b">if(message.includes(“北海道”))</code></p>
+<p><code class="gt iw ix iy iz b">if(message.includes(&quot;北海道&quot;))</code></p>
 <p>因為原句可能是「北海、道路」，大概是這種感覺。</p>
 <p>這邊我用<a href="https://github.com/yanyiwu/nodejieba" class="dj by im in io ip" target="_blank" rel="noopener nofollow">結巴分詞</a>，來把句子切割成一個個詞。這個模組簡單原理就是用詞頻來決定要不要做切割。不過其實在預設問句中一定要有地名的情況下，這樣做用處不大。實際比較有感可能是像 Siri 這種可以回答各種天馬行空問題的機器人才要能正確辨識是不是有地名的概念，還是只是湊巧兩個字連在一起罷了。但考量未來可擴充性，我先採用比較高級一點的方式處理。</p>
 <h2 id="總結"><a class="header-anchor" href="#總結">¶ </a>總結</h2>
