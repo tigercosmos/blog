@@ -26,11 +26,6 @@ date: 2020-04-11 00:00:00
 - 玉山 App 掃碼︰
 <img src="https://user-images.githubusercontent.com/18013815/118236826-252c0480-b4c9-11eb-856d-b907dcc3a989.png" width="200px">
 
-如果人在國外可以轉入 **Revolut**，歐盟內免手續費
-- *Beneficiary*: An-Chi Liu
-- *IBAN*: LT13 3250 0148 8958 7620
-- *BIC*: REVOLT21
-
 ### Paypal
 
 當然您也可以透過 **Paypal**
