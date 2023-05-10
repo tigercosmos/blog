@@ -95,6 +95,8 @@ target_link_libraries(my_project Threads::Threads ${Boost_LIBRARIES})
 add_dependencies(my_project rapidjson)
 ```
 
+`ExternalProject_Add` 預設是非同步執行，所以有可能 rapidjson 還在被 Clone 當中，就開始編譯，所以所有有依賴函示庫的程式碼，我們都必須加入 `add_dependencies` 來告訴 CMake 相依關係，這樣要編譯 `my_project` 時，就會先等 rapidjson 下載完。
+
 ## 開始使用
 
 這樣我們就大功告成啦！
