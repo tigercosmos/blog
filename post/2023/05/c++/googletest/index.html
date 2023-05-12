@@ -341,7 +341,7 @@ Test project /mnt/c/Users/tiger/googletest-tutorial/build
 
 Total Test time (real) =   0.05 sec
 </code></pre>
-<h2 id="節論"><a class="header-anchor" href="#節論">¶ </a>節論</h2>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
 <p>整體來說幫 C++ 程式碼做單元測試是一個挺好的投資也是良好的習慣，可以提高程式碼的品質和可靠性，減少錯誤和維護成本，同時也可以幫助開發人員更好地理解程式碼的運作方式。而本文簡單介紹如何在 CMake 專案中導入 GoogleTest，並以此來寫單元測試。</p>
 
     </div>
@@ -417,7 +417,7 @@ Total Test time (real) =   0.05 sec
                 <section class="aside-section">
                     <h2>TOC</h2>
 <div class="toc-container">
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B0%A1%E4%BB%8B"><span class="toc-text">簡介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8-CMake-%E5%B0%88%E6%A1%88%E4%B8%AD%E5%B0%8E%E5%85%A5-GoogleTest"><span class="toc-text">在 CMake 專案中導入 GoogleTest</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%A7%8B%E5%B0%88%E6%A1%88"><span class="toc-text">原始專案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E5%85%A5-GoogleTest-%E7%9A%84%E5%B0%88%E6%A1%88"><span class="toc-text">加入 GoogleTest 的專案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-TEST-%E5%92%8C-TEST-F-%E4%BE%86%E6%B8%AC%E8%A9%A6"><span class="toc-text">使用 TEST 和 TEST_F 來測試</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TEST"><span class="toc-text">TEST</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TEST-F"><span class="toc-text">TEST_F</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%B7%E8%A1%8C%E6%B8%AC%E8%A9%A6"><span class="toc-text">執行測試</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AF%80%E8%AB%96"><span class="toc-text">節論</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B0%A1%E4%BB%8B"><span class="toc-text">簡介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8-CMake-%E5%B0%88%E6%A1%88%E4%B8%AD%E5%B0%8E%E5%85%A5-GoogleTest"><span class="toc-text">在 CMake 專案中導入 GoogleTest</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%A7%8B%E5%B0%88%E6%A1%88"><span class="toc-text">原始專案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E5%85%A5-GoogleTest-%E7%9A%84%E5%B0%88%E6%A1%88"><span class="toc-text">加入 GoogleTest 的專案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-TEST-%E5%92%8C-TEST-F-%E4%BE%86%E6%B8%AC%E8%A9%A6"><span class="toc-text">使用 TEST 和 TEST_F 來測試</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TEST"><span class="toc-text">TEST</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TEST-F"><span class="toc-text">TEST_F</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%B7%E8%A1%8C%E6%B8%AC%E8%A9%A6"><span class="toc-text">執行測試</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
 </div>
                 </section>
             
