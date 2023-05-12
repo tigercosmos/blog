@@ -225,6 +225,6 @@ Test project /mnt/c/Users/tiger/googletest-tutorial/build
 Total Test time (real) =   0.05 sec
 ```
 
-## 節論
+## 結論
 
 整體來說幫 C++ 程式碼做單元測試是一個挺好的投資也是良好的習慣，可以提高程式碼的品質和可靠性，減少錯誤和維護成本，同時也可以幫助開發人員更好地理解程式碼的運作方式。而本文簡單介紹如何在 CMake 專案中導入 GoogleTest，並以此來寫單元測試。
