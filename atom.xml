@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://tigercosmos.xyz/"/>
-  <updated>2023-05-14T07:21:24.073Z</updated>
+  <updated>2023-06-06T15:19:31.749Z</updated>
   <id>https://tigercosmos.xyz/</id>
   
   <author>
@@ -17,11 +17,39 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>還在用 const std::string &amp;? 試試 std::string_view 吧！</title>
+    <link href="https://tigercosmos.xyz/post/2023/06/c++/stringview/"/>
+    <id>https://tigercosmos.xyz/post/2023/06/c++/stringview/</id>
+    <published>2023-06-06T16:01:00.000Z</published>
+    <updated>2023-06-06T15:19:31.749Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;img src=&quot;https://github.com/tigercosmos/blog/assets/18013815/e93fadda-2edc-4ba8-87fd-4df5569939e4&quot; alt=&quot;COVER IMAGE&quot;&gt;&lt;/p&gt;
+&lt;h2
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
+    
+      <category term="string_view" scheme="https://tigercosmos.xyz/tags/string-view/"/>
+    
+  </entry>
+  
+  <entry>
     <title>如何利用 PcapPlusPlus 以混雜模式（Promiscuous Mode）進行網路封包分析</title>
     <link href="https://tigercosmos.xyz/post/2023/05/system/promiscuous-mode/"/>
     <id>https://tigercosmos.xyz/post/2023/05/system/promiscuous-mode/</id>
     <published>2023-05-14T10:20:08.000Z</published>
-    <updated>2023-05-14T07:21:24.073Z</updated>
+    <updated>2023-06-06T15:19:31.757Z</updated>
     
     <summary type="html">
     
@@ -55,7 +83,7 @@
     <link href="https://tigercosmos.xyz/post/2023/05/c++/googletest/"/>
     <id>https://tigercosmos.xyz/post/2023/05/c++/googletest/</id>
     <published>2023-05-10T07:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -85,7 +113,7 @@
     <link href="https://tigercosmos.xyz/post/2023/02/software-engineer/software-engineer-grow-up-1/"/>
     <id>https://tigercosmos.xyz/post/2023/02/software-engineer/software-engineer-grow-up-1/</id>
     <published>2023-02-15T15:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.069Z</updated>
+    <updated>2023-06-06T15:19:31.753Z</updated>
     
     <summary type="html">
     
@@ -121,7 +149,7 @@
     <link href="https://tigercosmos.xyz/post/2022/12/c++/cmake-include-header-only-library/"/>
     <id>https://tigercosmos.xyz/post/2022/12/c++/cmake-include-header-only-library/</id>
     <published>2022-12-19T07:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -150,7 +178,7 @@
     <link href="https://tigercosmos.xyz/post/2022/08/japan/before-work-in-japan/"/>
     <id>https://tigercosmos.xyz/post/2022/08/japan/before-work-in-japan/</id>
     <published>2022-08-18T17:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -180,7 +208,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/c++/smallvec/"/>
     <id>https://tigercosmos.xyz/post/2022/06/c++/smallvec/</id>
     <published>2022-06-22T07:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -211,7 +239,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/c++/sso/"/>
     <id>https://tigercosmos.xyz/post/2022/06/c++/sso/</id>
     <published>2022-06-12T07:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -242,7 +270,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/japan/new-grad-find-swe-job-in-japan/"/>
     <id>https://tigercosmos.xyz/post/2022/06/japan/new-grad-find-swe-job-in-japan/</id>
     <published>2022-06-02T17:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -271,7 +299,7 @@
     <link href="https://tigercosmos.xyz/post/2022/05/autobiography/nctu-6/"/>
     <id>https://tigercosmos.xyz/post/2022/05/autobiography/nctu-6/</id>
     <published>2022-05-19T16:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.061Z</updated>
+    <updated>2023-06-06T15:19:31.745Z</updated>
     
     <summary type="html">
     
@@ -304,7 +332,7 @@
     <link href="https://tigercosmos.xyz/post/2022/04/story/japanese-girlfriend/"/>
     <id>https://tigercosmos.xyz/post/2022/04/story/japanese-girlfriend/</id>
     <published>2022-04-08T10:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.069Z</updated>
+    <updated>2023-06-06T15:19:31.753Z</updated>
     
     <summary type="html">
     
@@ -336,7 +364,7 @@
     <link href="https://tigercosmos.xyz/post/2021/12/italy/2021-exchange-polimi-school/"/>
     <id>https://tigercosmos.xyz/post/2021/12/italy/2021-exchange-polimi-school/</id>
     <published>2021-12-24T08:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -373,7 +401,7 @@
     <link href="https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/"/>
     <id>https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/</id>
     <published>2021-10-15T17:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -410,7 +438,7 @@
     <link href="https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi/"/>
     <id>https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi/</id>
     <published>2021-10-04T06:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -447,7 +475,7 @@
     <link href="https://tigercosmos.xyz/post/2021/09/italy/first-two-days-milan/"/>
     <id>https://tigercosmos.xyz/post/2021/09/italy/first-two-days-milan/</id>
     <published>2021-09-20T01:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -478,7 +506,7 @@
     <link href="https://tigercosmos.xyz/post/2021/08/italy/apply-visa/"/>
     <id>https://tigercosmos.xyz/post/2021/08/italy/apply-visa/</id>
     <published>2021-08-13T15:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -505,7 +533,7 @@
     <link href="https://tigercosmos.xyz/post/2021/08/autobiography/nctu-5/"/>
     <id>https://tigercosmos.xyz/post/2021/08/autobiography/nctu-5/</id>
     <published>2021-08-05T16:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.061Z</updated>
+    <updated>2023-06-06T15:19:31.745Z</updated>
     
     <summary type="html">
     
@@ -540,7 +568,7 @@
     <link href="https://tigercosmos.xyz/post/2021/06/js/js-array-for-methods/"/>
     <id>https://tigercosmos.xyz/post/2021/06/js/js-array-for-methods/</id>
     <published>2021-06-11T23:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -573,7 +601,7 @@
     <link href="https://tigercosmos.xyz/post/2021/06/cv/computation-photography-1/"/>
     <id>https://tigercosmos.xyz/post/2021/06/cv/computation-photography-1/</id>
     <published>2021-06-03T04:00:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -611,7 +639,7 @@
     <link href="https://tigercosmos.xyz/post/2021/05/exposure-notification/"/>
     <id>https://tigercosmos.xyz/post/2021/05/exposure-notification/</id>
     <published>2021-05-13T15:25:00.000Z</published>
-    <updated>2023-05-14T07:21:24.065Z</updated>
+    <updated>2023-06-06T15:19:31.749Z</updated>
     
     <summary type="html">
     
@@ -633,38 +661,6 @@
       <category term="公共衛生" scheme="https://tigercosmos.xyz/tags/%E5%85%AC%E5%85%B1%E8%A1%9B%E7%94%9F/"/>
     
       <category term="covid-19" scheme="https://tigercosmos.xyz/tags/covid-19/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>深入理解 Reentrancy 和 Thread-safe</title>
-    <link href="https://tigercosmos.xyz/post/2021/05/system/reentrant-and-thread-safe-code/"/>
-    <id>https://tigercosmos.xyz/post/2021/05/system/reentrant-and-thread-safe-code/</id>
-    <published>2021-05-09T22:20:08.000Z</published>
-    <updated>2023-05-14T07:21:24.073Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;1-並行與平行&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#1-並行與平行&quot;&gt;¶ &lt;/a&gt;1. 並行與平行&lt;/h2&gt;
-&lt;p&gt;Concurrency (並行) 和 Parallelism (平行)
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="parallel programming" scheme="https://tigercosmos.xyz/tags/parallel-programming/"/>
-    
-      <category term="reentrancy" scheme="https://tigercosmos.xyz/tags/reentrancy/"/>
-    
-      <category term="thread-safe" scheme="https://tigercosmos.xyz/tags/thread-safe/"/>
-    
-      <category term="system" scheme="https://tigercosmos.xyz/tags/system/"/>
     
   </entry>
   
