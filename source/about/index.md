@@ -22,13 +22,12 @@ You may want to refer to [my resume](https://github.com/tigercosmos/resume/raw/m
   This is for head hunters.
 - Facebook Page: [微中子 @tigercosmos](https://www.facebook.com/CodingNeutrino/).
   I share information, news, article about technology and computer science on Facebook.
-- Twitter: [@tigercosmos](https://twitter.com/tigercosmos).
-  Usually just reply others tweets.
-- Instagram: [@liu_an_chi](https://www.instagram.com/liu_an_chi/).
-  I share photos in daily life.
+- Google Scholar: [An-Chi Liu](https://scholar.google.com/citations?hl=en&user=i06mZ0sAAAAJ&view_op=list_works)
 - YouTube Teaching Channel: [Coding Neutrino—微中子的程式教學](https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ).
   I teach computer science and programming.
 - YouTube Life Channel: [Neutrino Life 微中子的生活頻道](https://www.youtube.com/channel/UCAcBvq5pQvy7RXkFq5a9LGA)
+- Twitter: [@tigercosmos](https://twitter.com/tigercosmos).
+  Usually just reply others tweets.
 - Email: phy.tiger@gmail.com, acliu@cs.nycu.edu.tw
 
 ---
