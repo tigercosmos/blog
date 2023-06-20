@@ -248,7 +248,7 @@ std::cout << s.back(); //c
 ### 3.4 string 的相加
 
 #### 3.4.1 string 彼此相加
-把兩個字串相加，讓 `"abc"` 和 `"dfg"` 變成 `"abcdefg"`。
+把兩個字串相加，讓 `"abc"` 和 `"defg"` 變成 `"abcdefg"`。
 
 一個簡單的作法就是用 `+` 運算子，例如 `s1 + s2`。另一個作法是 `s1.append(s2)`。
 
