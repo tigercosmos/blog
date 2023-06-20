@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh, en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="c++,string," />
+    <meta name="description"
+        content="本文深入淺出介紹 std::string，完整介紹各種 string 的使用方法" />
+    <title>Neutrino&#39;s Blog: 入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！ </title>
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+        <h3 class="invisibile">
+            <a href="/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！
+    </h2>
+    <ul class="post-date">
+        <li>
+            2023-06-21
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+    </ul>
+    <div class="post-content">
+        <h2 id="1-string-簡介"><a class="header-anchor" href="#1-string-簡介">¶ </a>1. string 簡介</h2>
+<p>不管你是以 C++ 為第一個語言程式初學者，或者從 C 或 Python 來的開發者，想必你都意識到「字串」在一個程式語言中是多麼的重要，在 C++ 中字串們會使用 <code>std::string</code> 函示庫（本文之後皆以 string 代稱），第一次聽到嗎？別擔心，這篇文章會詳細解說所有關於 string 你該知道的知識和細節。</p>
+<p>這篇文章宗旨是讓稍微有寫程式經驗的初學者得以融會貫通如何使用 string，建議初學者至少把隨便一本 C++ 教學書前半部大致翻過（至少要知道什麼是變數，迴圈是什麼），過程中會出現許多專業的術語，我盡量用簡單的話去解釋，但畢竟受限版面不能一一解釋，最好的辦法是看不懂得術語，直接去問一下 ChatGPT；而對於比較進階的讀者，可能比較簡單的部分都知道了，但應該會有一些學習的盲點，可以透過本文補齊。</p>
+<p>為什麼需要 string 呢？</p>
+<p>想一下不靠 string 的話我們要怎麼去表達一個字串？</p>
+<pre><code class="language-cpp">const char *a = &quot;abcdfe&quot;;
+char b[] = &quot;123345&quot;;
+</code></pre>
+<p>這樣不是不可以，畢竟我們在 C 語言基本上都這樣幹的。但是就沒有很方便，比方說我想知道長度是多少，想要搜尋子字串，想要想加字串，都沒有很方便！</p>
+<p>string 的話就讓世界變簡單了！</p>
+<pre><code class="language-cpp">string s = &quot;aabbcc&quot;;
+s.size(); // return 6
+s.find(&quot;bb&quot;); // return 2
+s += &quot;123&quot;; // s = aabbcc123
+</code></pre>
+<p>在我們開始學習之前，記得之後的程式要使用 <code>std::string</code> 時都必須引入 <code>&lt;string&gt;</code> 函示庫喔！</p>
+<p>另外 string 是標準函示庫，一般來說都是要用 <code>std::string</code> 來操作，為求精簡，本文皆假設已經宣靠 <code>using std::string;</code>，這樣不需要一直打 <code>std::</code>。不了解這邊的同學可以查一下 <code>using</code> 關鍵字，還有 <code>namespace</code> 關鍵字。</p>
+<p>所以預設範例程式碼都包含前提：</p>
+<pre><code class="language-c++">#include &lt;string&gt;
+using std::string;
+</code></pre>
+<p>本篇文章是「<strong>基本篇</strong>」，會帶你認識和了解 string 的基本操作和用法，接下來讓我們來學習 string 吧！</p>
+<p><img src="https://github.com/tigercosmos/blog/assets/18013815/3fdf2165-cb58-4a01-8698-bca0fec93acb" alt="cover image"></p>
+<h2 id="2-string-的宣告初始化"><a class="header-anchor" href="#2-string-的宣告初始化">¶ </a>2. string 的宣告初始化</h2>
+<p>讓我們來看怎麼樣去宣告 string：</p>
+<pre><code class="language-c++">string s1; // 預設初始化，為空字串
+string s2 = s1; // s2 是 s1 的拷貝
+string s3 = &quot;hello world&quot;; // s3 是字串值的拷貝（先轉型成 string）
+string s4(&quot;hello world&quot;); // s4 以給予的字串來初始化
+</code></pre>
+<p>接著要談一下直接初始化（direct initialization）、拷貝初始化（copy initialization）、移動初始化（move initialization）</p>
+<pre><code class="language-c++">string s5(&quot;abc&quot;); // 直接初始化
+string s6 = &quot;abc&quot;; // 拷貝初始化
+string s7 = string(&quot;abc&quot;); // 拷貝初始化
+string s8(s7); // 拷貝初始化
+string s9 = s8; // 拷貝初始化
+string s10(std::move(s9)); // 移動初始化
+</code></pre>
+<p>先介紹 s5，非常直觀就是我們直接告訴 string 要用什麼值去做初始化。</p>
+<p>s6 是很多新手會用的寫法，事實上 s6 跟 s7 是完全等價的，s6 例子中右值其實會做隱含轉型（implicit），轉型後就等同 s7。</p>
+<p>s6 或 s7 例子是拷貝轉換，意思是我們用一個 string 物件（右值的 string）去新建一個 string 物件（左值的 string），等於你需要生成 string 兩次，所以很多新手不知道的是，用這種語法做初始化其實非常沒效率，但幸運的是大多數現代編譯器都會幫你做最佳化，實際上編譯完其實可能也沒有差，但我們仍然需要了解在沒有編譯器最佳化幫助下這些初始化的差異。</p>
+<p>s8、s9 都是拷貝初始化，不過通常用這種語法的時候是明確知道我們需要做字串複製，所以沒什麼大問題。</p>
+<p>s10 是移動初始化，白話解釋就是這邊把 s9 的 string 裡面的資料直接「讓給」s10，此時 s9 就不能用，而 s10 因為直接拿了 s9 的資料，所以初始化比較有效率。這邊牽扯到 <code>std::move</code> 以及右值（rvalue）的概念，這邊先提個頭，有興趣的讀者可以根據關鍵字去做延伸學習。</p>
+<p>完整的初始化方式可以參考 string 的<a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/string/basic_string/basic_string">建構子</a>列表，不過大多數的建構方法都比較進階了，我們可以簡單記住以上幾種 string 初始化方式，如果你知道怎麼使用 <code>std::vector</code>，vector 的建構子方法也適用 string。</p>
+<p>最後介紹一個特別的初始化方法：</p>
+<pre><code class="language-cpp">using namespace std::literals;
+string s3_2 = &quot;hello world&quot;s; // s3 的另一種寫法，&quot;&quot;s 會直接讓右值是 string
+</code></pre>
+<p>透過 <code>&quot;&quot;s</code> 運算子，我們可以直接讓字元字串字面值（character string literals）直接宣告成 string。不過要記住必須加入 <code>using namespace std::literals;</code>。</p>
+<h2 id="3-string-的基本運算操作"><a class="header-anchor" href="#3-string-的基本運算操作">¶ </a>3. string 的基本運算操作</h2>
+<p>以下是 string 可以進行的運算操作，先列出常用的操作：</p>
+<pre><code class="language-c++">os &lt;&lt; s // 輸出 s 
+is &gt;&gt; s // 輸入 s
+s.empty() // 檢查 s 是否為空
+s.size() // s 目前長度
+s[n] // 直接取得 s 的第 n 個元素
+s1 + s2 // 把 s1 加 s2 取得新的字串
+s1.append(s2) // 把 s2 加到 s1 後面
+s1 = s2 //　拷貝複製 s2
+s1 != s2 // 比較 s1 和 s2 是否相同
+&lt;, &lt;=, ==, &gt;=, &gt; // 做大小比較，以字典排序
+</code></pre>
+<h3 id="3-1-string-的輸入和輸出"><a class="header-anchor" href="#3-1-string-的輸入和輸出">¶ </a>3.1 string 的輸入和輸出</h3>
+<p>我們可以簡單寫一個程式來做程式輸入和輸出：</p>
+<pre><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+int main() &#123;
+    std::string input;
+    while(std::cin &gt;&gt; input) &#123; // 不斷讀取資料，直到遇到 EOF（檔案終止符號）
+        std::cout &lt;&lt; input &lt;&lt; std::endl; // 輸出剛剛得到的 input
+    &#125;
+    return 0;
+&#125;
+</code></pre>
+<blockquote>
+<p>不知道 <code>std::cin</code> 和 <code>std::cout</code> 的同學可以查一下 <code>iostream</code> 用法。<code>std::endl</code> 代表換行符號。</p>
+</blockquote>
+<p>你也可以讀取一整行</p>
+<pre><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+int main() &#123;
+    std::string line;
+    while(std::getline(std::cin, line)) &#123; // 不斷讀取資料，一次一行（以 \n 分行），直到遇到 EOF（檔案終止符號）
+        std::cout &lt;&lt; line &lt;&lt; std::endl; // 輸出剛剛得到的 input
+    &#125;
+    return 0;
+&#125;
+</code></pre>
+<p>當然這邊不一定要是 <code>ostream</code>（<code>std::cin</code>, <code>std::cout</code>），例如之後我們會介紹 <code>stringstream</code> 也適用 <code>&gt;&gt;</code>、<code>&lt;&lt;</code>，只要是 stream 基本上都是用，甚至你還可以客製化 <code>&gt;&gt;</code>、<code>&lt;&lt;</code> 運算子讓 string 可以輸入輸出自定義的 C++ 物件，但這邊就超過討論範圍了。</p>
+<h3 id="3-2-empty-和-size"><a class="header-anchor" href="#3-2-empty-和-size">¶ </a>3.2 <code>empty()</code> 和 <code>size()</code></h3>
+<p><code>empty()</code> 和 <code>size()</code> 是用來檢查 string 常用的函數。</p>
+<pre><code class="language-c++">string s = &quot;&quot;;
+if(s.empty()) &#123;
+    std::cout &lt;&lt; &quot;it's empty!&quot;; 
+&#125;
+
+s = &quot;12345678910&quot;;
+if(s.size() &gt; 5) &#123;
+    std::cout &lt;&lt; &quot;more than 5!&quot;; 
+&#125;
+</code></pre>
+<p>例如剛剛 <code>getline</code> 的例子，如果我們想跳過空的行，就可以這樣寫：</p>
+<pre><code class="language-c++">    while(std::getline(std::cin, line)) &#123;
+        if(!line.empty()) &#123; // 確認不是空字串
+            std::cout &lt;&lt; line &lt;&lt; std::endl;
+        &#125;
+    &#125;
+</code></pre>
+<p>注意雖然 <code>!s.empty()</code> 意思等價 <code>s.size() &gt; 0</code>，但以 <code>!s.empty()</code> 來表示不為空字串可以視為更簡潔的寫法。</p>
+<p>另外 <code>size()</code>  的數值型別為 <code>string::size_type</code>，實際型別視標準函示庫的實作決定，一般來說就是 <code>size_t</code>（非負整數）。所以 <code>s.size()</code> 的值不是 <code>int</code>！</p>
+<p>所以當我們要遍歷一個 string 時，以下寫法是錯的：</p>
+<pre><code class="language-c++">// 錯誤！
+for(int i = 0; i &lt; s.size(); ++1) &#123;
+    std::cout &lt;&lt; s[i];
+&#125;
+</code></pre>
+<p>正確的話應該寫成：</p>
+<pre><code class="language-c++">// 正確
+for(std::string::size_type i = 0; i &lt; s.size(); ++1) &#123;
+    std::cout &lt;&lt; s[i];
+&#125;
+</code></pre>
+<blockquote>
+<p>別擔心，馬上就會解釋 <code>for</code> 了！</p>
+</blockquote>
+<p>你也可以用 <code>size_t</code>，一般來說都是對的，或是你很懶的話你就直接用 <code>auto</code>。</p>
+<p>在這種情況你寫 <code>int</code> 當然也可以，因為 <code>int</code> 跟 <code>size_t</code>（<code>s.size()</code>）仍然可以做比較，但是有些情況會導致錯誤，例如去比較 <code>s.size() &lt; n</code>，且當 <code>n</code> 為 <code>int</code> 負數時，這時候 <code>n</code> 會被轉型成 <code>size_t</code>，而變成一個無限大的正數，因此就永遠會是 <code>true</code>。</p>
+<h3 id="3-3-字串的存取"><a class="header-anchor" href="#3-3-字串的存取">¶ </a>3.3 字串的存取</h3>
+<p>我們如何去存取 string 裡面的字元呢？</p>
+<p>最簡單的語法有兩個 <code>s[]</code> 和 <code>s.at()</code></p>
+<pre><code class="language-c++">string s(&quot;0123456789&quot;);
+ 
+s[2] = 'a'; // s = &quot;01a3456789&quot;
+std::cout &lt;&lt; s[9]; // 9
+
+s.at(3) = '6'; &quot;01a6456789&quot;
+std::cout &lt;&lt; s.at(3); // 6
+</code></pre>
+<p>看起來 <code>[]</code> 和 <code>at()</code> 好像一樣對吧？</p>
+<p>其實他們差在有沒有做邊界檢查：</p>
+<pre><code class="language-c++">std::cout &lt;&lt; s[100]; // 故意存取超出邊界
+// 未定義行為，可能是亂碼，也可能 Segmentation Fault
+
+std::cout &lt;&lt; s.at(100); // 故意存取超出邊界
+// terminate called after throwing an instance of 'std::out_of_range'
+//   what():  basic_string::at: __n (which is 100) &gt;= this-&gt;size() (which is 10)
+// Aborted
+</code></pre>
+<p>可以看到 <code>at()</code> 幫我們做了邊界檢查，明確告訴你這程式碼有問題，這時你還可以搭配 try-catch 語法，來做錯誤處理。反之，直接用 <code>[]</code> 存取邊界以外則是未定義行為，多數時候你會得到 segmentation fault。不過這代表 <code>[]</code> 不好嗎？其實不然，邊界檢查是有效能代價的（畢竟多做了檢查），用 <code>[]</code> 比較直觀且會比較有效率，只是開發者自己必須很小心去處理存取的邊界問題。</p>
+<p>我們可以這樣做檢查：</p>
+<pre><code class="language-c++">string s(&quot;abcd&quot;);
+size_t index = /* any number */;
+if(index &gt;=0 &amp;&amp; index &lt; s.size()) &#123;
+    std::cout &lt;&lt; s[index];
+&#125;
+
+另外有兩個函數也滿常使用的，`s.front() 和 `s.back()`。顧名思義，存取最前面跟存取最後面。
+
+```c++
+string s(&quot;abc&quot;);
+std::cout &lt;&lt; s.front(); // a
+std::cout &lt;&lt; s.back(); //c
+</code></pre>
+<p>你當然也可以用 <code>s[0]</code> 和 <code>s[s.size() - 1]</code>，只是比較不直觀且比較醜。</p>
+<h3 id="3-4-string-的相加"><a class="header-anchor" href="#3-4-string-的相加">¶ </a>3.4 string 的相加</h3>
+<h4 id="3-4-1-string-彼此相加"><a class="header-anchor" href="#3-4-1-string-彼此相加">¶ </a>3.4.1 string 彼此相加</h4>
+<p>把兩個字串相加，讓 <code>&quot;abc&quot;</code> 和 <code>&quot;dfg&quot;</code> 變成 <code>&quot;abcdefg&quot;</code>。</p>
+<p>一個簡單的作法就是用 <code>+</code> 運算子，例如 <code>s1 + s2</code>。另一個作法是 <code>s1.append(s2)</code>。</p>
+<p>先來看個範例：</p>
+<pre><code class="language-c++">string s1(&quot;aaa&quot;);
+string s2(&quot;bbb&quot;);
+
+string s3 = s1 + s2; // s3 = &quot;aaabbb&quot;
+
+s1 += s2; // s1 = s1 + s2
+s1.append(s2); // 結果等同上式，但比較有效率
+</code></pre>
+<p><code>s1 + s2</code> 運算可以讓兩個 string 去產生一個新個 string，而 <code>s1.append(s2)</code> 則是把 <code>s2</code> 加到 <code>s1</code> 後面。兩者差別在於前者會先拷貝 <code>s1</code> 再拷貝 <code>s2</code> 產生出一個新的 string。後者則是只會拷貝 <code>s2</code> 並放到 <code>s1</code> 後面。可以發現 <code>+</code> 會使 <code>s1</code> 也拷貝，並多產生一個 string 物件。</p>
+<p>如果你不想去動到 <code>s1</code> 和 <code>s2</code>，那麼用 <code>+</code> 正好。</p>
+<p>如果你不在乎 <code>s1</code> 是否被修改，那就用 <code>append</code>，可以減少不必要的拷貝。</p>
+<p>上面例子中，<code>s1 += s2</code> 其實就是 <code>s1 + s2</code> 產生一個新的 string，再拷貝給 <code>s1</code> 使其取代。那麼還不如一開始就直接用 <code>s1.append(s2)</code>，還比較有效率！</p>
+<h4 id="3-4-2-string-與字面值相加"><a class="header-anchor" href="#3-4-2-string-與字面值相加">¶ </a>3.4.2 string 與字面值相加</h4>
+<p>string 也可以跟字元字面值（character literals）和字元字串字面值（character string literals）互相相加。概念也很簡單，其實就是他會自己把字面值做轉型。</p>
+<p>不過當我們混合 string 與字面值相加時，<code>+</code> 左右必須有一個是 string。</p>
+<pre><code class="language-c++">string s1 = &quot;hello&quot;;
+string s2 = &quot;world&quot;;
+string s3 = s1 + ' ' + s2 + &quot;!\n&quot;; // OK
+string s4 = &quot;123&quot; + &quot;567&quot;; // 錯誤，不能直接相加兩個字面值
+string s5 = &quot;123&quot;s + &quot;567&quot;s; // OK，等同 string 相加
+string s6 = s1 + &quot;aaa&quot; + &quot;bbb&quot;; // OK，等同 s1 + &quot;aaa&quot; 產生一個新 string，新 string 與 &quot;bbb&quot; 相加
+string s7 = &quot;aaa&quot; + &quot;bbb&quot; + s1; // 錯誤，&quot;aaa&quot; + &quot;bbb&quot; 會先運算，兩個字面值不能相加
+string s8 = s1 + &quot;aaa&quot;; // OK
+string s9 = &quot;aaa&quot; + s1; // OK
+</code></pre>
+<h3 id="3-5-兩個-string-的比較"><a class="header-anchor" href="#3-5-兩個-string-的比較">¶ </a>3.5 兩個 string 的比較</h3>
+<p>接下來介紹 <code>&lt;, &lt;=, ==, !=, &gt;=, &gt;</code>。</p>
+<p><code>==</code> 很簡單理解，兩個字串一樣長，內容都一樣，<code>s1 == s2</code> 就為真。</p>
+<p>而當我們需要比大小時，有兩條規則：</p>
+<ol>
+<li>s1 和 s2 不同長度，但從其面數來內容都一樣，這時比較長的字串比較大</li>
+<li>s1 和 s2 不同長度、不同內容，這時從前面數來，第一個不同值的字元誰大，那個字串就是比較大</li>
+</ol>
+<p>直接上例子：</p>
+<pre><code class="language-c++">// 以下皆為 true
+&quot;aaa&quot; == &quot;aaa&quot; // 相同
+&quot;aaa&quot; != &quot;bbb&quot; // 不相同
+&quot;abcd&quot; &lt; &quot;abcde&quot; // 規則 1
+&quot;abcd&quot; &gt; &quot;abcc&quot; // 規則 2，d &gt; c
+&quot;abcd&quot; &gt; &quot;abcceeeeee&quot; // 規則 2，d &gt; c，即使右邊比較長
+</code></pre>
+<p>比較常見的比較是 <code>==</code>、<code>!=</code>，個人認為直接用「大小」去比較兩字串不太直觀，實務上也很少見到這樣的操作。</p>
+<h2 id="4-string-的單字元的操作"><a class="header-anchor" href="#4-string-的單字元的操作">¶ </a>4. string 的單字元的操作</h2>
+<p>在處理自串的時候，依序處理每一個字元也是很長見的操作。例如有一個字串 <code>&quot;abcdefg&quot;</code>，我們想檢查裡面有沒有包含 <code>'f'</code>，或是我們想要把每個字元都做平移，變成 <code>&quot;bcdefgh&quot;</code>，也有可能想要檢查一個字串裡面有沒有特殊符號。不論如何，你勢必要遍歷過整個字串來做檢查。</p>
+<p>說到遍歷，那自然是 <code>for</code> 了，這邊介紹最主要你會需要的兩種。</p>
+<p>第一種，指定範圍的遍歷：</p>
+<pre><code class="language-c++">string s(&quot;aaabbbccc&quot;);
+for(size_t i = 3 ; i &lt; s.size() ; i++) &#123;
+    std::cout &lt;&lt; s[i];
+&#125;
+// 印出 bbbccc
+</code></pre>
+<p>這邊我們可以自己決定 <code>i</code> 的起始和終點，例如這邊讓 <code>i</code> 從 3 開始。</p>
+<p>第二種，遍歷全部字元，這邊我們可以使用迭代（Iterator）語法 <code>for(declaration : expression)</code>，冒號左邊是對字元的宣告，右邊是來源的字串。</p>
+<pre><code class="language-c++">for(char c : s) &#123;
+    std::cout &lt;&lt; c;
+&#125;
+// aaabbbccc
+</code></pre>
+<p>這邊我們去掃過一個一個字元，並複製存到 <code>char c</code> 裡面，所以原本的 <code>s</code> 是不可更改的。</p>
+<p>如果我們想要去改變 <code>s</code> 的話，可以變成 <code>char &amp;c</code>，這樣就會去存取每一個 <code>s</code> 的字元的參考。</p>
+<pre><code class="language-c++">for(char &amp;c : s) &#123;
+    c += 1;
+&#125;
+// s = bbbcccddd
+</code></pre>
+<h2 id="5-string-的一些操作"><a class="header-anchor" href="#5-string-的一些操作">¶ </a>5. string 的一些操作</h2>
+<p>在使用 string 一個很長見的情景就是要去查詢一個字串是否包含一個子字串，或是要對字串做切割插入等動作。</p>
+<p>以下提供一些常使用的 API 供參考：</p>
+<pre><code class="language-c++">s.find(sub_string); // 查詢，回傳第一個發現的子字串的位置
+s.replace(pos, length, new_string); // 取代，從 pos 位置，取代 length 長度，換成新的字串 new_string
+s.substr(pos, length); // 擷取子字串，從 pos 位置，擷取 length 長度
+s.insert(pos, new_string); // 插入，從 pos 位置，插入一個 new_string
+s.contains(sub_string); // 包含，檢查有沒有包含子字串 sub_string（注意，c++23 之後才支援）
+</code></pre>
+<p>以下為簡單的範例：</p>
+<pre><code class="language-cpp">std::string http_url = &quot;http://tigercosmos.xyz/about/&quot;;
+
+// 從位置 4 地方插入，也就是 p 的下一個位置，得到 https://tigercosmos.xyz/about/
+http_url.insert(4, &quot;s&quot;); 
+// 檢查位置 0 到 5 的子字串
+assert(http_url.substr(0, 5) == &quot;https&quot;);
+// 檢查字串是否包含 &quot;about&quot;
+assert(http_url.contains(&quot;about&quot;) == true);
+
+// 找到 &quot;xyz&quot; 子字串的開頭位置
+size_t pos = http_url.find(&quot;xyz&quot;);
+// 從剛剛找到的 pos 位置，取代三個字元，換成 &quot;co.jp&quot;，於是得到 https://tigercosmos.co.jp/about/
+http_url.replace(pos, 3, &quot;co.jp&quot;);
+</code></pre>
+<p>std::string 還提供很多 API 可以使用，而且每一個 API 還包含很多重載（overloads），白話一點就是你可以有多種使用方法，例如 insert 就可以是插入 string 或是 char。基本上就是你發現你需要什麼功能，就檢查一下 <a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/string/basic_string">string 標準函示庫</a>有沒有提供，沒提供的話就自己土砲自幹！（有時很我很懶，就會直接想拿現成 API，有時候也很享受自己造輪子的樂趣！）</p>
+<h2 id="6-string-與數字的型別轉換"><a class="header-anchor" href="#6-string-與數字的型別轉換">¶ </a>6. string 與數字的型別轉換</h2>
+<p>想要把字串變成數字嗎？</p>
+<p>你需要以下這些函數（都在 <code>&lt;string&gt;</code> 函示庫裡）</p>
+<pre><code class="language-c++">std::stoi // 轉 int
+std::stol // 轉 long int
+std::stoll // 轉 long long int
+std::stoul // 轉 unsigned long int
+std::stoull // 轉 unsigned long long int
+std::stof // 轉 float
+std::stod // 轉 double
+std::stold // 轉 long double
+</code></pre>
+<pre><code class="language-c++">int a = std::stoi(string(&quot;5&quot;));
+double b = std::stod(string(&quot;5.5555&quot;));
+</code></pre>
+<p>注意喔！沒有 <code>stou</code>，這是個<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/8715213/why-is-there-no-stdstou">神秘的迷團</a>。</p>
+<p>如果你想要把數字變成 string，則可以用 <code>std::to_string()</code>。</p>
+<p>以下為簡單範例：</p>
+<pre><code class="language-c++">int a = 5;
+std::string s = &quot;a: &quot; + std::to_string(a);
+// s = &quot;a: 5&quot;
+</code></pre>
+<p>如果你只是想要讀取一串 string 型別的數字，比方說 <code>&quot;123456&quot;</code>，並操作每一個數字，那你其實不需要 <code>stoi</code>，可以用以下的小技巧：</p>
+<pre><code class="language-cpp">string s(&quot;123456&quot;);
+for(size_t i = 0; i &lt; s.size(); i++) &#123;
+    int a = s[i] - '0';
+&#125;
+</code></pre>
+<p>string 的字元為 char，所以每一個字元其實都是 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/ASCII">ASCII 編碼</a>的 char，例如「A」的編碼是 65，「0」的編碼是 48。</p>
+<p>所以如何取得一個 string 裡面的的數字？比方說上面的例子，<code>s[2]</code> 是 <code>'3'</code>，我們讓 <code>'3'</code> 的 ASCII 編碼（51）去扣掉 <code>'0'</code> 的編碼（48），其差值正是 3。</p>
+<p>上面的例子只是想說明，很多時候你其實不需要把字串直接換成數字，或是數字直接換成字串，反之我們可以一個一個字元處理，這時候你可能會有一些新的演算法的點子。</p>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
+<p>這篇文章我們詳細介紹 std::string 的各種基本用法，如果有不太會用的地方，可以查一下 string 的 API，不過更常見也更簡單的作法，不是 Google，也不是 Stack Overflow，讓我們問一下萬能的 ChatGPT 吧！</p>
+<blockquote>
+<p><strong>In:</strong> help me write a C++ program that can replace all “.” in a std::string “192.168.3.4” with ‘-’<br>
+<strong>Out:</strong> Certainly! Here’s a C++ program that replaces all occurrences of “.” with “-” in a std::string:</p>
+</blockquote>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::string str = &quot;192.168.3.4&quot;;
+    
+    for (size_t i = 0; i &lt; str.length(); i++) &#123;
+        if (str[i] == '.') &#123;
+            str.replace(i, 1, &quot;-&quot;);
+        &#125;
+    &#125;
+    
+    std::cout &lt;&lt; str &lt;&lt; std::endl;  // Output: 192-168-3-4
+    
+    return 0;
+&#125;
+</code></pre>
+<p>不過小心喔，還是得自己檢查一下 ChatGPT 有沒有在胡說 &gt;.O！</p>
+<blockquote>
+<p>p.s. 事實上你看一下 ChatGPT 給的範例，其實非常沒效率，直接 <code>str[i] = '-'</code> 不就得了 😂</p>
+</blockquote>
+
+    </div>
+    
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/tags/c/">
+                c++
+            </a>,&nbsp;
+        
+            <a href="/tags/string/">
+                string
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+<!-- <hr class="hr-color"> -->
+
+<!-- <p class="post-end-line">Ad</p>
+<p class="post-end-line-small">This may help me earn some money. (Of course you can <a href="/donation/">donate me</a> directly)</p> -->
+
+<!-- <ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6206289145662773"
+     data-ad-slot="6052934851"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+</script> -->
+
+<!-- <hr class="hr-color">
+<p class="post-end-line">Comments</p> -->
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-string-%E7%B0%A1%E4%BB%8B"><span class="toc-text">1. string 簡介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-string-%E7%9A%84%E5%AE%A3%E5%91%8A%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">2. string 的宣告初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-string-%E7%9A%84%E5%9F%BA%E6%9C%AC%E9%81%8B%E7%AE%97%E6%93%8D%E4%BD%9C"><span class="toc-text">3. string 的基本運算操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-string-%E7%9A%84%E8%BC%B8%E5%85%A5%E5%92%8C%E8%BC%B8%E5%87%BA"><span class="toc-text">3.1 string 的輸入和輸出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-empty-%E5%92%8C-size"><span class="toc-text">3.2 empty() 和 size()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%AD%97%E4%B8%B2%E7%9A%84%E5%AD%98%E5%8F%96"><span class="toc-text">3.3 字串的存取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-string-%E7%9A%84%E7%9B%B8%E5%8A%A0"><span class="toc-text">3.4 string 的相加</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-1-string-%E5%BD%BC%E6%AD%A4%E7%9B%B8%E5%8A%A0"><span class="toc-text">3.4.1 string 彼此相加</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-2-string-%E8%88%87%E5%AD%97%E9%9D%A2%E5%80%BC%E7%9B%B8%E5%8A%A0"><span class="toc-text">3.4.2 string 與字面值相加</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E5%85%A9%E5%80%8B-string-%E7%9A%84%E6%AF%94%E8%BC%83"><span class="toc-text">3.5 兩個 string 的比較</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-string-%E7%9A%84%E5%96%AE%E5%AD%97%E5%85%83%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-text">4. string 的單字元的操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-string-%E7%9A%84%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C"><span class="toc-text">5. string 的一些操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-string-%E8%88%87%E6%95%B8%E5%AD%97%E7%9A%84%E5%9E%8B%E5%88%A5%E8%BD%89%E6%8F%9B"><span class="toc-text">6. string 與數字的型別轉換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    <li>
+      <a href="/post/2023/06/c++/std-string-beginer/">
+        入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2023/06/c++/stringview/">
+        還在用 const std::string &amp;? 試試 std::string_view 吧！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2023/05/system/promiscuous-mode/">
+        如何利用 PcapPlusPlus 以混雜模式（Promiscuous Mode）進行網路封包分析
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2023/05/c++/googletest/">
+        如何使用 GoogleTest 寫 C++ 單元測試
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2023/02/software-engineer/software-engineer-grow-up-1/">
+        新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2022/12/c++/cmake-include-header-only-library/">
+        如何在 Cmake 中引入 Header-Only Library
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2022/08/japan/before-work-in-japan/">
+        2022 赴日本東京工作全方位教戰手冊
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2022/06/c++/smallvec/">
+        C++ 實作 Small Vector
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2022/06/c++/sso/">
+        C++ 短字串最佳化（Short String Optimization）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2022/06/japan/new-grad-find-swe-job-in-japan/">
+        2022 海外新卒找日本東京軟體工程師工作經驗分享
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2021/" rel="tag">2021</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/30-%E5%A4%A9-javascript-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E/" rel="tag">30 天 javascript 從入門到進階</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular-2-%E4%B9%8B-30-%E5%A4%A9%E9%82%81%E5%90%91%E7%A5%9E%E4%B9%8E%E5%85%B6%E6%8A%80%E4%B9%8B%E8%B7%AF/" rel="tag">angular 2 之 30 天邁向神乎其技之路</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/boost/" rel="tag">boost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cgi/" rel="tag">cgi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpu-spec/" rel="tag">cpu spec</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/facebook/" rel="tag">facebook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/italy/" rel="tag">italy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/milan/" rel="tag">milan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sharedarraybuffer/" rel="tag">sharedarraybuffer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vocabulary-titan/" rel="tag">vocabulary titan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xr-%E5%B0%88%E9%A1%8C/" rel="tag">xr 專題</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular/" rel="tag">angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular-5/" rel="tag">angular 5</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular2/" rel="tag">angular2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomics/" rel="tag">atomics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/beginner/" rel="tag">beginner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bot/" rel="tag">bot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bottender/" rel="tag">bottender</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/browser-architecture/" rel="tag">browser architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chaos/" rel="tag">chaos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chatbot/" rel="tag">chatbot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/" rel="tag">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudmosa/" rel="tag">cloudmosa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coscup/" rel="tag">coscup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covid-19/" rel="tag">covid-19</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deep-learning-hardware/" rel="tag">deep learning hardware</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/front-end-development/" rel="tag">front end development</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github-app/" rel="tag">github app</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/growing-up/" rel="tag">growing up</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/how-things-work/" rel="tag">how things work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inference/" rel="tag">inference</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/intern/" rel="tag">intern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/key-point/" rel="tag">key point</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/let-s-build-a-dbms/" rel="tag">let's build a dbms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/line-bot/" rel="tag">line bot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/localization/" rel="tag">localization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/" rel="tag">machine learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mobile-device/" rel="tag">mobile device</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mozilla/" rel="tag">mozilla</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mozilla-taiwan/" rel="tag">mozilla taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/new-year-resolution/" rel="tag">new year resolution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/paper/" rel="tag">paper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance-analysis/" rel="tag">performance analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/polimi/" rel="tag">polimi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/probot/" rel="tag">probot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/puffin-browser/" rel="tag">puffin browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/puffin-os-phone/" rel="tag">puffin os phone</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pull-request/" rel="tag">pull request</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/relational-database/" rel="tag">relational database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/revision-control/" rel="tag">revision control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rust-taiwan/" rel="tag">rust taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/science/" rel="tag">science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/side-project/" rel="tag">side project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sir/" rel="tag">sir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/socket/" rel="tag">socket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software/" rel="tag">software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-engineering/" rel="tag">software engineering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stellarsql/" rel="tag">stellarsql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/story/" rel="tag">story</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/the-clean-coder/" rel="tag">the clean coder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tpu/" rel="tag">tpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traditional-chinese/" rel="tag">traditional chinese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visa/" rel="tag">visa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/weather-bot/" rel="tag">weather bot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A4%E5%A4%A7%E8%A7%80%E5%AF%9F%E8%88%87%E5%BF%83%E5%BE%97/" rel="tag">交大觀察與心得</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A4%E5%A4%A7%E8%AA%B2%E7%A8%8B/" rel="tag">交大課程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A4%E5%A4%A7%E8%B3%87%E5%B7%A5%E6%89%80/" rel="tag">交大資工所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BE%86%E5%81%9A%E5%80%8B%E7%B6%B2%E8%B7%AF%E7%80%8F%E8%A6%BD%E5%99%A8%E5%90%A7%EF%BC%81/" rel="tag">來做個網路瀏覽器吧！</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%82%B3%E6%9F%93%E7%97%85/" rel="tag">傳染病</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%A8%E7%90%83%E9%9B%86%E6%80%9D%E8%AB%96%E5%A3%87/" rel="tag">全球集思論壇</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%AC%E5%85%B1%E8%A1%9B%E7%94%9F/" rel="tag">公共衛生</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%AC%E5%8F%B8/" rel="tag">公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%87%BD%E5%BC%8F/" rel="tag">函式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8A%A9%E6%95%99/" rel="tag">助教</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B0%E5%A4%A7%E7%B6%B2%E5%AA%92%E6%89%80/" rel="tag">台大網媒所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%B0%E5%A4%A7%E8%A7%80%E5%AF%9F%E8%88%87%E5%BF%83%E5%BE%97/" rel="tag">台大觀察與心得</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9C%8B%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">國網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E6%9C%AC%E7%B4%A0%E9%A4%8A/" rel="tag">基本素養</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E5%AD%B8/" rel="tag">大學</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E5%AD%B8%E7%94%9F%E6%B4%BB/" rel="tag">大學生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E6%B0%A3/" rel="tag">大氣</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A5%B3%E5%8F%8B/" rel="tag">女友</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%B8%E7%BF%92%E6%8C%87%E5%8D%97/" rel="tag">學習指南</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E7%90%AA%E5%85%92/" rel="tag">安琪兒</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B0%88%E6%A1%88/" rel="tag">專案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C/" rel="tag">工作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E4%BD%9C%E7%92%B0%E5%A2%83/" rel="tag">工作環境</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B8%83%E6%9C%97%E9%81%8B%E5%8B%95/" rel="tag">布朗運動</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B3%E8%A1%8C%E7%A8%8B%E5%BC%8F/" rel="tag">平行程式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BF%85%E4%BF%AE%E8%AA%B2/" rel="tag">必修課</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%82%85%E8%AE%80%E6%BA%90%E7%A2%BC/" rel="tag">悅讀源碼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%83%B3%E6%B3%95/" rel="tag">想法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A5%E8%A7%B8%E9%80%9A%E7%9F%A5%E7%B3%BB%E7%B5%B1/" rel="tag">接觸通知系統</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A8%E7%94%84/" rel="tag">推甄</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%85%E4%BA%8B/" rel="tag">故事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%85%E5%AE%AE/" rel="tag">故宮</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B0%E5%B9%B4%E6%96%B0%E5%B8%8C%E6%9C%9B/" rel="tag">新年新希望</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%B0%E7%B1%B3%E5%B7%A5%E7%A8%8B%E5%B8%AB%E9%80%B2%E4%BF%AE%E4%B8%AD/" rel="tag">新米工程師進修中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%A1%E7%B3%BB%E9%81%B8%E6%93%87/" rel="tag">校系選擇</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%9D%E4%BB%B6%E5%88%A4%E6%96%B7/" rel="tag">條件判斷</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E7%8E%87/" rel="tag">機率</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AA%94%E6%A1%88%E8%AE%80%E5%AF%AB/" rel="tag">檔案讀寫</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B0%A3%E8%B1%A1%E5%96%B5/" rel="tag">氣象喵</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B0%A3%E8%B1%A1%E6%A9%9F%E5%99%A8%E4%BA%BA/" rel="tag">氣象機器人</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E5%A7%8B%E7%A2%BC/" rel="tag">源始碼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%80%8F%E8%A6%BD%E5%99%A8/" rel="tag">瀏覽器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%A9%E4%BB%B6/" rel="tag">物件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%8D%8E%E5%AD%B8%E9%87%91/" rel="tag">獎學金</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%8E%89%E5%B1%B1%E5%9F%B9%E8%82%B2%E5%82%91%E5%87%BA%E4%BA%BA%E6%89%8D%E7%8D%8E%E5%AD%B8%E9%87%91/" rel="tag">玉山培育傑出人才獎學金</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%8E%89%E5%B1%B1%E6%96%87%E6%95%99/" rel="tag">玉山文教</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%A9%9F/" rel="tag">生機</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9C%81%E6%80%9D/" rel="tag">省思</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%94%E7%A9%B6%E6%89%80/" rel="tag">研究所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A2%A9%E5%A3%AB/" rel="tag">碩士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%B8/" rel="tag">科學</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%B8%E7%8F%AD/" rel="tag">科學班</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%B1%95/" rel="tag">科展</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A8%8B%E5%BC%8F/" rel="tag">程式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88%E5%85%A5%E9%96%80/" rel="tag">程式設計入門</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%86%E8%A8%98/" rel="tag">筆記</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B0%BD%E8%AD%89/" rel="tag">簽證</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B1%B3%E8%98%AD/" rel="tag">米蘭</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B1%B3%E8%98%AD%E7%90%86%E5%B7%A5/" rel="tag">米蘭理工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B1%B3%E8%98%AD%E7%90%86%E5%B7%A5%E4%BA%A4%E6%8F%9B%E6%95%99%E6%88%B0%E6%89%8B%E5%86%8A/" rel="tag">米蘭理工交換教戰手冊</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B4%85%E9%BB%91%E6%A8%B9/" rel="tag">紅黑樹</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BE%8E%E8%A1%93%E7%A4%BE/" rel="tag">美術社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BE%A9%E5%A4%A7%E5%88%A9/" rel="tag">義大利</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E5%BA%8F/" rel="tag">自序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86/" rel="tag">自然語言處理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%BA%E7%81%A3%E9%87%91%E8%9E%8D%E7%A7%91%E6%8A%80%E5%85%AC%E5%8F%B8/" rel="tag">臺灣金融科技公司</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%97%9D%E8%A1%93/" rel="tag">藝術</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B3%87%E8%A8%8A%E5%B7%A5%E7%A8%8B/" rel="tag">資訊工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B/" rel="tag">軟體工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB/" rel="tag">軟體工程師</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%B4%E5%9C%88/" rel="tag">迴圈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%90%B5%E4%BA%BA%E8%B3%BD/" rel="tag">鐵人賽</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%96%8B%E6%BA%90/" rel="tag">開源</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%A8%E7%AD%86/" rel="tag">隨筆</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB%E8%88%87%E7%89%B9%E6%95%88/" rel="tag">電腦動畫與特效</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%BB%E8%85%A6%E8%A6%96%E8%A6%BA/" rel="tag">電腦視覺</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%A9%A6/" rel="tag">面試</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%AB%98%E4%B8%AD/" rel="tag">高中</a></li></ul>
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

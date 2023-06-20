@@ -168,6 +168,34 @@
     <article class="post">
         
         <h1 class="post-title">
+            <a href="/post/2020/08/js/webassembly-intro/">
+                完整介紹 WebAssembly 使用方式
+            </a>
+        </h1>
+
+        <ul class="post-date">
+            <li>
+                August 17, 2020
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+                    <div class="post-content ">
+                        <h2 id="1-簡介"><a class="header-anchor" href="#1-簡介">¶ </a>1. 簡介</h2>
+<p>先來說說 WebAssembly 是甚麼，為甚麼我們需要這玩意？</p>
+<p>如今網頁技術已經無所不在，人們上網時間佔一天好幾個小時，人們透過網路享受各種服務，各種應用服務也漸漸都轉移到網頁上，桌面程式或手機程式也越來越多採用網頁程式 (Web App) 或混合式程式 (Hybrid App)，可以說網頁技術已經主宰了世界。</p>
+<p>網頁是採用 JavaScript (JS) 語言，隨著瀏覽器進步、JS 引擎發展，我們似乎已經達到優化效能的瓶頸，JS 不管怎樣快，由於是直譯式語言，會一行一行讀程式碼同時進行編譯，這種模式鐵定會比編譯式語言像是 C++ 還要慢。那你會問，為啥網頁不用 C++ 這種編譯式語言？這是因為不管是事先編好，編譯出來的執行檔會很大，這樣傳給瀏覽器反而會造成網路傳輸花太多時間，或是瀏覽器拿到檔案才開始編譯，那要等他全部編完才能跑也會花太多時間。所以直譯式語言的 JS 先傳給瀏覽器，由於是原始檔檔案不會很大傳輸時間就還行，然後拿到檔案後一行一行編譯，先編譯好的部分可以先跑，也不會讓速度過慢。</p>
+<p>不管如何，JS 效能已經到上限了，人們開始想要怎樣讓網頁可以在瀏覽器上跑得更快，於是就有 WebAssembly (WASM) 的誕生了，WASM 是一個低階類似組合語言的語言，其效能可以接近原生 (Native) 的程式，像是 C++ 或 Rust 跑出來的效能。開發網頁時，JS 和 WASM 會搭配使用，概念簡單來說是一般程式邏輯一樣給 JS 跑，但把部分負擔很重的程式碼改成事先編譯的 WASM，這樣就可以讓效能更加進化。同時享有 JS 可以快速啟動的好處，也享有 WASM 在運算複雜的程式碼上有高效能的表現。</p>
+<p>接下來本文將會介紹如何使用 JS 搭配 WASM 進行開發。</p>
+        <a href="/post/2020/08/js/webassembly-intro/" class="more-link">Continue reading</a>
+        </div>
+    </article>
+    
+    <article class="post">
+        
+        <h1 class="post-title">
             <a href="/post/2020/08/system/spec-accel-opencl-amd-mi50/">
                 Run SPEC ACCEL OpenCL benchmarks on AMD MI50
             </a>
@@ -408,31 +436,6 @@
         </div>
     </article>
     
-    <article class="post">
-        
-        <h1 class="post-title">
-            <a href="/post/2020/06/system/spec-cpu-note/">
-                SPEC CPU 2006 安裝執行
-            </a>
-        </h1>
-
-        <ul class="post-date">
-            <li>
-                June 16, 2020
-            </li>
-            <li>
-                Liu, An-Chi 劉安齊
-            </li>
-        </ul>
-        
-                    <div class="post-content ">
-                        <h2 id="前言"><a class="header-anchor" href="#前言">¶ </a>前言</h2>
-<p>SPEC CPU 是 The Standard Performance Evaluation Corporation (SPEC) 組織建立的 CPU 效能測試指標 (Benchmark)。最近的指標有 SPEC CPU 2006 和 SPEC CPU 2017，因為具有極大公信力，許多研究都會以這套指標當作評量測試。</p>
-<p>如果想要弄到這套指標，網路上是找不到的，是需要跟這機構購買，而且要價不斐，要用的話就是想辦法靠關係弄一套來。我最近要重現一篇論文，裡面有用到 SPEC CPU 2006/2017，實驗室剛好有 2006 年版，但在使用過程中滿多坑的，為此紀錄。</p>
-        <a href="/post/2020/06/system/spec-cpu-note/" class="more-link">Continue reading</a>
-        </div>
-    </article>
-    
 
     <div class="pagination-bar" align=center>
         <ul class="pagination">
@@ -480,6 +483,12 @@
 <div class="recent-post">
   <h2>Recent Posts</h2>
   <ul>
+    
+    <li>
+      <a href="/post/2023/06/c++/std-string-beginer/">
+        入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！
+      </a>
+    </li>
     
     <li>
       <a href="/post/2023/06/c++/stringview/">
@@ -535,12 +544,6 @@
       </a>
     </li>
     
-    <li>
-      <a href="/post/2022/05/autobiography/nctu-6/">
-        交大觀察與心得(六)：碩三畢業
-      </a>
-    </li>
-    
   </ul>
 </div>
 
@@ -575,7 +578,7 @@
                 
     <h2>Archives</h2>
 
-    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
 
 
             </section>
