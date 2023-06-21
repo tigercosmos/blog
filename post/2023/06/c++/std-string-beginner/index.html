@@ -179,7 +179,7 @@
     </ul>
     <div class="post-content">
         <h2 id="1-string-簡介"><a class="header-anchor" href="#1-string-簡介">¶ </a>1. string 簡介</h2>
-<p>不管你是以 C++ 為第一個語言程式初學者，或者從 C 或 Python 來的開發者，想必你都意識到「字串」在一個程式語言中是多麼的重要，在 C++ 中字串們會使用 <code>std::string</code> 函示庫（本文之後皆以 string 代稱），第一次聽到嗎？別擔心，這篇文章會詳細解說所有關於 string 你該知道的知識和細節。</p>
+<p>不管你是以 C++ 為第一個語言程式初學者，或者從 C 或 Python 來的開發者，想必你都意識到「字串」在一個程式語言中是多麼的重要，在 C++ 中字串們會使用 <code>std::string</code> 函式庫（本文之後皆以 string 代稱），第一次聽到嗎？別擔心，這篇文章會詳細解說所有關於 string 你該知道的知識和細節。</p>
 <p>這篇文章宗旨是讓稍微有寫程式經驗的初學者得以融會貫通如何使用 string，建議初學者至少把隨便一本 C++ 教學書前半部大致翻過（至少要知道什麼是變數，迴圈是什麼），過程中會出現許多專業的術語，我盡量用簡單的話去解釋，但畢竟受限版面不能一一解釋，最好的辦法是看不懂得術語，直接去問一下 ChatGPT；而對於比較進階的讀者，可能比較簡單的部分都知道了，但應該會有一些學習的盲點，可以透過本文補齊。</p>
 <p>為什麼需要 string 呢？</p>
 <p>想一下不靠 string 的話我們要怎麼去表達一個字串？</p>
@@ -193,8 +193,8 @@ s.size(); // return 6
 s.find(&quot;bb&quot;); // return 2
 s += &quot;123&quot;; // s = aabbcc123
 </code></pre>
-<p>在我們開始學習之前，記得之後的程式要使用 <code>std::string</code> 時都必須引入 <code>&lt;string&gt;</code> 函示庫喔！</p>
-<p>另外 string 是標準函示庫，一般來說都是要用 <code>std::string</code> 來操作，為求精簡，本文皆假設已經宣靠 <code>using std::string;</code>，這樣不需要一直打 <code>std::</code>。不了解這邊的同學可以查一下 <code>using</code> 關鍵字，還有 <code>namespace</code> 關鍵字。</p>
+<p>在我們開始學習之前，記得之後的程式要使用 <code>std::string</code> 時都必須引入 <code>&lt;string&gt;</code> 函式庫喔！</p>
+<p>另外 string 是標準函式庫，一般來說都是要用 <code>std::string</code> 來操作，為求精簡，本文皆假設已經宣靠 <code>using std::string;</code>，這樣不需要一直打 <code>std::</code>。不了解這邊的同學可以查一下 <code>using</code> 關鍵字，還有 <code>namespace</code> 關鍵字。</p>
 <p>所以預設範例程式碼都包含前提：</p>
 <pre><code class="language-c++">#include &lt;string&gt;
 using std::string;
@@ -287,7 +287,7 @@ if(s.size() &gt; 5) &#123;
     &#125;
 </code></pre>
 <p>注意雖然 <code>!s.empty()</code> 意思等價 <code>s.size() &gt; 0</code>，但以 <code>!s.empty()</code> 來表示不為空字串可以視為更簡潔的寫法。</p>
-<p>另外 <code>size()</code>  的數值型別為 <code>string::size_type</code>，實際型別視標準函示庫的實作決定，一般來說就是 <code>size_t</code>（非負整數）。所以 <code>s.size()</code> 的值不是 <code>int</code>！</p>
+<p>另外 <code>size()</code>  的數值型別為 <code>string::size_type</code>，實際型別視標準函式庫的實作決定，一般來說就是 <code>size_t</code>（非負整數）。所以 <code>s.size()</code> 的值不是 <code>int</code>！</p>
 <p>所以當我們要遍歷一個 string 時，以下寫法是錯的：</p>
 <pre><code class="language-c++">// 錯誤！
 for(int i = 0; i &lt; s.size(); ++1) &#123;
@@ -437,10 +437,10 @@ size_t pos = http_url.find(&quot;xyz&quot;);
 // 從剛剛找到的 pos 位置，取代三個字元，換成 &quot;co.jp&quot;，於是得到 https://tigercosmos.co.jp/about/
 http_url.replace(pos, 3, &quot;co.jp&quot;);
 </code></pre>
-<p>std::string 還提供很多 API 可以使用，而且每一個 API 還包含很多重載（overloads），白話一點就是你可以有多種使用方法，例如 insert 就可以是插入 string 或是 char。基本上就是你發現你需要什麼功能，就檢查一下 <a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/string/basic_string">string 標準函示庫</a>有沒有提供，沒提供的話就自己土砲自幹！（有時很我很懶，就會直接想拿現成 API，有時候也很享受自己造輪子的樂趣！）</p>
+<p>std::string 還提供很多 API 可以使用，而且每一個 API 還包含很多重載（overloads），白話一點就是你可以有多種使用方法，例如 insert 就可以是插入 string 或是 char。基本上就是你發現你需要什麼功能，就檢查一下 <a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/string/basic_string">string 標準函式庫</a>有沒有提供，沒提供的話就自己土砲自幹！（有時很我很懶，就會直接想拿現成 API，有時候也很享受自己造輪子的樂趣！）</p>
 <h2 id="6-string-與數字的型別轉換"><a class="header-anchor" href="#6-string-與數字的型別轉換">¶ </a>6. string 與數字的型別轉換</h2>
 <p>想要把字串變成數字嗎？</p>
-<p>你需要以下這些函數（都在 <code>&lt;string&gt;</code> 函示庫裡）</p>
+<p>你需要以下這些函數（都在 <code>&lt;string&gt;</code> 函式庫裡）</p>
 <pre><code class="language-c++">std::stoi // 轉 int
 std::stol // 轉 long int
 std::stoll // 轉 long long int
