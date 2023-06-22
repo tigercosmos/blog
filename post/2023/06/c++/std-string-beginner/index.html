@@ -350,13 +350,14 @@ string s2(&quot;bbb&quot;);
 
 string s3 = s1 + s2; // s3 = &quot;aaabbb&quot;
 
-s1 += s2; // s1 = s1 + s2
-s1.append(s2); // 結果等同上式，但比較有效率
+s1 = s1 + s2; // case 1 沒效率
+s1 += s2; // case 2 有效率
+s1.append(s2); // case 3 有效率
 </code></pre>
-<p><code>s1 + s2</code> 運算可以讓兩個 string 去產生一個新個 string，而 <code>s1.append(s2)</code> 則是把 <code>s2</code> 加到 <code>s1</code> 後面。兩者差別在於前者會先拷貝 <code>s1</code> 再拷貝 <code>s2</code> 產生出一個新的 string。後者則是只會拷貝 <code>s2</code> 並放到 <code>s1</code> 後面。可以發現 <code>+</code> 會使 <code>s1</code> 也拷貝，並多產生一個 string 物件。</p>
-<p>如果你不想去動到 <code>s1</code> 和 <code>s2</code>，那麼用 <code>+</code> 正好。</p>
-<p>如果你不在乎 <code>s1</code> 是否被修改，那就用 <code>append</code>，可以減少不必要的拷貝。</p>
-<p>上面例子中，<code>s1 += s2</code> 其實就是 <code>s1 + s2</code> 產生一個新的 string，再拷貝給 <code>s1</code> 使其取代。那麼還不如一開始就直接用 <code>s1.append(s2)</code>，還比較有效率！</p>
+<p>先來看 case 1，<code>s1 + s2</code> 運算可以讓兩個 string 去產生一個新個 string，然後複製回去 s1，可想而知很沒效率。case 2 與 case 3 例子中，概念都是把 <code>s2</code> 加到原本 <code>s1</code> 的後面，所以 case 2 和 case 3 實際執行效率是一樣的。case 1 與 case 2（或 case 3）的差別在於前者會先拷貝 <code>s1</code> 再拷貝 <code>s2</code> 產生出一個新的 string。後者則是只會拷貝 <code>s2</code> 並放到 <code>s1</code> 後面。</p>
+<p>可以發現 case 1 會使 <code>s1</code> 也拷貝，並多產生一個 string 物件，如果你不想去改動 <code>s1</code> 和 <code>s2</code> 的值，那麼寫 <code>string new_str = s1 + s2</code> 正好。</p>
+<p>如果你不在乎 <code>s1</code> 是否被修改，那就用 <code>append</code> 或 <code>+=</code>，可以減少不必要的拷貝。</p>
+<p>上面例子中，<code>s1 = s1 + s2</code> 非常沒效率，請不要這樣寫！</p>
 <h4 id="3-4-2-string-與字面值相加"><a class="header-anchor" href="#3-4-2-string-與字面值相加">¶ </a>3.4.2 string 與字面值相加</h4>
 <p>string 也可以跟字元字面值（character literals）和字元字串字面值（character string literals）互相相加。概念也很簡單，其實就是他會自己把字面值做轉型。</p>
 <p>不過當我們混合 string 與字面值相加時，<code>+</code> 左右必須有一個是 string。</p>
