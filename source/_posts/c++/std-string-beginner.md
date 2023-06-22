@@ -234,6 +234,7 @@ size_t index = /* any number */;
 if(index >=0 && index < s.size()) {
     std::cout << s[index];
 }
+```
 
 另外有兩個函數也滿常使用的，`s.front() 和 `s.back()`。顧名思義，存取最前面跟存取最後面。
 
