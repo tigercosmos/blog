@@ -374,7 +374,7 @@ string s9 = &quot;aaa&quot; + s1; // OK
 <h3 id="3-5-兩個-string-的比較"><a class="header-anchor" href="#3-5-兩個-string-的比較">¶ </a>3.5 兩個 string 的比較</h3>
 <p>接下來介紹 <code>&lt;, &lt;=, ==, !=, &gt;=, &gt;</code>。</p>
 <p><code>==</code> 很簡單理解，兩個字串一樣長，內容都一樣，<code>s1 == s2</code> 就為真。</p>
-<p>而當我們需要比大小時，有兩條規則：</p>
+<p>而當我們需要比大小時，string 遵循「字典排序」，有兩條規則：</p>
 <ol>
 <li>s1 和 s2 不同長度，但從其面數來內容都一樣，這時比較長的字串比較大</li>
 <li>s1 和 s2 不同長度、不同內容，這時從前面數來，第一個不同值的字元誰大，那個字串就是比較大</li>
@@ -387,7 +387,14 @@ string s9 = &quot;aaa&quot; + s1; // OK
 &quot;abcd&quot; &gt; &quot;abcc&quot; // 規則 2，d &gt; c
 &quot;abcd&quot; &gt; &quot;abcceeeeee&quot; // 規則 2，d &gt; c，即使右邊比較長
 </code></pre>
-<p>比較常見的比較是 <code>==</code>、<code>!=</code>，個人認為直接用「大小」去比較兩字串不太直觀，實務上也很少見到這樣的操作。</p>
+<p>比較常見的比較是 <code>==</code>、<code>!=</code> 去比較兩個 string 是否相等。至於比 string 大小的話，當有需要用到字典排序的時候就可以用。</p>
+<p>一個字典排序的應用例子：</p>
+<pre><code class="language-c++">std::vector&lt;std::string&gt; words; // 包含很多 word 字串: &quot;aaa&quot;, &quot;abc&quot;, &quot;bbb&quot;, ....
+
+std::sort(words.begin(), words.end(), [](auto&amp; s1, auto&amp; s2)&#123;
+    return s1 &gt; s2; // 字母大到字母小去排序
+&#125;);
+</code></pre>
 <h2 id="4-string-的單字元的操作"><a class="header-anchor" href="#4-string-的單字元的操作">¶ </a>4. string 的單字元的操作</h2>
 <p>在處理自串的時候，依序處理每一個字元也是很長見的操作。例如有一個字串 <code>&quot;abcdefg&quot;</code>，我們想檢查裡面有沒有包含 <code>'f'</code>，或是我們想要把每個字元都做平移，變成 <code>&quot;bcdefgh&quot;</code>，也有可能想要檢查一個字串裡面有沒有特殊符號。不論如何，你勢必要遍歷過整個字串來做檢查。</p>
 <p>說到遍歷，那自然是 <code>for</code> 了，這邊介紹最主要你會需要的兩種。</p>
