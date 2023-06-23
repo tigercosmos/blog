@@ -57,26 +57,27 @@ string s3 = "hello world"; // s3 是字串值的拷貝（先轉型成 string）
 string s4("hello world"); // s4 以給予的字串來初始化
 ```
 
-接著要談一下直接初始化（direct initialization）、拷貝初始化（copy initialization）、移動初始化（move initialization）
+接著要談一下直接初始化（direct initialization）、拷貝初始化（copy initialization）、移動初始化（move initialization）、拷貝指定（copy assignment）、移動指定（move assignment）。或是簡稱 [Rule of Three](https://en.cppreference.com/w/cpp/language/rule_of_three)。
 
 ```c++
 string s5("abc"); // 直接初始化
-string s6 = "abc"; // 拷貝初始化
-string s7 = string("abc"); // 拷貝初始化
+string s6 = "abc"; // 拷貝指定
+string s7 = string("abc"); // 拷貝指定
 string s8(s7); // 拷貝初始化
 string s9 = s8; // 拷貝初始化
 string s10(std::move(s9)); // 移動初始化
+string s11 = std::move(s10); // 移動指定
 ```
 
 先介紹 s5，非常直觀就是我們直接告訴 string 要用什麼值去做初始化。
 
-s6 是很多新手會用的寫法，事實上 s6 跟 s7 是完全等價的，s6 例子中右值其實會做隱含轉型（implicit），轉型後就等同 s7。
+s6 是很常見的宣告方法，事實上 s6 跟 s7 是完全等價的，s6 例子中右值其實會做隱含轉型（implicit），轉型後就等同 s7。
 
-s6 或 s7 例子是拷貝轉換，意思是我們用一個 string 物件（右值的 string）去新建一個 string 物件（左值的 string），等於你需要生成 string 兩次，所以很多新手不知道的是，用這種語法做初始化其實非常沒效率，但幸運的是大多數現代編譯器都會幫你做最佳化，實際上編譯完其實可能也沒有差，但我們仍然需要了解在沒有編譯器最佳化幫助下這些初始化的差異。
+s6 或 s7 例子是拷貝轉換，意思是我們用一個 string 物件（右值的 string）去新建一個 string 物件（左值的 string），等於你需要生成 string 兩次。理論上用這種語法去宣告 string 原理上其實非常沒效率，但幸運的是大多數現代編譯器都會幫你做最佳化，實際上編譯完其實可能也沒有差，但我們仍然需要了解在沒有編譯器最佳化幫助下這些初始化的差異。
 
-s8、s9 都是拷貝初始化，不過通常用這種語法的時候是明確知道我們需要做字串複製，所以沒什麼大問題。
+s8、s9 都會做拷貝，不過通常用這種語法的時候是明確知道我們需要做字串複製，所以沒什麼大問題。
 
-s10 是移動初始化，白話解釋就是這邊把 s9 的 string 裡面的資料直接「讓給」s10，此時 s9 就不能用，而 s10 因為直接拿了 s9 的資料，所以初始化比較有效率。這邊牽扯到 `std::move` 以及右值（rvalue）的概念，這邊先提個頭，有興趣的讀者可以根據關鍵字去做延伸學習。
+s10 白話解釋就是這邊把 s9 的 string 裡面的資料直接「讓給」s10，此時 s9 就不能用，而 s10 因為直接拿了 s9 的資料，所以初始化比較有效率。而 s11 概念跟 s10 一樣。這邊牽扯到 `std::move` 以及右值（rvalue）等概念，這邊先提個頭，有興趣的讀者可以根據關鍵字去做延伸學習。
 
 完整的初始化方式可以參考 string 的[建構子](https://en.cppreference.com/w/cpp/string/basic_string/basic_string)列表，不過大多數的建構方法都比較進階了，我們可以簡單記住以上幾種 string 初始化方式，如果你知道怎麼使用 `std::vector`，vector 的建構子方法也適用 string。
 
