@@ -59,6 +59,8 @@ string s4("hello world"); // s4 以給予的字串來初始化
 
 接著要談一下直接初始化（direct initialization）、拷貝初始化（copy initialization）、移動初始化（move initialization）、拷貝指定（copy assignment）、移動指定（move assignment）。或是簡稱 [Rule of Three](https://en.cppreference.com/w/cpp/language/rule_of_three)。
 
+> 因為下面解釋會有點複雜，如果是初學者的話，只要記住以下範例 s5~s9 方法去建立 string 都可以
+
 ```c++
 string s5("abc"); // 直接初始化
 string s6 = "abc"; // 拷貝指定
