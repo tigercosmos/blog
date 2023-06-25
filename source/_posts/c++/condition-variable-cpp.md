@@ -64,7 +64,7 @@ void run_producer_thread(std::queue<std::string> &queue) {
 void run_consumer_thread(std::queue<std::string> &queue) {
     for (;;) {
         std::unique_lock<std::mutex> lock(g_mutex);        // 這邊的 lock 還不會真的上鎖
-        g_cond(lock, [&] { return !queue.empty(); }); // 當進行檢查 queue 不為空時，lock 會上鎖
+        g_cond.wait(lock, [&] { return !queue.empty(); }); // 當進行檢查 queue 不為空時，lock 會上鎖
 
         auto word = queue.front(); // 把資料拷貝出來，才能盡快解鎖
         queue.pop();
