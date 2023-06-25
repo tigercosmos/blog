@@ -7,9 +7,9 @@ des: "本文提供了一個簡單的範例，介紹如何用 C++ 寫 Condition V
 
 ## 前言
 
-我第一次聽到 [Condition Variable（條件變數）](https://zh.wikipedia.org/wiki/%E7%9B%A3%E8%A6%96%E5%99%A8_(%E7%A8%8B%E5%BA%8F%E5%90%8C%E6%AD%A5%E5%8C%96)#%E6%A2%9D%E4%BB%B6%E8%AE%8A%E6%95%B8(Condition_Variable)) 是在台大資工作業系統課上，老實說當時我對電腦概念還非常模糊，糊裡糊塗修完課後就忘記了這玩意（當時覺得老師教不好，為啥就是聽不懂，也許是慧根不夠）。
+我第一次聽到 [Condition Variable（條件變數）](https://zh.wikipedia.org/wiki/%E7%9B%A3%E8%A6%96%E5%99%A8_(%E7%A8%8B%E5%BA%8F%E5%90%8C%E6%AD%A5%E5%8C%96)#%E6%A2%9D%E4%BB%B6%E8%AE%8A%E6%95%B8(Condition_Variable)) 是在台大資工作業系統課上，老實說當時我對電腦概念還非常模糊，糊里糊塗修完課後就忘記了這玩意（當時覺得老師教不好，為啥就是聽不懂，也許是慧根不夠）。
 
-在交大資工所即使當了平行計算助教，很意外的還是沒用過，我現在也覺得挺意外的（？）題外話，平行計算本來就跟並行運算有些區別就是了，另外就是這兩門學問都博大精神，我到現在都不敢說自己「會」，即便我有一篇跟平行計算有關的[論文](https://link.springer.com/chapter/10.1007/978-3-031-20891-1_13)上 LNCS，連工作面試時別人隨便考個平行計算都被電，常常讓我感慨學無止盡且艱難。
+在交大資工所即使當了平行計算助教，很意外的還是沒用過，我現在也覺得挺意外的（？）題外話，平行計算本來就跟並行運算有些區別就是了，另外就是這兩門學問都博大精深，我到現在都不敢說自己「會」，即便我有一篇跟平行計算有關的[論文](https://link.springer.com/chapter/10.1007/978-3-031-20891-1_13)上 LNCS，連工作面試時別人隨便考個平行計算都被電，常常讓我感慨學無止盡且艱難。
 
 扯遠了，這幾天工作上要寫一個很經典的[生產者消費者問題](https://zh.wikipedia.org/zh-tw/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98)（Producer-Consumer Problem），問了一下同事我要處理的問題，他就說「阿這不就是 Condition Variable 嗎，去看一下應該會有幫助」，當然他是用英文跟我講啦。我覺得滿滿的慚愧，好歹學電腦也好幾年了，竟然到現在才實際去寫 Condition Variable，查了一下怎麼寫算是滿快就搞定，巧的是短期就有機會用了兩次。
 
@@ -76,7 +76,7 @@ void run_consumer_thread(std::queue<std::string> &queue) {
 
 注意這邊用到 `std::unique_lock`，他的[功能很多](https://en.cppreference.com/w/cpp/thread/unique_lock)，包含以下「deferred locking, time-constrained attempts at locking, recursive locking, transfer of lock ownership, and use with condition variables」（抱歉我懶 :P）。
 
-在這個範例下，白化解釋就是「晚一點才會用上你」的一種鎖，所以宣告當下並不會真的上鎖。
+在這個範例下，白話解釋就是「晚一點才會用上你」的一種鎖，所以宣告當下並不會真的上鎖。
 
 `g_cond.wait` 會一直做等待（或稱做阻塞，Blocking），並且當收到 `notify_one` 時，觸發進行條件檢查。這邊的檢查是確認 `queue` 是否不為空（亦即有資料進來）。如果 `g_cond` 的檢查得到 `true`，則取消阻塞，反之繼續進行等待。
 
