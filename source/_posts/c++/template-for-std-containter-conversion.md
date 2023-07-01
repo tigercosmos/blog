@@ -420,7 +420,7 @@ int main() {
 ```cpp
 template <typename ElementType, typename Container>
     requires std::constructible_from<ElementType, std::ranges::range_value_t<Container>>
-constexpr auto to_vector(Container&& c) {
+auto to_vector(Container&& c) {
     return std::vector<ElementType>(std::begin(c), std::end(c));
 }
 ```
