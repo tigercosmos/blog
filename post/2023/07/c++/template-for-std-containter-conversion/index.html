@@ -501,7 +501,7 @@ int main() &#123;
 <p>不過本文的範例只需用到 C++17，更有趣的是，在 C++ 20 之後出了 Concept 的概念，又有更多的實作可能性：</p>
 <pre><code class="language-cpp">template &lt;typename ElementType, typename Container&gt;
     requires std::constructible_from&lt;ElementType, std::ranges::range_value_t&lt;Container&gt;&gt;
-constexpr auto to_vector(Container&amp;&amp; c) &#123;
+auto to_vector(Container&amp;&amp; c) &#123;
     return std::vector&lt;ElementType&gt;(std::begin(c), std::end(c));
 &#125;
 </code></pre>
