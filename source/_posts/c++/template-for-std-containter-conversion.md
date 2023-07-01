@@ -2,7 +2,7 @@
 title: 如何用 C++ 模版函數將容器輸出成不同容器型別（std::list<int> 轉成 std::vector<double>）
 date: 2023-07-02 00:01:00
 tags: [c++, template, vector]
-des: "本文介紹如何使用模版將 C++ 的容器輸出成其他的容器型別，例如將 std::list<int> 輸出成 std::vector<double>，說明多種模版的操作方式以及思路。"
+des: "本文介紹如何使用模版函數將 C++ 的容器輸出成其他的容器型別，例如將 std::list<int> 輸出成 std::vector<double>，說明多種模版的操作方式以及思路。"
 ---
 
 ![Cover](https://github.com/tigercosmos/blog/assets/18013815/f695f82e-f849-400d-abf0-9c7ab23ebdd2)
