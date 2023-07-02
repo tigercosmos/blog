@@ -150,11 +150,11 @@ auto v3_1 = to_vector3(l); // std::vector<int>
 auto v3_2 = to_vector3<double>(l); // std::vector<double>
 ```
 
-## 作法 4 自定義配置器版
+## 作法 4 客製化配置器版
 
 一般的容器函式庫都會允許使用客製化的配置器（Allocator）。
 
-如果還想要加上自定義的 Allocator 怎麼辦？
+如果還想要加上客製化的 Allocator 怎麼辦？
 
 假設我們已經有個 `MyAllocator`，長的像以下（隨便讓 ChatGPT 給我生出來的）：
 
@@ -172,7 +172,7 @@ public:
 };
 ```
 
-情況變的更複雜了，因為你會需要將自定義的 `MyAllocator` 也傳入 `to_vector`，用法應該要是 `to_vector4<ElementType, AllocatorType>(container, allocator)`。
+情況變的更複雜了，因為你會需要將客製化的 `MyAllocator` 也傳入 `to_vector`，用法應該要是 `to_vector4<ElementType, AllocatorType>(container, allocator)`。
 
 套用我們剛剛學過的 `std::conditional_t<std::is_same_v<...>, ...>` 技巧，我們可以得到以下的程式碼：
 
@@ -187,7 +187,7 @@ auto to_vector4(
     std::conditional_t<std::is_same_v<Allocator, void>, // Allocator 是否為預設
         std::allocator<std::conditional_t<std::is_same_v<ElementType, void>, // ElementType 是否為預設
             std::decay_t<decltype(*std::declval<Container>().begin())>, ElementType>>, // Container 元素型別或 ElementType 的 std::allocator
-    Allocator>  //採用自定義的 Allocator
+    Allocator>  //採用客製化的 Allocator
     al = {}
 ) {
     using ActualElementType =
@@ -203,7 +203,7 @@ auto to_vector4(
 
 上面參數定義的地方有點複雜，讓我們用白話文解釋。
 
-`to_vector4` 的第二個參數要收自定義的 Allocator 的型別，我們得依據 Template 的型別去做推定，於是乎會有一下的邏輯：
+`to_vector4` 的第二個參數要收客製化的 Allocator 的型別，我們得依據 Template 的型別去做推定，於是乎會有一下的邏輯：
 
 ```
 if Allocator 採用預設
@@ -217,7 +217,7 @@ else
 
 是不是清楚多了呢！
 
-## 作法 5 支援自定義配置器簡潔版
+## 作法 5 支援客製化配置器簡潔版
 
 因為 `to_vector4` 這樣寫真的很亂，上面程式可以簡化成下面版本：
 
