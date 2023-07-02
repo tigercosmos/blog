@@ -273,9 +273,9 @@ auto to_vector3(Container &amp;&amp;c) &#123;
 auto v3_1 = to_vector3(l); // std::vector&lt;int&gt;
 auto v3_2 = to_vector3&lt;double&gt;(l); // std::vector&lt;double&gt;
 </code></pre>
-<h2 id="作法-4-自定義配置器版"><a class="header-anchor" href="#作法-4-自定義配置器版">¶ </a>作法 4 自定義配置器版</h2>
+<h2 id="作法-4-客製化配置器版"><a class="header-anchor" href="#作法-4-客製化配置器版">¶ </a>作法 4 客製化配置器版</h2>
 <p>一般的容器函式庫都會允許使用客製化的配置器（Allocator）。</p>
-<p>如果還想要加上自定義的 Allocator 怎麼辦？</p>
+<p>如果還想要加上客製化的 Allocator 怎麼辦？</p>
 <p>假設我們已經有個 <code>MyAllocator</code>，長的像以下（隨便讓 ChatGPT 給我生出來的）：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;
 class MyAllocator &#123;
@@ -289,7 +289,7 @@ public:
     template&lt;typename U&gt; void destroy(U* p) &#123; p-&gt;~U();&#125;
 &#125;;
 </code></pre>
-<p>情況變的更複雜了，因為你會需要將自定義的 <code>MyAllocator</code> 也傳入 <code>to_vector</code>，用法應該要是 <code>to_vector4&lt;ElementType, AllocatorType&gt;(container, allocator)</code>。</p>
+<p>情況變的更複雜了，因為你會需要將客製化的 <code>MyAllocator</code> 也傳入 <code>to_vector</code>，用法應該要是 <code>to_vector4&lt;ElementType, AllocatorType&gt;(container, allocator)</code>。</p>
 <p>套用我們剛剛學過的 <code>std::conditional_t&lt;std::is_same_v&lt;...&gt;, ...&gt;</code> 技巧，我們可以得到以下的程式碼：</p>
 <pre><code class="language-cpp">template &lt;
     typename ElementType = void,
@@ -301,7 +301,7 @@ auto to_vector4(
     std::conditional_t&lt;std::is_same_v&lt;Allocator, void&gt;, // Allocator 是否為預設
         std::allocator&lt;std::conditional_t&lt;std::is_same_v&lt;ElementType, void&gt;, // ElementType 是否為預設
             std::decay_t&lt;decltype(*std::declval&lt;Container&gt;().begin())&gt;, ElementType&gt;&gt;, // Container 元素型別或 ElementType 的 std::allocator
-    Allocator&gt;  //採用自定義的 Allocator
+    Allocator&gt;  //採用客製化的 Allocator
     al = &#123;&#125;
 ) &#123;
     using ActualElementType =
@@ -315,7 +315,7 @@ auto to_vector4(
 &#125;
 </code></pre>
 <p>上面參數定義的地方有點複雜，讓我們用白話文解釋。</p>
-<p><code>to_vector4</code> 的第二個參數要收自定義的 Allocator 的型別，我們得依據 Template 的型別去做推定，於是乎會有一下的邏輯：</p>
+<p><code>to_vector4</code> 的第二個參數要收客製化的 Allocator 的型別，我們得依據 Template 的型別去做推定，於是乎會有一下的邏輯：</p>
 <pre><code>if Allocator 採用預設
     if ElementType 採用預設
         使用 Container 的元素型別的 std::allocator
@@ -325,7 +325,7 @@ else
     使用使用者定義的 Allocator
 </code></pre>
 <p>是不是清楚多了呢！</p>
-<h2 id="作法-5-支援自定義配置器簡潔版"><a class="header-anchor" href="#作法-5-支援自定義配置器簡潔版">¶ </a>作法 5 支援自定義配置器簡潔版</h2>
+<h2 id="作法-5-支援客製化配置器簡潔版"><a class="header-anchor" href="#作法-5-支援客製化配置器簡潔版">¶ </a>作法 5 支援客製化配置器簡潔版</h2>
 <p>因為 <code>to_vector4</code> 這樣寫真的很亂，上面程式可以簡化成下面版本：</p>
 <pre><code class="language-cpp">template &lt;typename ElementType = void,
           typename Allocator = void,
@@ -581,7 +581,7 @@ auto to_vector(Container&amp;&amp; c) &#123;
                 <section class="aside-section">
                     <h2>TOC</h2>
 <div class="toc-container">
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-0-%E8%B6%85%E7%B4%9A%E9%99%BD%E6%98%A5%E7%89%88"><span class="toc-text">作法 0 超級陽春版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-1-%E9%99%BD%E6%98%A5%E4%BF%AE%E6%94%B9%E7%89%88"><span class="toc-text">作法 1 陽春修改版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-2-%E9%99%BD%E6%98%A5%E4%BF%AE%E6%94%B9%E7%89%88%EF%BC%88%E6%94%B9%EF%BC%89"><span class="toc-text">作法 2 陽春修改版（改）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-3-%E5%96%84%E7%94%A8%E6%A8%A1%E7%89%88%E5%8F%83%E6%95%B8%E7%89%88"><span class="toc-text">作法 3 善用模版參數版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-4-%E8%87%AA%E5%AE%9A%E7%BE%A9%E9%85%8D%E7%BD%AE%E5%99%A8%E7%89%88"><span class="toc-text">作法 4 自定義配置器版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-5-%E6%94%AF%E6%8F%B4%E8%87%AA%E5%AE%9A%E7%BE%A9%E9%85%8D%E7%BD%AE%E5%99%A8%E7%B0%A1%E6%BD%94%E7%89%88"><span class="toc-text">作法 5 支援自定義配置器簡潔版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-6-%E5%87%BD%E5%BC%8F%E6%A8%A1%E7%89%88%E5%A4%9A%E8%BC%89%E7%89%88"><span class="toc-text">作法 6 函式模版多載版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E6%95%B4%E7%90%86"><span class="toc-text">總整理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-0-%E8%B6%85%E7%B4%9A%E9%99%BD%E6%98%A5%E7%89%88"><span class="toc-text">作法 0 超級陽春版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-1-%E9%99%BD%E6%98%A5%E4%BF%AE%E6%94%B9%E7%89%88"><span class="toc-text">作法 1 陽春修改版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-2-%E9%99%BD%E6%98%A5%E4%BF%AE%E6%94%B9%E7%89%88%EF%BC%88%E6%94%B9%EF%BC%89"><span class="toc-text">作法 2 陽春修改版（改）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-3-%E5%96%84%E7%94%A8%E6%A8%A1%E7%89%88%E5%8F%83%E6%95%B8%E7%89%88"><span class="toc-text">作法 3 善用模版參數版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-4-%E5%AE%A2%E8%A3%BD%E5%8C%96%E9%85%8D%E7%BD%AE%E5%99%A8%E7%89%88"><span class="toc-text">作法 4 客製化配置器版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-5-%E6%94%AF%E6%8F%B4%E5%AE%A2%E8%A3%BD%E5%8C%96%E9%85%8D%E7%BD%AE%E5%99%A8%E7%B0%A1%E6%BD%94%E7%89%88"><span class="toc-text">作法 5 支援客製化配置器簡潔版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%B3%95-6-%E5%87%BD%E5%BC%8F%E6%A8%A1%E7%89%88%E5%A4%9A%E8%BC%89%E7%89%88"><span class="toc-text">作法 6 函式模版多載版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E6%95%B4%E7%90%86"><span class="toc-text">總整理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
 </div>
                 </section>
             
