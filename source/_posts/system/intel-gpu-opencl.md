@@ -1,15 +1,17 @@
 ---
-title: 如何在 Intel GPU　上跑 OpenCL
-date: 2023-06-13 00:18:40
+title: 如何在 Intel GPU 上跑 OpenCL
+date: 2023-09-13 00:18:40
 tags: [gpu, opencl, intel]
-des: "本文介紹如何在 Intel GPU 上跑 OpenCL，使用 AOT 事先編譯 Kernel 檔案，並使用 Kernel Binary 來執行 OpenCL"
+des: "本文介紹如何在 Intel GPU 上跑 OpenCL，使用 AOT 事先編譯 Kernel 檔案，並使用編譯好的 Kernel Binary 來執行 OpenCL"
 ---
 
-如何在 Intel GPU　上跑 OpenCL?
+![many workers on GPU](https://github.com/tigercosmos/blog/assets/18013815/5d281088-938f-402c-bc63-fd6e3035870e)
 
-首先，我們得先去裝 Intel 的 [Compute Runtime](https://github.com/intel/compute-runtime/releases/tag/23.22.26516.18)
+如何在 Intel GPU 上跑 OpenCL?
 
-直接用 `apt install` 裝的可能會太舊。
+首先，我們得先去裝 Intel 的 [Compute Runtime](https://github.com/intel/compute-runtime/releases/tag/23.22.26516.18) 來裝驅動程式，直接用 `apt install` 裝的可能會太舊。
+
+裝完之後可以順邊裝一下 `sudo apt install clinfo`，然後使用 `clinfo` 指令看一下 OpenCL 是不是可以真的抓到 GPU 資訊。
 
 雖然 OpenCL 可以執行時直接讀取 `.cl` 檔案來進行編譯 Kernel，但我們希望事先編譯好 Kernel，也就是使用 AOT 技術，這樣執行時才不用重新編譯，因此我們會需要使用 ocloc 編譯器事先編譯。根據平台我們要下的 `-device` 參數不一樣，可以在 Intel 文件中「[Use AOT for Integrated Graphics](https://www.intel.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2023-0/ahead-of-time-compilation.html)」找到對應的代碼。
 
@@ -17,7 +19,7 @@ des: "本文介紹如何在 Intel GPU 上跑 OpenCL，使用 AOT 事先編譯 Ke
 
 以下以 CMake 作為範例，`CMakeList.txt` 中我們使用以下程式碼：
 
-```cmake
+```sh
 # 找到 OpenCL
 find_package(OpenCL REQUIRED)
 
@@ -37,7 +39,7 @@ execute_process(
 install(FILES "/tmp/kernel.bin_glk.bin" DESTINATION /somewhere/path/kernel.bin_glk.bin)
 ```
 
-> 題外話，即使設置 ` -output kernel.bin`，ocloc 編譯完還是會自動加後綴
+> 題外話，即使設置 ` -output kernel.bin`，ocloc 編譯完還是會自動加後綴 `bin_glk` 其實有點惱人
 
 這樣之後寫 OpenCL 程式的時候，就可以直接去 `/somewhere/path/kernel.bin_glk.bin` 讀取編譯好的 Kernel Binary 檔案。
 
@@ -93,3 +95,5 @@ if (clError != CL_SUCCESS) {
 
 // 一般的 OpenCL 寫法 ...
 ```
+
+剩下的部分就是一般的 OpenCL 程式設計，本文就不多介紹了。
