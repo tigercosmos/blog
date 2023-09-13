@@ -4,10 +4,10 @@
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <meta name="keywords"
-        content="gpu,opencl,intel," />
+        content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'" />
     <meta name="description"
-        content="本文介紹如何在 Intel GPU 上跑 OpenCL，使用 AOT 事先編譯 Kernel 檔案，並使用 Kernel Binary 來執行 OpenCL" />
-    <title>Neutrino&#39;s Blog: 如何在 Intel GPU　上跑 OpenCL </title>
+        content="Liu, An-Chi&#39;s blog" />
+    <title>Neutrino&#39;s Blog</title>
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -162,155 +162,47 @@
     </div>
 </header>
         <main class="main">
-            <article class="post">
+            
+<section class="posts">
     
+    <article class="post">
+        
+        <h1 class="post-title">
+            <a href="/post/2023/09/system/intel-gpu-opencl/">
+                如何在 Intel GPU 上跑 OpenCL
+            </a>
+        </h1>
+
+        <ul class="post-date">
+            <li>
+                September 13, 2023
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+        <div class="post-cover">
+            <img src="https://github.com/tigercosmos/blog/assets/18013815/5d281088-938f-402c-bc63-fd6e3035870e">
+        </div>
+        
+                    <div class="post-content ">
+                        
+        <a href="/post/2023/09/system/intel-gpu-opencl/" class="more-link">Continue reading</a>
+        </div>
+    </article>
     
-    
-    <h2 class="post-title">
-        如何在 Intel GPU　上跑 OpenCL
-    </h2>
-    <ul class="post-date">
-        <li>
-            2023-06-13
-        </li>
-        <li>
-            Liu, An-Chi 劉安齊
-        </li>
-    </ul>
-    <div class="post-content">
-        <p>如何在 Intel GPU　上跑 OpenCL?</p>
-<p>首先，我們得先去裝 Intel 的 <a target="_blank" rel="noopener" href="https://github.com/intel/compute-runtime/releases/tag/23.22.26516.18">Compute Runtime</a></p>
-<p>直接用 <code>apt install</code> 裝的可能會太舊。</p>
-<p>雖然 OpenCL 可以執行時直接讀取 <code>.cl</code> 檔案來進行編譯 Kernel，但我們希望事先編譯好 Kernel，也就是使用 AOT 技術，這樣執行時才不用重新編譯，因此我們會需要使用 ocloc 編譯器事先編譯。根據平台我們要下的 <code>-device</code> 參數不一樣，可以在 Intel 文件中「<a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2023-0/ahead-of-time-compilation.html">Use AOT for Integrated Graphics</a>」找到對應的代碼。</p>
-<p>例如我使用的 Intel HD Graphics P530 其代碼就是 <code>glk</code>。</p>
-<p>以下以 CMake 作為範例，<code>CMakeList.txt</code> 中我們使用以下程式碼：</p>
-<pre><code class="language-cmake"># 找到 OpenCL
-find_package(OpenCL REQUIRED)
 
-# 找到 ocloc
-set(OCLOC_EXECUTABLE &quot;/usr/bin/ocloc&quot;)
+    <div class="pagination-bar" align=center>
+        <ul class="pagination">
+            
+            <li class="pagination-number">
+                Page 1 of 1</li>
+            
 
-# 使用 ocloc 編譯 kernel 檔案
-execute_process(
-    COMMAND $&#123;OCLOC_EXECUTABLE&#125; -device glk -file $&#123;KERNEL_SOURCE&#125; -output kernel.bin
-    OUTPUT_VARIABLE OCLOC_OUTPUT
-    ERROR_VARIABLE OCLOC_ERROR
-    RESULT_VARIABLE OCLOC_RESULT
-    WORKING_DIRECTORY /tmp
-)
-
-# 安裝檔案到指定位置
-install(FILES &quot;/tmp/kernel.bin_glk.bin&quot; DESTINATION /somewhere/path/kernel.bin_glk.bin)
-</code></pre>
-<blockquote>
-<p>題外話，即使設置 <code> -output kernel.bin</code>，ocloc 編譯完還是會自動加後綴</p>
-</blockquote>
-<p>這樣之後寫 OpenCL 程式的時候，就可以直接去 <code>/somewhere/path/kernel.bin_glk.bin</code> 讀取編譯好的 Kernel Binary 檔案。</p>
-<p>讀取 Binary 的部份是這樣寫：</p>
-<pre><code class="language-c++">#define CL_HPP_TARGET_OPENCL_VERSION 300 // use OpenCL 3.0
-#define CL_HPP_ENABLE_EXCEPTIONS
-
-#include &lt;CL/opencl.hpp&gt;
-
-cl::Device device;          
-cl::Program program;         
-cl::Context context;               
-cl::CommandQueue queue;          
-std::vector&lt;int&gt; binaryStatus;
-cl_int clError = 0;
-
-std::vector&lt;cl::Platform&gt; platforms;
-cl::Platform::get(&amp;platforms);
-
-cl::Platform&amp; platform = platforms.front();
-std::vector&lt;cl::Device&gt; devices;
-platform.getDevices(CL_DEVICE_TYPE_ALL, &amp;devices);
-
-if (devices.empty()) &#123;
-   std::cerr &lt;&lt; &quot;no device found&quot; &lt;&lt; std::endl;
-&#125;
-
-device = devices.front();
-context = cl::Context(device);
-queue = cl::CommandQueue(context, device, CL_QUEUE_PROFILING_ENABLE);
-
-// 讀取 OpenCL Binary
-std::ifstream binaryFile(binaryFilePath, std::ios::binary);
-if (!binaryFile.is_open()) &#123;
-    std::cerr &lt;&lt; &quot;cannot open file&quot; &lt;&lt; std::endl;
-&#125;
-const std::vector&lt;uint8_t&gt; binaryBuffer(std::istreambuf_iterator&lt;char&gt;(binaryFile), &#123;&#125;);
-binaryFile.close();
-
-cl::Program::Binaries binaries;
-binaries.push_back(binaryBuffer);
-
-// 使用 Binary 建立 cl::Program
-program = cl::Program(context, &#123;device&#125;, binaries, &amp;binaryStatus, &amp;clError);
-
-program.build();
-if (clError != CL_SUCCESS) &#123;
-    std::cerr &lt;&lt; program.getBuildInfo&lt;CLprogram_BUILD_STATUS&gt;(device) &lt;&lt; std::endl;
-    std::cerr &lt;&lt; program.getBuildInfo&lt;CLprogram_BUILD_LOG&gt;(device) &lt;&lt; std::endl;
-&#125;
-
-// 一般的 OpenCL 寫法 ...
-</code></pre>
-
+        </ul>
     </div>
-    
-    <div class="post-tag">
-        tags:&nbsp;
-        
-            <a href="/tags/gpu/">
-                gpu
-            </a>,&nbsp;
-        
-            <a href="/tags/opencl/">
-                opencl
-            </a>,&nbsp;
-        
-            <a href="/tags/intel/">
-                intel
-            </a>,&nbsp;
-        
-    </div>
-    
-<script>
-    hljs.configure({
-        useBR: false
-    });
-    document.querySelectorAll('.code').forEach((block) => {
-        hljs.highlightBlock(block);
-    });
-    document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightBlock(block);
-    });
-</script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
-
-<!-- <hr class="hr-color"> -->
-
-<!-- <p class="post-end-line">Ad</p>
-<p class="post-end-line-small">This may help me earn some money. (Of course you can <a href="/donation/">donate me</a> directly)</p> -->
-
-<!-- <ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-6206289145662773"
-     data-ad-slot="6052934851"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-</script> -->
-
-<!-- <hr class="hr-color">
-<p class="post-end-line">Comments</p> -->
-
+</section>
         </main>
         <aside class="aside">
             <div class="close"></div>
@@ -327,18 +219,17 @@ if (clError != CL_SUCCESS) &#123;
 
             </section>
             
-                <section class="aside-section">
-                    <h2>TOC</h2>
-<div class="toc-container">
-
-</div>
-                </section>
-            
             <section class="aside-section">
                 
 <div class="recent-post">
   <h2>Recent Posts</h2>
   <ul>
+    
+    <li>
+      <a href="/post/2023/09/system/intel-gpu-opencl/">
+        如何在 Intel GPU 上跑 OpenCL
+      </a>
+    </li>
     
     <li>
       <a href="/post/2023/07/c++/template-for-std-containter-conversion/">
@@ -355,12 +246,6 @@ if (clError != CL_SUCCESS) &#123;
     <li>
       <a href="/post/2023/06/c++/std-string-beginner/">
         入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！
-      </a>
-    </li>
-    
-    <li>
-      <a href="/post/2023/06/system/intel-gpu-opencl/">
-        如何在 Intel GPU　上跑 OpenCL
       </a>
     </li>
     
