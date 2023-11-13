@@ -168,6 +168,33 @@
     <article class="post">
         
         <h1 class="post-title">
+            <a href="/post/2020/02/browser/build-chromium-windows/">
+                在 Windows 上編譯 Chromium
+            </a>
+        </h1>
+
+        <ul class="post-date">
+            <li>
+                February 17, 2020
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+        <div class="post-cover">
+            <img src="https://user-images.githubusercontent.com/18013815/74681074-69185700-51fd-11ea-8504-0a775aebeb37.png">
+        </div>
+        
+                    <div class="post-content ">
+                        <p>Chromium 是 Chrome 的開源版本，與 Chrome 差異是 Chrome 多了一些 Google 服務，並且介面設計上也會不太一樣。Chromium 因為是開源軟體，所以被許多其他瀏覽器開發商拿來改造，像是 MicroSoft Edge、Opera、Puffin 等瀏覽器，而 Chromium 底下的 V8 JavaScript 引擎則被 NodeJS 使用。</p>
+        <a href="/post/2020/02/browser/build-chromium-windows/" class="more-link">Continue reading</a>
+        </div>
+    </article>
+    
+    <article class="post">
+        
+        <h1 class="post-title">
             <a href="/post/2020/02/web/js-parallel-worker-sharedarraybuffer/">
                 JavaScript 平行化使用 Web Worker、SharedArrayBuffer、Atomics
             </a>
@@ -420,31 +447,6 @@
         </div>
     </article>
     
-    <article class="post">
-        
-        <h1 class="post-title">
-            <a href="/post/2019/11/unix/sigaction/">
-                Example of Signals by `sigaction` in Unix
-            </a>
-        </h1>
-
-        <ul class="post-date">
-            <li>
-                November 24, 2019
-            </li>
-            <li>
-                Liu, An-Chi 劉安齊
-            </li>
-        </ul>
-        
-                    <div class="post-content ">
-                        <p>Unix 中 processes 之間溝通有很多種，本篇介紹 signal 的簡易使用。可以先閱讀 <a target="_blank" rel="noopener" href="http://beej.us/guide/bgipc/html/single/bgipc.html#signals">Beej 的介紹</a>。顧名思義，signal 就是程序發送和接受訊號，例如我們在使用 Shell 的時候，之所以 <code>Ctrl-C</code> 可以中斷程式執行，就是因為 Shell 捕捉到 <code>Ctrl-C</code> 發送的 <code>SIGINT</code> 訊號，知道有一個 interrupt signal，所以將程式中斷。</p>
-<p>發送 signal 可以用 <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man2/sigaction.2.html"><code>sigaction()</code></a> 或 <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man7/signal.7.html"><code>signal()</code></a>，不過建議使用 <code>sigaction</code> 因為比較新，詳細差別可以看 Stack Overflow 這篇 「<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/231912/what-is-the-difference-between-sigaction-and-signal">What is the difference between sigaction and signal?</a>」。</p>
-<p>如果想觸發 signal，可以用 <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man2/kill.2.html"><code>kill()</code></a> 或 <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man3/sigqueue.3.html"><code>sigqueue()</code></a>，差別在於後者僅限 Linux，但後者可以藉由傳送 <code>siginfo</code> 加一些資訊在 signal 中。此外一些 system call 本身也會觸發 signal，例如如果嘗試 <code>send()</code> 到不存在的 <code>socket</code>，就會觸發 <code>SIGPIPE</code>。</p>
-        <a href="/post/2019/11/unix/sigaction/" class="more-link">Continue reading</a>
-        </div>
-    </article>
-    
 
     <div class="pagination-bar" align=center>
         <ul class="pagination">
@@ -492,6 +494,12 @@
 <div class="recent-post">
   <h2>Recent Posts</h2>
   <ul>
+    
+    <li>
+      <a href="/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米工程師進修中（二）： 職場的社會化與生存
+      </a>
+    </li>
     
     <li>
       <a href="/post/2023/09/system/intel-gpu-opencl/">
@@ -547,12 +555,6 @@
       </a>
     </li>
     
-    <li>
-      <a href="/post/2022/08/japan/before-work-in-japan/">
-        2022 赴日本東京工作全方位教戰手冊
-      </a>
-    </li>
-    
   </ul>
 </div>
 
@@ -587,7 +589,7 @@
                 
     <h2>Archives</h2>
 
-    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
 
 
             </section>

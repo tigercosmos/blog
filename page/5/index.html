@@ -168,6 +168,33 @@
     <article class="post">
         
         <h1 class="post-title">
+            <a href="/post/2020/08/system/measurement-bias/">
+                我們與誤差的距離——論系統軟體實驗測量誤差
+            </a>
+        </h1>
+
+        <ul class="post-date">
+            <li>
+                August 30, 2020
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+        <div class="post-cover">
+            <img src="https://user-images.githubusercontent.com/18013815/91653233-3ff05180-ead1-11ea-9340-743c0b04cb84.png">
+        </div>
+        
+                    <div class="post-content ">
+                        
+        <a href="/post/2020/08/system/measurement-bias/" class="more-link">Continue reading</a>
+        </div>
+    </article>
+    
+    <article class="post">
+        
+        <h1 class="post-title">
             <a href="/post/2020/08/system/perf-basic/">
                 在 Linux 上使用 Perf 做效能分析(入門篇)
             </a>
@@ -413,32 +440,6 @@
         </div>
     </article>
     
-    <article class="post">
-        
-        <h1 class="post-title">
-            <a href="/post/2020/07/js/emscripten-pthread-to-js/">
-                使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析
-            </a>
-        </h1>
-
-        <ul class="post-date">
-            <li>
-                July 7, 2020
-            </li>
-            <li>
-                Liu, An-Chi 劉安齊
-            </li>
-        </ul>
-        
-                    <div class="post-content ">
-                        <h2 id="簡介"><a class="header-anchor" href="#簡介">¶ </a>簡介</h2>
-<p>Emscripten 是可以將 C/C++ 轉換成 WebAssembly 的工具，背後是透過 LLVM 轉換，支援轉換 Pthread，會轉成 JavaScript 的 Web Worker 加 WebAssembly，甚至可以將 OpenGL 轉成 WebGL，讓程式在網頁上跑還能有接近原生程式的效能。</p>
-<p>其中 Pthread 轉成 Web Worker 加 WebAssembly 的部分，就是本文要介紹的重點。我會拿一個範例程式來實際轉換看看，不過要找一個好的測試程式不容易，所以我寫一支 Pthread 計算 PI 的平行程式，用來做轉換測試。</p>
-<p>本文先介紹如何使用 Emscripten 將 Pthread 轉 JS，照著官網教學做的過程採到一些坑，順便也記錄下來，免得大家又落坑了。隨後會分析 (1)原生 C Code (2)Emscripten 轉換的 JS (3)直接用 JS 寫的 Web Worker，三種情境下的效能差異。</p>
-        <a href="/post/2020/07/js/emscripten-pthread-to-js/" class="more-link">Continue reading</a>
-        </div>
-    </article>
-    
 
     <div class="pagination-bar" align=center>
         <ul class="pagination">
@@ -486,6 +487,12 @@
 <div class="recent-post">
   <h2>Recent Posts</h2>
   <ul>
+    
+    <li>
+      <a href="/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米工程師進修中（二）： 職場的社會化與生存
+      </a>
+    </li>
     
     <li>
       <a href="/post/2023/09/system/intel-gpu-opencl/">
@@ -541,12 +548,6 @@
       </a>
     </li>
     
-    <li>
-      <a href="/post/2022/08/japan/before-work-in-japan/">
-        2022 赴日本東京工作全方位教戰手冊
-      </a>
-    </li>
-    
   </ul>
 </div>
 
@@ -581,7 +582,7 @@
                 
     <h2>Archives</h2>
 
-    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
 
 
             </section>
