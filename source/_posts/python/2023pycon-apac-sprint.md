@@ -26,7 +26,7 @@ Sprint 是半天活動，時間有限，通常沒辦法作什麼大貢獻，所�
 
 我大概花了一個多小時找目標，後來鎖定了「[gh-57879: Increase test coverage for pstats.py](https://github.com/python/cpython/pull/111447)」。這是一個增加測試覆蓋率的題目，通常這種就不會太複雜，同時之前已經有人有初步貢獻了，只是他後來中途放棄，我基本上就是把他做一半的拿來繼續做。
 
-由於是基於前者貢獻繼續改，也必沒有花很久就完成，大約一小時就完成了 PR，不過比較可惜的是，Donghee 說他不太熟這邊的程式碼，說等其他人幫忙看，這就比較可惜了，因為有些人是現場就可以 Merge，而我則是後續來來回回跟其他貢獻者討論，約莫三週後才被 Merge。
+由於是基於前者貢獻繼續改，也沒有花很久就完成，當天大約一小時就完成了 PR（但後續的花費時間大概也有五六個小時），不過比較可惜的是，Donghee 說他不太熟這邊的程式碼，說等其他人幫忙看，這就比較可惜了，因為有些人是現場就可以 Merge，而我則是後續來來回回跟其他貢獻者討論，約莫三週後才被 Merge。
 
 我在搞懂 CPython 怎麼樣去察看覆蓋率上特別花時間，官方的「[Increase test coverage](https://devguide.python.org/testing/coverage/)」我覺得沒有寫得很清楚，比方說我完全搞不懂他裡面提到的 `COVERAGEDIR`，還有我一直不知道怎麼去有效率的察看覆蓋率報告。總之以我的 PR 來說，我是執行 `./python -m test test_profile test_pstats --coverage --coverdir=coverage`，然後在 `coverage` 資料夾中去直接讀 Raw 格式的報告，我感覺應該有更聰明的作法。此外我不知道為啥常常 `python -m test` 會出錯，我必須重新執行 `make` 重新編譯。
 
