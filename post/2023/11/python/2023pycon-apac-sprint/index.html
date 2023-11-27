@@ -189,7 +189,7 @@
 <p>以 CPython 為例的話，大家都是找<a target="_blank" rel="noopener" href="https://github.com/python/CPython/issues?q=is%3Aopen+is%3Aissue+label%3Aeasy">「Easy」標籤的 Issue</a> 做，大多數 Easy 會很快被搶光，不過也有不少是前人做到一半的，也有一些 Easy 根本不 Easy。</p>
 <p>判斷一個 Issue 的難易度很重要，最好的情況是可以在 Sprint 的幾小時內可以完成，因為這種大型專案的核心貢獻者通常很忙，趁他在場的時候當面問是最有效率的，不然回家之後你只能在 Github 上 tag 人家，溝通下率會大打折扣。</p>
 <p>我大概花了一個多小時找目標，後來鎖定了「<a target="_blank" rel="noopener" href="https://github.com/python/cpython/pull/111447">gh-57879: Increase test coverage for pstats.py</a>」。這是一個增加測試覆蓋率的題目，通常這種就不會太複雜，同時之前已經有人有初步貢獻了，只是他後來中途放棄，我基本上就是把他做一半的拿來繼續做。</p>
-<p>由於是基於前者貢獻繼續改，也必沒有花很久就完成，大約一小時就完成了 PR，不過比較可惜的是，Donghee 說他不太熟這邊的程式碼，說等其他人幫忙看，這就比較可惜了，因為有些人是現場就可以 Merge，而我則是後續來來回回跟其他貢獻者討論，約莫三週後才被 Merge。</p>
+<p>由於是基於前者貢獻繼續改，也沒有花很久就完成，當天大約一小時就完成了 PR（但後續的花費時間大概也有五六個小時），不過比較可惜的是，Donghee 說他不太熟這邊的程式碼，說等其他人幫忙看，這就比較可惜了，因為有些人是現場就可以 Merge，而我則是後續來來回回跟其他貢獻者討論，約莫三週後才被 Merge。</p>
 <p>我在搞懂 CPython 怎麼樣去察看覆蓋率上特別花時間，官方的「<a target="_blank" rel="noopener" href="https://devguide.python.org/testing/coverage/">Increase test coverage</a>」我覺得沒有寫得很清楚，比方說我完全搞不懂他裡面提到的 <code>COVERAGEDIR</code>，還有我一直不知道怎麼去有效率的察看覆蓋率報告。總之以我的 PR 來說，我是執行 <code>./python -m test test_profile test_pstats --coverage --coverdir=coverage</code>，然後在 <code>coverage</code> 資料夾中去直接讀 Raw 格式的報告，我感覺應該有更聰明的作法。此外我不知道為啥常常 <code>python -m test</code> 會出錯，我必須重新執行 <code>make</code> 重新編譯。</p>
 <p>另外在貢獻這支 PR 的過程中，我也學到了一些 Python 的新知識，像是怎麼使用 <code>NamedTemporaryFile</code> API，還有使用上要怎麼搭配 <code>try..finally</code> 來確保暫存文件的正確關閉，透過簡單的貢獻 CPython 小 PR 就能學到很多。</p>
 <p>參加這次 Sprint 貢獻 CPython 算是滿有趣的，解一下小的 Issue 也不會太困難，不過 CPython 對於真正的初學者來說可能還是有點挑戰，但是 Sprint 中也有各式各樣的題目，也有一些題目是使用 Python 接一下 API，我想對於新手來說也可以很快上手。</p>
