@@ -276,9 +276,9 @@ $ exit
 <p><img src="https://user-images.githubusercontent.com/18013815/91634468-44f6c780-ea23-11ea-9bf5-cd14907e22e8.png" alt="perf annotate"></p>
 <p>perf 會自動跳到花費比較多的區塊，如上圖所示，左邊是執行時間比例，右邊是程式碼對照的 Assembly Code。你可以用上下方向鍵移動，或用 <code>h</code> 來看操作說明。</p>
 <p>其實從這個 Assembly 時間比例就可以看出端倪，通常我們會去看哪邊花最多時間，然後去研究背後原因。這邊的關鍵是 <code>d8</code> 和 <code>cf</code> 這兩行，<code>addl</code> 其實就是在做 <code>sum += data[c]</code>，所以這兩行分別代表 Branch Prediction 猜對和猜錯的路徑。</p>
-<p>這張圖「箭頭」標註的是 Branch Prediction 猜對的路徑，可以看到 <code>d8</code> 行占比幾乎是 0.0%。<br>
+<p>這張圖「箭頭」標註的是 Branch Prediction <strong>猜對</strong>的路徑，可以看到 <code>d8</code> 行占比幾乎是 0.0%。<br>
 <img src="https://user-images.githubusercontent.com/18013815/91635364-93f42b00-ea2a-11ea-89b8-19075dbc67fc.png" alt="branch prediction 猜對" width=70%></p>
-<p>這張圖「箭頭」標註的是 Branch Prediction 猜對的路徑，可以看到 <code>cf</code> 行占比幾乎是 27.7%。<br>
+<p>這張圖「箭頭」標註的是 Branch Prediction <strong>猜錯</strong>的路徑，可以看到 <code>cf</code> 行占比幾乎是 27.7%。<br>
 <img src="https://user-images.githubusercontent.com/18013815/91635373-9eaec000-ea2a-11ea-8347-1f2386373a57.png" alt="branch prediction 猜錯" width=70%></p>
 <p>所以其實就可以發現整隻程式因為 Branch Misses 浪費很多時間。</p>
 <p>這邊我們可以偷偷看一下 <code>./sort</code> 的結果：</p>
