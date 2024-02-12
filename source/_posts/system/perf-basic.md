@@ -159,10 +159,10 @@ perf 會自動跳到花費比較多的區塊，如上圖所示，左邊是執行
 
 其實從這個 Assembly 時間比例就可以看出端倪，通常我們會去看哪邊花最多時間，然後去研究背後原因。這邊的關鍵是 `d8` 和 `cf` 這兩行，`addl` 其實就是在做 `sum += data[c]`，所以這兩行分別代表 Branch Prediction 猜對和猜錯的路徑。
 
-這張圖「箭頭」標註的是 Branch Prediction 猜對的路徑，可以看到 `d8` 行占比幾乎是 0.0%。
+這張圖「箭頭」標註的是 Branch Prediction **猜對**的路徑，可以看到 `d8` 行占比幾乎是 0.0%。
 <img src="https://user-images.githubusercontent.com/18013815/91635364-93f42b00-ea2a-11ea-89b8-19075dbc67fc.png" alt="branch prediction 猜對" width=70%>
 
-這張圖「箭頭」標註的是 Branch Prediction 猜對的路徑，可以看到 `cf` 行占比幾乎是 27.7%。
+這張圖「箭頭」標註的是 Branch Prediction **猜錯**的路徑，可以看到 `cf` 行占比幾乎是 27.7%。
 <img src="https://user-images.githubusercontent.com/18013815/91635373-9eaec000-ea2a-11ea-8347-1f2386373a57.png" alt="branch prediction 猜錯" width=70%>
 
 所以其實就可以發現整隻程式因為 Branch Misses 浪費很多時間。
