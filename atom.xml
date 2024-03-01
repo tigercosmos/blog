@@ -6,7 +6,7 @@
   <link href="https://tigercosmos.xyz/atom.xml" rel="self"/>
   
   <link href="https://tigercosmos.xyz/"/>
-  <updated>2024-02-12T14:06:38.498Z</updated>
+  <updated>2024-03-01T18:07:50.985Z</updated>
   <id>https://tigercosmos.xyz/</id>
   
   <author>
@@ -17,11 +17,39 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Facebook 帳號被駭一週後取回的心得感想</title>
+    <link href="https://tigercosmos.xyz/post/2024/02/security/facebook-hack/"/>
+    <id>https://tigercosmos.xyz/post/2024/02/security/facebook-hack/</id>
+    <published>2024-02-29T16:03:00.000Z</published>
+    <updated>2024-03-01T18:07:50.985Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;2/25 早上一起床，正要滑 Instagram，發現被強制都出，而且登入不了，明明睡覺前都還好好的，還發了一偏廢文啊，我馬上感覺不妙，打開 Messenger 和 Facebook，發現全部都被強制踢出。完蛋，我肯定被駭了！&lt;/p&gt;
+&lt;h2</summary>
+        
+      
+    
+    
+    
+    
+    <category term="facebook" scheme="https://tigercosmos.xyz/tags/facebook/"/>
+    
+    <category term="hack" scheme="https://tigercosmos.xyz/tags/hack/"/>
+    
+    <category term="instagram" scheme="https://tigercosmos.xyz/tags/instagram/"/>
+    
+  </entry>
+  
+  <entry>
     <title>三個月日語 N4 自學經驗分享</title>
     <link href="https://tigercosmos.xyz/post/2023/12/japan/learn-japanese-n4/"/>
     <id>https://tigercosmos.xyz/post/2023/12/japan/learn-japanese-n4/</id>
     <published>2023-12-13T15:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.498Z</updated>
+    <updated>2024-03-01T18:07:50.981Z</updated>
     
     
       
@@ -51,7 +79,7 @@
     <link href="https://tigercosmos.xyz/post/2023/11/python/2023pycon-apac-sprint/"/>
     <id>https://tigercosmos.xyz/post/2023/11/python/2023pycon-apac-sprint/</id>
     <published>2023-11-26T16:03:00.000Z</published>
-    <updated>2024-02-12T14:06:38.502Z</updated>
+    <updated>2024-03-01T18:07:50.985Z</updated>
     
     
       
@@ -80,7 +108,7 @@
     <link href="https://tigercosmos.xyz/post/2023/11/software-engineer/software-engineer-grow-up-2/"/>
     <id>https://tigercosmos.xyz/post/2023/11/software-engineer/software-engineer-grow-up-2/</id>
     <published>2023-11-13T15:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.502Z</updated>
+    <updated>2024-03-01T18:07:50.985Z</updated>
     
     
       
@@ -114,7 +142,7 @@
     <link href="https://tigercosmos.xyz/post/2023/09/system/intel-gpu-opencl/"/>
     <id>https://tigercosmos.xyz/post/2023/09/system/intel-gpu-opencl/</id>
     <published>2023-09-12T16:18:40.000Z</published>
-    <updated>2024-02-12T14:06:38.502Z</updated>
+    <updated>2024-03-01T18:07:50.989Z</updated>
     
     
       
@@ -141,7 +169,7 @@
     <link href="https://tigercosmos.xyz/post/2023/07/c++/template-for-std-containter-conversion/"/>
     <id>https://tigercosmos.xyz/post/2023/07/c++/template-for-std-containter-conversion/</id>
     <published>2023-07-01T16:01:00.000Z</published>
-    <updated>2024-02-12T14:06:38.494Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -168,7 +196,7 @@
     <link href="https://tigercosmos.xyz/post/2023/06/c++/condition-variable-cpp/"/>
     <id>https://tigercosmos.xyz/post/2023/06/c++/condition-variable-cpp/</id>
     <published>2023-06-24T19:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.494Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -194,7 +222,7 @@
     <link href="https://tigercosmos.xyz/post/2023/06/c++/std-string-beginner/"/>
     <id>https://tigercosmos.xyz/post/2023/06/c++/std-string-beginner/</id>
     <published>2023-06-20T16:01:00.000Z</published>
-    <updated>2024-02-12T14:06:38.494Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -220,7 +248,7 @@
     <link href="https://tigercosmos.xyz/post/2023/06/c++/stringview/"/>
     <id>https://tigercosmos.xyz/post/2023/06/c++/stringview/</id>
     <published>2023-06-06T16:01:00.000Z</published>
-    <updated>2024-02-12T14:06:38.494Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -246,7 +274,7 @@
     <link href="https://tigercosmos.xyz/post/2023/05/system/promiscuous-mode/"/>
     <id>https://tigercosmos.xyz/post/2023/05/system/promiscuous-mode/</id>
     <published>2023-05-14T10:20:08.000Z</published>
-    <updated>2024-02-12T14:06:38.502Z</updated>
+    <updated>2024-03-01T18:07:50.989Z</updated>
     
     
       
@@ -278,7 +306,7 @@
     <link href="https://tigercosmos.xyz/post/2023/05/c++/googletest/"/>
     <id>https://tigercosmos.xyz/post/2023/05/c++/googletest/</id>
     <published>2023-05-10T07:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.494Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -306,7 +334,7 @@
     <link href="https://tigercosmos.xyz/post/2023/02/software-engineer/software-engineer-grow-up-1/"/>
     <id>https://tigercosmos.xyz/post/2023/02/software-engineer/software-engineer-grow-up-1/</id>
     <published>2023-02-15T15:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.502Z</updated>
+    <updated>2024-03-01T18:07:50.985Z</updated>
     
     
       
@@ -340,7 +368,7 @@
     <link href="https://tigercosmos.xyz/post/2022/12/c++/cmake-include-header-only-library/"/>
     <id>https://tigercosmos.xyz/post/2022/12/c++/cmake-include-header-only-library/</id>
     <published>2022-12-19T07:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.494Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -367,7 +395,7 @@
     <link href="https://tigercosmos.xyz/post/2022/08/japan/before-work-in-japan/"/>
     <id>https://tigercosmos.xyz/post/2022/08/japan/before-work-in-japan/</id>
     <published>2022-08-18T17:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.498Z</updated>
+    <updated>2024-03-01T18:07:50.981Z</updated>
     
     
       
@@ -395,7 +423,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/c++/smallvec/"/>
     <id>https://tigercosmos.xyz/post/2022/06/c++/smallvec/</id>
     <published>2022-06-22T07:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.494Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -411,11 +439,11 @@
     
     <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
     
+    <category term="optimization" scheme="https://tigercosmos.xyz/tags/optimization/"/>
+    
     <category term="small vector" scheme="https://tigercosmos.xyz/tags/small-vector/"/>
     
     <category term="vector" scheme="https://tigercosmos.xyz/tags/vector/"/>
-    
-    <category term="optimization" scheme="https://tigercosmos.xyz/tags/optimization/"/>
     
   </entry>
   
@@ -424,7 +452,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/c++/sso/"/>
     <id>https://tigercosmos.xyz/post/2022/06/c++/sso/</id>
     <published>2022-06-12T07:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.494Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -440,11 +468,11 @@
     
     <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
     
-    <category term="optimization" scheme="https://tigercosmos.xyz/tags/optimization/"/>
-    
     <category term="string" scheme="https://tigercosmos.xyz/tags/string/"/>
     
     <category term="sso" scheme="https://tigercosmos.xyz/tags/sso/"/>
+    
+    <category term="optimization" scheme="https://tigercosmos.xyz/tags/optimization/"/>
     
   </entry>
   
@@ -453,7 +481,7 @@
     <link href="https://tigercosmos.xyz/post/2022/06/japan/new-grad-find-swe-job-in-japan/"/>
     <id>https://tigercosmos.xyz/post/2022/06/japan/new-grad-find-swe-job-in-japan/</id>
     <published>2022-06-02T17:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.498Z</updated>
+    <updated>2024-03-01T18:07:50.981Z</updated>
     
     
       
@@ -480,7 +508,7 @@
     <link href="https://tigercosmos.xyz/post/2022/05/autobiography/nctu-6/"/>
     <id>https://tigercosmos.xyz/post/2022/05/autobiography/nctu-6/</id>
     <published>2022-05-19T16:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.490Z</updated>
+    <updated>2024-03-01T18:07:50.977Z</updated>
     
     
       
@@ -511,7 +539,7 @@
     <link href="https://tigercosmos.xyz/post/2022/04/story/japanese-girlfriend/"/>
     <id>https://tigercosmos.xyz/post/2022/04/story/japanese-girlfriend/</id>
     <published>2022-04-08T10:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.502Z</updated>
+    <updated>2024-03-01T18:07:50.985Z</updated>
     
     
       
@@ -526,9 +554,9 @@
     
     
     
-    <category term="米蘭" scheme="https://tigercosmos.xyz/tags/%E7%B1%B3%E8%98%AD/"/>
-    
     <category term="日本" scheme="https://tigercosmos.xyz/tags/%E6%97%A5%E6%9C%AC/"/>
+    
+    <category term="米蘭" scheme="https://tigercosmos.xyz/tags/%E7%B1%B3%E8%98%AD/"/>
     
     <category term="女友" scheme="https://tigercosmos.xyz/tags/%E5%A5%B3%E5%8F%8B/"/>
     
@@ -541,42 +569,7 @@
     <link href="https://tigercosmos.xyz/post/2021/12/italy/2021-exchange-polimi-school/"/>
     <id>https://tigercosmos.xyz/post/2021/12/italy/2021-exchange-polimi-school/</id>
     <published>2021-12-24T08:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.498Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;&lt;a</summary>
-        
-      
-    
-    
-    
-    
-    <category term="義大利" scheme="https://tigercosmos.xyz/tags/%E7%BE%A9%E5%A4%A7%E5%88%A9/"/>
-    
-    <category term="Italy" scheme="https://tigercosmos.xyz/tags/italy/"/>
-    
-    <category term="米蘭" scheme="https://tigercosmos.xyz/tags/%E7%B1%B3%E8%98%AD/"/>
-    
-    <category term="Milan" scheme="https://tigercosmos.xyz/tags/milan/"/>
-    
-    <category term="米蘭理工" scheme="https://tigercosmos.xyz/tags/%E7%B1%B3%E8%98%AD%E7%90%86%E5%B7%A5/"/>
-    
-    <category term="polimi" scheme="https://tigercosmos.xyz/tags/polimi/"/>
-    
-    <category term="米蘭理工交換教戰手冊" scheme="https://tigercosmos.xyz/tags/%E7%B1%B3%E8%98%AD%E7%90%86%E5%B7%A5%E4%BA%A4%E6%8F%9B%E6%95%99%E6%88%B0%E6%89%8B%E5%86%8A/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>2021 米蘭理工交換教戰手冊—抵達米蘭與生存篇</title>
-    <link href="https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/"/>
-    <id>https://tigercosmos.xyz/post/2021/10/italy/2021-exchange-polimi-arrive-milan-survive/</id>
-    <published>2021-10-15T17:00:00.000Z</published>
-    <updated>2024-02-12T14:06:38.498Z</updated>
+    <updated>2024-03-01T18:07:50.981Z</updated>
     
     
       
