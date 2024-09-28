@@ -9,6 +9,11 @@ des: "旅日菜鳥工程師進入日本 Mujin 的第二個半年的職場心得�
 
 總算又度過一個半年，在日本待滿一年，第一份正職工作做滿一年，在 Mujin 也待滿一年。若問我過了一年學到了什麼？我想是職場的現實與殘酷還有更進一步的社會化。表現不佳的員工會離開，鞠躬盡瘁的員工會晉升，說起來像廢話，卻是親自感受才會有最深刻的體悟。從桀驁不馴到慢慢地學會不露鋒芒，又是一個社會化的過程，入職後的一年，深深嘆了一口氣，終於成功生存了一年。
 
+本系列（持續更新中）：
+- [新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗](/post/2023/02/software-engineer/software-engineer-grow-up-1/)
+- [新米工程師進修中（二）： 職場的社會化與生存](/post/2023/11/software-engineer/software-engineer-grow-up-2/) （本篇）
+- [新米工程師進修中（三）： 飛越性成長，成為開源專案維護者](/post/2024/05/software-engineer/software-engineer-grow-up-3/) 
+
 <img src="https://user-images.githubusercontent.com/18013815/282447510-427edb91-e209-4893-aba9-9e2cc5ebd711.jpg" alt="cover image"  width="500px"></img>
 
 
