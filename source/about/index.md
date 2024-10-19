@@ -30,6 +30,8 @@ You may want to refer to [my resume](https://github.com/tigercosmos/resume/raw/m
   Usually just reply others tweets.
 - Email: phy.tiger@gmail.com, acliu@cs.nycu.edu.tw
 
+> 專案合作、顧問諮詢、演講邀約請直接 Email 洽談
+
 ---
 
 <iframe
