@@ -12,7 +12,7 @@ des: "旅日菜鳥工程師進入日本 Mujin 的第二個半年的職場心得�
 本系列（持續更新中）：
 - [新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗](/post/2023/02/software-engineer/software-engineer-grow-up-1/)
 - [新米工程師進修中（二）： 職場的社會化與生存](/post/2023/11/software-engineer/software-engineer-grow-up-2/) （本篇）
-- [新米工程師進修中（三）： 飛越性成長，成為開源專案維護者](/post/2024/05/software-engineer/software-engineer-grow-up-3/) 
+- [新米工程師進修中（三）： 飛越性成長，成為開源專案維護者](/post/2024/09/software-engineer/software-engineer-grow-up-3/) 
 
 <img src="https://user-images.githubusercontent.com/18013815/282447510-427edb91-e209-4893-aba9-9e2cc5ebd711.jpg" alt="cover image"  width="500px"></img>
 
