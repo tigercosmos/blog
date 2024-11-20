@@ -21,7 +21,7 @@ struct {
 
 我們先用 [Quick C++ Benchmarks](https://quick-bench.com/) 來看一下以下程式碼的執行結果。
 
-```
+```c++
 const char* SHORT_STR = "hello world";
 
 void ShortStringCreation(benchmark::State& state) {

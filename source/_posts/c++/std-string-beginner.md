@@ -2,7 +2,7 @@
 title:  入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！
 date: 2023-06-21 00:01:00
 tags: [c++, string, ]
-des: "本文深入淺出介紹 std::string，完整介紹各種 string 的使用方法"
+des: "本文深入淺出介紹 std::string，完整介紹各種 string 的初級使用方法"
 ---
 
 ## 1. string 簡介
@@ -43,6 +43,9 @@ using std::string;
 ```
 
 本篇文章是「**基本篇**」，會帶你認識和了解 string 的基本操作和用法，接下來讓我們來學習 string 吧！
+
+前篇：[看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！](/post/2023/06/c++/std-string-beginner/)
+後篇：[看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 進階篇！](/post/2024/11/c++/std-string-advanced/)
 
 ![cover image](https://github.com/tigercosmos/blog/assets/18013815/3fdf2165-cb58-4a01-8698-bca0fec93acb)
 
