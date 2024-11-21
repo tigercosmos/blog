@@ -214,8 +214,8 @@ str.reserve(100); // 預先分配 100 字元的空間
 std::cout &lt;&lt; &quot;Capacity after reserve: &quot; &lt;&lt; str.capacity() &lt;&lt; std::endl; // 至少是 100
 std::cout &lt;&lt; &quot;Size after reserve: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 0
 </code></pre>
-<p>預留好空間之後，你可以使用 <code>str += str2</code> 或是 <code>str.push_back(c)</code> 來向 <code>str</code> 字串添加新內容，此時因為記憶體空間已經事先預留好，因此不會有任何記憶體分配產生，直到我們將 <code>str</code> 的空間用磬，才會再次發生記憶體分配，因此當我們用 <code>reserve</code> 預留空間時，要注意之後避免用超過事先安排的空間大小。</p>
-<p>使用 <code>reserve</code> 可以在處理大量資料時減少記憶體重新配置的次數而提高效能，如果你已經知道要進行大量的字串操作，則此時先將記憶體分配好就可以避免之後不必要的記憶體重新分配。</p>
+<p>預留好空間之後，你可以使用 <code>str += str2</code> 或是 <code>str.push_back(c)</code> 來向 <code>str</code> 字串裡面添加新內容，此時因為記憶體空間已經事先預留好，因此不會有任何記憶體分配產生，直到我們將 <code>str</code> 的空間用磬，才會再次發生記憶體分配，因此當我們用 <code>reserve</code> 預留空間時，要注意之後避免用超過事先安排的空間大小。</p>
+<p>使用 <code>reserve</code> 可以在處理大量字串資料時減少記憶體重新配置的次數而提高效能，如果你已經知道要進行大量的字串操作，則此時先將記憶體分配好就可以避免之後不必要的記憶體重新分配。</p>
 <blockquote>
 <p>小提示：使用 <code>size()</code> 時因為字串已經被填滿，所以通常會使用 <code>str[i]</code> 來改變字串內容；而使用 <code>reserve()</code> 的時候，由於只是預留空間，此時你可以使用 <code>str += str2</code> 或是 <code>str.push_back(c)</code> 來向原本的字串後端添加新字元。</p>
 </blockquote>
@@ -232,7 +232,7 @@ std::cout &lt;&lt; str &lt;&lt; std::endl; // Hell
 </code></pre>
 <p>單一操作字元有時候在使用字串時會非常方便，像是我們有時候要用 for 迴圈逐一處理每個字元，並且搭配 <code>reserve</code> 使用時基本上可以確保我們一直都在容量內。</p>
 <blockquote>
-<p>注意到本小節介紹的函數和 <code>std::vector</code> 用法是一模一樣的，因為其實 <code>std::string</code> 可以理解成 <code>std::vector&lt;char&gt;</code>。</p>
+<p>你會發現本小節介紹的函數和 <code>std::vector</code> 用法是一模一樣的，這因為其實 <code>std::string</code> 可以理解成 <code>std::vector&lt;char&gt;</code>，本質上他們幾乎是一樣的。</p>
 </blockquote>
 <h2 id="2-string-與-C-style-string"><a class="header-anchor" href="#2-string-與-C-style-string">¶ </a>2. string 與 C-style string</h2>
 <p>在 C++ 中，<code>std::string</code> 是一個強大的容器，但傳統的 C-style 字串（<code>char*</code>）在某些場景下依然不可避免，例如和 C 語言的函式庫進行互動時，就只能使用 C-style 字串。</p>
@@ -242,7 +242,7 @@ std::cout &lt;&lt; str &lt;&lt; std::endl; // Hell
 const char* c_filename = str.c_str();
 FILE* file = fopen(c_filename, &quot;w&quot;); // POSIX  API 只接受 C-style 字串
 </code></pre>
-<p>如果需要非 <code>const</code> 的 <code>char*</code>，可以使用 <code>std::vector&lt;char&gt;</code> 或是 <code>std::array&lt;char&gt;</code> 建立新的記憶體空間，並將字串複製過去。</p>
+<p>如果需要非 <code>const</code> 的 <code>char*</code>，可以使用 <code>std::vector&lt;char&gt;</code> 或是 <code>std::array&lt;char&gt;</code> 建立新的記憶體空間，並將字串複製過去（使用 <code>memcpy</code>）。</p>
 <h3 id="2-2-C-style-字串與-std-string-的轉換"><a class="header-anchor" href="#2-2-C-style-字串與-std-string-的轉換">¶ </a>2.2 C-style 字串與 std::string 的轉換</h3>
 <p>從 C-style 字串轉換到 <code>std::string</code> 非常簡單，直接使用 <code>std::string</code> 的建構子即可：</p>
 <pre><code class="language-cpp">const char* c_str = &quot;Hello&quot;;
@@ -303,8 +303,8 @@ int main() &#123;
     std::cout &lt;&lt; ss.str();  // [1, 2, 3]
 &#125;
 </code></pre>
-<p><code>std::stringstream</code> 讓我們可以像用 <code>std::cout</code> 一樣用 <code>&lt;&lt;</code> 去將資料輸入進字串流中，結束之後我們可以再用 <code>ss.str()</code> 去將字串流轉換成 <code>std::string</code>。</p>
-<p>另外，<code>std::stringstream</code> 可以像 <code>std::cout</code> 和 <code>std::cin</code> 一樣進行資料讀取和寫入，舉例來說可以將數字轉換為字串或從字串解析數字：</p>
+<p>例如上面我們將一個陣列輸出成字串，可以看到 <code>std::stringstream</code> 讓我們可以像用 <code>std::cout</code> 一樣地使用 <code>&lt;&lt;</code> 去將資料輸入進字串流中，結束之後我們可以再用 <code>ss.str()</code> 去將字串流轉換成 <code>std::string</code>。</p>
+<p>另外，<code>std::stringstream</code> 也可以像 <code>std::cout</code> 和 <code>std::cin</code> 一樣進行資料輸出和讀取，舉例來說可以將數字轉換為字串或從字串解析數字：</p>
 <pre><code class="language-cpp">#include &lt;sstream&gt;
 #include &lt;iostream&gt;
 #include &lt;string&gt;
@@ -312,12 +312,12 @@ int main() &#123;
     std::stringstream ss;
     ss &lt;&lt; 123 &lt;&lt; &quot; &quot; &lt;&lt; 234; // 將資料輸入 stringstream
     std::string result = ss.str(); // 轉換成 std::string
-    std::cout &lt;&lt; result &lt;&lt; std::endl; // 輸出 「123 234」
+    std::cout &lt;&lt; result &lt;&lt; std::endl; // stdout 輸出 「123 234」
     
     // ss 裡面還保有「123 234」
     int number;
     ss &gt;&gt; number; // 從 stringstream 中讀取數字，從左到右開始
-    std::cout &lt;&lt; number &lt;&lt; std::endl; // 輸出 「123」
+    std::cout &lt;&lt; number &lt;&lt; std::endl; // stdout 輸出 「123」
     return 0;
 &#125;
 </code></pre>
@@ -342,6 +342,7 @@ int main() &#123;
     return 0;
 &#125;
 </code></pre>
+<p><code>std::getline</code> 的定義是 <code>istream&amp; getline(istream&amp; input_stream, string&amp; output, char delim);</code>，第一個參數要接 <code>std::istream</code>，而 <code>std::stringstream</code> 本身就是繼承 <code>std::istream</code>，因此我們可以直接使用 <code>getline</code> 來從 <code>std::stringstream</code> 中讀取資料，事實上讀者過去有使用過 <code>std::getline(std::cin, ...)</code> 的話，<code>std::cin</code> 本身也是繼承自 <code>std::istream</code>。</p>
 <h2 id="5-regex"><a class="header-anchor" href="#5-regex">¶ </a>5. regex</h2>
 <p>regex（regular expression，正規表示式）常用來處理字串的模式匹配與查找，包含檢查格式、搜尋特定模式、或是進行字串取代，而 C++ 的標準庫提供了 <code>&lt;regex&gt;</code> 函式庫來處理 regex。</p>
 <blockquote>
@@ -409,7 +410,7 @@ int main() &#123;
     return 0;
 &#125;
 </code></pre>
-<p>在這個例子中，我們使用 <code>std::format</code> 來替換 <code>&#123;&#125;</code> 內的參數。它支援多種型別的輸入，不需要擔心格式錯誤的風險，這也是它比傳統的 <code>sprintf</code> 更安全的原因。</p>
+<p>在這個例子中，我們使用 <code>std::format</code> 來替換 <code>&#123;&#125;</code> 內的參數，與 Python 的 <code>str.format</code> 或 Rust 的 <code>format!</code> 類似。<code>std::format</code> 會自動將參數轉換成字串，並將其插入到字串中。</p>
 <h3 id="6-2-格式化參數"><a class="header-anchor" href="#6-2-格式化參數">¶ </a>6.2 格式化參數</h3>
 <p><code>std::format</code> 支援不同的格式化參數，例如設定數字的進位、寬度、填充字元等：</p>
 <pre><code class="language-cpp">#include &lt;iostream&gt;
@@ -430,7 +431,7 @@ int main() &#123;
 Padded number: 00000255
 Scientific notation: 1.23e+04
 </code></pre>
-<p>基本上使用起來跟 <code>boost::format</code> 或 <code>std::cout</code> 差不多，一樣有很多格式彈性。</p>
+<p>基本上使用起來跟 <code>boost::format</code> 或 <code>std::cout</code> 差不多，一樣有很多格式可以設定。</p>
 <h2 id="7-wstring"><a class="header-anchor" href="#7-wstring">¶ </a>7. wstring</h2>
 <p>一般 string 的字元只佔用一個位元，其數值最多到 256，也就是可以表達 256 種字元，但顯然要支援 Unicode 字元遠遠不夠用（多達上萬個字元），根據不同語言，其字元佔用的長度也不一樣，像是一般的 CJK（中日韓）字元屬於多位元組字元（multibyte character），會用到 2（UTF-16）至 4 （UTF-32）個位元來表達。這時候就需要使用 <code>std::wstring</code>，它是 <code>std::string</code> 的寬字元（wide character）版本，使用 <code>wchar_t</code> 來儲存每一個字元，適合處理 Unicode 或其他多位元組編碼的字元。</p>
 <h3 id="7-1-基本用法"><a class="header-anchor" href="#7-1-基本用法">¶ </a>7.1 基本用法</h3>
@@ -620,7 +621,7 @@ int main() &#123;
 </code></pre>
 <p>解果會分別得到字串的 <code>3.14159</code> 與字串的 <code>10</code> （十進位的 8 等於八進位的 10）</p>
 <blockquote>
-<p>儘管 <code>std::to_chars</code> 在效率上比傳統的字串轉換方法更好，但它目前僅支援基本的數字型別（例如整數和浮點數），不支援複雜的格式化操作。如果需要格式化字串的靈活性，可以考慮使用 <code>std::format</code> 來輔助。</p>
+<p><code>&lt;charconv&gt;</code> 函式庫比較適合用在簡單的轉換情景，並且有很高的效能，但它不能做複雜的格式化，如果需要格式化字串的話，可以考慮直接使用 <code>std::format</code>。</p>
 </blockquote>
 
     </div>
