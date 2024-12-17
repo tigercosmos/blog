@@ -1,8 +1,12 @@
 <article class="post">
-    <h2 class="post-title">
-        <%= page.title %>
-    </h2>
-    <div class="post-content">
-        <%- page.content %>
-    </div>
+    <% if (page.title) { %>
+        <h2 class="post-title">
+            <%= page.title %>
+        </h2>
+    <% } %>
+    <% if (page.content) { %>
+        <div class="post-content">
+            <%- page.content %>
+        </div>
+    <% } %>
 </article>
