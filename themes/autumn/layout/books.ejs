@@ -1,0 +1,105 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Noto+Serif+TC:wght@200..900&display=swap" rel="stylesheet">
+<style>
+    .book_container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 20px;
+        background: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+        
+    .book_title_left {
+        color: #7fabdb;
+        font-family: "Noto Sans TC", serif;
+        font-optical-sizing: auto;
+        font-weight: 600;
+        font-style: normal;
+    }
+    .book_title_right {
+        color: #5c8db7;
+        font-family: "Noto Sans TC", serif;
+        font-optical-sizing: auto;
+        font-weight: 600;
+        font-style: normal;
+    }
+    .book_title_h2 {
+        text-align: center;
+        margin: 0px;
+    }
+    .book_title_h3 {
+        text-align: center;
+        color: #000000 ;
+        margin: 0px;
+        font-family: "Noto Serif TC", serif;
+        font-optical-sizing: auto;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 1.1rem;
+    }
+    .book_image {
+        display: block;
+        max-width: 100%;
+        margin: 0 auto 20px;
+        border-radius: 5px;
+    }
+    .author {
+        font-size: 0.9rem;
+        color: #555;
+        text-align: center;
+        margin-bottom: 10px;
+        font-family: "Noto Serif TC", serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+    }
+    .book_summary {
+        margin: 20px 0;
+
+        p {
+            font-size: 0.9rem;
+            color: #333;
+        }
+    }
+    .slogan {
+        text-align: center !important;
+        color: #5c8db7;
+        font-family: "Noto Sans TC", serif;
+        font-optical-sizing: auto;
+        font-weight: 600;
+        font-style: normal;
+    }
+    .show_more {
+        text-align: center;
+        margin-top: 30px;
+    }
+    .show_more a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #5c8db7;
+        color: white !important;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        font-size: 0.9rem;
+    }
+    .show_more a:hover {
+        background-color: #537695;
+        color: white !important;
+    }
+</style>
+
+<article class="post">
+    <% if (page.title) { %>
+        <h2 class="post-title">
+            <%= page.title %>
+        </h2>
+    <% } %>
+    <% if (page.content) { %>
+        <div class="post-content">
+            <%- page.content %>
+        </div>
+    <% } %>
+</article>
