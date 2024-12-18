@@ -22,7 +22,7 @@ layout: books
         font-size: 1rem;
     }
     .book-details ul {
-        margin: 10%;
+        margin: 10% 10% 0 10%;
         list-style-type: none;
         padding: 0;
     }
@@ -31,6 +31,26 @@ layout: books
             flex: 1 1 100%;
             max-width: 100%;
         }
+    }
+
+    .book-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .book-buttons button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      background-color: #5c8db7;
+      color: white;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    .book-buttons button:hover {
+      background-color:rgb(51, 81, 108);
     }
 </style>
 
@@ -59,6 +79,39 @@ layout: books
         </ul>
     </div>
 </div>
+
+<div class="book-buttons">
+  <button onclick="openPreview()">預覽頁面</button>
+  <button onclick="window.open('https://www.tenlong.com.tw/products/9786264140348', '_blank')">購買</button>
+</div>
+
+<div id="previewDialog" style="width:60%; height:80%; display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border:1px solid #ccc; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);">
+  <p>預覽頁面</p>
+  <div id="previewPages" style="overflow-y: auto; max-height: 400px;">
+    <img src="/img/beyond-just-coding-preview-1" alt="預覽頁面" id="previewImage" style="width:100%; display:block; margin:auto;">
+  </div>
+  <script>
+    var previewImage = document.getElementById('previewImage');
+    var previewPages = document.getElementById('previewPages');
+    var previewPage = 1;
+    previewImage.onclick = function() {
+      previewPage = previewPage === 1 ? 2 : 1;
+      previewImage.src = '/img/beyond-just-coding-preview-' + previewPage;
+    };
+  <button onclick="closePreview()">X</button>
+</div>
+
+<script>
+  function openPreview() {
+    document.getElementById('previewDialog').style.display = 'block';
+  }
+
+  function closePreview() {
+    document.getElementById('previewDialog').style.display = 'none';
+  }
+</script>
+
+
 
 > 更多內容即將公布，敬請期待！
 
