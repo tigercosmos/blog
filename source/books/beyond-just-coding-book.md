@@ -52,6 +52,49 @@ layout: books
     .book-buttons button:hover {
       background-color:rgb(51, 81, 108);
     }
+    .book-preview-button {
+      margin: 0;
+    }
+    .book-preview-button button {
+      font-size: 0.8rem;
+    }
+    .book-preview-button button:hover {
+      font-size: 0.8rem;
+    }
+    #previewDialog {
+      width: 60%;
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 0 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    @media (max-width: 768px) {
+        #previewDialog {
+            width: 100%;
+            padding: 0 5%;
+            height: auto;
+        }
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+      display: none; /* Hidden by default */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* Make sure it is on top of other elements */
+    }
 </style>
 
 <h2 class="book_title_h2">
@@ -85,32 +128,52 @@ layout: books
   <button onclick="window.open('https://www.tenlong.com.tw/products/9786264140348', '_blank')">購買</button>
 </div>
 
-<div id="previewDialog" style="width:60%; height:80%; display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border:1px solid #ccc; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);">
-  <p>預覽頁面</p>
-  <div id="previewPages" style="overflow-y: auto; max-height: 400px;">
-    <img src="/img/beyond-just-coding-preview-1" alt="預覽頁面" id="previewImage" style="width:100%; display:block; margin:auto;">
-  </div>
-  <script>
-    var previewImage = document.getElementById('previewImage');
-    var previewPages = document.getElementById('previewPages');
-    var previewPage = 1;
-    previewImage.onclick = function() {
-      previewPage = previewPage === 1 ? 2 : 1;
-      previewImage.src = '/img/beyond-just-coding-preview-' + previewPage;
-    };
-  <button onclick="closePreview()">X</button>
-</div>
-
 <script>
   function openPreview() {
+    document.getElementById('overlay').style.display = 'flex';
     document.getElementById('previewDialog').style.display = 'block';
   }
 
   function closePreview() {
+    document.getElementById('overlay').style.display = 'none';
     document.getElementById('previewDialog').style.display = 'none';
   }
 </script>
 
+<div class="overlay" id="overlay">
+  <div id="previewDialog">
+    <div id="previewPages" style="overflow-y:scroll;height:90%;">
+      <img src="/img/beyond-just-coding-preview-1.jpg" alt="預覽頁面" id="previewImage" style="width: 100%; display:block; margin:auto;">
+    </div>
+    <div class="book-buttons book-preview-button">
+      <button onclick="previousPage()">上一頁</button>
+      <button onclick="nextPage()">下一頁</button>
+    </div>
+    <script>
+      function previousPage() {
+        let previewImage = document.getElementById('previewImage');
+        let parts = previewImage.src.split("-");
+        let tmp = parts[parts.length - 1];
+        let pageNumber = parseInt(tmp.split(".")[0]);
+        if (pageNumber > 1) {
+          pageNumber -= 1;
+        }
+        previewImage.src = '/img/beyond-just-coding-preview-' + pageNumber+ '.jpg';
+      }
+      function nextPage() {
+        let previewImage = document.getElementById('previewImage');
+        const parts = previewImage.src.split("-");
+        let tmp = parts[parts.length - 1];
+        let pageNumber = parseInt(tmp.split(".")[0]);
+        if (pageNumber < 15) {
+          pageNumber += 1;
+        }
+        previewImage.src = '/img/beyond-just-coding-preview-' + pageNumber + '.jpg';
+      }
+    </script>
+    <button onclick="closePreview()" style="position:absolute; top:10px; right:30px;">X</button>
+  </div>
+</div>
 
 
 > 更多內容即將公布，敬請期待！
