@@ -63,6 +63,8 @@ layout: books
     }
     #previewDialog {
       width: 60%;
+      height: 85%;
+      max-height: min-content;
       display: none;
       position: fixed;
       top: 50%;
