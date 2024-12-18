@@ -17,6 +17,7 @@ widgets:
   archive: enabled
   tag: enabled
   about: enabled
+  newbook: enabled
   recent: enabled
   search: enabled
 
