@@ -183,6 +183,7 @@
             Liu, An-Chi 劉安齊
         </li>
     </ul>
+    <a href="/books/beyond-just-coding-book.html" role="advertisement"><img src="/img/new-book-ad.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="ad-banner-image"></a>
     <div class="post-content">
         <p>Unix 中 processes 之間溝通有很多種，本篇介紹 signal 的簡易使用。可以先閱讀 <a target="_blank" rel="noopener" href="http://beej.us/guide/bgipc/html/single/bgipc.html#signals">Beej 的介紹</a>。顧名思義，signal 就是程序發送和接受訊號，例如我們在使用 Shell 的時候，之所以 <code>Ctrl-C</code> 可以中斷程式執行，就是因為 Shell 捕捉到 <code>Ctrl-C</code> 發送的 <code>SIGINT</code> 訊號，知道有一個 interrupt signal，所以將程式中斷。</p>
 <p>發送 signal 可以用 <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man2/sigaction.2.html"><code>sigaction()</code></a> 或 <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man7/signal.7.html"><code>signal()</code></a>，不過建議使用 <code>sigaction</code> 因為比較新，詳細差別可以看 Stack Overflow 這篇 「<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/231912/what-is-the-difference-between-sigaction-and-signal">What is the difference between sigaction and signal?</a>」。</p>
@@ -399,7 +400,7 @@ Tick #15.
 
 
             </section>
-            <section class="aside-section">
+            <section class="aside-section" role="advertisement">
                 
     <h2>新書上市</h2>
     <a href="/books/beyond-just-coding-book.html">

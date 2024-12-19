@@ -4,7 +4,7 @@
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <meta name="keywords"
-        content="c++,string,sso,optimization," />
+        content="c++,optimization,string,sso," />
     <meta name="description"
         content="本文簡單介紹 C++ 短字串最佳化（Short String Optimization）" />
     <title>Neutrino&#39;s Blog: C++ 短字串最佳化（Short String Optimization） </title>
@@ -183,6 +183,7 @@
             Liu, An-Chi 劉安齊
         </li>
     </ul>
+    <a href="/books/beyond-just-coding-book.html" role="advertisement"><img src="/img/new-book-ad.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="ad-banner-image"></a>
     <div class="post-content">
         <p>C++ 的 <code>std::string</code> 是我們在學 C++ 最早且最常使用的函示庫了，我們在學習的時候大多是去理解 string 就是一個容器（container），基本上大概可以想成 <code>std::vector&lt;char&gt;</code>。</p>
 <p>我們看一下 <code>std::string</code> 裡面長什麼樣子，<code>std::string</code> 其實是 <code>std::basic_string&lt;char&gt;</code> 的別名，<code>basic_string</code> 結構至少會長的像以下程式碼，一個字元類別 <code>CharT</code> 的陣列指標，紀錄當前字串多長的 <code>size</code>，以及當前字串容器的容量 <code>capacity</code>，以跑在 64 bits x86 架構上來說，一個 string 起碼會需要 $8+8+8=24$ bytes。</p>
@@ -322,16 +323,16 @@ stack space = 24, heap space = 0, capacity = 31
                 c++
             </a>,&nbsp;
         
+            <a href="/tags/optimization/">
+                optimization
+            </a>,&nbsp;
+        
             <a href="/tags/string/">
                 string
             </a>,&nbsp;
         
             <a href="/tags/sso/">
                 sso
-            </a>,&nbsp;
-        
-            <a href="/tags/optimization/">
-                optimization
             </a>,&nbsp;
         
     </div>
@@ -386,7 +387,7 @@ stack space = 24, heap space = 0, capacity = 31
 
 
             </section>
-            <section class="aside-section">
+            <section class="aside-section" role="advertisement">
                 
     <h2>新書上市</h2>
     <a href="/books/beyond-just-coding-book.html">
