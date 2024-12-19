@@ -4,7 +4,7 @@
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <meta name="keywords"
-        content="c++,optimization,small vector,vector," />
+        content="c++,small vector,vector,optimization," />
     <meta name="description"
         content="本文簡單介紹 C++ 實作 Small Vector" />
     <title>Neutrino&#39;s Blog: C++ 實作 Small Vector </title>
@@ -183,7 +183,7 @@
             Liu, An-Chi 劉安齊
         </li>
     </ul>
-    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-ad.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="ad-banner-image"></a>
+    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     <div class="post-content">
         <p><code>std::vector</code> 應該是所有人使用 C++ 最常使用的容器了，Chandler Carruth 在 「<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fHNmRkzxHWs">Efficiency with Algorithms, Performance with Data Structures (2014)</a>」演講中也提到，絕大多數時候我們基本上只需要考慮使用 <code>std::vector</code>，理由是即使像是 <code>std::unordered_map</code> 似乎有著 $O(1)$ 的複雜度，但實際上考量到記憶體存取還有 Cache Miss，還不如使用 <code>std::vector</code> 的連續記憶體來的好。為了方便，後續都直接用 Vector 指 <code>std::vector</code>。</p>
 <p>在使用 Vector 的時候，如果我們大概知道數量上限，可以使用 <code>reserve()</code> 來事先宣告要使用多少 Heap 記憶體，這樣可以避免重複分配新的記憶體和拷貝，但是我們仍然不能避免第一次使用時分配 Heap 記憶體，只要花一次時間做記憶體分配就會拖慢效能。</p>
@@ -538,16 +538,16 @@ int main()
                 c++
             </a>,&nbsp;
         
-            <a href="/tags/optimization/">
-                optimization
-            </a>,&nbsp;
-        
             <a href="/tags/small-vector/">
                 small vector
             </a>,&nbsp;
         
             <a href="/tags/vector/">
                 vector
+            </a>,&nbsp;
+        
+            <a href="/tags/optimization/">
+                optimization
             </a>,&nbsp;
         
     </div>
