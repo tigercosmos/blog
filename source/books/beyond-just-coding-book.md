@@ -120,14 +120,17 @@ layout: books
             <li><strong>ISBN-13：</strong> 9786264140348</li>
             <li><strong>定價：</strong> NT$ 700</li>
             <li><strong>GitHub repo：</strong> <a href="https://github.com/tigercosmos/beyond-just-coding-book">tigercosmos/beyond-just-coding-book</a></li>
-            <li><strong>購買連結：</strong> <a href="https://www.tenlong.com.tw/products/9786264140348">天瓏書局</a> </li>
+            <li><strong>購買連結：</strong> <a href="https://www.tenlong.com.tw/products/9786264140348">天瓏書局</a> （最便宜） </li>
+            <li><strong>海外購買連結：</strong> <a href="https://www.books.com.tw/products/0011008985">博客來</a></li>
+            <li><strong>電子書：</strong> 預計 2025/3/31 上市</li>
         </ul>
     </div>
 </div>
 
 <div class="book-buttons">
-  <button onclick="openPreview()">預覽頁面</button>
-  <button onclick="window.open('https://www.tenlong.com.tw/products/9786264140348', '_blank')">購買</button>
+  <button onclick="openPreview()">預覽書籍頁面</button>
+  <button onclick="window.open('https://www.tenlong.com.tw/products/9786264140348', '_blank')">線上購買</button>
+  <button onclick="location.href='#目錄'">線上搶先看</button>
 </div>
 
 <script>
@@ -178,8 +181,6 @@ layout: books
 </div>
 
 
-> 更多內容即將公布，敬請期待！
-
 ## 簡介
 
 成為優秀的程式設計師，可以從基本的資工素養開始培養起！
@@ -210,6 +211,7 @@ layout: books
 - **專為實習生與初階工程師設計**：不僅是一本技術書，更是一本指導實習生、初階工程師如何在真實環境中成長的指南。除了專業技術，書中也融入了職場溝通、團隊合作、學習心法等實務技巧。
 
 ## 適合對象
+
 - 正在尋找程式開發實習機會的各科類學生
 - 即將步入職場成為軟體工程師的準畢業生
 - 從其他領域轉行至軟體開發的工程師
@@ -218,6 +220,12 @@ layout: books
 
 ## 目錄
 
+> 將不定期公開部分書籍內容，敬請期待！
+
+- [序](/post/2024/12/beyond-just-coding-book/preface/)
+- 推薦序（交大資工副教授游逸平）
+- 推薦序（新思科技首席工程師陳永昱）
+- 致謝
 - Chapter 1 程式開發環境
   - 1.1 作業系統
     - 1.1.1 Linux
