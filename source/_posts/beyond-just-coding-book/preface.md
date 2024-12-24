@@ -87,6 +87,6 @@ des: "本文摘自《程式設計原來不只有寫 CODE！》一書之序，談
 
 > 欲閱讀更多內容，請參閱[《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》](/books/beyond-just-coding-book.html)介紹頁面。
 > 
-> <a href="/books/beyond-just-coding-book.html"><img class="book_image" src="https://raw.githubusercontent.com/tigercosmos/beyond-just-coding-book/refs/heads/master/book_picture.jpg" width="80%" alt="「程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課」書籍封面" style="max-width:350px"></a>
+> <a href="/books/beyond-just-coding-book.html"><img src="https://raw.githubusercontent.com/tigercosmos/beyond-just-coding-book/refs/heads/master/book_picture.jpg" width="80%" alt="「程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課」書籍封面" style="max-width:350px"></a>
 
 
