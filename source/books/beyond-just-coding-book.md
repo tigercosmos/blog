@@ -220,7 +220,7 @@ layout: books
 
 ## 目錄
 
-> 將不定期公開部分書籍內容，敬請期待！
+> 有連結的章節為公開內容，將不定期公開部分書籍內容，敬請期待！
 
 - [序](/post/2024/12/beyond-just-coding-book/preface/)
 - 推薦序（交大資工副教授游逸平）
@@ -234,7 +234,7 @@ layout: books
   - 1.2 編輯器
     - 1.2.1 學習盲打
     - 1.2.2 Visual Studio Code
-    - 1.2.3 Vim
+    - [1.2.3 Vim](/post/2024/12/beyond-just-coding-book/vim/)
 - Chapter 2 系統操作
   - 2.1 Shell
     - 2.1.1 Shell 的功用

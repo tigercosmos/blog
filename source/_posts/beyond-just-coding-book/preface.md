@@ -89,8 +89,11 @@ des: "本文摘自《程式設計原來不只有寫 CODE！》一書之序，談
 本書也用來勉勵各個資工系所學生、轉職工程師，或任何想要踏進資工領域的讀者，期待書中教授的知識對各位有幫助，希望大家可以一起進步！
 
 
-> 欲閱讀更多內容，請參閱[《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》](/books/beyond-just-coding-book.html)介紹頁面。
-> 
-> <a href="/books/beyond-just-coding-book.html"><img src="https://raw.githubusercontent.com/tigercosmos/beyond-just-coding-book/refs/heads/master/book_picture.jpg" width="80%" alt="「程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課」書籍封面" style="max-width:350px"></a>
+<div style="display: flex;justify-content: center;align-items: center;">
+<blockquote style="border: 5px solid #ee9c6b;border-radius:30px; width:80%;">
 
+欲閱讀更多內容，請參閱[《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》](/books/beyond-just-coding-book.html)介紹頁面。
+<a href="/books/beyond-just-coding-book.html" style="display: flex;justify-content: center;align-items: center;"><img src="https://raw.githubusercontent.com/tigercosmos/beyond-just-coding-book/refs/heads/master/book_picture.jpg" width="100%" alt="「程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課」書籍封面" style="max-width:350px"></a>
 
+</blockquote>
+</div>
