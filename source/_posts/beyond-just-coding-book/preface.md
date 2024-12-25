@@ -5,7 +5,11 @@ tags: [序,  程式設計原來不只有寫 CODE！, 資工基本素養, 軟體�
 des: "本文摘自《程式設計原來不只有寫 CODE！》一書之序，談論每個軟體工程師都該具備的資工基本素養。"
 ---
 
-> 本文摘自[《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》](/books/beyond-just-coding-book.html)一書的〈序〉。
+<blockquote style="border: 5px solid #ee9c6b;border-radius:30px;">
+
+本文摘自[**《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》**](/books/beyond-just-coding-book.html)一書的〈序〉。本文為精簡版，敬請[支持原書](/books/beyond-just-coding-book.html)來觀看完整內容以及精美排版。
+
+</blockquote>
 
 一個資工系所畢業的學生該具備什麼技能？一個半路出家的工程師需要具備什麼能力？除了基本的程式設計能力與專業科目所學的知識，這本書想好好來討論一下任何寫程式的學生或工程師都該該具備的「基本素養」。
 
