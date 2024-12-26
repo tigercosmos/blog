@@ -9,7 +9,8 @@ des: "本文簡單介紹 std::hash 的使用方式，瞭解如何替客製化型
 
 一般使用 `std::unordered_map` 或 `std::unordered_set` 時我們並不會碰到任何問題，例如我們使用 `std::string`、`int`、`float` 等型別當鍵值時，C++ 已經內建好算雜湊值的方式，但是當我們用客製化的類別、型別當作鍵值時，C++ 並不知道要怎樣去計算其雜湊值，我們就會需要定義如何去算該物件的雜湊值，此時就會使用 `std::hash`。
 
-![Cover Picture](https://github.com/user-attachments/assets/28b99953-2b57-42da-a029-00d3ad6144d8)
+<img src="https://github.com/user-attachments/assets/28b99953-2b57-42da-a029-00d3ad6144d8" rel="img_src" alt="cover picture">
+
 
 ## 基本用法
 
