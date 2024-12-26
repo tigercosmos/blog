@@ -183,7 +183,6 @@
             Liu, An-Chi 劉安齊
         </li>
     </ul>
-    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     <div class="post-content">
         <p>大家在資料結構與演算法中應該學過雜湊（hash），其最大功用是查表時效率為 $\mathbf{O}(1)$，換句話說就是常數時間的速度，也就是最快的意思。在 C++ 中如果我們想要使用雜湊的資料結構，通常會使用 <code>std::unordered_map</code> 或 <code>std::unordered_set</code>，藉由這兩個資料結構達到快速查表的效果。</p>
 <p>一般使用 <code>std::unordered_map</code> 或 <code>std::unordered_set</code> 時我們並不會碰到任何問題，例如我們使用 <code>std::string</code>、<code>int</code>、<code>float</code> 等型別當鍵值時，C++ 已經內建好算雜湊值的方式，但是當我們用客製化的類別、型別當作鍵值時，C++ 並不知道要怎樣去計算其雜湊值，我們就會需要定義如何去算該物件的雜湊值，此時就會使用 <code>std::hash</code>。</p>
@@ -353,6 +352,9 @@ int main() &#123;
 <p>實際測試之後會發現就算 <code>std::hash</code> 定義的雜湊有碰撞時，C++ 依舊能正確將答案找出來，但可以預期因為發生碰撞，查表就會是線性的，也就失去雜湊原本速度上的優勢。</p>
 
     </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     
     <div class="post-tag">
         tags:&nbsp;

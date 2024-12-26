@@ -183,7 +183,6 @@
             Liu, An-Chi 劉安齊
         </li>
     </ul>
-    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     <div class="post-content">
         <h2 id="1-簡介"><a class="header-anchor" href="#1-簡介">¶ </a>1. 簡介</h2>
 <p>本文接續前篇「<a href="/post/2020/07/js/emscripten-pthread-to-js/">使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析</a>」，對用 Emscripten 將 Pthread 轉 JS 做另一個 Case 的測試，這次將檢驗 Merge Sort 的表現。</p>
@@ -529,6 +528,9 @@ $ ./a.out
 <p>本文實驗 Pthread、Pthread 轉 JS + WASM 和純 JS，執行 Merge Sort 的效能。結果 Merge Sort 以 Pthread 版本跑最快，Emscripten 轉換的 WASM 其次，其中又以一般模式在陣列長度小時比較快，而 Proxy 模式在陣列長度大時有優勢，最後純 JS 的版本執行速度最慢。</p>
 
     </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     
     <div class="post-tag">
         tags:&nbsp;

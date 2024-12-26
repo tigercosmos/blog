@@ -183,7 +183,6 @@
             Liu, An-Chi 劉安齊
         </li>
     </ul>
-    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     <div class="post-content">
         <p>I found it becomes more and more difficult to programing some and record the process on this series. The reason is that it costs huge time for studying and thinking about the next steps. I expected I could write some code every day, but it seems that I would take two or three days for studying on a topic and then implementing functions.</p>
 <p>So, let’s talked about my studying today. I spend some time studying the implementation of <a target="_blank" rel="noopener" href="https://github.com/pingcap/tidb">TiDB</a> that I talked about yesterday. I have some reflection on its methods.</p>
@@ -193,6 +192,9 @@
 <p>Further, considering the performance, many DBMS implement their own bytes or strings handler for the scanner. I have not designed the protocol of the message yet, and I am just thinking about converting the string to bytes as protocol to make it simple. Anyway, handling bytes by well designed protocol would optimize the performance, but I would just process strings and using the Rust standard library for now. Maybe I will rewrite and refactor this part in the future, but now it’s fine to “keep it simple, keep it stupid”.</p>
 
     </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     
     <div class="post-tag">
         tags:&nbsp;

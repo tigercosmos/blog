@@ -183,7 +183,6 @@
             Liu, An-Chi 劉安齊
         </li>
     </ul>
-    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     <div class="post-content">
         <h2 id="簡介"><a class="header-anchor" href="#簡介">¶ </a>簡介</h2>
 <p>Emscripten 是可以將 C/C++ 轉換成 WebAssembly 的工具，背後是透過 LLVM 轉換，支援轉換 Pthread，會轉成 JavaScript 的 Web Worker 加 WebAssembly，甚至可以將 OpenGL 轉成 WebGL，讓程式在網頁上跑還能有接近原生程式的效能。</p>
@@ -431,6 +430,9 @@ real    0m0.350s
 <p>本文介紹如何使用 Emscripten 去將 C/C++ Pthread 轉換成 Web Worker 和 WebAssembly，並對 (1)原生 C Code (2)Emscripten 轉換的 JS (3)直接用 JS 寫的 Web Worker，三種情境作效能分析。發現在開 O3 優化的情況下，Native C 比 Pthread 轉換的 WASM 快 30% 左右，並且用 Pthread 轉換的 WASM 和直接用 Web Worker 的 JS 差不多。</p>
 
     </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     
     <div class="post-tag">
         tags:&nbsp;

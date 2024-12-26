@@ -183,7 +183,6 @@
             Liu, An-Chi 劉安齊
         </li>
     </ul>
-    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     <div class="post-content">
         <p>Working on the parser. When I write the following function <code>Parser::new</code>, I encounter lifetime issue. No matter how I add lifetime syntax <code>'a</code>, '<code>b</code> in the function. I cannot pass the compiler.</p>
 <p>!FILENAME sql/parser.rs</p>
@@ -233,6 +232,9 @@ impl Parser &#123;
 <p>This story tells us, when you implement a <code>struct</code> in Rust, it is better to let the type <code>String</code> in the fields. Though it will be stored at heap, but it will be easier with lifetime handling – once using <code>&amp;str</code> as type, you must add <code>'a</code> lifetime for the <code>struct</code>, and all other <code>fn</code> or <code>struct</code> that use this <code>struct</code>. Also, all objects related to this <code>struct</code> in lifetime <code>'a</code>, will all live as long as <code>'a</code>, and it seems not a good idea. So, <code>String</code> next time.</p>
 
     </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html"><img src="/img/new-book-banner.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image"></a>
     
     <div class="post-tag">
         tags:&nbsp;
