@@ -6,7 +6,7 @@
   <link href="https://tigercosmos.xyz/atom.xml" rel="self"/>
   
   <link href="https://tigercosmos.xyz/"/>
-  <updated>2024-12-26T16:02:15.153Z</updated>
+  <updated>2024-12-27T16:38:33.920Z</updated>
   <id>https://tigercosmos.xyz/</id>
   
   <author>
@@ -17,11 +17,41 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>那一個夏天，在寫程式的女孩：《程式設計原來不只有寫 CODE！》之〈新員報到〉</title>
+    <link href="https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/newcomer/"/>
+    <id>https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/newcomer/</id>
+    <published>2024-12-27T17:00:00.000Z</published>
+    <updated>2024-12-27T16:38:33.920Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;blockquote style=&quot;border: 5px solid #ee9c6b;border-radius:30px;&quot;&gt;
+&lt;p&gt;本文改編自&lt;a</summary>
+        
+      
+    
+    
+    
+    
+    <category term="書摘" scheme="https://tigercosmos.xyz/tags/%E6%9B%B8%E6%91%98/"/>
+    
+    <category term="程式設計原來不只有寫 CODE！" scheme="https://tigercosmos.xyz/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88%E5%8E%9F%E4%BE%86%E4%B8%8D%E5%8F%AA%E6%9C%89%E5%AF%AB-code%EF%BC%81/"/>
+    
+    <category term="資工基本素養" scheme="https://tigercosmos.xyz/tags/%E8%B3%87%E5%B7%A5%E5%9F%BA%E6%9C%AC%E7%B4%A0%E9%A4%8A/"/>
+    
+    <category term="軟體工程師自我成長" scheme="https://tigercosmos.xyz/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E8%87%AA%E6%88%91%E6%88%90%E9%95%B7/"/>
+    
+  </entry>
+  
+  <entry>
     <title>C++ 雜湊值函式庫 std::hash 介紹</title>
     <link href="https://tigercosmos.xyz/post/2024/12/c++/hash/"/>
     <id>https://tigercosmos.xyz/post/2024/12/c++/hash/</id>
     <published>2024-12-26T17:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.153Z</updated>
+    <updated>2024-12-27T16:38:33.924Z</updated>
     
     
       
@@ -52,7 +82,7 @@
     <link href="https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/vim/"/>
     <id>https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/vim/</id>
     <published>2024-12-25T17:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.149Z</updated>
+    <updated>2024-12-27T16:38:33.920Z</updated>
     
     
       
@@ -86,7 +116,7 @@
     <link href="https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/preface/"/>
     <id>https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/preface/</id>
     <published>2024-12-24T17:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.149Z</updated>
+    <updated>2024-12-27T16:38:33.920Z</updated>
     
     
       
@@ -101,13 +131,13 @@
     
     
     
-    <category term="序" scheme="https://tigercosmos.xyz/tags/%E5%BA%8F/"/>
-    
     <category term="程式設計原來不只有寫 CODE！" scheme="https://tigercosmos.xyz/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88%E5%8E%9F%E4%BE%86%E4%B8%8D%E5%8F%AA%E6%9C%89%E5%AF%AB-code%EF%BC%81/"/>
     
     <category term="資工基本素養" scheme="https://tigercosmos.xyz/tags/%E8%B3%87%E5%B7%A5%E5%9F%BA%E6%9C%AC%E7%B4%A0%E9%A4%8A/"/>
     
     <category term="軟體工程師自我成長" scheme="https://tigercosmos.xyz/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E8%87%AA%E6%88%91%E6%88%90%E9%95%B7/"/>
+    
+    <category term="序" scheme="https://tigercosmos.xyz/tags/%E5%BA%8F/"/>
     
   </entry>
   
@@ -116,7 +146,7 @@
     <link href="https://tigercosmos.xyz/post/2024/11/c++/std-string-advanced/"/>
     <id>https://tigercosmos.xyz/post/2024/11/c++/std-string-advanced/</id>
     <published>2024-11-20T18:01:00.000Z</published>
-    <updated>2024-12-26T16:02:15.153Z</updated>
+    <updated>2024-12-27T16:38:33.924Z</updated>
     
     
       
@@ -141,7 +171,7 @@
     <link href="https://tigercosmos.xyz/post/2024/10/travel/china-travel-document-usage/"/>
     <id>https://tigercosmos.xyz/post/2024/10/travel/china-travel-document-usage/</id>
     <published>2024-10-18T15:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.165Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -170,7 +200,7 @@
     <link href="https://tigercosmos.xyz/post/2024/09/software-engineer/software-engineer-grow-up-3/"/>
     <id>https://tigercosmos.xyz/post/2024/09/software-engineer/software-engineer-grow-up-3/</id>
     <published>2024-09-28T20:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.161Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -208,7 +238,7 @@
     <link href="https://tigercosmos.xyz/post/2024/09/software-engineer/apply-china-travel-document/"/>
     <id>https://tigercosmos.xyz/post/2024/09/software-engineer/apply-china-travel-document/</id>
     <published>2024-09-28T00:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.161Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -233,7 +263,7 @@
     <link href="https://tigercosmos.xyz/post/2024/03/security/facebook-hack/"/>
     <id>https://tigercosmos.xyz/post/2024/03/security/facebook-hack/</id>
     <published>2024-03-01T16:03:00.000Z</published>
-    <updated>2024-12-26T16:02:15.161Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -260,7 +290,7 @@
     <link href="https://tigercosmos.xyz/post/2023/12/japan/learn-japanese-n4/"/>
     <id>https://tigercosmos.xyz/post/2023/12/japan/learn-japanese-n4/</id>
     <published>2023-12-13T15:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.157Z</updated>
+    <updated>2024-12-27T16:38:33.928Z</updated>
     
     
       
@@ -290,7 +320,7 @@
     <link href="https://tigercosmos.xyz/post/2023/11/python/2023pycon-apac-sprint/"/>
     <id>https://tigercosmos.xyz/post/2023/11/python/2023pycon-apac-sprint/</id>
     <published>2023-11-26T16:03:00.000Z</published>
-    <updated>2024-12-26T16:02:15.161Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -319,7 +349,7 @@
     <link href="https://tigercosmos.xyz/post/2023/11/software-engineer/software-engineer-grow-up-2/"/>
     <id>https://tigercosmos.xyz/post/2023/11/software-engineer/software-engineer-grow-up-2/</id>
     <published>2023-11-13T15:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.161Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -353,7 +383,7 @@
     <link href="https://tigercosmos.xyz/post/2023/09/system/intel-gpu-opencl/"/>
     <id>https://tigercosmos.xyz/post/2023/09/system/intel-gpu-opencl/</id>
     <published>2023-09-12T16:18:40.000Z</published>
-    <updated>2024-12-26T16:02:15.161Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -380,7 +410,7 @@
     <link href="https://tigercosmos.xyz/post/2023/07/c++/template-for-std-containter-conversion/"/>
     <id>https://tigercosmos.xyz/post/2023/07/c++/template-for-std-containter-conversion/</id>
     <published>2023-07-01T16:01:00.000Z</published>
-    <updated>2024-12-26T16:02:15.153Z</updated>
+    <updated>2024-12-27T16:38:33.924Z</updated>
     
     
       
@@ -407,7 +437,7 @@
     <link href="https://tigercosmos.xyz/post/2023/06/c++/condition-variable-cpp/"/>
     <id>https://tigercosmos.xyz/post/2023/06/c++/condition-variable-cpp/</id>
     <published>2023-06-24T19:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.153Z</updated>
+    <updated>2024-12-27T16:38:33.924Z</updated>
     
     
       
@@ -433,7 +463,7 @@
     <link href="https://tigercosmos.xyz/post/2023/06/c++/std-string-beginner/"/>
     <id>https://tigercosmos.xyz/post/2023/06/c++/std-string-beginner/</id>
     <published>2023-06-20T16:01:00.000Z</published>
-    <updated>2024-12-26T16:02:15.153Z</updated>
+    <updated>2024-12-27T16:38:33.924Z</updated>
     
     
       
@@ -459,7 +489,7 @@
     <link href="https://tigercosmos.xyz/post/2023/06/c++/stringview/"/>
     <id>https://tigercosmos.xyz/post/2023/06/c++/stringview/</id>
     <published>2023-06-06T16:01:00.000Z</published>
-    <updated>2024-12-26T16:02:15.153Z</updated>
+    <updated>2024-12-27T16:38:33.924Z</updated>
     
     
       
@@ -485,7 +515,7 @@
     <link href="https://tigercosmos.xyz/post/2023/05/system/promiscuous-mode/"/>
     <id>https://tigercosmos.xyz/post/2023/05/system/promiscuous-mode/</id>
     <published>2023-05-14T10:20:08.000Z</published>
-    <updated>2024-12-26T16:02:15.165Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -517,7 +547,7 @@
     <link href="https://tigercosmos.xyz/post/2023/05/c++/googletest/"/>
     <id>https://tigercosmos.xyz/post/2023/05/c++/googletest/</id>
     <published>2023-05-10T07:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.153Z</updated>
+    <updated>2024-12-27T16:38:33.924Z</updated>
     
     
       
@@ -545,7 +575,7 @@
     <link href="https://tigercosmos.xyz/post/2023/02/software-engineer/software-engineer-grow-up-1/"/>
     <id>https://tigercosmos.xyz/post/2023/02/software-engineer/software-engineer-grow-up-1/</id>
     <published>2023-02-15T15:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.161Z</updated>
+    <updated>2024-12-27T16:38:33.932Z</updated>
     
     
       
@@ -571,33 +601,6 @@
     <category term="新米工程師進修中" scheme="https://tigercosmos.xyz/tags/%E6%96%B0%E7%B1%B3%E5%B7%A5%E7%A8%8B%E5%B8%AB%E9%80%B2%E4%BF%AE%E4%B8%AD/"/>
     
     <category term="japan" scheme="https://tigercosmos.xyz/tags/japan/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>如何在 Cmake 中引入 Header-Only Library</title>
-    <link href="https://tigercosmos.xyz/post/2022/12/c++/cmake-include-header-only-library/"/>
-    <id>https://tigercosmos.xyz/post/2022/12/c++/cmake-include-header-only-library/</id>
-    <published>2022-12-19T07:00:00.000Z</published>
-    <updated>2024-12-26T16:02:15.153Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;在 C++ 開發環境中，Header-Only Library 是一種很常見的形式，好處是想要使用該函示庫（Library）的時候，只需要 &lt;code&gt;include&lt;/code&gt; 標頭檔（&lt;code&gt;.h&lt;/code&gt;,</summary>
-        
-      
-    
-    
-    
-    
-    <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
-    
-    <category term="cmake" scheme="https://tigercosmos.xyz/tags/cmake/"/>
-    
-    <category term="header-only" scheme="https://tigercosmos.xyz/tags/header-only/"/>
     
   </entry>
   
