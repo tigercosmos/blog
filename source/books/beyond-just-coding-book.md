@@ -226,6 +226,7 @@ layout: books
 - 推薦序（交大資工副教授游逸平）
 - 推薦序（新思科技首席工程師陳永昱）
 - 致謝
+- [新員報到](/post/2024/12/beyond-just-coding-book/newcomer/)
 - Chapter 1 程式開發環境
   - 1.1 作業系統
     - 1.1.1 Linux
