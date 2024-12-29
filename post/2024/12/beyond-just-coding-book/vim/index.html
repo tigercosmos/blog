@@ -231,7 +231,7 @@ sudo make install
 <p>當我們進入 Vim 之後，一開始會在<em>一般模式</em>，在一般模式中任何按鍵都可以是功能鍵（不管是英文按鍵、數字按鍵等），我們可以用功能鍵進行一些操作，例如下指令進行存檔、搜尋字串、瀏覽檔案、複製和刪改等等；而<em>插入模式</em>則是讓你可以進行文字輸入，在此模式中你按的任何按鍵都會被視為文字插進文本中。</p>
 <p>現在請在圖 3 的介面中以鍵盤輸入「<code>:q</code>」 （有正確輸入的話，畫面左下方會顯示你輸入的文字）並按下 <span class="button-like">Enter</span>，你就會離開 Vim 的畫面了。</p>
 <blockquote>
-<p><code>:q</code> 即為 quit 的意思，有時候指令是英文字母的縮寫，例如 <code>:d</code>（delete）、<code>:w</code>（write），有時候則沒有特別原因只能硬背，例如 <code>:x</code>（exit if modified, otherwise just quit）。</p>
+<p><code>:q</code> 即為 quit 的意思，有時候指令是英文字母的縮寫，例如 <code>:d</code>（delete）、<code>:w</code>（write），有時候則沒有特別原因只能硬背，例如 <code>:x</code>（save and exit if modified, otherwise just quit）。</p>
 </blockquote>
 <p>在一般模式中，下達指令的方式都是「:」或「/」開頭，例如剛剛的「<code>:q</code>」。接下來為了方便書寫和閱讀，本書在一般模式下指令時，會以「<code>:q&lt;Enter&gt;</code>」的方式進行標註，其中「<code>&lt;Enter&gt;</code>」代表要按下 <span class="button-like">Enter</span>。如果要你按下 <span class="button-like">Ctrl</span> + <span class="button-like">λ</span>，將會直接標註 <span class="button-like">C-λ</span>，如果要連續按幾個按鍵，例如按兩下 <span class="button-like">d</span>，則會直接標註成 <span class="button-like">dd</span>，此外 Vim 在一般模式中大小寫的英文字母會是不同功能，大寫的 J 按鍵會直接標註成 <span class="button-like">J</span> 反之小寫的 j 會標示成 <span class="button-like">j</span>（用 <span class="button-like">CapsLock</span> 來進行大小寫切換），所以請留意字母的大小寫之分。</p>
 <p>最後， Vim 的游標位置會以「|」來表示，注意：根據不同平台，一般模式的游標可能是細的或粗的（包住字元並反白），以 <code>ti|ger</code> 為範例，當游標是粗的情況下，字母 g 會被粗的游標框住並反白，本書中一般模式將一律以細的游標進行講解，之後不會特別再針對粗游標做說明。</p>
