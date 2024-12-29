@@ -86,7 +86,7 @@ Vim 令人聞風喪膽的其中一點是，一旦進入該程式，你甚至不�
 
 現在請在圖 3 的介面中以鍵盤輸入「`:q`」 （有正確輸入的話，畫面左下方會顯示你輸入的文字）並按下 <span class="button-like">Enter</span>，你就會離開 Vim 的畫面了。
 
-> `:q` 即為 quit 的意思，有時候指令是英文字母的縮寫，例如 `:d`（delete）、`:w`（write），有時候則沒有特別原因只能硬背，例如 `:x`（exit if modified, otherwise just quit）。
+> `:q` 即為 quit 的意思，有時候指令是英文字母的縮寫，例如 `:d`（delete）、`:w`（write），有時候則沒有特別原因只能硬背，例如 `:x`（save and exit if modified, otherwise just quit）。
 
 在一般模式中，下達指令的方式都是「:」或「/」開頭，例如剛剛的「`:q`」。接下來為了方便書寫和閱讀，本書在一般模式下指令時，會以「`:q<Enter>`」的方式進行標註，其中「`<Enter>`」代表要按下 <span class="button-like">Enter</span>。如果要你按下 <span class="button-like">Ctrl</span> + <span class="button-like">λ</span>，將會直接標註 <span class="button-like">C-λ</span>，如果要連續按幾個按鍵，例如按兩下 <span class="button-like">d</span>，則會直接標註成 <span class="button-like">dd</span>，此外 Vim 在一般模式中大小寫的英文字母會是不同功能，大寫的 J 按鍵會直接標註成 <span class="button-like">J</span> 反之小寫的 j 會標示成 <span class="button-like">j</span>（用 <span class="button-like">CapsLock</span> 來進行大小寫切換），所以請留意字母的大小寫之分。
 
