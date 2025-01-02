@@ -271,7 +271,7 @@ layout: books
     - 3.2.2 使用 PDB 分析 Python 程式
   - 3.3 分析程式執行效能與行為
     - 3.3.1 使用 perf 分析程式效能
-    - 3.3.2 使用 tcpdump & Wireshark 分析網路行為
+    - 3.3.2 [使用 tcpdump & Wireshark 分析網路行為](/post/2025/01/beyond-just-coding-book/tcpdump/)
 - Chapter 4 多人協作開發
   - 4.1 程式碼版本控制今生今世
   - 4.2 Git 工具使用教學
