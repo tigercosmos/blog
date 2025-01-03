@@ -134,4 +134,4 @@ markdown:
 
 robotstxt:
   useragent: "*"
-  sitemap: /sitemap.xml
+  sitemap: https://tigercosmos.xyz/sitemap.xml
