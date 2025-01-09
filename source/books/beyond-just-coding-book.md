@@ -123,6 +123,7 @@ layout: books
             <li><strong>購買連結：</strong> <a href="https://www.tenlong.com.tw/products/9786264140348">天瓏書局</a> （最便宜） </li>
             <li><strong>海外購買連結：</strong> <a href="https://www.books.com.tw/products/0011008985">博客來</a></li>
             <li><strong>電子書：</strong> 預計 2025/3/31 上市</li>
+            <li><strong>勘誤表：</strong> <a href="#勘誤表">連結</a></li>
         </ul>
     </div>
 </div>
@@ -310,3 +311,16 @@ layout: books
     - 5.4.2 Markdown 教學
     - 5.4.3 工程師必備的繪圖工具
 - 結語
+
+
+## 勘誤表
+
+雖然本書經過多次校稿，但仍難免有錯誤，若讀者發現任何錯誤，歡迎來信指正，謝謝！
+
+以下堪誤內容針對不同版本用代號做區分是否適用：
+- 第一版第一刷：E1P1
+- 第一版第二刷：E1P2
+
+堪誤表如下：
+- p35，圖 1-10 說明文字中應更正為「Stack Overflow 2023 問卷調查不同 IDE 的使用比例」（E1P1）
+- p95，第 7 行，「stdout（fd=0）」應更正為「stdout（fd=1）」 （E1P1、E1P2）
