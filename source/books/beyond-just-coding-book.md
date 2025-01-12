@@ -323,4 +323,5 @@ layout: books
 
 堪誤表如下：
 - p35，圖 1-10 說明文字中應更正為「Stack Overflow 2023 問卷調查不同 IDE 的使用比例」（E1P1）
+- p48，「Go to Defination」更正為「Go to Definition」。（E1P1、E1P2）
 - p95，第 7 行，「stdout（fd=0）」應更正為「stdout（fd=1）」 （E1P1、E1P2）
