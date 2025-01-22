@@ -228,8 +228,11 @@ int main() &#123;
 </ul>
 <h2 id="std-string-view-範例"><a class="header-anchor" href="#std-string-view-範例">¶ </a>std::string_view 範例</h2>
 <h3 id="substr-子字串"><a class="header-anchor" href="#substr-子字串">¶ </a>substr 子字串</h3>
-<p>前面提到，<code>std::string::substr</code> 和 <code>std::string_view::substr</code> 兩者效能差很大，實驗 <code>string</code> 呼叫 <code>substr</code> 會慢 <code>string_view</code> 17 倍，理由也簡單，<code>string</code> 的 <code>substr</code> 會再產生一個新的 <code>string</code>。<br>
-那使用 <code>string</code> 的時候不想使用 <code>substr</code> 來做子字串比對怎麼辦呢？你可以自己操作 <code>string</code> 底層的記憶體，只是就不是很方便。</p>
+<p>前面提到，<code>std::string::substr</code> 和 <code>std::string_view::substr</code> 兩者效能差很大，實驗 <code>string</code> 呼叫 <code>substr</code> 會慢 <code>string_view</code> 17 倍，理由也簡單，<code>string</code> 的 <code>substr</code> 會再產生一個新的 <code>string</code>。</p>
+<blockquote>
+<p>注意 <code>substr</code> 用法是 <code>substr(start, length)</code>，不是給頭跟尾喔！</p>
+</blockquote>
+<p>那使用 <code>string</code> 的時候不想使用 <code>substr</code> 來做子字串比對怎麼辦呢？你可以自己操作 <code>string</code> 底層的記憶體，只是就不是很方便。</p>
 <pre><code class="language-c++">void print1(const std::string &amp;input) &#123;
     if(input.substr(0,3) == &quot;123&quot;) &#123; // 這個情況下子字串是 std::string
       // ...
