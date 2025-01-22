@@ -65,6 +65,9 @@ int main() {
 ### substr 子字串
 
 前面提到，`std::string::substr` 和 `std::string_view::substr` 兩者效能差很大，實驗 `string` 呼叫 `substr` 會慢 `string_view` 17 倍，理由也簡單，`string` 的 `substr` 會再產生一個新的 `string`。
+
+> 注意 `substr` 用法是 `substr(start, length)`，不是給頭跟尾喔！
+
 那使用 `string` 的時候不想使用 `substr` 來做子字串比對怎麼辦呢？你可以自己操作 `string` 底層的記憶體，只是就不是很方便。
 
 
