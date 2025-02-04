@@ -4,7 +4,7 @@
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <meta name="keywords"
-        content="algorithm,演算法,binary search tree,二元搜尋樹," />
+        content="algorithm,binary search tree,演算法,二元搜尋樹," />
     <meta name="description"
         content="本文以圖解說明如何刪除二元搜尋樹的節點，並提供完整程式碼範例。" />
     <title>Neutrino&#39;s Blog: 圖解刪除二元搜尋樹的節點（LeetCode 450 Delete Node in a BST） </title>
@@ -241,8 +241,6 @@ Output： <code>[6, 2, 8, 1, 3, null, 10]</code></p>
     // 當前節點的值小於 key，往右子樹找
     else if (root-&gt;val &lt; key) &#123;
         root-&gt;right = deleteNode(root-&gt;right, key);
-    &#125; else if (root-&gt;val &lt; key) &#123;
-        root-&gt;right = deleteNode(root-&gt;right, key);
     &#125;
     // 當前節點的值等於 key
     else &#123;
@@ -297,12 +295,12 @@ Output： <code>[6, 2, 8, 1, 3, null, 10]</code></p>
                 algorithm
             </a>,&nbsp;
         
-            <a href="/tags/%E6%BC%94%E7%AE%97%E6%B3%95/">
-                演算法
-            </a>,&nbsp;
-        
             <a href="/tags/binary-search-tree/">
                 binary search tree
+            </a>,&nbsp;
+        
+            <a href="/tags/%E6%BC%94%E7%AE%97%E6%B3%95/">
+                演算法
             </a>,&nbsp;
         
             <a href="/tags/%E4%BA%8C%E5%85%83%E6%90%9C%E5%B0%8B%E6%A8%B9/">
