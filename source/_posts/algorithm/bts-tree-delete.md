@@ -92,8 +92,6 @@ TreeNode *deleteNode(TreeNode *root, int key) {
     // 當前節點的值小於 key，往右子樹找
     else if (root->val < key) {
         root->right = deleteNode(root->right, key);
-    } else if (root->val < key) {
-        root->right = deleteNode(root->right, key);
     }
     // 當前節點的值等於 key
     else {
