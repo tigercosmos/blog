@@ -24,7 +24,7 @@
     </div>
     <% if (page.tags){%>
 
-    <a href="/books/beyond-just-coding-book.html">
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
         <picture>
             <!-- For screens wider than 600px -->
             <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
