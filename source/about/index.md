@@ -32,7 +32,7 @@ You may want to refer to [my resume](https://github.com/tigercosmos/resume/raw/m
 - **YouTube Life Channel**: [Neutrino Life 微中子的生活頻道](https://www.youtube.com/channel/UCAcBvq5pQvy7RXkFq5a9LGA)
 - **Twitter**: [@tigercosmos](https://twitter.com/tigercosmos).
 - **Threads**: [@liu_an_chi](https://www.threads.net/@liu_an_chi)
-- **Email**: phy.tiger@gmail.com, acliu@cs.nycu.edu.tw
+- **Email**: phy.tiger@gmail.com
 
 > 專案合作、顧問諮詢、演講邀約請直接 Email 洽談
 
