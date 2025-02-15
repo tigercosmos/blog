@@ -320,6 +320,7 @@ layout: books
 以下堪誤內容針對不同版本用代號做區分是否適用：
 - 第一版第一刷：E1P1
 - 第一版第二刷：E1P2
+- 第一版第三刷（包含電子書）：E1P3
 
 堪誤表如下：
 - pxiv，「5.2」標題更正為「持續整合和持續部署（CI/CD）」（E1P1、E1P2）
@@ -327,11 +328,13 @@ layout: books
 - p35，圖 1-10 說明文字中應更正為「Stack Overflow 2023 問卷調查不同 IDE 的使用比例」。（E1P1）
 - p48，「Go to Defination」更正為「Go to Definition」。（E1P1、E1P2）
 - p95，第 7 行，「stdout（fd=0）」應更正為「stdout（fd=1）」。（E1P1、E1P2）
-- p114，`route` 執行範例程式區塊，第二行「255.255.240.0」更正為「255.255.255.0」。（E1P1、E1P2）
-- p114，「eno5」全部更正為「eth5」。（E1P1、E1P2）
+- p114，`route` 執行範例程式區塊，第二行「255.255.240.0」更正為「255.255.255.0」。（E1P1、E1P2、E1P3）
+- p114，「eno5」全部更正為「eth5」。（E1P1、E1P2、E1P3）
 - p123，第二個程式碼區塊中的「cat .ssh/authorized_keys」更正為「cat ~/.ssh/authorized_keys」。（E1P1、E1P2）
-- p127，（非錯誤調整）下方程式碼區塊「[sudo] password for mujin:」 更新為 「[sudo] password for acliu:」。（E1P1、E1P2）
-- p158，「確認函式傳遞鏈」段落中，「或者反過來看誰呼叫切呼點」的「切呼點」更正為「切入點」。（E1P1、E1P2）
+- p127，（非錯誤調整）下方程式碼區塊「[sudo] password for mujin:」 更新為 「[sudo] password for acliu:」。（E1P1、E1P2、E1P3）
+- p153，「例如我們從指看根目錄的檔案和目錄」，筆誤「指」為「只」。（E1P1、E1P2、E1P3）
+- p156，「在做從上而下閱讀時兩者使用方法概念相同」，「從上而下」應該為「從下而上」。（E1P1、E1P2、E1P3）
+- p158，「確認函式傳遞鏈」段落中，「或者反過來看誰呼叫切呼點」的「切呼點」更正為「切入點」。（E1P1、E1P2、E1P3）
 
 ## 補充內容
 
