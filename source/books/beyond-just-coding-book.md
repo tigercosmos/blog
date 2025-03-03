@@ -320,13 +320,14 @@ layout: books
 以下堪誤內容針對不同版本用代號做區分是否適用：
 - 第一版第一刷：E1P1
 - 第一版第二刷：E1P2
-- 第一版第三刷（包含電子書）：E1P3
+- 第一版第三刷、第四刷、電子書：E1P3
 
 堪誤表如下：
 - pxiv，「5.2」標題更正為「持續整合和持續部署（CI/CD）」（E1P1、E1P2）
 - p29，〈Xcode〉小節中，第 6 行更正為「各種iOS 裝置上的應用程式」，第 11 行更正為「開發者發布應用程式至 App Store」。（E1P1、E1P2）
 - p35，圖 1-10 說明文字中應更正為「Stack Overflow 2023 問卷調查不同 IDE 的使用比例」。（E1P1）
 - p48，「Go to Defination」更正為「Go to Definition」。（E1P1、E1P2）
+- p73, 第二行「stdin 分別重新輸出到 stdin 和 stderr」，更正為「stdin 分別重新輸出到 stdout 和 stderr」。（E1P1、E1P2、E1P3）
 - p95，第 7 行，「stdout（fd=0）」應更正為「stdout（fd=1）」。（E1P1、E1P2）
 - p114，`route` 執行範例程式區塊，第二行「255.255.240.0」更正為「255.255.255.0」。（E1P1、E1P2、E1P3）
 - p114，「eno5」全部更正為「eth5」。（E1P1、E1P2、E1P3）
