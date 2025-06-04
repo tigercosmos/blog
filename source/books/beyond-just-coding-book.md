@@ -120,9 +120,18 @@ layout: books
             <li><strong>ISBN-13：</strong> 9786264140348</li>
             <li><strong>定價：</strong> NT$ 700</li>
             <li><strong>GitHub repo：</strong> <a href="https://github.com/tigercosmos/beyond-just-coding-book">tigercosmos/beyond-just-coding-book</a></li>
-            <li><strong>購買連結：</strong> <a href="https://www.tenlong.com.tw/products/9786264140348">天瓏書局</a> （最便宜） </li>
+            <li>
+              <strong>購買連結：</strong>
+              <a href="https://www.tenlong.com.tw/products/9786264140348">天瓏書局</a> 、
+              <a href="https://www.books.com.tw/products/0011008985">博客來</a>
+            </li>
             <li><strong>海外購買連結：</strong> <a href="https://www.books.com.tw/products/0011008985">博客來</a></li>
-            <li><strong>電子書：</strong> 預計 2025/3/31 上市</li>
+            <li>
+                <strong>電子書：</strong>
+                <a href="https://www.books.com.tw/products/E050256034">博客來</a> 、
+                <a href="https://www.kobo.com/tw/zh/ebook/code-beyond-just-coding-five-essential-lessons-from-classroom-to-career-in-software-development">樂天 Kobo</a> 、
+                <a href="https://readmoo.com/book/210376330000101">讀墨</a>
+            </li>
             <li><strong>勘誤表：</strong> <a href="#勘誤表">連結</a></li>
         </ul>
     </div>
@@ -337,6 +346,7 @@ layout: books
 - p156，「在做從上而下閱讀時兩者使用方法概念相同」，「從上而下」應該為「從下而上」。（E1P1、E1P2、E1P3）
 - p158，「確認函式傳遞鏈」段落中，「或者反過來看誰呼叫切呼點」的「切呼點」更正為「切入點」。（E1P1、E1P2、E1P3）
 - p188，倒數第二行「行別宣告」更正為「型別宣告」。（E1P1、E1P2、E1P3）
+- p201，「不論有沒有將陣列排序的執行結果」，刪除「不論」使語意更明確。（E1P1、E1P2、E1P3）
 
 ## 補充內容
 
