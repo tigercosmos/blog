@@ -11,9 +11,11 @@ des: "旅日菜鳥工程師進入日本 Mujin 的半年職場心得體驗"
 關於軟體工程師的職涯發展，入職前我就反覆著墨 Vgod 寫的「[軟體工程師的修煉與成長](https://vgod.medium.com/list/e731a8ecf20d)」，不過裡面大部分的內容離我還很遙遠，主要是給入職幾年的工程師參考。Vgod 對菜鳥階段的描述我覺得過於輕描淡寫，畢竟他是事後回首，當初碰到的挫折可能都已經覺得沒什麼了（重點是人家可是 MIT 博士畢業！）。而我想分享的是每個當下我最真實的心境，記下每次的挫折和成長，我相信這個系列可以幫到別人，尤其我覺得很少人去分享從菜鳥到資深的細節，但每個小細節都是成長蛻變的關鍵因素。
 
 本系列（持續更新中）：
-- [新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗](/post/2023/02/software-engineer/software-engineer-grow-up-1/) （本篇）
-- [新米工程師進修中（二）： 職場的社會化與生存](/post/2023/11/software-engineer/software-engineer-grow-up-2/)
-- [新米工程師進修中（三）： 飛越性成長，成為開源專案維護者](/post/2024/09/software-engineer/software-engineer-grow-up-3/)
+- [新米工程師進修中（一）：旅日軟體工程師在 Mujin 的職場初體驗](/post/2023/02/software-engineer/software-engineer-grow-up-1/) （本篇）
+- [新米工程師進修中（二）：職場的社會化與生存](/post/2023/11/software-engineer/software-engineer-grow-up-2/)
+- [新米工程師進修中（三）：飛越性成長，成為開源專案維護者](/post/2024/09/software-engineer/software-engineer-grow-up-3/)
+- [新米工程師進修中（四）：晉升中階工程師，辭職創業（完結篇）](/post/2025/06/software-engineer/software-engineer-grow-up-4/)
+
 
 ![與同事一起去滑雪](https://user-images.githubusercontent.com/18013815/219051435-27c4ef39-b6d6-4b84-9f40-a1bb6c3163a8.png)
 (與同事一起去滑雪)

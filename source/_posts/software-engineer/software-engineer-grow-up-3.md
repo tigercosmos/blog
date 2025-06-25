@@ -10,9 +10,10 @@ des: "旅日菜鳥工程師在日本工作的第二年度心得，這一年中�
 說好的半年一更，一拖就是一年過去了，轉眼進入 Mujin 已經兩年，慢慢地開始適應了如何在這邊生存，可以說是老江湖了。這半年開始，我感到自己實力飛快地成長，一方面是在公司磨練了兩年，另一方面更仰賴我從開源社群所學習到的各種技能。目前公司的程式大致上都摸熟了，開發對我來說不成問題，即使我們公司的程式碼規模也逐漸擴大，但不影響我開發的速度，整體開始越來越得心應手。
 
 本系列（持續更新中）：
-- [新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗](/post/2023/02/software-engineer/software-engineer-grow-up-1/)
-- [新米工程師進修中（二）： 職場的社會化與生存](/post/2023/11/software-engineer/software-engineer-grow-up-2/)
-- [新米工程師進修中（三）： 飛越性成長，成為開源專案維護者](/post/2024/09/software-engineer/software-engineer-grow-up-3/) （本篇）
+- [新米工程師進修中（一）：旅日軟體工程師在 Mujin 的職場初體驗](/post/2023/02/software-engineer/software-engineer-grow-up-1/)
+- [新米工程師進修中（二）：職場的社會化與生存](/post/2023/11/software-engineer/software-engineer-grow-up-2/)
+- [新米工程師進修中（三）：飛越性成長，成為開源專案維護者](/post/2024/09/software-engineer/software-engineer-grow-up-3/) （本篇）
+- [新米工程師進修中（四）：晉升中階工程師，辭職創業（完結篇）](/post/2025/06/software-engineer/software-engineer-grow-up-4/)
 
 <img src="https://github.com/tigercosmos/blog/assets/18013815/a96e7331-f056-4408-82e7-f58f99050014" alt="cover image"  width="500px"></img>
 
