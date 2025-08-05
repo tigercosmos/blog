@@ -37,24 +37,24 @@ code {
   line-height: 1.2;
 }
 .header .title a {
-  color: #f78769;
+  color: var(--accent-color);
   text-decoration: none;
   font: 700 3rem BLOG;
   transition: 0.3s;
 }
 .header .title a:hover {
-  color: #bbb;
+  color: var(--text-light);
 }
 .header .desc {
   margin: 0.5em 0 0.25em;
   font: 18px BLOG;
-  color: #bbb;
+  color: var(--text-light);
 }
 .header .links {
   height: 40px;
   margin: 2.25em auto 4.5em;
-  border-top: 1px dashed #ddd;
-  border-bottom: 1px dashed #ddd;
+  border-top: 1px dashed var(--border-color);
+  border-bottom: 1px dashed var(--border-color);
   font: 700 13px Lato-Bold;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -74,12 +74,12 @@ code {
   content: '';
 }
 .header .links ul li a {
-  color: #777;
+  color: var(--text-color);
   text-decoration: none;
   transition: 0.3s;
 }
 .header .links ul li a:hover {
-  color: #f78769;
+  color: var(--accent-color);
 }
 .header .ipad-menu {
   display: none;
@@ -96,22 +96,22 @@ code {
   padding: 0 1.5em;
   height: 3em;
   z-index: 1;
-  box-shadow: 0px 1px 5px #ddd;
+  box-shadow: 0px 1px 5px var(--border-color);
 }
 .header .mobile-menu h3 a {
-  color: #f78769;
+  color: var(--accent-color);
   text-decoration: none;
   font: 700 1.6rem Lora-Bold;
-  text-shadow: 1px 1px #fff, 2px 2px #f78769;
+  text-shadow: 1px 1px var(--container-bg), 2px 2px var(--accent-color);
 }
 .header .mobile-menu h3 a:hover {
-  color: #bbb;
+  color: var(--text-light);
 }
 .header .menu {
   padding: 0.5em 1em;
-  border: 1px dashed #fff;
-  outline: 5px solid #bbb;
-  background: #bbb;
+  border: 1px dashed var(--container-bg);
+  outline: 5px solid var(--text-light);
+  background: var(--text-light);
   font: 700 14px Lato-Bold;
   color: #fff;
   text-transform: upperCase;
@@ -127,8 +127,8 @@ code {
 }
 .header .menu:focus,
 .header .menu:active {
-  background: #f78769;
-  outline: 3px solid #f78769;
+  background: var(--accent-color);
+  outline: 3px solid var(--accent-color);
 }
 @media screen and (max-width: 1015px) {
   .header .ipad-menu {
@@ -150,13 +150,13 @@ code {
   .header .mobile-menu .menu {
     padding: 0.2em 0.5em;
     font: 700 12px Lato-Bold;
-    outline: 3px solid #bbb;
+    outline: 3px solid var(--text-light);
   }
 }
 .post {
   position: relative;
   text-align: center;
-  border-bottom: 1px dashed #ddd;
+  border-bottom: 1px dashed var(--border-color);
   margin: 0 0 4.5em;
   padding: 0 0 3em;
 }
@@ -178,26 +178,26 @@ code {
 .post .post-cat:first-of-type::after {
   content: "\00B7";
   margin: 0 0.75em;
-  color: #f78769;
+  color: var(--accent-color);
 }
 .post .post-cat:last-of-type::after {
   content: '';
 }
 .post .post-cat a {
   font: 700 13px Lato-Bold;
-  color: #f78769;
+  color: var(--accent-color);
   text-decoration: none;
   transition: 0.3s;
   text-transform: upperCase;
   letter-spacing: 1px;
 }
 .post .post-cat a:hover {
-  color: #777;
+  color: var(--text-color);
 }
 .post .post-title {
   margin: 0 0 0.5em;
   font: 1.953em Lora;
-  color: #777;
+  color: var(--text-color);
 }
 .post .post-title::after {
   content: "";
@@ -205,16 +205,16 @@ code {
   margin: 0.5em auto;
   width: 20%;
   height: 2px;
-  background-color: #f3f3f3;
+  background-color: var(--bg-color);
 }
 .post .post-title a {
-  color: #777;
+  color: var(--text-color);
   text-decoration: none;
 }
 .post .post-date {
   padding: 0;
   list-style: none;
-  color: #bbb;
+  color: var(--text-light);
   font: 14px/1.6 Lato;
 }
 .post .post-date li {
@@ -236,7 +236,7 @@ code {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  box-shadow: 0 0 40px 10px #fff inset;
+  box-shadow: 0 0 40px 10px var(--container-bg) inset;
 }
 .post .post-cover img {
   max-width: 80%;
@@ -244,7 +244,7 @@ code {
 }
 .post .post-content {
   position: relative;
-  color: #777;
+  color: var(--text-color);
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: 1.5em;
@@ -252,7 +252,7 @@ code {
 }
 .post .post-content a.more-link {
   box-shadow: inset 0 -80px 80px -5px rgba(255,255,255,0.75);
-  color: #f78769;
+  color: var(--accent-color);
   font-family: Lora-Bold;
   font-weight: 700;
   display: block;
@@ -274,7 +274,7 @@ code {
 .post .post-tag {
   text-align: left;
   padding: 10px 20px;
-  color: #bbb;
+  color: var(--text-light);
   font: 1rem Lato;
   font-style: italic;
 }
@@ -293,14 +293,14 @@ table {
 }
 table td,
 table th {
-  border: 1px solid #808080;
+  border: 1px solid var(--highlight-border);
   padding: 5px;
 }
 blockquote {
-  background: #f9f9f9;
+  background: var(--blockquote-bg);
   padding: 5px 10px;
   margin-left: 0;
-  border-left: 10px solid #ccc;
+  border-left: 10px solid var(--blockquote-border);
 }
 .post-end-line {
   text-align: left;
@@ -317,7 +317,7 @@ blockquote {
   font-style: italic;
 }
 #comments strong {
-  color: #bbb;
+  color: var(--text-light);
   font-size: 1rem;
 }
 #comments small {
@@ -331,14 +331,14 @@ blockquote {
   margin-bottom: 1em;
 }
 #comments .O_summary {
-  color: #bbb;
+  color: var(--text-light);
   font-size: 1rem;
 }
 #comments #O__submit_comment {
   font-size: 1rem;
 }
 .hr-color {
-  border: 3px dashed #bbb;
+  border: 3px dashed var(--text-light);
   border-radius: 2px;
 }
 .new-book-banner-image {
@@ -368,7 +368,7 @@ blockquote {
   content: ' ';
   height: 24px;
   width: 2px;
-  background-color: #333;
+  background-color: var(--text-dark);
 }
 .close:before {
   transform: rotate(45deg);
@@ -382,7 +382,7 @@ blockquote {
 .aside-section h2 {
   font: 1.25em/1.2 Lora;
   margin: 0.67em 0;
-  color: #777;
+  color: var(--text-color);
 }
 .aside-section h2:before {
   content: '';
@@ -401,23 +401,23 @@ blockquote {
   padding: 0;
 }
 .aside-section ul li {
-  border-top: 1px dashed #ddd;
+  border-top: 1px dashed var(--border-color);
   margin-top: 0.6em;
   padding-top: 0.6em;
 }
 .aside-section ul li a {
-  color: #f78769;
+  color: var(--accent-color);
   text-decoration: none;
   font: 14px Lato;
   transition: 0.3s;
 }
 .aside-section ul li a:hover {
-  color: #ddd;
+  color: var(--accent-hover);
 }
 .aside-section ul li span {
   font: 12px Lato;
   padding-left: 5px;
-  color: #f78769;
+  color: var(--accent-color);
 }
 .aside-section.tag li {
   display: inline-block;
@@ -425,7 +425,7 @@ blockquote {
   margin: 0 10px 0 0;
 }
 .aside-section.tag li a {
-  border: 1px dashed #ddd;
+  border: 1px dashed var(--border-color);
   padding: 4px;
 }
 @media screen and (max-width: 1015px) {
@@ -439,8 +439,8 @@ blockquote {
     width: 28%;
     height: 100vh;
     padding: 3em 20px 0;
-    background-color: #fff;
-    box-shadow: 1px 1px 3px #ddd;
+    background-color: var(--container-bg);
+    box-shadow: 1px 1px 3px var(--border-color);
   }
   .aside .close {
     display: block;
@@ -470,12 +470,12 @@ blockquote {
   color: #777;
 }
 ::placeholder {
-  color: #bababa;
+  color: var(--text-light);
   font-style: italic;
 }
 .toc-container {
-  background: #f9f9f9;
-  border: 1px #aaa;
+  background: var(--blockquote-bg);
+  border: 1px var(--text-light);
   display: table;
   font-size: 80%;
   padding: 5px;
@@ -492,11 +492,38 @@ blockquote {
 .toc-container ol {
   padding-inline-start: 10px;
 }
+:root {
+  --bg-color: #f3f3f3;
+  --container-bg: #fff;
+  --text-color: #777;
+  --text-light: #bbb;
+  --text-dark: #555;
+  --accent-color: #f78769;
+  --accent-hover: #ddd;
+  --border-color: #ddd;
+  --blockquote-bg: #f9f9f9;
+  --blockquote-border: #ccc;
+  --highlight-border: #808080;
+}
+[data-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --container-bg: #2d2d2d;
+  --text-color: #ccc;
+  --text-light: #999;
+  --text-dark: #e0e0e0;
+  --accent-color: #ff8c69;
+  --accent-hover: #666;
+  --border-color: #444;
+  --blockquote-bg: #333;
+  --blockquote-border: #555;
+  --highlight-border: #666;
+}
 body {
   font-size: 1rem;
   line-height: 1.6;
   margin: 0;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 body h1 .header-anchor,
 body h2 .header-anchor,
@@ -515,12 +542,12 @@ body h6:hover .header-anchor {
   display: inline-block;
 }
 body a {
-  color: #f78769 !important;
+  color: var(--accent-color) !important;
   text-decoration: none;
   transition: 0.3s;
 }
 body a:hover {
-  color: #ddd !important;
+  color: var(--accent-hover) !important;
 }
 body p code {
   font-size: 1rem;
@@ -530,9 +557,10 @@ body p code {
   width: 80%;
   box-sizing: border-box;
   padding: 3em 5%;
-  background: #fff;
+  background: var(--container-bg);
   margin: 3em auto;
   overflow: hidden;
+  transition: background-color 0.3s ease;
 }
 .container .main {
   width: 70%;
@@ -568,7 +596,7 @@ body p code {
   padding: 0;
 }
 .pagination-bar ul li {
-  color: #777;
+  color: var(--text-color);
   display: inline-block;
 }
 .pagination-bar ul li::after {
@@ -583,5 +611,5 @@ body p code {
   transition: 0.3s;
 }
 .pagination-bar ul li a:hover {
-  color: #f78769;
+  color: var(--accent-color);
 }

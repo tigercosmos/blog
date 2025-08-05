@@ -15,12 +15,61 @@
 
 
         <!-- highlight -->
-        <link rel="stylesheet"
+        <link id="hljs-light" rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
 
         <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
             window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
                 const [
                     mainTitle,
                     mobileMenu,
@@ -102,10 +151,10 @@
 <meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
-<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
         <header class="header">
-    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
         <h3 class="invisibile">
             <a href="/" class="logo">
                 Neutrino&#39;s Blog
@@ -164,6 +213,11 @@
                 </a>
             </li>
             
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
         </ul>
     </div>
 </header>
@@ -312,6 +366,29 @@
     <article class="post">
         
         <h1 class="post-title">
+            <a href="/post/2018/10/let-build-dbms/23/">
+                Implement Table `insert_row`
+            </a>
+        </h1>
+
+        <ul class="post-date">
+            <li>
+                October 24, 2018
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+                    <div class="post-content ">
+                        
+        <a href="/post/2018/10/let-build-dbms/23/" class="more-link">Continue reading</a>
+        </div>
+    </article>
+    
+    <article class="post">
+        
+        <h1 class="post-title">
             <a href="/post/2018/10/let-build-dbms/24/">
                 Different Client Design of DBMS
             </a>
@@ -339,8 +416,8 @@
     <article class="post">
         
         <h1 class="post-title">
-            <a href="/post/2018/10/let-build-dbms/23/">
-                Implement Table `insert_row`
+            <a href="/post/2018/10/let-build-dbms/3/">
+                Frontend/Backend Protocol
             </a>
         </h1>
 
@@ -355,7 +432,7 @@
         
                     <div class="post-content ">
                         
-        <a href="/post/2018/10/let-build-dbms/23/" class="more-link">Continue reading</a>
+        <a href="/post/2018/10/let-build-dbms/3/" class="more-link">Continue reading</a>
         </div>
     </article>
     
@@ -379,29 +456,6 @@
                     <div class="post-content ">
                         
         <a href="/post/2018/10/let-build-dbms/4/" class="more-link">Continue reading</a>
-        </div>
-    </article>
-    
-    <article class="post">
-        
-        <h1 class="post-title">
-            <a href="/post/2018/10/let-build-dbms/3/">
-                Frontend/Backend Protocol
-            </a>
-        </h1>
-
-        <ul class="post-date">
-            <li>
-                October 24, 2018
-            </li>
-            <li>
-                Liu, An-Chi 劉安齊
-            </li>
-        </ul>
-        
-                    <div class="post-content ">
-                        
-        <a href="/post/2018/10/let-build-dbms/3/" class="more-link">Continue reading</a>
         </div>
     </article>
     
