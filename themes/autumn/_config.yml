@@ -8,7 +8,7 @@ social:
   RSS: /atom.xml
 
 # Background image, color
-background: 'url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3'
+background: 'url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)'
 
 # SEO
 keywords: tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'

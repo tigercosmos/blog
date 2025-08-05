@@ -5,23 +5,23 @@
     line-height: 1.2
   .title 
     a
-      color:#f78769
+      color: var(--accent-color)
       text-decoration: none
       font: 700 3rem BLOG
       transition: .3s
       &:hover
-        color: #bbb
+        color: var(--text-light)
     
   .desc
       margin:.5em 0 .25em
       font: 18px BLOG
-      color: #bbb
+      color: var(--text-light)
 
   .links 
     height: 40px
     margin: 2.25em auto 4.5em
-    border-top: 1px dashed #ddd
-    border-bottom: 1px dashed #ddd
+    border-top: 1px dashed var(--border-color)
+    border-bottom: 1px dashed var(--border-color)
     font: 700 13px Lato-Bold
     text-transform: uppercase
     letter-spacing: 1px
@@ -36,11 +36,11 @@
         &:last-child::after 
           content: ''
         a
-          color: #777
+          color: var(--text-color)
           text-decoration: none
           transition: .3s
           &:hover
-            color: #f78769
+            color: var(--accent-color)
   
   .ipad-menu
     display: none
@@ -57,21 +57,21 @@
     padding: 0 1.5em
     height: 3em
     z-index: 1
-    box-shadow: 0px 1px 5px #ddd
+    box-shadow: 0px 1px 5px var(--border-color)
     h3
       a
-        color:#f78769
+        color: var(--accent-color)
         text-decoration: none
         font: 700 1.6rem Lora-Bold
-        text-shadow: 1px 1px #fff, 2px 2px #f78769
+        text-shadow: 1px 1px var(--container-bg), 2px 2px var(--accent-color)
         &:hover
-          color: #bbb
+          color: var(--text-light)
 
   .menu
     padding: .5em 1em
-    border: 1px dashed #fff
-    outline: 5px solid #bbb
-    background: #bbb
+    border: 1px dashed var(--container-bg)
+    outline: 5px solid var(--text-light)
+    background: var(--text-light)
     font: 700 14px Lato-Bold
     color: #fff
     text-transform: upperCase
@@ -86,8 +86,8 @@
       vertical-align: -3px
 
     &:focus, &:active
-      background: #f78769
-      outline: 3px solid #f78769
+      background: var(--accent-color)
+      outline: 3px solid var(--accent-color)
 
 @media screen and (max-width: 1015px)
   .header
@@ -110,7 +110,7 @@
       .menu
         padding: .2em .5em
         font: 700 12px Lato-Bold
-        outline: 3px solid #bbb
+        outline: 3px solid var(--text-light)
 
       
       

@@ -3,11 +3,40 @@
 @import "_partial/post"
 @import "_widget/aside"
 
+// CSS Variables for theming
+:root
+  --bg-color: #f3f3f3
+  --container-bg: white
+  --text-color: #777
+  --text-light: #bbb
+  --text-dark: #555
+  --accent-color: #f78769
+  --accent-hover: #ddd
+  --border-color: #ddd
+  --blockquote-bg: #f9f9f9
+  --blockquote-border: #ccc
+  --highlight-border: gray
+
+// Dark mode colors
+[data-theme="dark"]
+  --bg-color: #1a1a1a
+  --container-bg: #2d2d2d
+  --text-color: #cccccc
+  --text-light: #999999
+  --text-dark: #e0e0e0
+  --accent-color: #ff8c69
+  --accent-hover: #666666
+  --border-color: #444444
+  --blockquote-bg: #333333
+  --blockquote-border: #555555
+  --highlight-border: #666666
+
 body 
   font-size: 1rem
   line-height: 1.6
   margin: 0
   -webkit-tap-highlight-color: rgba(0,0,0,0)
+  transition: background-color 0.3s ease, color 0.3s ease
 
   h1, h2, h3, h4, h5, h6
     .header-anchor
@@ -16,11 +45,11 @@ body
       .header-anchor
         display: inline-block;
   a
-    color: #f78769 !important
+    color: var(--accent-color) !important
     text-decoration: none
     transition: .3s
     &:hover
-      color: #ddd !important
+      color: var(--accent-hover) !important
   p
     code
       font-size: 1rem
@@ -30,9 +59,10 @@ body
   width: 80%
   box-sizing: border-box
   padding: 3em 5%
-  background: white
+  background: var(--container-bg)
   margin: 3em auto
   overflow: hidden
+  transition: background-color 0.3s ease
 
   .main
     width: 70%
@@ -64,7 +94,7 @@ body
       text-decoration: none
       padding: 0
       li
-        color: #777
+        color: var(--text-color)
         display: inline-block
         &::after
           content: "\00B7"
@@ -75,4 +105,4 @@ body
           text-decoration: none
           transition: .3s
           &:hover
-            color: #f78769
+            color: var(--accent-color)

@@ -1,7 +1,7 @@
 .post
   position: relative
   text-align: center
-  border-bottom: 1px dashed #ddd
+  border-bottom: 1px dashed var(--border-color)
   margin: 0 0 4.5em
   padding: 0 0 3em
 
@@ -22,38 +22,38 @@
     &:first-of-type::after
       content: "\00B7"
       margin: 0 .75em
-      color: #f78769
+      color: var(--accent-color)
     &:last-of-type::after 
       content: ''
     a
       font: 700 13px Lato-Bold
-      color: #f78769
+      color: var(--accent-color)
       text-decoration: none
       transition: .3s
       text-transform: upperCase
       letter-spacing: 1px
       &:hover
-        color: #777
+        color: var(--text-color)
 
   .post-title
     margin: 0 0 .5em
     font: 1.953em Lora 
-    color: #777
+    color: var(--text-color)
     &::after
       content: ""
       display: block
       margin: .5em auto
       width: 20%
       height: 2px
-      background-color: #f3f3f3  
+      background-color: var(--bg-color)  
     a
-      color: #777
+      color: var(--text-color)
       text-decoration: none
 
   .post-date
     padding: 0
     list-style: none
-    color: #bbb
+    color: var(--text-light)
     font: 14px/1.6 Lato
     li 
       display: inline-block
@@ -71,21 +71,21 @@
       top: 0
       left: 50%
       transform: translateX(-50%)
-      box-shadow:0 0 40px 10px #ffffff inset
+      box-shadow:0 0 40px 10px var(--container-bg) inset
     img
       max-width: 80%
       border-radius: 10px
 
   .post-content
     position: relative
-    color: #777
+    color: var(--text-color)
     font-size: 1.2rem
     line-height: 1.6
     margin-bottom: 1.5em
     text-align: left
     a.more-link
       box-shadow: inset 0 -80px 80px -5px rgba(255,255,255,.75)
-      color: #f78769
+      color: var(--accent-color)
       font-family: Lora-Bold
       font-weight: 700
       display: block
@@ -105,7 +105,7 @@
   .post-tag
     text-align: left
     padding: 10px 20px
-    color: #bbb
+    color: var(--text-light)
     font: 1rem Lato
     font-style: italic
 
@@ -121,14 +121,14 @@ table
   border-collapse: collapse;
 
   td, th
-    border: 1px solid gray;
+    border: 1px solid var(--highlight-border);
     padding: 5px;
 
 blockquote
-  background: #f9f9f9;
+  background: var(--blockquote-bg);
   padding: 5px 10px
   margin-left: 0
-  border-left: 10px solid #ccc;
+  border-left: 10px solid var(--blockquote-border);
 
 .post-end-line
   text-align: left
@@ -146,7 +146,7 @@ blockquote
 
 #comments 
   strong
-    color: #bbb
+    color: var(--text-light)
     font-size: 1rem
   small
     font-size: 0.8rem
@@ -157,14 +157,14 @@ blockquote
     line-height: 1.2
     margin-bottom: 1em
   .O_summary
-    color: #bbb
+    color: var(--text-light)
     font-size: 1rem
   
   #O__submit_comment
     font-size: 1rem
 
 .hr-color
-    border: 3px dashed #bbb;
+    border: 3px dashed var(--text-light);
     border-radius: 2px;
 
 .new-book-banner-image
