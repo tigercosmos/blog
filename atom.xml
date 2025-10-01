@@ -6,7 +6,7 @@
   <link href="https://tigercosmos.xyz/atom.xml" rel="self"/>
   
   <link href="https://tigercosmos.xyz/"/>
-  <updated>2025-10-01T09:16:54.389Z</updated>
+  <updated>2025-10-01T10:40:32.917Z</updated>
   <id>https://tigercosmos.xyz/</id>
   
   <author>
@@ -17,11 +17,46 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>3D Pointcloud Projection on 2D Image in C++</title>
+    <link href="https://tigercosmos.xyz/post/2025/10/cv/3d-pointcloud-project-to-2d-image/"/>
+    <id>https://tigercosmos.xyz/post/2025/10/cv/3d-pointcloud-project-to-2d-image/</id>
+    <published>2025-10-01T12:00:00.000Z</published>
+    <updated>2025-10-01T10:40:32.917Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;在機器人領域或自駕車領域，為了得知目前場域（scene）裡面的 3D 建模實況，會透過 3D 攝影機或是光達來取得點雲圖（pointcloud），基本上就是一堆 3D 座標的點組成的 3x3 矩陣。透過分析這些 3D</summary>
+        
+      
+    
+    
+    
+    
+    <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
+    
+    <category term="電腦視覺" scheme="https://tigercosmos.xyz/tags/%E9%9B%BB%E8%85%A6%E8%A6%96%E8%A6%BA/"/>
+    
+    <category term="computer vision" scheme="https://tigercosmos.xyz/tags/computer-vision/"/>
+    
+    <category term="opencv" scheme="https://tigercosmos.xyz/tags/opencv/"/>
+    
+    <category term="eigen" scheme="https://tigercosmos.xyz/tags/eigen/"/>
+    
+    <category term="pointcloud" scheme="https://tigercosmos.xyz/tags/pointcloud/"/>
+    
+    <category term="projection" scheme="https://tigercosmos.xyz/tags/projection/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Shopify Pricing 踩雷紀錄：Managed Pricing &amp; Manual Pricing 那邊設定？</title>
     <link href="https://tigercosmos.xyz/post/2025/09/shopify/pricing-method/"/>
     <id>https://tigercosmos.xyz/post/2025/09/shopify/pricing-method/</id>
     <published>2025-09-17T10:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.389Z</updated>
+    <updated>2025-10-01T10:40:32.923Z</updated>
     
     
       
@@ -52,7 +87,7 @@
     <link href="https://tigercosmos.xyz/post/2025/08/startup/datra-1/"/>
     <id>https://tigercosmos.xyz/post/2025/08/startup/datra-1/</id>
     <published>2025-08-30T16:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.390Z</updated>
+    <updated>2025-10-01T10:40:32.924Z</updated>
     
     
       
@@ -83,7 +118,7 @@
     <link href="https://tigercosmos.xyz/post/2025/06/software-engineer/software-engineer-grow-up-4/"/>
     <id>https://tigercosmos.xyz/post/2025/06/software-engineer/software-engineer-grow-up-4/</id>
     <published>2025-06-25T13:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.390Z</updated>
+    <updated>2025-10-01T10:40:32.924Z</updated>
     
     
       
@@ -119,7 +154,7 @@
     <link href="https://tigercosmos.xyz/post/2025/05/beyond-just-coding-book/writing-experience/"/>
     <id>https://tigercosmos.xyz/post/2025/05/beyond-just-coding-book/writing-experience/</id>
     <published>2025-05-02T04:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.379Z</updated>
+    <updated>2025-10-01T10:40:32.913Z</updated>
     
     
       
@@ -153,7 +188,7 @@
     <link href="https://tigercosmos.xyz/post/2025/02/algorithm/bts-tree-delete/"/>
     <id>https://tigercosmos.xyz/post/2025/02/algorithm/bts-tree-delete/</id>
     <published>2025-02-04T17:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.374Z</updated>
+    <updated>2025-10-01T10:40:32.909Z</updated>
     
     
       
@@ -185,7 +220,7 @@
     <link href="https://tigercosmos.xyz/post/2025/01/beyond-just-coding-book/tcpdump/"/>
     <id>https://tigercosmos.xyz/post/2025/01/beyond-just-coding-book/tcpdump/</id>
     <published>2025-01-02T16:30:00.000Z</published>
-    <updated>2025-10-01T09:16:54.379Z</updated>
+    <updated>2025-10-01T10:40:32.913Z</updated>
     
     
       
@@ -215,7 +250,7 @@
     <link href="https://tigercosmos.xyz/post/2025/01/book-report/morris-chang-1964-2018/"/>
     <id>https://tigercosmos.xyz/post/2025/01/book-report/morris-chang-1964-2018/</id>
     <published>2025-01-01T10:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.379Z</updated>
+    <updated>2025-10-01T10:40:32.913Z</updated>
     
     
       
@@ -245,7 +280,7 @@
     <link href="https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/newcomer/"/>
     <id>https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/newcomer/</id>
     <published>2024-12-27T17:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.379Z</updated>
+    <updated>2025-10-01T10:40:32.913Z</updated>
     
     
       
@@ -275,7 +310,7 @@
     <link href="https://tigercosmos.xyz/post/2024/12/c++/hash/"/>
     <id>https://tigercosmos.xyz/post/2024/12/c++/hash/</id>
     <published>2024-12-26T17:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.382Z</updated>
+    <updated>2025-10-01T10:40:32.916Z</updated>
     
     
       
@@ -306,7 +341,7 @@
     <link href="https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/vim/"/>
     <id>https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/vim/</id>
     <published>2024-12-25T17:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.379Z</updated>
+    <updated>2025-10-01T10:40:32.913Z</updated>
     
     
       
@@ -340,7 +375,7 @@
     <link href="https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/preface/"/>
     <id>https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/preface/</id>
     <published>2024-12-24T17:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.379Z</updated>
+    <updated>2025-10-01T10:40:32.913Z</updated>
     
     
       
@@ -370,7 +405,7 @@
     <link href="https://tigercosmos.xyz/post/2024/11/c++/std-string-advanced/"/>
     <id>https://tigercosmos.xyz/post/2024/11/c++/std-string-advanced/</id>
     <published>2024-11-20T18:01:00.000Z</published>
-    <updated>2025-10-01T09:16:54.382Z</updated>
+    <updated>2025-10-01T10:40:32.916Z</updated>
     
     
       
@@ -395,7 +430,7 @@
     <link href="https://tigercosmos.xyz/post/2024/10/travel/china-travel-document-usage/"/>
     <id>https://tigercosmos.xyz/post/2024/10/travel/china-travel-document-usage/</id>
     <published>2024-10-18T15:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.391Z</updated>
+    <updated>2025-10-01T10:40:32.925Z</updated>
     
     
       
@@ -424,7 +459,7 @@
     <link href="https://tigercosmos.xyz/post/2024/09/software-engineer/software-engineer-grow-up-3/"/>
     <id>https://tigercosmos.xyz/post/2024/09/software-engineer/software-engineer-grow-up-3/</id>
     <published>2024-09-28T20:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.390Z</updated>
+    <updated>2025-10-01T10:40:32.924Z</updated>
     
     
       
@@ -462,7 +497,7 @@
     <link href="https://tigercosmos.xyz/post/2024/09/software-engineer/apply-china-travel-document/"/>
     <id>https://tigercosmos.xyz/post/2024/09/software-engineer/apply-china-travel-document/</id>
     <published>2024-09-28T00:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.389Z</updated>
+    <updated>2025-10-01T10:40:32.923Z</updated>
     
     
       
@@ -487,7 +522,7 @@
     <link href="https://tigercosmos.xyz/post/2024/03/security/facebook-hack/"/>
     <id>https://tigercosmos.xyz/post/2024/03/security/facebook-hack/</id>
     <published>2024-03-01T16:03:00.000Z</published>
-    <updated>2025-10-01T09:16:54.389Z</updated>
+    <updated>2025-10-01T10:40:32.923Z</updated>
     
     
       
@@ -514,7 +549,7 @@
     <link href="https://tigercosmos.xyz/post/2023/12/japan/learn-japanese-n4/"/>
     <id>https://tigercosmos.xyz/post/2023/12/japan/learn-japanese-n4/</id>
     <published>2023-12-13T15:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.385Z</updated>
+    <updated>2025-10-01T10:40:32.919Z</updated>
     
     
       
@@ -544,7 +579,7 @@
     <link href="https://tigercosmos.xyz/post/2023/11/python/2023pycon-apac-sprint/"/>
     <id>https://tigercosmos.xyz/post/2023/11/python/2023pycon-apac-sprint/</id>
     <published>2023-11-26T16:03:00.000Z</published>
-    <updated>2025-10-01T09:16:54.388Z</updated>
+    <updated>2025-10-01T10:40:32.923Z</updated>
     
     
       
@@ -573,7 +608,7 @@
     <link href="https://tigercosmos.xyz/post/2023/11/software-engineer/software-engineer-grow-up-2/"/>
     <id>https://tigercosmos.xyz/post/2023/11/software-engineer/software-engineer-grow-up-2/</id>
     <published>2023-11-13T15:00:00.000Z</published>
-    <updated>2025-10-01T09:16:54.389Z</updated>
+    <updated>2025-10-01T10:40:32.924Z</updated>
     
     
       
@@ -599,33 +634,6 @@
     <category term="新米工程師進修中" scheme="https://tigercosmos.xyz/tags/%E6%96%B0%E7%B1%B3%E5%B7%A5%E7%A8%8B%E5%B8%AB%E9%80%B2%E4%BF%AE%E4%B8%AD/"/>
     
     <category term="japan" scheme="https://tigercosmos.xyz/tags/japan/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>如何在 Intel GPU 上跑 OpenCL</title>
-    <link href="https://tigercosmos.xyz/post/2023/09/system/intel-gpu-opencl/"/>
-    <id>https://tigercosmos.xyz/post/2023/09/system/intel-gpu-opencl/</id>
-    <published>2023-09-12T16:18:40.000Z</published>
-    <updated>2025-10-01T09:16:54.391Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://github.com/tigercosmos/blog/assets/18013815/5d281088-938f-402c-bc63-fd6e3035870e&quot; alt=&quot;many workers on</summary>
-        
-      
-    
-    
-    
-    
-    <category term="gpu" scheme="https://tigercosmos.xyz/tags/gpu/"/>
-    
-    <category term="opencl" scheme="https://tigercosmos.xyz/tags/opencl/"/>
-    
-    <category term="intel" scheme="https://tigercosmos.xyz/tags/intel/"/>
     
   </entry>
   
