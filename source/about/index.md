@@ -6,7 +6,7 @@ date: 2019-11-19 11:38:12
 
 ## 誰是劉安齊 Who is Liu, An-Chi
 
-哈囉！我是劉安齊，歡迎來到我的網站。我目前在日本東京 Mujin, Inc 擔任軟體工程師。平時以 ID @tigercosmos 活躍於開源社群。
+哈囉！我是劉安齊，歡迎來到我的網站。我目前在日本東京擔任軟體工程師。平時以 ID @tigercosmos 活躍於開源社群。
 
 我是台北人，畢業於國立陽明交大資工所（2022）以及國立臺灣大學生機系（2019）。
 
@@ -14,7 +14,7 @@ date: 2019-11-19 11:38:12
 
 如果想瞭解更多，可以參考我的[履歷](https://github.com/tigercosmos/resume/raw/master/resume.pdf)。
 
-Hello, this website is authored by Liu, An-Chi. His Chinese name is 劉安齊 (pronounce: 劉/liú/ 安/ān/ 齊/chí/). Liu is a software engineer at Mujin, Inc. in Tokyo, and he is well known as the ID @tigercosmos in open source communities.
+Hello, this website is authored by Liu, An-Chi. His Chinese name is 劉安齊 (pronounce: 劉/liú/ 安/ān/ 齊/chí/). Liu is a software engineer based in Tokyo, and he is well known as the ID @tigercosmos in open source communities.
 
 Liu was born in Taipei, Taiwan. He obtained an M.S. degree in Computer Science at National Yang Ming Chiao Tung University (NYCU) in 2022, Taiwan. He holds a B.S. degree in Bio-Industrial Mechatronics Engineering from National Taiwan University (NTU) in 2019.
 
