@@ -73,6 +73,92 @@ code {
 .header .links ul li:last-child::after {
   content: '';
 }
+.header .links ul li.translation-switcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.header .links ul li.translation-switcher .translation-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+  min-width: 28px;
+  height: 28px;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: 0.3s;
+}
+.header .links ul li.translation-switcher .translation-button svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+.header .links ul li.translation-switcher .translation-button .translation-current {
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+.header .links ul li.translation-switcher .translation-button:hover {
+  color: var(--accent-color);
+}
+.header .links ul li.translation-switcher .translation-button:hover .translation-current {
+  color: var(--accent-color);
+}
+.header .links ul li.translation-switcher .translation-button:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+.header .links ul li.translation-switcher .translation-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin: 0.5em 0 0;
+  padding: 0.4em 0;
+  list-style: none;
+  background: var(--container-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  min-width: 90px;
+  z-index: 5;
+}
+.header .links ul li.translation-switcher .translation-menu li {
+  display: block;
+  padding: 0;
+}
+.header .links ul li.translation-switcher .translation-menu li::after {
+  content: '';
+  margin: 0;
+}
+.header .links ul li.translation-switcher:hover .translation-menu {
+  display: block;
+}
+.header .links ul li.translation-switcher:focus-within .translation-menu {
+  display: block;
+}
+.header .links ul li.translation-switcher .translation-lang {
+  display: block;
+  padding: 0.35em 0.8em;
+  text-decoration: none;
+  color: var(--text-color);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+.header .links ul li.translation-switcher .translation-lang.is-current {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+.header .links ul li.translation-switcher .translation-lang:hover {
+  color: var(--accent-color);
+}
 .header .links ul li a {
   color: var(--text-color);
   text-decoration: none;
@@ -220,9 +306,31 @@ code {
 .post .post-date li {
   display: inline-block;
 }
-.post .post-date li:first-child::after {
+.post .post-date li:not(:last-child)::after {
   content: "\00B7";
   margin: 0 0.75em;
+}
+.post .post-date .post-languages .post-languages-label {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  margin-right: 0.4em;
+  color: var(--text-light);
+}
+.post .post-date .post-languages .translation-lang {
+  text-decoration: none;
+  color: var(--text-light);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+.post .post-date .post-languages .translation-lang.is-current {
+  color: var(--accent-color);
+}
+.post .post-date .post-languages .post-languages-note {
+  margin-left: 0.4em;
+  color: var(--text-light);
+  font-size: 12px;
 }
 .post .post-cover {
   position: relative;
