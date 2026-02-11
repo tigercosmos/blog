@@ -35,6 +35,77 @@
           margin: 0 .75em
         &:last-child::after 
           content: ''
+        &.translation-switcher
+          position: relative
+          display: inline-flex
+          align-items: center
+          .translation-button
+            display: inline-flex
+            align-items: center
+            justify-content: center
+            gap: .35em
+            min-width: 28px
+            height: 28px
+            border: 1px solid transparent
+            background: transparent
+            padding: 0
+            margin: 0
+            cursor: pointer
+            color: var(--text-light)
+            transition: .3s
+            svg
+              width: 16px
+              height: 16px
+              fill: currentColor
+            .translation-current
+              font-size: 11px
+              letter-spacing: .6px
+              text-transform: uppercase
+              color: var(--text-light)
+            &:hover
+              color: var(--accent-color)
+              .translation-current
+                color: var(--accent-color)
+            &:focus-visible
+              outline: 2px solid var(--accent-color)
+              outline-offset: 2px
+          .translation-menu
+            display: none
+            position: absolute
+            top: 100%
+            right: 0
+            margin: .5em 0 0
+            padding: .4em 0
+            list-style: none
+            background: var(--container-bg)
+            border: 1px solid var(--border-color)
+            border-radius: 6px
+            box-shadow: 0 10px 30px rgba(0,0,0,.12)
+            min-width: 90px
+            z-index: 5
+            li
+              display: block
+              padding: 0
+              &::after
+                content: ''
+                margin: 0
+          &:hover .translation-menu
+            display: block
+          &:focus-within .translation-menu
+            display: block
+          .translation-lang
+            display: block
+            padding: .35em .8em
+            text-decoration: none
+            color: var(--text-color)
+            text-transform: uppercase
+            font-size: 12px
+            letter-spacing: .5px
+            &.is-current
+              color: var(--accent-color)
+              font-weight: 700
+            &:hover
+              color: var(--accent-color)
         a
           color: var(--text-color)
           text-decoration: none

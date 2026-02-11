@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="<%= config.language %>">
+<% const pageLang = page.lang || (Array.isArray(config.language) ? config.language[0] : config.language); %>
+<html lang="<%= pageLang %>">
 <%- partial('_partial/head') %>
 
 <body style="background: <%- theme.background %>">

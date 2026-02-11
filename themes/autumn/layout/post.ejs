@@ -18,6 +18,23 @@
         <li>
             <%= config.author %>
         </li>
+        <% const translationEntries = translation_entries(page); %>
+        <% if (translationEntries.length > 1) { %>
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            <% translationEntries.forEach(function (entry, idx) { %>
+                <% if (entry.isCurrent) { %>
+                    <span class="translation-lang is-current" lang="<%= entry.lang %>"><%= entry.lang %></span>
+                <% } else { %>
+                    <a class="translation-lang" href="<%- entry.path %>" hreflang="<%= entry.lang %>" lang="<%= entry.lang %>"><%= entry.lang %></a>
+                <% } %>
+                <% if (idx < translationEntries.length - 1) { %>,<% } %>
+            <% }) %>
+            <span class="post-languages-note">
+                (original <%= page.lang || (Array.isArray(config.language) ? config.language[0] : config.language) %>, translation powered by AI)
+            </span>
+        </li>
+        <% } %>
     </ul>
     <div class="post-content">
         <%- page.content %>

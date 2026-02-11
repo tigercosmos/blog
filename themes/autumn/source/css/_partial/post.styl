@@ -57,9 +57,28 @@
     font: 14px/1.6 Lato
     li 
       display: inline-block
-      &:first-child::after
+      &:not(:last-child)::after
         content: "\00B7"
         margin: 0 .75em
+    .post-languages
+      .post-languages-label
+        text-transform: uppercase
+        font-size: 11px
+        letter-spacing: .6px
+        margin-right: .4em
+        color: var(--text-light)
+      .translation-lang
+        text-decoration: none
+        color: var(--text-light)
+        text-transform: uppercase
+        font-size: 12px
+        letter-spacing: .5px
+        &.is-current
+          color: var(--accent-color)
+      .post-languages-note
+        margin-left: .4em
+        color: var(--text-light)
+        font-size: 12px
   .post-cover
     position: relative
     user-select: none

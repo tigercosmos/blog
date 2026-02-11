@@ -8,7 +8,10 @@ subtitle: 'Code makes the world a better place'
 description: "Liu, An-Chi's blog"
 keywords: tigercosmos, An-Chi Liu, 劉安齊, blog
 author: Liu, An-Chi 劉安齊
-language: zh, en
+language:
+  - zh
+  - en
+  - jp
 timezone: 'asia/taipei'
 
 # URL
@@ -28,6 +31,7 @@ archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
+translation_post_dir: _posts_translation
 skip_render:
 about: /about
 donation: /donation
