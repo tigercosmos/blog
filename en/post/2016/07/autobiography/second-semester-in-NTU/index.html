@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="NTU,university,thoughts,NTU observations and reflections,atmospheric sciences," />
+    <meta name="description"
+        content="NTU Observations and Reflections (2): Second Semester in Atmospheric Sciences" />
+    <title>Neutrino&#39;s Blog: NTU Observations and Reflections (2): Second Semester in Atmospheric Sciences </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2016/07/autobiography/second-semester-in-NTU/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2016/07/autobiography/second-semester-in-NTU/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2016/07/autobiography/second-semester-in-NTU/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2016/07/autobiography/second-semester-in-NTU/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2016/07/autobiography/second-semester-in-NTU/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2016/07/autobiography/second-semester-in-NTU/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        NTU Observations and Reflections (2): Second Semester in Atmospheric Sciences
+    </h2>
+    <ul class="post-date">
+        <li>
+            2016-07-22
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2016/07/autobiography/second-semester-in-NTU/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2016/07/autobiography/second-semester-in-NTU/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p>After spending two semesters at National Taiwan University (NTU), I understood university life better—but I was no longer as fired up as at the beginning. My course load also changed quite a bit this semester. Last semester I only took 22 credits; this semester I took 24. Time also felt like it passed faster. Midterms were one subject per week, and before I knew it, a whole month was gone. Not long after midterms ended, a pile of final reports arrived, and then finals came right after that. The semester rushed by. Even though it felt like I did not do anything particularly special, I still have some course reflections and stories worth sharing.</p>
+<span id="more"></span>
+<h2 id="General-Physics-A"><a class="header-anchor" href="#General-Physics-A">¶ </a>General Physics A</h2>
+<p>Let me start with courses. I moved General Physics from the Atmospheric Sciences section to the Electrical Engineering section. The EE section covered more material, the content was harder, and the exams were tougher. In the Atmospheric Sciences section, everyone chased A+; after switching, I was just trying to pass. I switched at the beginning because I wanted to take another course, but it conflicted with my original section, so I had to change. An EE friend told me that the EE “Section 2” grading was decent, so I thought there would be no problem. I did not expect that, last semester, some EE students harshly criticized the professor in course feedback, which made the professor’s attitude toward this section very bad this semester. We all became victims of that “clever” student. In the end, I also passed General Physics with a terrible grade.</p>
+<p>The professor’s handwriting was very light—if you sat in the back, you basically could not see it. On top of that, his symbols were strange, and he even liked to use Zhuyin symbols as variables (distance as ㄅ?). So later I mainly watched National Chiao Tung University (NCTU) OCW General Physics by Professor Jian Wen-bin. I think his explanation is clear, the depth is sufficient, and everything that should be taught is taught.</p>
+<h2 id="Introduction-to-Optoelectronics"><a class="header-anchor" href="#Introduction-to-Optoelectronics">¶ </a>Introduction to Optoelectronics</h2>
+<p>This semester, I originally wanted to take BIME’s Mechatronics Integration (I), which mainly teaches development boards such as Arduino. But Professor 郭彥甫 was extremely popular that semester, so only seniors could add the course. So I switched to the Electrical Engineering Department’s Introduction to Optoelectronics by Professor 吳育任. PTT said the course was fairly basic and suitable for people who just want a rough understanding, so I thought freshman-level physics would be enough.</p>
+<p>Later I found out this course is actually a junior/senior elective, so the level is not supposed to be “easy,” and indeed most students in the class were juniors and seniors. Overall, I found the course very interesting. It explained principles ranging from semiconductors and displays to solar panels. There were also two sessions where engineers from industry came to share, which were great experiences.</p>
+<p>But as fun as the course was, the exams were not. The professor did not work through example problems in class, yet homework had a bunch of problems I had never seen before. If the professor could work through problems, it would have helped a lot with both homework and exams. Or it would have been good to put worked examples into TA sessions. Even though I could follow the lecture, in reality I still did not know how to solve many problems, so in the end I only got an “okay” grade. Looking back, I think I should have audited the course instead. But it is done; at least I got 3 elective credits. And if I had not wanted to take a course in that time slot, I would not have needed to switch my physics section in the first place—a whole chain of misfortune.</p>
+<h2 id="Calculus"><a class="header-anchor" href="#Calculus">¶ </a>Calculus</h2>
+<p>I have always felt that attending Calculus lectures was not very effective—especially because Atmospheric Sciences students take Calculus A2. As long as you can compute and apply it, that is enough. There is not much need to grind through theoretical derivations or more mathematical topics, yet lectures usually emphasize the more mathematical parts. Since even after taking tons of notes in class, my understanding of calculus was not significantly better, I changed my method.</p>
+<p>I switched to NCTU OCW again—Professor 莊重’s calculus. The advantage of OCW is that I can control the pace myself, and I can also play it at 1.5× speed. Each small section is only around ten minutes: he tells you what formulas exist in that section and how to use them in problems. That was more than enough for homework and exams. Later, studying calculus felt smooth and easy. The downside was that NCTU only covered up to Chapter 15, but NTU tested through Chapter 16. Half of the final was self-study. TA sessions also had the TA quickly scan the textbook content; after hearing that quick overview, reading the textbook became faster.</p>
+<h2 id="General-Chemistry-A"><a class="header-anchor" href="#General-Chemistry-A">¶ </a>General Chemistry A</h2>
+<p>I took General Chemistry with Professor 李弘文. He repeats the same content at least three times, so you never have to worry about missing something because you nodded off. The two TAs were also excellent; whenever I asked questions, I always got extended knowledge beyond the immediate answer. I do not have anything especially “special” to say about lectures—it was simply a very solid course in both teaching and grading.</p>
+<p>The special thing was that this semester chemistry also required a small project. The professor asked us to do research without experiments. Simply put, it was “imaginary science”: based on known conditions, combine them and hypothesize whether a new phenomenon would occur. But the hypothesis could not be the kind of thing you can only know by “trying it in the lab.” Instead, you should be able to predict several possible outcomes in advance, and then discuss how to verify whether your hypothesis is correct.</p>
+<p>What counts as “you can only know by doing it”? For example, what products an unknown chemical reaction will yield—you can only know by actually running the reaction. The professor’s requirement, instead, was: given known conditions or phenomena A and B, but you do not know what will happen when A and B are combined; in that case, you can hypothesize outcomes.</p>
+<p>The project also had an annoying constraint: it had to be related to your major. Atmospheric science is basically physics, and the scope of atmospheric chemistry is very small, so it was genuinely difficult to come up with something creative and novel. Unsurprisingly, we ended up in the “air pollution” direction. Agricultural chemistry students had far more freedom; biology and chemistry are naturally close, so their topic space is vast.</p>
+<p>In the end, I got inspiration from an article by Professor 陳維婷, “Atmospheric Physics and Chemistry in Hazy Smog,” which mentioned the Köhler curve (describing droplet growth in the presence of solute). I felt it was something worth studying. After discussing feasible directions with the professor, I had an idea: combine the Köhler curve with electrification. In short, given the Köhler-curve model and the fact that droplet charge affects surface tension, we explored how the Köhler curve changes under different amounts of charge on the droplet surface.</p>
+<p>The Köhler curve relates to droplet formation. According to research by Paul A. Allee and B. B. Phillips, cloud droplets typically carry a few elementary charges (e), so charged droplets may affect precipitation. Even though we did not need to run experiments ourselves, we still had to propose an experimental method. The hardest part was designing an experimental setup, because the Köhler curve itself is theoretical, and there still are not experiments that directly measure it. To measure the growth of tiny droplets and also measure their weak electrical charge is extremely difficult. If someone actually pulled it off, I think publishing in an international journal would not be a problem. In the end, we proposed a few wild experimental designs, but they were neither complete nor very feasible, so I will not describe them here. As for predicted results: simply put, we believed that charged droplets would make rainfall more likely, because charge reduces droplet surface tension, which then carries through the Köhler-curve calculation.</p>
+<p>This topic involved solubility, so it barely counted as chemistry—but it felt much more like physics. And the Köhler curve itself is covered in the course “Cloud Physics,” which I had not taken yet. But I borrowed lecture notes from classmates to read. While doing this “imaginary research,” I still felt that my earlier science-program training helped a lot—whether it was research thinking or poster-design skills, I could apply them fluently and was more practiced than many peers.</p>
+<p>I have always felt that projects for introductory or professional courses are genuinely interesting. Compared with exams, I prefer using my hands and brain to do research. Projects are the real way to apply knowledge: the thinking skills and operational techniques you learn accumulate, making future work smoother. Exams, in contrast, are usually forgotten not long after they end.</p>
+<h2 id="General-Physics-Lab-General-Chemistry-Lab-Year-Long-Sections"><a class="header-anchor" href="#General-Physics-Lab-General-Chemistry-Lab-Year-Long-Sections">¶ </a>General Physics Lab &amp; General Chemistry Lab (Year-Long Sections)</h2>
+<p>Starting with my cohort, Atmospheric Sciences no longer required General Physics Lab or General Chemistry Lab. The reason is that, in atmospheric science, experiments rarely require hands-on lab work; instead, you collect data directly from instruments and satellites, do data analysis, or run numerical simulations and weather models. So hands-on physics and chemistry labs became electives. But considering that I might transfer to another department—and in engineering, physics and chemistry labs are almost always required—I still took both.</p>
+<p>Lab courses are “1 credit but 3 class sessions,” which is truly not worth the effort. You have to write pre-lab and post-lab reports, which is extremely annoying. For 1 credit, you still spend six or seven hours per week on a single lab course. The more enjoyable part is being able to witness phenomena taught in textbooks with your own eyes. Sometimes you already know what should happen, but when it really happens in front of you, it is still exciting. Of course, when you cannot find an error and you get stuck, it is extremely frustrating—but that is also part of experimental training. Labs also take up an entire afternoon, so usually you do experiments while chatting with your partners. Having two afternoons like that was not bad.</p>
+<h2 id="Freshman-Chinese"><a class="header-anchor" href="#Freshman-Chinese">¶ </a>Freshman Chinese</h2>
+<p>For Freshman Chinese, I chose Professor 梁偉賢’s course on wuxia novels. When filling out course preferences, I put it as my first choice; the other options were Laozi and Zhuangzi, the I Ching, Mencius, Confucius, modern novels, and so on. So when I saw a wuxia-novel course, I was extremely happy, because I quite like reading Jin Yong.</p>
+<p>The instructor’s style was to ask us to read the novel first, and then in class we discussed plot, characters, and techniques; through that discussion process, the instructor taught additional knowledge. I had never read Gu Long before, but after taking this course, I read quite a bit. I felt Gu Long’s writing broke my stereotypes about wuxia novels. Growing up, my impression was basically “Jin Yong’s style,” but in fact there are many different ways to write wuxia—and Gu Long really is brilliant.</p>
+<p>What made me sad was that NTU planned to abolish Freshman Chinese. The administration believed that the content of Freshman Chinese resembled literature electives, so it would be moved into the general-education elective pool. Even though I disliked Chinese classes as a kid because my Chinese grades were always poor—and even though the school’s reasoning sounds somewhat reasonable—I still feel regret, as a Chinese person, that we no longer emphasize the importance of learning Chinese. After abolishing Freshman Chinese, many Chinese instructors would be reassigned.</p>
+<h2 id="Freshman-English"><a class="header-anchor" href="#Freshman-English">¶ </a>Freshman English</h2>
+<p>For Freshman English, I took Professor 楊乃冬’s course. I think his curriculum design was very solid, and he especially emphasized listening and speaking. The class spent a lot of time training listening comprehension, and we also practiced English conversation with classmates in class. There were many assignments and group presentations during the semester; it was not easy.</p>
+<p>But I enjoyed working with others on group presentations. Last semester, the group assignment was English Presentation + Role Play; this semester it was only Presentation, and another component was changed into a self-designed assignment where we could freely decide what to do (acting or presenting were both fine). Last semester our group ranked third in the class; this semester we improved to second. I think everyone worked hard, but two of my group members were second place in the university-wide freshman English presentation contest, which certainly helped.</p>
+<p>For the self-designed assignment, our group of four split into two sub-groups: a pair, and a “2+1” group (with one person from another group). Both sub-groups chose to participate in the university-wide English presentation contest as the assignment. The other group ended up second place; my group failed. Still, through multiple presentations and the competition experience, I gained a deeper understanding of how to make a good presentation.</p>
+<p>Freshman English also has an important purpose: helping students pass the first stage of the GEPT High-Intermediate level, which can waive Advanced English requirements and is also needed for graduation. I think the GEPT High-Intermediate reading is easier than the college entrance exam, but the entrance exam does not test listening. In the end, I passed. My vocabulary was rusty and I almost could not do that part, but I felt my reading comprehension improved, and I believe my listening improved as well.</p>
+<h2 id="Human-Rights-and-Justice"><a class="header-anchor" href="#Human-Rights-and-Justice">¶ </a>Human Rights and Justice</h2>
+<p>When I filled out my schedule this semester, I noticed Friday afternoon was free. I originally wanted to take Introduction to Mechanical Engineering, but after looking into it, I found the content was not what I expected. So I decided to take a general-education course, and I ended up with Human Rights and Justice.</p>
+<p>I chose it because the U.S. “Justice” course is famous, and I also wanted to understand law better. But this course was not run like the American Justice course. The instructor said at the beginning that legal systems differ, so the ways to explore human rights and justice also differ. In lectures, the instructor rationally analyzed human-rights and justice questions under different scenarios. In TA sessions after class, everyone shared their opinions with each other.</p>
+<p>The instructor also invited guest speakers that semester: Judge 林孟皇, Prosecutor 陳瑞仁, and Professor 吳乃德. We also had one class session where we went to a district court to observe a hearing. For the final, we did group presentations; each group presented a topic related to human rights and justice. Listening to other groups present topics such as new immigrants, Indigenous peoples, the national health insurance system, long-term care, and historical cases was also very rewarding.</p>
+<p>The assigned reading for the course was <em>Reflections on Law Enforcement: Prosecutor 陳瑞仁’s Notes on Judicial Reform</em>. After reading the book, attending several talks, and learning the instructor’s way of thinking, I gained new insights—both into human rights and justice and into the judicial system. I felt happy every week attending this course. I was very lucky to get in; it was my favorite course this semester. After the new administration took office, the instructor was also recruited to serve in government.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/ntu/">
+                NTU
+            </a>,&nbsp;
+        
+            <a href="/en/tags/university/">
+                university
+            </a>,&nbsp;
+        
+            <a href="/en/tags/thoughts/">
+                thoughts
+            </a>,&nbsp;
+        
+            <a href="/en/tags/ntu-observations-and-reflections/">
+                NTU observations and reflections
+            </a>,&nbsp;
+        
+            <a href="/en/tags/atmospheric-sciences/">
+                atmospheric sciences
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#General-Physics-A"><span class="toc-text">General Physics A</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction-to-Optoelectronics"><span class="toc-text">Introduction to Optoelectronics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Calculus"><span class="toc-text">Calculus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#General-Chemistry-A"><span class="toc-text">General Chemistry A</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#General-Physics-Lab-General-Chemistry-Lab-Year-Long-Sections"><span class="toc-text">General Physics Lab &amp; General Chemistry Lab (Year-Long Sections)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Freshman-Chinese"><span class="toc-text">Freshman Chinese</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Freshman-English"><span class="toc-text">Freshman English</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Human-Rights-and-Justice"><span class="toc-text">Human Rights and Justice</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/condition-variable-cpp/">
+        A Simple Example of Condition Variables in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/std-string-beginner/">
+        C++ std::string for Beginners: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/stringview/">
+        Still Using const std::string&amp;? Try std::string_view!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/05/c++/googletest/">
+        Writing C++ Unit Tests with GoogleTest
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

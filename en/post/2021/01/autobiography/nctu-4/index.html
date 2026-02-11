@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="parallel programming,thoughts,graduate school,master&#39;s,NYCU ICSE,NCTU observations and reflections,fine arts club,NCHC,teaching assistant," />
+    <meta name="description"
+        content="This post records a few stories from the fall semester of my second year at the Institute of Computer Science and Engineering, NCTU/NYCU." />
+    <title>Neutrino&#39;s Blog: NCTU Observations and Reflections (4): Second Year (Fall) </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2021/01/autobiography/nctu-4/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2021/01/autobiography/nctu-4/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2021/01/autobiography/nctu-4/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2021/01/autobiography/nctu-4/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2021/01/autobiography/nctu-4/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2021/01/autobiography/nctu-4/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        NCTU Observations and Reflections (4): Second Year (Fall)
+    </h2>
+    <ul class="post-date">
+        <li>
+            2021-01-27
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2021/01/autobiography/nctu-4/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2021/01/autobiography/nctu-4/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Preface"><a class="header-anchor" href="#Preface">¶ </a>Preface</h2>
+<p>In the blink of an eye, the fall semester of my second year is over. Time really does feel faster as you get older. I still remember how, in elementary school, a semester felt unbelievably long—now it feels like it is suddenly vacation again.</p>
+<p>As usual, I am writing one post per semester. So many things happened that I should record them—otherwise it would be a shame to not remember the stories later.</p>
+<p>A lot happened this semester. I took two courses, TA’d for two courses, joined the Ironman Challenge in October and recorded videos for a month, worked part-time at NCHC, continued participating in the Fine Arts Club, and picked up a new hobby: photography.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/105941169-c8324d00-6097-11eb-858b-e284a93ab198.png" alt="Basketball court at NCTU in the evening"></p>
+<p>(Basketball court at NCTU in the evening)</p>
+<h2 id="Courses"><a class="header-anchor" href="#Courses">¶ </a>Courses</h2>
+<p>I took Accelerator Architectures for Machine Learning (AAML) and Operating Systems (OS). With that, I completed all eight courses required for graduation.</p>
+<p>AAML was a pleasant surprise for me. Professor 葉宗泰 is a new faculty member, and this was his first course after joining NCTU CS. Why was it a surprise? Because I have always hated the term “AI.” I have always felt it is just hype. Also, I have always had a mental block with AI—my “domain power” is relatively low. I had never seriously understood what deep learning really is. Of course I learned the basic knowledge, but I never had the feeling of truly understanding it. Yet the deep-learning introduction at the beginning of this course suddenly made things click. Either I finally had an epiphany after procrastinating for so long, or it is because Professor 葉’s perspective is closer to systems software/hardware design, which is closer to my background, so I can absorb what he says more easily.</p>
+<p>I categorize “AI” into four layers: application scenarios, AI models (or algorithms), parameter tuning (fine-grained customization), and system software/hardware. A successful AI service needs all four. First, you have a problem to solve—for example, a device needs to recognize what animal it is seeing. Then you need an appropriate model. For example, ResNet is a model designed for image recognition, so you evaluate whether it can be used. But having an architecture is not enough. You also need to tune parameters to best fit the target problem. Finally, AI always runs on systems. How you optimize the system and hardware has a huge effect on performance. This course mainly focused on the last step, which I also think is the most important step: no matter how good the earlier steps are, if you run AI on hardware without fully utilizing the hardware’s performance, it is all wasted. AAML is a huge topic, and I cannot do it justice in a few sentences. If I have the chance, I will write another post to introduce it. In short: I strongly recommend this course.</p>
+<p>The other course was OS. I took OS in undergrad, but the graduate-level version goes deeper. Also, it did not seem too heavy, so I thought I would learn it again. Professor 張立平 teaches in English without much problem—he speaks smoothly, and the content is quite clear. The biggest issue is that half of the course consists of student presentations on classic OS papers. But I think CS grad-student presentations are generally bad. It is fine if you cannot speak English smoothly, but at least you should know how to present—and the content was a mess too. Each group had only 15 minutes to present a paper. For reference, in a lab paper-reading session, it often takes 40 minutes or more to clearly explain one paper. So when time is short, the right approach is to pick a few interesting points and explain them deeply or extend them. But many people try to rush through the entire paper in 15 minutes like a train schedule, which leads to slides packed with everything and no structure; combined with poor English, the slide layout becomes chaotic, and the audience cannot understand anything. The intention of having students present papers is good, but the student level is too low. Unless you need OS as a makeup requirement because you never took it in undergrad, I would not recommend this course.</p>
+<p>When I worked part-time at Skymizer in Taiwan, I never understood what “Compiler for AI” was for. After taking AAML, I finally understood!</p>
+<p>As a side note: I think if you enter the AI field from systems software, tight hardware–software co-design is extremely important. The unfortunate part about Skymizer is that they do not have their own hardware—they only provide software services. But many AI models require highly customized hardware, and customers typically do not have the capability to design AI-optimized hardware themselves. So customers can probably only use off-the-shelf hardware like NVDLA. Yet AI models can be accelerated much more through hardware design. That is not a problem you can solve by compilers alone. This kind of hardware–software integration is exactly where companies like 耐能 (Kneron) and Cerebras shine.</p>
+<h2 id="Teaching-Assistant-Work"><a class="header-anchor" href="#Teaching-Assistant-Work">¶ </a>Teaching Assistant Work</h2>
+<p>This semester I TA’d for two courses: <a target="_blank" rel="noopener" href="https://nycu-sslab.github.io/PP-f20/">Parallel Programming</a> and Numerical Software Development. Parallel Programming is my advisor Professor 游逸平’s course. In previous years, it was usually handled by M2s. It also happens to be a field I like, so I became the head TA and basically handled everything. Numerical Software Development is a TA job I have done continuously since M1. When I first joined NCTU, Professor 陳永昱 happened to be looking for someone, and since then I have kept working with him.</p>
+<p>I am determined to be a good TA, so I replaced all of the Parallel Programming assignments (you can take a look at the <a target="_blank" rel="noopener" href="https://nycu-sslab.github.io/PP-f20/">course website</a>; the course is all about assignments). I thought the previous assignments were too easy and not at the graduate level. Now people cannot even think about copying assignments XD. Also, whenever students had questions, I responded immediately. In my experience, many TAs for other courses just ignore emails. There was one assignment every two weeks. I usually spent one week designing the assignment, and another week grading it, meaning I basically had no breaks between assignments. I also graded presentations. In other courses, TAs often give scores based on vibes; for my scoring, I used very detailed rubrics.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/105940784-0418e280-6097-11eb-964c-205d5ffaafff.png" alt="Parallel Programming final student presentations"><br>
+(Parallel Programming final student presentations)</p>
+<p>Honestly, I could have chosen to do only as much work as the pay justifies. But I chose to do a lot. The TA hourly rate is about 200. If I work more than 5 hours per week for one course, I am basically losing money. In reality, I spent more like 10–20 hours per week on it. I have to rant a bit about NCTU: I TA’d for two courses, and I only got NT$8,000 per month total (NTU professors were shocked; it is even lower than what NTU pays students). At NTU, one course at least pays around NT$11,000. No wonder many TAs slack off—who wants to work for that little? The “correct” strategy is to do less and treat it as scholarship money. I just happen to have a lot of passion for teaching. I think students could feel how serious I was. I wonder whether I can get an outstanding TA award; it would be nice to have an honor like that.</p>
+<h2 id="Ironman-Challenge"><a class="header-anchor" href="#Ironman-Challenge">¶ </a>Ironman Challenge</h2>
+<p>Participating in the Ironman Challenge has basically become routine. I join it every year. From Angular to DBMS to Browsers, I have written a lot of posts. Writing is actually exhausting. My high-quality posts often take several days. For Ironman, if you do not stockpile drafts in advance, a post produced in one day is basically garbage. This year I did not want to exhaust myself, and I did not want to write low-quality posts. So I decided to join the video track, because I have long wanted to produce a video series: “<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLCOCSTovXmudP_dZi1T9lNHLOtqpK9e2P">Basic Literacy to Save CS Students</a>.”</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/IaHcesCpuA4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p>Before making this video series, I wrote a post: “<a href="post/2020/04/thought-about-cs-student/">Basic Literacy for CS Students</a>.” In that post, I explained the skills that I think CS students need to know but that schools often do not teach—you have to learn them yourself. You can view that post as the reading guide for the series. In the videos, I went one step further and actually taught what I believe CS students should know.</p>
+<p>For beginners, this series should be quite practical. I hope you can recommend it to your juniors. I also hope people in education will make more use of my teaching.</p>
+<p>For example, once a sophomore CS junior asked me how to learn touch typing and Vim, and I knew I should make an episode explaining learning methods. Or, when a teammate in my graduate course project told me they did not know how to call an API, I knew I needed to explain what an API and a server are. For students who have never interned at a company or participated in a large open-source project, they probably are not familiar enough with Git operations either. Also, more and more people are learning to code—not only CS students. In fact, all developers should have these basic literacies.</p>
+<p>Remember how, when preparing for college entrance exams, everyone had to read “搶救國文大作戰”? Now we also need to “save” our programming abilities. My goal is to help CS students stand up to scrutiny, whether at school or during job hunting. My own ability is only so-so, but among people who are better than me, who is willing to spend hours every day making videos? This series took me four to five hours of work each day. After finishing it, I felt proud that I had done something meaningful. The only regret is that I do not know why it did not even win an honorable mention.</p>
+<h2 id="Fine-Arts-Club"><a class="header-anchor" href="#Fine-Arts-Club">¶ </a>Fine Arts Club</h2>
+<p>I joined the Fine Arts Club in M1, when I was full of drive for art creation. I feel like that drive has cooled down a bit now, but drawing is still fun. Also, I met many great friends in the club. I feel that friendships in arts-and-culture clubs are easier to maintain. The clubs I joined at NTU were mostly work-oriented. After the event was over, there was no bond anymore, and people stopped contacting each other. But in the Fine Arts Club, everyone is interested in art. The connection built on shared interests may be more solid.</p>
+<iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fnctu.finart%2Fphotos%2Fa.3503794043022848%2F3503787503023502%2F&width=500&show_text=true&appId=577288832614270&height=375" width="500" height="375" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+<p>(Nude figure sketch)</p>
+<p>This year I also took an officer role. It is not common for graduate students to take officer roles, but I was just a small social-media editor. My job was to take lots of photos and share them on the club’s Facebook page. I actually enjoyed doing it. I found that I am quite interested in photography. In regular club sessions, rather than practicing drawing, I often preferred photographing people while they were drawing and capturing their works. Later, I only spent half the time drawing, and used the other half to take photos everywhere. If you are interested, you can check out the <a target="_blank" rel="noopener" href="https://www.facebook.com/nctu.finart/photos">Fine Arts Club Facebook page</a> for typical activity photos.</p>
+<iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fnctu.finart%2Fphotos%2Fa.3460872767314976%2F3460863130649273%2F&width=500&show_text=true&appId=577288832614270&height=375" width="500" height="375" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+<p>(Instructor demonstrating an oil portrait)</p>
+<h2 id="National-Center-for-High-performance-Computing-NCHC"><a class="header-anchor" href="#National-Center-for-High-performance-Computing-NCHC">¶ </a>National Center for High-performance Computing (NCHC)</h2>
+<p>I already talked about going to NCHC in the previous post. The main reason I went was that I wanted to work with SmartNICs—network interface cards with onboard processors, commonly used in data centers to accelerate networking and data processing. But the vendor kept delaying. I originally thought we could start using them in June of last year, but the NICs did not arrive until October. After installing them in servers, the whole device still had a bunch of problems. So by the end of this semester, I still had not actually done SmartNIC research. During summer I read many related papers, but reading alone does not give much intuition—you need to use the hardware to really know what is going on.</p>
+<p>Later I was reassigned to other projects to do full-stack work. I am not interested in full stack. Mainly because I already did a lot of it when I worked part-time at a software company in undergrad, and in my view it is more like grunt work. But there was no choice: the equipment I was supposed to use was not ready, so at NCHC I could only help other projects with development. Recently, the SmartNIC equipment should finally be ready. I hope I can start doing related research next semester.</p>
+<p>The most interesting part of working at NCHC is probably understanding what they do inside. I even had the chance to visit the supercomputer machine room in the basement. To enter, you first have to register your face, and every entry and exit requires a scan. Inside looks like the supercomputer machine rooms you see in photos, but it is still nice to experience it in person (even though it is really loud). There are many racks of machines—one rack can cost several million. This is not the kind of equipment you can play with at NCTU. Once, I even helped remove GPUs inside: you have to pull out the machine trays. A rack can have multiple layers, and one layer can weigh close to 100 kg. It takes several people working together to remove one layer. In short, it was a valuable experience.</p>
+<h2 id="People-Who-Influenced-Me-Deeply"><a class="header-anchor" href="#People-Who-Influenced-Me-Deeply">¶ </a>People Who Influenced Me Deeply</h2>
+<p>I want to specifically talk about the people around me this semester who had a big impact on me.</p>
+<p>The first is the instructor of Numerical Software Development, <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/yungyuc/">陳永昱</a>. At first, I was just a TA, and we worked together smoothly. Later, I mentioned that I was actually very interested in high-performance computing (HPC). In fact, he already knew I worked part-time at NCHC (in his generation, they called it 國高), but he thought it was just regular part-time work (and, to be fair, this semester it did become that 😅). I went to NCHC because I wanted to get more exposure to HPC research and equipment. He then told me that he used to do HPC-related work—for example, when he was in the U.S., he worked on NASA research projects; after returning to Taiwan, he worked on missile research at the National Chung-Shan Institute of Science and Technology. These are topics that require massive computation. Now at Synopsys, in some sense his work is still related to HPC.</p>
+<p>Previously, my understanding of HPC was very abstract. What I learned from 洪士灝 was viewing it from an infrastructure perspective. But 陳永昱 comes from a mechanical engineering background, and he understands it from the application perspective. That was a brand-new perspective for me. I still think there is a clear difference between academia and industry. When discussing technology, 陳永昱 often asks me whether it can “make money.” Of course, I am not saying there is anything wrong with exploring the mysteries of the world. But people do need to earn a living (?). Talking with him is always a big shock to me. I cannot say everything he says is correct, but he often offers viewpoints I never thought about. Most of the time, I agree with him.</p>
+<p>Another person is my undergrad DBMS instructor, <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/ming-ling-lo-94631b3/">駱明凌</a>. He returned to NTU to teach mainly because he had already retired; he taught DBMS with the mindset of giving back to society. After I graduated, I stayed in touch with him. There was a time when I was very interested in DBMS and even wanted him to advise me. This semester I talked with him once, and we talked a lot. Mainly, I had never had the chance to properly hear his story, so I used this opportunity to hear the whole story—from school to retirement. I love listening to stories like this. I feel you can learn a lot from them. I also learned that he recently started a company. At some point, I suddenly lost interest in entrepreneurship, but after that conversation, I again felt that I must seize the opportunity to start something in the future. I even already decided on a company name: “微中子科技股份有限公司.” I hope it becomes real one day.</p>
+<p>In fact, I think the people I meet in daily life all inspire or influence me in some way: labmates, club friends, classmates, and even friends I met through the E.Sun Scholarship. This is also why I like spending time with people.</p>
+<h2 id="Research"><a class="header-anchor" href="#Research">¶ </a>Research</h2>
+<p>During summer, my research progress was fairly fast. The program architecture was basically built in summer. This semester, progress slowed down. Mainly because I spent half my time doing coursework assignments, and the other half on TA work—so there was no time left. Also, I took a bit of a detour in the research. Recently, after discussing with my advisor, I narrowed the topic, which should make it easier to maintain steady progress. My expectation is to defend next semester and finish writing the thesis. Since I plan to go to Italy as an exchange student next academic year, I need to ensure I meet all graduation requirements before going abroad, so after returning I can graduate directly. Or, if I am unlucky and cannot go abroad because of the pandemic, I can still graduate directly.</p>
+<h2 id="Photography"><a class="header-anchor" href="#Photography">¶ </a>Photography</h2>
+<p>I have always been interested in taking photos. Previously, I thought shooting with the iPhone 11 should be acceptable, but later I really felt the limitations were too strong. For example, shooting distant subjects or getting good night scenes is just too different. So I bought a camera. After researching for a long time, I decided on the Fujifilm X-S10. It is a new model released at the end of last year. Compared with mid-range mirrorless cameras from other brands, I think it has the best cost–performance ratio, so I bought it. Photography is a new hobby I have been cultivating after fine arts. I am still practicing seriously. I hope I can keep improving. If you are interested, feel free to follow my <a target="_blank" rel="noopener" href="https://www.instagram.com/liu_an_chi/">ig: @liu_an_chi</a>, where I post my photography work.</p>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>It feels weird to not have a conclusion. In short: I did quite a lot this semester. NCTU is honestly pretty good, and life has been quite exciting.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/parallel-programming/">
+                parallel programming
+            </a>,&nbsp;
+        
+            <a href="/en/tags/thoughts/">
+                thoughts
+            </a>,&nbsp;
+        
+            <a href="/en/tags/graduate-school/">
+                graduate school
+            </a>,&nbsp;
+        
+            <a href="/en/tags/master-s/">
+                master&#39;s
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nycu-icse/">
+                NYCU ICSE
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nctu-observations-and-reflections/">
+                NCTU observations and reflections
+            </a>,&nbsp;
+        
+            <a href="/en/tags/fine-arts-club/">
+                fine arts club
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nchc/">
+                NCHC
+            </a>,&nbsp;
+        
+            <a href="/en/tags/teaching-assistant/">
+                teaching assistant
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Preface"><span class="toc-text">Preface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Courses"><span class="toc-text">Courses</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Teaching-Assistant-Work"><span class="toc-text">Teaching Assistant Work</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ironman-Challenge"><span class="toc-text">Ironman Challenge</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fine-Arts-Club"><span class="toc-text">Fine Arts Club</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#National-Center-for-High-performance-Computing-NCHC"><span class="toc-text">National Center for High-performance Computing (NCHC)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#People-Who-Influenced-Me-Deeply"><span class="toc-text">People Who Influenced Me Deeply</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Research"><span class="toc-text">Research</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Photography"><span class="toc-text">Photography</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/condition-variable-cpp/">
+        A Simple Example of Condition Variables in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/std-string-beginner/">
+        C++ std::string for Beginners: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/stringview/">
+        Still Using const std::string&amp;? Try std::string_view!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/05/c++/googletest/">
+        Writing C++ Unit Tests with GoogleTest
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

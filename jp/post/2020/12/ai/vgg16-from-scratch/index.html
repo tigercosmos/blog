@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="ai,deep learning,vgg16,c++,cuda,cudnn,cublas," />
+    <meta name="description"
+        content="本記事では VGG16 を 2 つのバージョンで紹介します。1 つ目は CPU 上で動く純粋な C++ 実装、2 つ目は CUDA / cuDNN / cuBLAS を用いて GPU 上で動かす実装です。" />
+    <title>Neutrino&#39;s Blog: VGG16 をスクラッチ実装する 2 つの方法：CPU 上の C++ と GPU 上の CUDA </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/12/ai/vgg16-from-scratch/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/12/ai/vgg16-from-scratch/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/12/ai/vgg16-from-scratch/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/en/post/2020/12/ai/vgg16-from-scratch/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2020/12/ai/vgg16-from-scratch/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2020/12/ai/vgg16-from-scratch/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        VGG16 をスクラッチ実装する 2 つの方法：CPU 上の C++ と GPU 上の CUDA
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-12-02
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/en/post/2020/12/ai/vgg16-from-scratch/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2020/12/ai/vgg16-from-scratch/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Introduction"><a class="header-anchor" href="#Introduction">¶ </a>Introduction</h2>
+<p>VGG16 は、オックスフォード大学の K. Simonyan と A. Zisserman により論文 “Very Deep Convolutional Networks for Large-Scale Image Recognition” で提案された畳み込みニューラルネットワーク（CNN）モデルです。ILSVRC-2014 の画像認識で有名なモデルで、AlexNet、GoogleNet、ResNet などと並んでよく知られています。VGG16 の概要は、たとえば “<a target="_blank" rel="noopener" href="https://neurohive.io/en/popular-networks/vgg16/">VGG16 – Convolutional Network for Classification and Detection</a>” が参考になります。</p>
+<p>本記事では VGG16 をスクラッチで 2 つのバージョンとして実装しました。1 つ目は CPU 上で動く純粋な C++ 実装で、各層の演算をすべて C++ のみで実装しています。2 つ目は CUDA / cuDNN / cuBLAS を使って GPU の利点を活かし、ニューラルネットワークの演算を高速化する実装です。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/100784827-bd1dc080-344a-11eb-8a65-76be05809123.png" alt="Vgg16 architecture"></p>
+<h2 id="VGG16-in-C"><a class="header-anchor" href="#VGG16-in-C">¶ </a>VGG16 in C++</h2>
+<p>このプログラムはヘッダーオンリーのフレームワークとして書きました。拡張性・スケーラビリティのある構造になっていると思います。GitHub のリポジトリは <a target="_blank" rel="noopener" href="https://github.com/tigercosmos/simple-vgg16">simple-vgg16</a> です。</p>
+<p>フレームワークの使い方は次のとおりです。</p>
+<pre><code class="language-c++">    // prepare the input data
+    auto input = sv::Tensor&lt;double&gt;(224, 224, 3); // 224 x 224 x 3
+
+    // prepare the network
+    auto network = sv::Network&lt;double&gt;();
+
+    // add layers into the network
+    auto *layer1_1 = new sv::ConvLayer&lt;double&gt;(3, 3, 64); //224 x 224 x 64
+    network.addLayer(layer1_1);
+    auto *layer1_2 = new sv::ConvLayer&lt;double&gt;(64, 3, 64); //224 x 224 x 64
+    network.addLayer(layer1_2);
+    auto *layer1_3 = new sv::MaxPoolLayer&lt;double&gt;(2, 2); // 112 x 112 x 64
+    network.addLayer(layer1_3);
+
+    // SKIP
+
+    // predict the result by forwarding
+    sv::Tensor&lt;double&gt; output;
+    network.predict(input, output);
+</code></pre>
+<p>上のスニペットのように、まずネットワークを宣言し、層を追加していきます。ネットワーク構造を定義したら、<code>predict()</code> を呼び出して推論を実行します。TensorFlow や PyTorch でモデルを書くのと同じくらい簡単です。</p>
+<p>フレームワークはシンプルで、ヘッダーは少数です：</p>
+<ul>
+<li>Activation：活性化関数の定義</li>
+<li>Layer：<code>ConvLayer</code>、<code>MaxPoolLayer</code> など層の定義</li>
+<li>Network：層を保持するネットワーク（モデル）</li>
+<li>Operand：畳み込み・プーリングなど、層内部で使う演算子の定義</li>
+<li>Tensor：テンソル型の定義</li>
+</ul>
+<p>このシンプルなフレームワークはかなり分かりやすい構成だと思います。一方で最も難しいのは Operand（演算）の実装です。畳み込みなどの演算はバグを作りやすく、私は実装のデバッグに多くの時間を使いました。また、データの扱い方や使用するアルゴリズムなど、最適化の余地は多くあります。純粋な C++ は非常に遅かったので、OpenMP を導入して少し速くしました。</p>
+<p>このフレームワークには満足しています。現時点では推論のみをサポートしていますが、学習機能を足したり、演算・層・活性化関数を拡張したりするのもそれほど難しくないと思います。</p>
+<p>また簡単なベンチマークも用意しています。出力は次のようになります：</p>
+<pre><code>The VGG16 Net
+-----------------------------
+NAME:   MEM     PARAM   MAC
+-----------------------------
+Conv:   25690112,       1792,   86704128
+Conv:   25690112,       36928,  1849688064
+MaxPool:        6422528,        0,      0
+Conv:   12845056,       73856,  924844032
+Conv:   12845056,       147584, 1849688064
+MaxPool:        3211264,        0,      0
+Conv:   6422528,        295168, 924844032
+Conv:   6422528,        590080, 1849688064
+MaxPool:        1605632,        0,      0
+Conv:   3211264,        1180160,        924844032
+Conv:   3211264,        2359808,        1849688064
+MaxPool:        802816, 0,      0
+Conv:   802816, 2359808,        462422016
+Conv:   802816, 2359808,        462422016
+MaxPool:        200704, 0,      0
+FC:     32768,  102764544,      102760448
+FC:     32768,  16781312,       16777216
+FC:     8000,   4097000,        4096000
+Total:  110Mb,  133M,   11308M
+-----------------------------
+@@ result @@
+0.0413532 0.0416434 0.0412649 0.0419855 0.0412341 ... so many ... 0.0415309 0.0406799 0.0418257 0.0416706 0.0413013
+</code></pre>
+<p>詳細は GitHub の <a target="_blank" rel="noopener" href="https://github.com/tigercosmos/simple-vgg16">simple-vgg16</a> を参照してください。ぜひ fork して自由に改造してみてください。</p>
+<h2 id="VGG16-in-CUDA"><a class="header-anchor" href="#VGG16-in-CUDA">¶ </a>VGG16 in CUDA</h2>
+<p>行列演算のように、深層学習で頻出する処理では CPU より GPU の方が速いことが多いです。深層ニューラルネットワークの実行時間を短縮するには、CUDA や cuDNN / cuBLAS といったライブラリを活用して GPU 計算を使うのが効果的です。</p>
+<p>2 つ目の実装では、CUDA を使って VGG16 を実装しました。GitHub: <a target="_blank" rel="noopener" href="https://github.com/tigercosmos/simple-vgg16-cu">simple-vgg16-cu</a> にあります。先ほどの C++ 版と同様に、Proof-of-Concept 的な実装です。畳み込み層は cuDNN、全結合層は cuBLAS で実装しています。</p>
+<p><code>cudnnConvolutionBiasActivationForward</code>、<code>cudnnPoolingForward</code>、<code>cublasSgemm</code> のような API を使うと、CUDA 上でニューラルネットワーク（NN）の各種演算を比較的簡単に実装できます。CUDA 系ライブラリは、推論／学習の速度向上だけでなく、NN モデル開発の効率も大きく高めてくれるため、可能な限りこうしたライブラリの利用が推奨されます。</p>
+<p>GPU は数秒で終わる一方で、CPU は数分かかります。以下は各層の実行時間です：</p>
+<pre><code>CONV 224x224x64 84 ms
+CONV 224x224x64 115 ms
+POOLMAX 112x112x64 108 ms
+CONV 112x112x128 114 ms
+CONV 112x112x128 111 ms
+POOLMAX 56x56x128 70 ms
+CONV 56x56x256 122 ms
+CONV 56x56x256 115 ms
+POOLMAX 28x28x256 92 ms
+CONV 28x28x512 122 ms
+CONV 28x28x512 118 ms
+POOLMAX 14x14x512 73 ms
+CONV 14x14x1024 63 ms
+CONV 14x14x1024 114 ms
+POOLMAX 7x7x1024 102 ms
+FC 4096 3280 ms
+FC 4096 311 ms
+FC 1000 104 ms
+</code></pre>
+<p>なお、私のコードは最適化していません。CPU より速くはなっているものの、PyTorch の VGG16 は 100ms 台で動くこともあり、私の実装には大きな改善余地があります。</p>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>PyTorch のようなフレームワークを使えば VGG16 のようなネットワークは簡単に構築できますが、スクラッチ実装することで概念理解を深められます。だからこそ私は、CPU 上の純粋な C++ と、GPU 上の CUDA という 2 つの方法で VGG16 を書きました。</p>
+<p>CPU 計算と GPU 計算は対照的で、実行時間に非常に大きな差があることが分かります。ただし「GPU が速いから常に GPU を選ぶ」とは限りません。組み込みなど CPU しか搭載していないハードウェアもあり、その場合は CPU が唯一の選択肢です。また、CPU や GPU だけでなく、ALU や FPGA の方がさらに速いケースもあります。</p>
+<p>何かをスクラッチで書いてみるのは常に良い練習になります。私はこうした小さな実装から多くを学びました。本記事が少しでも役に立てば嬉しいです。あなたの実装を見るのも楽しみにしています。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/ai/">
+                ai
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/deep-learning/">
+                deep learning
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/vgg16/">
+                vgg16
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/c/">
+                c++
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/cuda/">
+                cuda
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/cudnn/">
+                cudnn
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/cublas/">
+                cublas
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VGG16-in-C"><span class="toc-text">VGG16 in C++</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VGG16-in-CUDA"><span class="toc-text">VGG16 in CUDA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/07/c++/template-for-std-containter-conversion/">
+        C++ のテンプレート関数でコンテナ型を変換する（std::list&lt;int&gt; → std::vector&lt;double&gt;）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/condition-variable-cpp/">
+        C++ の Condition Variable：シンプルな例
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/std-string-beginner/">
+        C++ std::string 入門：この一篇で基礎を融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/stringview/">
+        まだ const std::string&amp; を使ってる？ std::string_view を試そう！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/05/c++/googletest/">
+        GoogleTest で書く C++ のユニットテスト
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

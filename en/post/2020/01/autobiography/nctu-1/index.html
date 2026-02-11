@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="computer science,thoughts,graduate school,master&#39;s,NYCU ICSE,NCTU observations and reflections," />
+    <meta name="description"
+        content="NCTU Observations and Reflections (1): First-Year Master&#39;s (Fall)" />
+    <title>Neutrino&#39;s Blog: NCTU Observations and Reflections (1): First-Year Master&#39;s (Fall) </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/01/autobiography/nctu-1/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/01/autobiography/nctu-1/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/01/autobiography/nctu-1/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/01/autobiography/nctu-1/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/01/autobiography/nctu-1/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2020/01/autobiography/nctu-1/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        NCTU Observations and Reflections (1): First-Year Master&#39;s (Fall)
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-01-16
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/01/autobiography/nctu-1/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2020/01/autobiography/nctu-1/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p><img src="https://user-images.githubusercontent.com/18013815/72513126-bcf2f180-3887-11ea-94f5-6af64b6a747e.jpg" alt="CS building"><br>
+(CS building)</p>
+<p>Back in undergrad, I had the habit of recording what I saw and felt every semester in the “<a href="/tags/%E5%A4%A7%E5%AD%B8/">NTU Observations and Reflections</a>” series. Now that I am studying CS at NCTU, I have a new series: “<a href="/tags/%E4%BA%A4%E5%A4%A7%E8%A7%80%E5%AF%9F%E8%88%87%E5%BF%83%E5%BE%97/">NCTU Observations and Reflections</a>”. My hope is to graduate early in graduate school—one post per semester. Hopefully it does not take more than four posts.</p>
+<h2 id="Campus"><a class="header-anchor" href="#Campus">¶ </a>Campus</h2>
+<p>NCTU is actually quite beautiful. The first time I came to NCTU was when I applied to the CS graduate program. As soon as I walked into the campus, I felt comfortable. It certainly fits the stereotype: “nice mountains, nice water, and very boring.” But honestly, I think that is a misunderstanding. Riding to downtown only takes a bit over ten minutes, and in Taipei, taking the MRT to almost anywhere takes more than ten minutes anyway. Compared with NTU, NCTU has fewer random non-students hanging around, the campus feels less crowded, and many buildings even have more modern interior design than NTU.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/72512965-9339ca80-3887-11ea-9ac7-a240304ab39e.jpg" alt="NCTU campus"><br>
+(NCTU campus: looking toward the library)</p>
+<p>In Taiwan, if you are not going abroad and you already went to NTU for undergrad, the best domestic option for graduate school is still NTU. Even if you switch from BIME to CS, you are basically staying in the same life circle. I can understand why Richard Feynman’s teacher, John Slater, insisted that Feynman leave MIT. Slater told him, “You should go see what the rest of the world looks like,” so Feynman went to Princeton for his PhD. Another example is 張懋中, who studied at NTU, NTHU, and NCTU from undergrad through PhD. This semester at NCTU has been pretty happy for me, so I have always felt that even if you cannot get into NTU CS, coming to NCTU CS is actually a solid option.</p>
+<p>I like NCTU’s architecture a lot. For example, the Haoran Library is huge, and every floor feels stylish. The first floor has spacious sofas where you can read comics and elegant glass tables where you can chat. The second floor holds periodicals, all arranged in circular shelves that surround the area. With the lighting and decoration, reading magazines there is extremely comfortable. My favorite is the sixth floor: there are many self-study desks, each desk is large and spaced far apart, and there are usually very few people. You can enjoy a lot of personal space. Near the floor-to-ceiling windows there are also lounge chairs and sofas facing outside—you can scroll on your phone, look at the view, and rest.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/72512877-6dacc100-3887-11ea-8379-7ff3c5472813.jpg" alt="Library, 6th floor"><br>
+(Library, 6th floor)</p>
+<p>The student cafeterias are also beautifully designed. Whether it is the Second Cafeteria or the “Female Second” Cafeteria, there are comfortable sofas and seats, and even bar counters. NTU does not have a single cafeteria that can compete with NCTU’s in terms of interior design. My favorite is picking a seat by the floor-to-ceiling windows in the morning—lying on the sofa, scrolling my phone, drinking coffee and eating bread, and enjoying the sunlight and quiet of the early morning.</p>
+<h2 id="A-New-Lab"><a class="header-anchor" href="#A-New-Lab">¶ </a>A New Lab</h2>
+<p>I originally wanted to go abroad, so at the beginning of the semester I spent almost all my time studying English. The reason was that I wanted to see the world, live in a foreign environment, make more foreign friends, and seriously improve my English. But after attending classes at NCTU for a few days, that motivation gradually faded. The reason was: I could already meet foreigners here, I could already speak English, and I even had some classes taught in English—so it felt like being abroad would probably be more or less the same vibe. Then I heard from a senior student that when she studied abroad for graduate school, she mostly met Chinese and Indian students, and she did not really make foreign friends. She studied abroad mainly for job-hunting reasons, while I am not necessarily determined to work in the U.S., so I did not have the motivation of “buying a U.S. job ticket” by doing a master’s degree there.</p>
+<p>Thinking it through, it seemed like there was no must-go-abroad reason. So I stopped studying English and decided to first do what I could do well: since I was already at NCTU CS, I should focus on my studies and graduate as soon as possible. To be honest, I feel a bit embarrassed: back then I discussed with many professors and seniors, and everyone suggested that I stay at NCTU and finish first. But I refused to listen. In the end, after I figured it out myself, I arrived at the same conclusion as everyone else. Still, I will not give up the chance to go abroad—if I get the opportunity to work abroad or do a PhD abroad, I will definitely go.</p>
+<p>By November, I had decided to take NCTU seriously. Before that, I had dropped my previous advisor, so I needed to find a new professor. Looking for an advisor in November surprised several professors. Normally, choosing an advisor is something you do a year earlier; a year later, you often only have “leftovers.” I did not have much choice, so I talked with professors who still had openings, one by one. In the end, I really hit it off with Professor 游逸平, so I joined the Systems Software Lab (SSLAB). I should thank the classmate who abandoned NCTU for NTU, because that was why I could still get into SSLAB at that point in time. My past experience was mainly in browsers, database systems, and compilers, which actually fits this lab well. Although the professor’s main expertise is still compilers, I think the essence of systems software is the same, and whether it is the professor, the senior students, or my peers, everyone here feels quite strong.</p>
+<p>I have heard that some labs do not really do much communication—everyone works on their own. And CS is a field that does not require experimental instruments, and it does not have the kind of “senior trains junior” structure. People are more like lone rangers fighting solo. But even lone rangers can still exchange ideas and help each other. In that sense, I think the atmosphere in SSLAB is great. People regularly exchange knowledge, and discussing professional topics is genuinely enjoyable.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/72514650-cb420d00-3889-11ea-932e-45c1cd498bb0.jpg" alt="Library, 2nd floor"><br>
+(Library, 2nd floor)</p>
+<p>However, because I joined the lab relatively late, by the time I joined, everyone else had already spent five months since summer reading papers and exploring directions. The lab’s average time-to-graduation is also around 2.5 years, so if I want to graduate on time, I need to speed up. This semester, the two main directions I explored were GPGPU and WebAssembly. The former is a direction my advisor has been guiding students on in recent years. The latter is related to his expertise and is also a relatively new area, so it should have more room for work. I still have not pinned down exactly what to do yet, but it feels like I really need to at least decide what I am doing before winter break.</p>
+<p>To understand how to do research properly, I went back to re-watch 彭明輝’s talk and re-read the “研究生完全求生手冊” (I had already read it when I did an undergrad project, but back then I was not truly a graduate student—and I had forgotten most of it anyway). I have always liked reading 彭明輝’s articles. His explanations on literature review techniques were especially enlightening. But techniques are just techniques. Finding a valuable topic yourself still feels difficult. Asking professors and seniors how they find topics is only a reference—everyone’s interests and strengths are different, and the sparks of inspiration are often different as well.</p>
+<h2 id="Courses"><a class="header-anchor" href="#Courses">¶ </a>Courses</h2>
+<p>This semester I took two courses: “Algorithms” and “Network Programming,” both taught in English. I took Algorithms because in undergrad I only took the basic data structures and algorithms course, and I felt I should fill in what needs to be filled. But this course was purely theoretical, and there was only one assignment. In my opinion, that is still not solid enough. I probably need to solve more algorithm problems to make the theory concrete before I can say I truly understand it. Later I found that the content of NTU CS undergrad “Advanced Algorithms” is basically identical to NCTU graduate Algorithms. After all, both use <em>Introduction to Algorithms</em>. I found 陳縕儂’s teaching easier to understand, so later I stopped going to class and just watched <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=gg7U1ZOPzSA&amp;list=PLOAQYZPRn2V5C4Cx5tSLW8z0saWUm8LD-">陳縕儂’s YouTube channel</a>.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/72514461-97ff7e00-3889-11ea-92dc-1424c14b0643.jpg" alt="In-class scene"><br>
+(In-class scene)</p>
+<p>I heard Network Programming is one of the heavy core courses at NCTU. I took it because a senior student strongly recommended it, and I also knew it would be heavy, so I only took two courses this semester because of it. In short, the course is systems programming plus user-space network application development.</p>
+<p>As it turned out, it really was time-consuming. I spent almost all my time on assignments. And because I am relatively weak, I spent a huge amount of time and still could not finish them. Two out of four assignments were submitted late, and the scores were not high. The essence of this course is actually the assignments (the senior student told me that too). The lecture materials were already “antiques.” In class, the professor would criticize the sample code as outdated and badly written, blah blah blah, and I would be like: then why not update the sample code? The professor also lectured in a very improvisational style. I did not feel I gained much from lectures, and later I stopped attending. But during the assignment process, when I looked up materials myself and implemented things, I truly learned a lot. I have to say: the assignment design was pretty good. It was painful for me, and I felt frustrated seeing others easily get full marks while I still made many mistakes, but I know I learned something—and that sense of gain is real.</p>
+<p>At the beginning of the semester, I also audited “Introduction to Music” and “Introduction to Law,” which are general-education courses for undergrads. Many people dislike gen-ed courses and think they are unnecessary, and this has long been controversial at NTU as well. Personally, I think gen-ed courses are great, because I am interested in many areas, and I believe cultivating humanistic literacy through listening, watching, and learning is worthwhile. To this day, the most impactful gen-ed course for me was “Human Rights and Justice” that I took in my freshman year at NTU (see my <a href="/post/2016/07/autobiography/second-semester-in-NTU/">reflection</a>). It completely broke my old way of thinking. The purpose of gen-ed courses is probably to help you step outside your frame and broaden your horizons.</p>
+<p>After all, NCTU is an engineering-focused university, and it differs from a comprehensive university like NTU. Most people I interact with are from engineering backgrounds, and even in the Fine Arts Club, you rarely see students from humanities or social sciences. I do not think that is a good thing. Only by interacting with people from different backgrounds do you learn how others in the world think. For example, business schools and engineering schools often view things very differently. For a product, business students might first look at whether there is a target audience and whether marketing will work, while engineering students might first look at technical feasibility. You need to understand these fundamental differences in order to communicate with people from different backgrounds.</p>
+<p>When I interned at a software company, I noticed that engineers and sales often have trouble communicating. For me, it was surprising: is it not easy to just explain clearly? In fact, even at school, when students from different colleges are grouped together, communication barriers often show up. My ability to work with people from different domains was built at a comprehensive university—through joining clubs, taking courses, and interning at multiple companies. That is why I recommend choosing a comprehensive university for undergrad: it is the first step into socialization. In graduate school, I feel it matters less, because what matters most for graduate students is building academic capability.</p>
+<p>At NCTU, I also listened to talks from time to time. At NTU, I used to go to talks all the time, and now, in the CS building, there are plenty of talks to attend. Even though I personally know nothing about machine learning, I really like listening to ML-related talks to understand the latest trends. I admire how the CS department can consistently invite scholars, professors, and engineers from abroad to give talks. Hopefully one day I can give talks at NTU and NCTU too.</p>
+<h2 id="Fine-Arts-Club"><a class="header-anchor" href="#Fine-Arts-Club">¶ </a>Fine Arts Club</h2>
+<p><img src="https://user-images.githubusercontent.com/18013815/72513839-97b2b300-3888-11ea-8334-deddf05d5d6a.jpg" alt="Fine Arts Club"><br>
+(Fine Arts Club)</p>
+<p>In undergrad, the clubs I joined were all work-oriented—for example, the Global Initiatives Symposium in Taiwan and the Green Collar Agricultural Market. Basically, it was nonstop work. I learned a lot, but I was exhausted. Another downside of work-oriented clubs is that you rarely become friends—like colleagues at a company: once you leave the office, there is nothing to talk about. Starting last semester, I began learning to draw, but after I came to NCTU, Vivianne could no longer teach me, so I joined the Fine Arts Club. The club president is an outgoing and cheerful girl. She is a bit of a goofball, but she runs the club well. I think the club atmosphere is great. I am happy drawing here. This was also my first time trying oil painting. Sometimes we also collaborate on paintings. When a piece turns out well, it is very satisfying.</p>
+<div align="center">
+<img height="400" alt="Clown" src="https://user-images.githubusercontent.com/18013815/72512788-435b0380-3887-11ea-9318-d7e1b75f2140.png">
+<p>(Clown. Authors: 吳映築, 曹于容, and me)</p></div>
+<h2 id="Bo-Ai-Dorm"><a class="header-anchor" href="#Bo-Ai-Dorm">¶ </a>Bo-Ai Dorm</h2>
+<p>One thing worth mentioning is that NCTU has two campuses in Hsinchu. The Guangfu campus is the teaching campus, and our department buildings are there. The Bo-Ai campus is basically all dormitories. Unfortunately, I was assigned a dorm on the Bo-Ai campus. Because I cannot ride a scooter, I commuted by shuttle bus every day—basically taking the bus to school at 9 a.m. and taking the bus back at 10:30 p.m. NCTU’s dorms are run-down. I sincerely think they should be rebuilt. The campus area is huge, yet the dorms are tiny. There are many international students here—such low-quality dorms are almost a joke. In short, commuting was annoying, and the dorm was not comfortable. Next semester, I decided to rent a place off campus.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/72515264-94202b80-388a-11ea-8338-8f3780b224b0.jpg" alt="Shuttle bus stop at Bo-Ai campus"><br>
+(Shuttle bus stop at Bo-Ai campus)</p>
+<p>However, from childhood all the way through attending NTU, I had always lived at home, so living outside for the first time was still quite new to me. I also always wanted to experience what it feels like to have roommates. I often heard friends who lived in dorms talk about their daily interactions, and I wanted to see it myself. This semester in the dorm, I finally got that experience. My roommates were all pretty nice: two electrical engineers and one civil engineer. Because our specializations were different, we could not really talk about academic topics much. We mostly talked about entertainment, politics, video games, and so on. Still, I think having roommates in the same specialty would be more convenient when you get stuck on homework. Luckily, as a grad student I have a lab and can ask labmates. Because I do not have a scooter, sometimes when we went out to eat, my roommates would give me a ride. I did build some friendship with them over the semester. Thinking about moving out next semester, I still felt a bit reluctant.</p>
+<h2 id="Overall-Impressions"><a class="header-anchor" href="#Overall-Impressions">¶ </a>Overall Impressions</h2>
+<p>As I said earlier, it is always good to change environments—experiencing life in Hsinchu at NCTU and seeing what another university looks like are valuable experiences. In terms of equipment, resources, faculty, and peers, NCTU and NTU are broadly similar. NTU has a lot of resources, but when they are distributed across colleges—and with the medical school taking the biggest share—I suspect the CS departments of the two schools end up with similar practical resources. Also, NCTU is right next to the National Center for High-performance Computing, so we have the fastest academic network! I should emphasize that I am comparing with the mindset of a graduate student. In undergrad I studied BIME, and at NTU CS I only took a few courses and did a project with Professor 洪士灝, so my view may be biased.</p>
+<p>In terms of average student quality (median), NTU is probably better. NTU students usually participate more actively in class, and the depth of their questions tends to be higher. Of course, Taiwanese students generally do not like asking questions, and classes are mostly one-way lectures anyway, so the difference between the two schools is not that huge. But I once took classes at NTNU and NTUST, and the difference felt very significant. That said, NCTU students seem less “weird.” At NTU, I met so many eccentrics—both “good weird” and “bad weird.” NTU students also tend to be more imaginative, while NCTU students feel more straightforward?</p>
+<p>In short, for the top group of students, I do not think there is much difference. I have a friend who studied at NTU, felt the department was not a good fit, retook the college entrance exam to go to NCKU, and then could not stand how far NCKU felt from NTU. Eventually, he transferred back to NTU. I do not think NCTU has that kind of problem. You can come here with peace of mind—just stay cautious and humble. In the eyes of top-tier universities abroad, whether you are from NTU or NCTU, they probably do not care much.</p>
+<p>A lot of people, hearing that I went from NTU to NCTU, act like: how bad do you have to be to “fall down” here? Or, some graduate students who came to NCTU from second-tier universities feel a “bloodline” inferiority complex. I think these ideas are unnecessary. I could not get into NTU CS in the first place. Once I am here, I will make the best of it. And if I had stayed at NTU, I would not have experienced these new things. Overall, NCTU feels great and comfortable. I hope I can do research smoothly and graduate early!</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/computer-science/">
+                computer science
+            </a>,&nbsp;
+        
+            <a href="/en/tags/thoughts/">
+                thoughts
+            </a>,&nbsp;
+        
+            <a href="/en/tags/graduate-school/">
+                graduate school
+            </a>,&nbsp;
+        
+            <a href="/en/tags/master-s/">
+                master&#39;s
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nycu-icse/">
+                NYCU ICSE
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nctu-observations-and-reflections/">
+                NCTU observations and reflections
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Campus"><span class="toc-text">Campus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-New-Lab"><span class="toc-text">A New Lab</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Courses"><span class="toc-text">Courses</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fine-Arts-Club"><span class="toc-text">Fine Arts Club</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bo-Ai-Dorm"><span class="toc-text">Bo-Ai Dorm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overall-Impressions"><span class="toc-text">Overall Impressions</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/condition-variable-cpp/">
+        A Simple Example of Condition Variables in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/std-string-beginner/">
+        C++ std::string for Beginners: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/stringview/">
+        Still Using const std::string&amp;? Try std::string_view!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/05/c++/googletest/">
+        Writing C++ Unit Tests with GoogleTest
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

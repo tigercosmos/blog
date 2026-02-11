@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="台大,大学,台大観察と所感," />
+    <meta name="description"
+        content="台大観察と所感（9）：学部4年（下）＆ログアウト" />
+    <title>Neutrino&#39;s Blog: 台大観察と所感（9）：学部4年（下）＆ログアウト </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2019/06/autobiography/ntu-9/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2019/06/autobiography/ntu-9/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2019/06/autobiography/ntu-9/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2019/06/autobiography/ntu-9/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2019/06/autobiography/ntu-9/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2019/06/autobiography/ntu-9/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        台大観察と所感（9）：学部4年（下）＆ログアウト
+    </h2>
+    <ul class="post-date">
+        <li>
+            2019-06-26
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2019/06/autobiography/ntu-9/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2019/06/autobiography/ntu-9/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p>これは私にとって台大の第8学期であり、同時に最後の学期でもあります。学部4年（下）は多くの人にとって気楽な時期で、単位は修了していて卒業のプレッシャーもありません。けれど私は転系したうえ、他学部・他学科の授業を取り続けていたせいで、学部4年（下）になっても必要単位がまだ埋まっていませんでした。そのため今学期も12単位を履修し、ほぼ毎日学校に通うことになりました。</p>
+<p>全体として、学部4年（下）は私にとってどこか不条理で、何もきちんとできていないような感覚がありました。誇れることはあまりなく、嬉しかった出来事がいくつか、そして強く印象に残った挫折がいくつかありました。</p>
+<span id="more"></span>
+<p>今学期は Skymizer でインターンをしました。そして私は、「大きなプロジェクトは簡単に回せる」と思い込んでいたけれど、現実はそうではない、ということに気づきました。結局、プロジェクトを理解するだけで膨大な時間がかかりました。彼らは深層学習のコンパイラを作っていて、私は深層学習もコンパイラもどちらも不慣れでした。必要な専門知識が欠けているのはやはり不利だと痛感しました。この経験を通じて、仕事を探すときには自分の能力と、その会社にどれほど適合しているかを、もっと厳密に見積もる必要があると学びました。</p>
+<p>前学期にある女の子と知り合い、その後かなり近い関係になって、私は彼女のことが好きだと思っていました。数か月間、心の多くを彼女に持っていかれていましたが、結局関係はうやむやのまま終わってしまいました。その数か月間、生活のリズムが大きく乱れてしまったと思います。やはり私はまだ未熟だったのだと思います。</p>
+<p>私はずっと「普生（一般生物学）」に苦手意識があり、以前に2回落としていました。今学期は単位数が特に少なく、しかも卒業のプレッシャーもあったので、真面目に授業に出て、そこそこ真面目に勉強しました（たぶん）。期末の総合成績は C で、冷や汗をかきながら何とか通過できました。これで私は予定通り台大を「ログアウト」できそうです。普生丙を3回履修し、しかも全部別の学科が開講したものだったので、合わせると生命科学系の先生だけで10人の授業を受けたことになります。これはこれで小さくない成果です。その苦い経験の詳細は、<a target="_blank" rel="noopener" href="https://www.dcard.tw/f/course/p/231572963-%EF%BC%83%E5%8F%B0%E5%A4%A7-%EF%BC%83%E6%99%AE%E7%94%9F%E4%B8%99-%E4%B8%89%E9%96%80%E6%99%AE%E7%94%9F%E4%B8%99%E8%AA%B2%E7%A8%8B%E8%A9%95%E5%83%B9%EF%BC%9A106-1-%E7%94%9F%E5%B7%A5%E7%B3%BB%E3%80%81107-1-%E8%97%A5%E5%AD%B8%E7%B3%BB%E3%80%81107-2-%E7%89%A9%E6%B2%BB%E8%81%B7%E6%B2%BB%E7%B3%BB">「普生丙3科目の履修レビュー：106-1 生工系、107-1 薬学系、107-2 物治職治系」</a> に書きました。興味がある方は見てみてください。</p>
+<p>他の授業は適当に受けていましたが、「中国書法史」はとても好きでした。私はもともと中華文化に愛着があり、盧慧紋先生の文物解説はとても聞きやすかったです。さらに、中研院歴史文物陳列館、故宮博物院、そして先生が自らキュレーションした「水月鏡像」展にも行きました。先生の解説つきで鑑賞できたのは本当に素晴らしく、私はこれまでで一番解説が上手い人だと思いました。</p>
+<p>そして私は相変わらず Rust Taiwan のコミュニティでも活動的でした。コミュニティで先頭に立つのは誰か？ たいてい「比較的暇な人」です。そしてその人は私でした。なのでコミュニティ関連のことをいろいろと担当し、主に今年の COSCUP 2019 の「<a target="_blank" rel="noopener" href="https://coscup.org/2019/en/programs/">Everything in Rust</a>」トラックの運営をしました。登壇者の顔ぶれは本当に豪華で、講演者の皆さんには感謝しかありませんが、司会としてはやはり誇らしかったです。6月中旬には COSCUP チームと一緒に香港のオープンソース年会 HKOSCON に行き、登壇もしました。</p>
+<blockquote class="twitter-tweet">
+<div dir="ltr" lang="en">
+I had a talk about &quot;Build a minimal DBMS from scratch by Rust&quot; at Hong Kong Open Source Conference.<br>
+<br>
+Thank <a target="_blank" rel="noopener" href="https://twitter.com/jolliffe?ref_src=twsrc%5Etfw">@jolliffe</a>&apos;s photos :)<br>
+<br>
+Sides: <a target="_blank" rel="noopener" href="https://t.co/0X2enww7FC">https://t.co/0X2enww7FC</a><a target="_blank" rel="noopener" href="https://twitter.com/hashtag/rustlang?src=hash&amp;ref_src=twsrc%5Etfw">#rustlang</a> <a target="_blank" rel="noopener" href="https://twitter.com/hashtag/hkoscon?src=hash&amp;ref_src=twsrc%5Etfw">#hkoscon</a> <a target="_blank" rel="noopener" href="https://t.co/bTokrOTNc2">https://t.co/bTokrOTNc2</a></div>
+— Liu, An-Chi (@tigercosmos) <a target="_blank" rel="noopener" href="https://twitter.com/tigercosmos/status/1139898565516386308?ref_src=twsrc%5Etfw">June 15, 2019</a></blockquote>
+<script async charset="utf-8" src="https://platform.twitter.com/widgets.js"></script>
+<p>今学期はもう一つ、かなり面白い試みもしました。私はずっとファインマンに憧れていて、『別に冗談じゃないよ、ファインマンさん』の中で、彼が芸術家と「才能交換」をした話が出てきます。彼は芸術家に科学を教え、芸術家は彼に絵を教え、最終的にファインマンは自分で個展まで開けるようになったそうです。私はそれをぜひ試してみたかったのです。以前、芸術を学んでいる親友の雅婷に「一緒にやってみない？」と聞いたことがありましたが、彼女は興味がないと言い、彼女のクラスメイトも興味がなさそうでした。それでも私は応援団で、彼女が台藝大の書画系で展示をするときは、ほとんど見に行っていました。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/72450353-2d9cfe00-37f5-11ea-9bdb-b110eed418f1.png" alt="image"><br>
+(私と雅婷)</p>
+<p>そこで今学期は、自分の Facebook に公開投稿で「誰か絵を教えてくれませんか。代わりにプログラミングを教えます」と書きました。するとデザイナーの Vivianne が興味があると言ってくれました。こうして毎週、ある日は彼女が私にデッサンと水彩を教え、別の日は私が彼女にプログラミングを教える、という形で固定しました。Vivianne はもともとプログラミングができて、他人に Web 開発を教えられるほどでした。なので私はできるだけ少し上級寄りの話をしました。一方で私は絵はほぼゼロなので、彼女が最初から丁寧に導いてくれました。こういう双方向の体験はとても良いと思いますし、Vivianne 自身も少し理工っぽい雰囲気があって面白い人でした。芸術人文と科学が一つのスペクトラムだとしたら、私も彼女も真ん中寄りにいる気がします。それが、付き合いやすかった理由でもあるのかもしれません。</p>
+<p>交大に合格した後、何がきっかけだったかは覚えていませんが、突然「国内に留まってはいけない。早く海外に出て見聞を広げないと」と強く思いました。そこで翌年に米国の CS 修士に出願することを決め、つまり交大の学位は取らない、という選択をしました。それで英語の勉強を始めました。今振り返ると、英語学習のスケジュールを長く取りすぎて、途中で疲れてしまった気がします。自分のお金で菁英の英語講座に5万円を使ったのに、気が向いたときだけ授業に行く、という感じで、正直かなり損でした。それでも英語の勉強自体は続けていて、普段は塾に通い、通学中も英語の Podcast を固定で聴いていました。全体として、英語は少しだけ伸びた気がします。夏休みは本気で追い込み、TOEFL と GRE を夏が終わるまでに片付けないといけません。</p>
+<p>気づけば4年間はあっという間でした。最後に少し心残りなのは、大学生活の「三大事」——課業、サークル、恋愛——を、私はどれもきちんと味わえなかったことです。課業の GPA は本当に低く、参加した組織も基本的に仕事寄りで、遊び要素は少なかったです。さらに大学時代は一度も恋愛関係がありませんでした。正直、残念です。それでも、私は台大を卒業して、予定通りログアウトします。時間ができたら、大学生活全体の振り返りも書こうと思います。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/%E5%8F%B0%E5%A4%A7/">
+                台大
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/%E5%A4%A7%E5%AD%A6/">
+                大学
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/">
+                台大観察と所感
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/07/c++/template-for-std-containter-conversion/">
+        C++ のテンプレート関数でコンテナ型を変換する（std::list&lt;int&gt; → std::vector&lt;double&gt;）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/condition-variable-cpp/">
+        C++ の Condition Variable：シンプルな例
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/std-string-beginner/">
+        C++ std::string 入門：この一篇で基礎を融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/stringview/">
+        まだ const std::string&amp; を使ってる？ std::string_view を試そう！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/05/c++/googletest/">
+        GoogleTest で書く C++ のユニットテスト
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

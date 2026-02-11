@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="python,ai,deep learning,googlenet,pytorch," />
+    <meta name="description"
+        content="本記事では GoogLeNet を簡単に紹介し、モデルを少し改造して試した実験結果を共有します。" />
+    <title>Neutrino&#39;s Blog: GoogLeNet の概要と簡単な実験 </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/10/ai/googlenet/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/10/ai/googlenet/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/10/ai/googlenet/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/10/ai/googlenet/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/10/ai/googlenet/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2020/10/ai/googlenet/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        GoogLeNet の概要と簡単な実験
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-10-23
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/10/ai/googlenet/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2020/10/ai/googlenet/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="イントロダクション"><a class="header-anchor" href="#イントロダクション">¶ </a>イントロダクション</h2>
+<p>GoogLeNet は、Google の論文 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1409.4842.pdf">Going deeper with convolutions</a> で初めて提案されました。この論文では Inception V1 / GoogLeNet アーキテクチャが紹介され、ILSVRC-2014 の分類部門で 1 位（Top-5 Error = 6.67%）を獲得しています。パラメータ数は約 680 万で、AlexNet より 9 倍少なく、VGG-16 より 20 倍少ないため、非常に軽量なモデルです。</p>
+<p>本記事では GoogLeNet を簡単に紹介し、私が適当に（？）改造した GoogLeNet で行った小さな実験結果を共有します。</p>
+<h2 id="GoogLeNet-モデル概要"><a class="header-anchor" href="#GoogLeNet-モデル概要">¶ </a>GoogLeNet モデル概要</h2>
+<p>多くの場合、Max-pooling と Convolution をどのタイミングで使うべきかは直感的に分かりづらいです。そこで GoogLeNet は、異なるカーネルサイズの Convolution と Max-pooling を並列に適用し、それらの出力を Concatenate して 1 つの出力にまとめます。これを Inception モジュールと呼び、GoogLeNet は多数の Inception モジュールを積み重ねて構成されています。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/96935484-bd937500-14f6-11eb-9c1e-a87e2050bef4.png" alt="GoogLeNet"></p>
+<p>上図は Inception モジュールの模式図です。GoogLeNet のもう 1 つの重要なアイデアは、<em>Bottleneck</em> の概念です。図の左が通常の Inception モジュールで、右が改造版です。改造版では 1×1 Convolution を導入しており、1×1 Conv によってパラメータ数を大幅に削減できます。これを Bottleneck と呼びます。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/96935814-75c11d80-14f7-11eb-9a73-70d52ce63e1d.png" alt="GoogLeNet Inception Parameters"></p>
+<p>Bottleneck を使わない場合、MAC（Multiply–Accumulate Operation）の回数は $((28\times 28\times 5\times 5)\times 192)\times 32 ≃ 120$ になります。</p>
+<p>一方で 1×1 Conv によって計算量を削減すると、MAC は第 1 層が $((28\times 28\times 1\times 1)\times 192)\times 16 ≃ 2.4M$、第 2 層が $((28\times 28\times 5\times 5)\times 16)\times 32 ≃ 10M $ となり、合計でおよそ $12.4M$ になります。MAC は概ね 10 倍程度減り、実際のパラメータ数も同様に約 10 倍減ることが分かります。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/96936889-7fe41b80-14f9-11eb-8159-ffd97a34bd91.png" alt="GoogLeNet Architecture"></p>
+<p>上図は GoogLeNet 全体のアーキテクチャです。大まかには 9 個の Inception モジュールから構成されています。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/96937010-cafe2e80-14f9-11eb-8e33-d787171acff9.png" alt="GoogLeNet Parameter Table"></p>
+<p>詳細な構成は上の表を参照してください。</p>
+<h2 id="PyTorch-による-GoogLeNet-実装"><a class="header-anchor" href="#PyTorch-による-GoogLeNet-実装">¶ </a>PyTorch による GoogLeNet 実装</h2>
+<p>コードはそれほど長くないので、そのまま全部貼ります。基本的には PyTorch の MNIST サンプルを土台にしつつ、<a target="_blank" rel="noopener" href="https://github.com/weiaicunzai/pytorch-cifar100">pytorch-cifar100</a> プロジェクトにある GoogLeNet モジュールを利用しています。</p>
+<p>以下のコードをコピーすれば、そのまま実行できるはずです。私の環境は Python3 + PyTorch 1.6 + CUDA 10.2 です。</p>
+<details>
+<pre><code class="language-python">from __future__ import print_function
+import argparse
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+import torchvision
+from torchvision import transforms
+from torch.optim.lr_scheduler import StepLR
+import numpy as np
+
+class Inception(nn.Module):
+    def __init__(self, input_channels, n1x1, n3x3_reduce, n3x3, n5x5_reduce, n5x5, pool_proj):
+        super().__init__()
+
+        # 1x1conv branch
+        self.b1 = nn.Sequential(
+            nn.Conv2d(input_channels, n1x1, kernel_size=1),
+            nn.BatchNorm2d(n1x1),
+            nn.ReLU(inplace=True)
+        )
+
+        # 1x1conv -&gt; 3x3conv branch
+        self.b2 = nn.Sequential(
+            nn.Conv2d(input_channels, n3x3_reduce, kernel_size=1),
+            nn.BatchNorm2d(n3x3_reduce),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(n3x3_reduce, n3x3, kernel_size=3, padding=1),
+            nn.BatchNorm2d(n3x3),
+            nn.ReLU(inplace=True)
+        )
+
+        # 1x1conv -&gt; 5x5conv branch
+        # we use 2 3x3 conv filters stacked instead
+        # of 1 5x5 filters to obtain the same receptive
+        # field with fewer parameters
+        self.b3 = nn.Sequential(
+            nn.Conv2d(input_channels, n5x5_reduce, kernel_size=1),
+            nn.BatchNorm2d(n5x5_reduce),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(n5x5_reduce, n5x5, kernel_size=3, padding=1),
+            nn.BatchNorm2d(n5x5, n5x5),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(n5x5, n5x5, kernel_size=3, padding=1),
+            nn.BatchNorm2d(n5x5),
+            nn.ReLU(inplace=True)
+        )
+
+        # 3x3pooling -&gt; 1x1conv
+        # same conv
+        self.b4 = nn.Sequential(
+            nn.MaxPool2d(3, stride=1, padding=1),
+            nn.Conv2d(input_channels, pool_proj, kernel_size=1),
+            nn.BatchNorm2d(pool_proj),
+            nn.ReLU(inplace=True)
+        )
+
+    def forward(self,\times):
+        return torch.cat([self.b1(x), self.b2(x), self.b3(x), self.b4(x)], dim=1)
+
+
+class GoogleNet(nn.Module):
+
+    def __init__(self, num_class=100):
+        super().__init__()
+        self.prelayer = nn.Sequential(
+            nn.Conv2d(3, 192, kernel_size=3, padding=1),
+            nn.BatchNorm2d(192),
+            nn.ReLU(inplace=True)
+        )
+
+        # although we only use 1 conv layer as prelayer,
+        # we still use name a3, b3.......
+        self.a3 = Inception(192, 64, 96, 128, 16, 32, 32)
+        self.b3 = Inception(256, 128, 128, 192, 32, 96, 64)
+
+        # &quot;&quot;&quot;In general, an Inception network is a network consisting of
+        # modules of the above type stacked upon each other, with occasional
+        # max-pooling layers with stride 2 to halve the resolution of the
+        # grid&quot;&quot;&quot;
+        self.maxpool = nn.MaxPool2d(3, stride=2, padding=1)
+
+        self.a4 = Inception(480, 192, 96, 208, 16, 48, 64)
+        self.b4 = Inception(512, 160, 112, 224, 24, 64, 64)
+        self.c4 = Inception(512, 128, 128, 256, 24, 64, 64)
+        self.d4 = Inception(512, 112, 144, 288, 32, 64, 64)
+        self.e4 = Inception(528, 256, 160, 320, 32, 128, 128)
+
+        self.a5 = Inception(832, 256, 160, 320, 32, 128, 128)
+        self.b5 = Inception(832, 384, 192, 384, 48, 128, 128)
+
+        # input feature size: 8*8*1024
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.dropout = nn.Dropout2d(p=0.4)
+        self.linear = nn.Linear(1024, num_class)
+
+    def forward(self,\times):
+        output = self.prelayer(x)
+        output = self.a3(output)
+        output = self.b3(output)
+
+        output = self.maxpool(output)
+
+        output = self.a4(output)
+        output = self.b4(output)
+        output = self.c4(output)
+        output = self.d4(output)
+        output = self.e4(output)
+
+        output = self.maxpool(output)
+
+        output = self.a5(output)
+        output = self.b5(output)
+
+        # &quot;&quot;&quot;It was found that a move from fully connected layers to
+        # average pooling improved the top-1 accuracy by about 0.6%,
+        # however the use of dropout remained essential even after
+        # removing the fully connected layers.&quot;&quot;&quot;
+        output = self.avgpool(output)
+        output = self.dropout(output)
+        output = output.view(output.size()[0], -1)
+        output = self.linear(output)
+
+        return output
+
+
+def train(args, model, device, train_loader, optimizer, epoch):
+    model.train()
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data, target = data.to(device), target.to(device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = F.cross_entropy(output, target)
+        loss.backward()
+        optimizer.step()
+        if batch_idx % args.log_interval == 0:
+            print('Train Epoch: &#123;&#125; [&#123;&#125;/&#123;&#125; (&#123;:.0f&#125;%)]\tLoss: &#123;:.6f&#125;'.format(
+                epoch, batch_idx * len(data), len(train_loader.dataset),
+                100. * batch_idx / len(train_loader), loss.item()))
+            if args.dry_run:
+                break
+
+
+def test(model, device, test_loader):
+    model.eval()
+    test_loss = 0
+    correct = 0
+
+    top5count = 0
+
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            output = model.forward(data)
+
+            v, result = output.topk(5, 1, True, True)
+            top5count += torch.eq(result, target.view(-1, 1)
+                                  ).sum().int().item()
+
+            # sum up batch loss
+            test_loss += F.cross_entropy(output,
+                                         target, reduction='sum').item()
+            # get the index of the max log-probability
+            pred = output.argmax(dim=1, keepdim=True)
+            correct += pred.eq(target.view_as(pred)).sum().item()
+
+    test_loss /= len(test_loader.dataset)
+
+    print('\nTest set: Average loss: &#123;:.4f&#125;, Top 1 Error: &#123;&#125;/&#123;&#125; (&#123;:.2f&#125;), Top 5 Error: &#123;&#125;/&#123;&#125; (&#123;:.2f&#125;)\n'.format(
+        test_loss,
+        len(test_loader.dataset) - correct, len(test_loader.dataset),
+        1 - correct / len(test_loader.dataset),
+        len(test_loader.dataset) - top5count, len(test_loader.dataset),
+        1 - top5count / len(test_loader.dataset),
+    ))
+
+
+def main():
+    # Training settings
+    parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
+    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
+                        help='input batch size for training (default:   64)')
+    parser.add_argument('--test-batch-size', type=int, default=10, metavar='N',
+                        help='input batch size for testing (default: 10)')
+    parser.add_argument('--epochs', type=int, default=14, metavar='N',
+                        help='number of epochs to train (default: 14)')
+    parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
+                        help='learning rate (default: 1.0)')
+    parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
+                        help='Learning rate step gamma (default: 0.7)')
+    parser.add_argument('--no-cuda', action='store_true', default=False,
+                        help='disables CUDA training')
+    parser.add_argument('--dry-run', action='store_true', default=False,
+                        help='quickly check a single pass')
+    parser.add_argument('--seed', type=int, default=1, metavar='S',
+                        help='random seed (default: 1)')
+    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+                        help='how many batches to wait before logging training status')
+    parser.add_argument('--save-model', action='store_true', default=False,
+                        help='For Saving the current Model')
+    args = parser.parse_args()
+    use_cuda = not args.no_cuda and torch.cuda.is_available()
+
+    torch.manual_seed(args.seed)
+
+    device = torch.device(&quot;cuda:0&quot;)
+
+    train_kwargs = &#123;'batch_size': args.batch_size&#125;
+    test_kwargs = &#123;'batch_size': args.test_batch_size&#125;
+    if use_cuda:
+        cuda_kwargs = &#123;'num_workers': 2,
+                       'pin_memory': True,
+                       'shuffle': True&#125;
+        train_kwargs.update(cuda_kwargs)
+        test_kwargs.update(cuda_kwargs)
+
+    transform = transforms.Compose(
+        [transforms.RandomHorizontalFlip(p=0.5),
+         transforms.ToTensor(),
+         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    trainset = torchvision.datasets.CIFAR100(root='./data', train=True,
+                                             download=True, transform=transform)
+    trainloader = torch.utils.data.DataLoader(trainset, **train_kwargs)
+
+    testset = torchvision.datasets.CIFAR100(root='./data', train=False,
+                                            download=True, transform=transform)
+    testloader = torch.utils.data.DataLoader(testset, **test_kwargs)
+
+    model = GoogleNet().to(device)
+    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
+
+    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
+    for epoch in range(1, args.epochs + 1):
+        train(args, model, device, trainloader, optimizer, epoch)
+        test(model, device, testloader)
+        scheduler.step()
+
+    if args.save_model:
+        torch.save(model.state_dict(), &quot;mnist_cnn.pt&quot;)
+
+    model_parameters = filter(lambda p: p.requires_grad, model.parameters())
+    params = sum([np.prod(p.size()) for p in model_parameters])
+    print(&quot;Parameters:&quot;, params)
+
+
+if __name__ == '__main__':
+    main()
+</code></pre>
+</details>
+<h2 id="GoogLeNet-の小さな実験"><a class="header-anchor" href="#GoogLeNet-の小さな実験">¶ </a>GoogLeNet の小さな実験</h2>
+<p>次に、GoogLeNet の性能を見てみるためにいくつか実験をしました。Bottleneck ありの GoogLeNet と、Bottleneck なしの Naïve GoogLeNet を用意しました。さらに、元の GoogLeNet に Inception を適当に 2 層追加したものを GoogLeNet Long、Inception 層を適当に減らしたものを GoogLeNet Short と呼ぶことにします。最も削減したのが GoogLeNet Short4 で、Inception は 2 層しか残っていません。パラメータ数を見ると、モデルの大きさを大まかに把握できます。</p>
+<p>これらのモデルで CIFAR-100 と CIFAR-10 を学習し、Top-1 Error、Top-5 Error、Parameters、Time を記録しました。</p>
+<p><strong>CIFAR-100 での結果</strong>：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Top   1 Error</th>
+<th>Top 5 Error</th>
+<th>Parameters</th>
+<th>Time(14 epoch)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GoogleNet Naïve</td>
+<td>0.36</td>
+<td>0.09</td>
+<td>65736148</td>
+<td>52m38s</td>
+</tr>
+<tr>
+<td>GoogleNet</td>
+<td>0.34</td>
+<td>0.10</td>
+<td>6258500</td>
+<td>29m8s</td>
+</tr>
+<tr>
+<td>GoogleNet Long</td>
+<td>0.35</td>
+<td>0.10</td>
+<td>9641924</td>
+<td>36m41s</td>
+</tr>
+<tr>
+<td>GoogleNet Short</td>
+<td>0.32</td>
+<td>0.09</td>
+<td>5271652</td>
+<td>23m11s</td>
+</tr>
+<tr>
+<td>GoogleNet Short2</td>
+<td>0.32</td>
+<td>0.09</td>
+<td>3523556</td>
+<td>16m29s</td>
+</tr>
+<tr>
+<td>GoogleNet Short3</td>
+<td>0.36</td>
+<td>0.11</td>
+<td>1985220</td>
+<td>9m3s</td>
+</tr>
+<tr>
+<td>GoogleNet Short4</td>
+<td>0.44</td>
+<td>0.15</td>
+<td>1650084</td>
+<td>8m56s</td>
+</tr>
+</tbody>
+</table>
+<p><strong>CIFAR-10 での結果</strong>：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Top   1 Error</th>
+<th>Top 5 Error</th>
+<th>Parameters</th>
+<th>Time(14 epoch)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GoogleNet Naïve</td>
+<td>0.15</td>
+<td>0.01</td>
+<td>65291098</td>
+<td>52m51s</td>
+</tr>
+<tr>
+<td>GoogleNet</td>
+<td>0.10</td>
+<td>0.00</td>
+<td>6166250</td>
+<td>28m45s</td>
+</tr>
+<tr>
+<td>GoogleNet Long</td>
+<td>0.11</td>
+<td>0.00</td>
+<td>9549674</td>
+<td>40m12s</td>
+</tr>
+<tr>
+<td>GoogleNet Short</td>
+<td>0.10</td>
+<td>0.00</td>
+<td>5179402</td>
+<td>27m30s</td>
+</tr>
+<tr>
+<td>GoogleNet Short2</td>
+<td>0.10</td>
+<td>0.00</td>
+<td>3431306</td>
+<td>31m57s</td>
+</tr>
+<tr>
+<td>GoogleNet Short3</td>
+<td>0.11</td>
+<td>0.00</td>
+<td>1892970</td>
+<td>26m31s</td>
+</tr>
+<tr>
+<td>GoogleNet Short4</td>
+<td>0.15</td>
+<td>0.01</td>
+<td>1557834</td>
+<td>25m30s</td>
+</tr>
+</tbody>
+</table>
+<p>まず、Naïve はパラメータ数が確かに 10 倍ほど多いものの、Accuracy の差はそれほど大きくありません。さらに Short4 を除けば、ほぼすべてのモデルの結果は同程度です。CIFAR-100 では Top-1 Error がだいたい 0.35、Top-5 Error が 0.10 前後で、CIFAR-10 では Top-1 Error が 0.10、Top-5 Error が 0.00（ほぼ 0）前後になっています。</p>
+<p>これは CIFAR-100 / CIFAR-10 がそこまで複雑ではないため、画像認識においてはモデルの深さの影響が相対的に小さいからだと推測しています。また、深さ以外にもチャンネル数は精度に影響します。チャンネル数が十分大きければ、そこまで深いネットワークが必要ないのかもしれません。GoogLeNet に Max-Pooling 層や Dropout 層を適当に足してみる実験もしましたが、Error はほぼ同じでした。画像認識ではモデル自体の「許容度（頑健性）」がかなり高いのだと思います。</p>
+<p>ただし以上の推論は簡単なデータセットでの話に限られます。複雑なベンチマークでは、数 % の精度差が非常に重要であり、小数点以下の僅かな違いの裏に膨大な工夫と労力が隠れています。それでも、GoogLeNet のすごいところは、パラメータを大幅に減らしながら精度がほとんど変わらない点です！</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/python/">
+                python
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/ai/">
+                ai
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/deep-learning/">
+                deep learning
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/googlenet/">
+                googlenet
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/pytorch/">
+                pytorch
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%A4%E3%83%B3%E3%83%88%E3%83%AD%E3%83%80%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3"><span class="toc-text">イントロダクション</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GoogLeNet-%E3%83%A2%E3%83%87%E3%83%AB%E6%A6%82%E8%A6%81"><span class="toc-text">GoogLeNet モデル概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PyTorch-%E3%81%AB%E3%82%88%E3%82%8B-GoogLeNet-%E5%AE%9F%E8%A3%85"><span class="toc-text">PyTorch による GoogLeNet 実装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GoogLeNet-%E3%81%AE%E5%B0%8F%E3%81%95%E3%81%AA%E5%AE%9F%E9%A8%93"><span class="toc-text">GoogLeNet の小さな実験</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/07/c++/template-for-std-containter-conversion/">
+        C++ のテンプレート関数でコンテナ型を変換する（std::list&lt;int&gt; → std::vector&lt;double&gt;）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/condition-variable-cpp/">
+        C++ の Condition Variable：シンプルな例
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/std-string-beginner/">
+        C++ std::string 入門：この一篇で基礎を融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/stringview/">
+        まだ const std::string&amp; を使ってる？ std::string_view を試そう！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/05/c++/googletest/">
+        GoogleTest で書く C++ のユニットテスト
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

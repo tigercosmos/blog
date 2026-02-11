@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="c++,string," />
+    <meta name="description"
+        content="This post introduces advanced string techniques in an approachable way, including advanced std::string usage, std::stringview, std::stringstream, std::regex, std::format, std::wstring, short string optimization, and the &lt;charconv&gt; library." />
+    <title>Neutrino&#39;s Blog: C++ std::string Advanced: One Article to Get You Comfortable with Strings! </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2024/11/c++/std-string-advanced/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2024/11/c++/std-string-advanced/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2024/11/c++/std-string-advanced/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2024/11/c++/std-string-advanced/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2024/11/c++/std-string-advanced/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2024/11/c++/std-string-advanced/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+    </h2>
+    <ul class="post-date">
+        <li>
+            2024-11-21
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2024/11/c++/std-string-advanced/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2024/11/c++/std-string-advanced/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p>As one of the most important features of a programming language, strings deserve serious attention. In this post, we will learn advanced string techniques in C++, including advanced APIs of <code>std::string</code>; how to use <code>std::stringview</code> to work with strings more efficiently; how to use <code>std::stringstream</code> for data streams; how to use <code>std::regex</code> for regular expressions; how to use <code>std::format</code> for string formatting; how to use <code>std::wstring</code> for wide characters; what short string optimization is; and how to use the <code>&lt;charconv&gt;</code> library.</p>
+<p>Previous: <a href="/post/2023/06/c++/std-string-beginner/">C++ std::string for Beginners: One Article to Get You Comfortable with Strings!</a><br>
+Next: <a href="/post/2024/11/c++/std-string-advanced/">C++ std::string Advanced: One Article to Get You Comfortable with Strings!</a></p>
+<p><img src="https://github.com/user-attachments/assets/0e911498-715e-4e9c-84fb-2c1db0e92573" alt="封面照片"><br>
+(Taken in Jiuzhaigou, 2024)</p>
+<h2 id="1-std-string-as-a-container"><a class="header-anchor" href="#1-std-string-as-a-container">¶ </a>1. std::string as a container</h2>
+<p>In C++, <code>std::string</code> is not just “a string”. It is a powerful container with flexible resizing behavior. If you understand how <code>std::string</code> manages capacity, you can handle string data more efficiently. This section introduces important container-related operations such as <code>capacity</code>, <code>size</code>, <code>resize</code>, <code>reserve</code>, as well as <code>push_back</code> and <code>pop_back</code>.</p>
+<h3 id="1-1-capacity-vs-size"><a class="header-anchor" href="#1-1-capacity-vs-size">¶ </a>1.1 capacity vs size</h3>
+<p>When working with <code>std::string</code>, you will frequently see <code>size()</code> and <code>capacity()</code>. <code>size()</code> is the actual length of the string (the number of characters you stored). <code>capacity()</code> is the size of the allocated buffer (how many characters it can hold). The size is always less than or equal to the capacity.</p>
+<p>For example, the following demonstrates the difference between <code>size()</code> and <code>capacity()</code>:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+int main() &#123;
+    std::string str = &quot;Hello&quot;;
+    std::cout &lt;&lt; &quot;Size: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 5
+    std::cout &lt;&lt; &quot;Capacity: &quot; &lt;&lt; str.capacity() &lt;&lt; std::endl; // 15
+    return 0;
+&#125;
+</code></pre>
+<p><code>std::string</code> usually allocates more memory than it currently needs to reduce the cost of frequent reallocations. In this example, <code>capacity</code> is 15 while <code>size</code> is 5. If you append more characters, it will not reallocate immediately; it will reallocate only when the capacity is exhausted. Reallocation is expensive, because the typical mechanism is to allocate a new buffer (often with doubled capacity) and then copy the old data into the new buffer.</p>
+<h3 id="1-2-resize"><a class="header-anchor" href="#1-2-resize">¶ </a>1.2 resize</h3>
+<p>The <code>resize</code> function lets you manually adjust the string length. If the new length is longer than the old length, <code>std::string</code> fills the additional space (by default with <code>\0</code>). If the new length is shorter, it truncates the string.</p>
+<pre><code class="language-cpp">std::string str = &quot;Hello&quot;;
+str.resize(10); // str becomes &quot;Hello\0\0\0\0\0&quot;
+std::cout &lt;&lt; &quot;New Size: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 10
+str.resize(3); // str becomes &quot;Hel&quot;
+std::cout &lt;&lt; &quot;New Size: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 3
+</code></pre>
+<p>Notice that <code>resize</code> “fills” the string to the requested length. So if you <code>str.resize(10)</code>, then <code>size</code> and <code>capacity</code> will both be 10.</p>
+<h3 id="1-3-reserve"><a class="header-anchor" href="#1-3-reserve">¶ </a>1.3 reserve</h3>
+<p>When <code>std::string</code> runs out of capacity, reallocating memory is very expensive. So if you already know how much memory you will need, you can allocate it once ahead of time using <code>reserve</code>. <code>reserve</code> only affects <code>capacity</code>; it does not change <code>size</code>.</p>
+<pre><code class="language-cpp">std::string str;
+str.reserve(100); // pre-allocate space for 100 characters
+std::cout &lt;&lt; &quot;Capacity after reserve: &quot; &lt;&lt; str.capacity() &lt;&lt; std::endl; // at least 100
+std::cout &lt;&lt; &quot;Size after reserve: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 0
+</code></pre>
+<p>After reserving space, you can use <code>str += str2</code> or <code>str.push_back(c)</code> to append new content to <code>str</code>. Since the buffer is already reserved, there will be no allocations until you fill up the reserved capacity. Therefore, when you use <code>reserve</code>, you should be careful not to exceed the planned capacity too soon.</p>
+<p>Using <code>reserve</code> can improve performance for large string workloads by reducing the number of reallocations. If you know you are going to do many string operations, reserving memory first can avoid unnecessary reallocations later.</p>
+<blockquote>
+<p>Tip: When you use <code>size()</code>, the string is already “filled”, so you usually use <code>str[i]</code> to modify characters. When you use <code>reserve()</code>, you are only reserving space; in that case, you should append via <code>str += str2</code> or <code>str.push_back(c)</code>.</p>
+</blockquote>
+<h3 id="1-4-push-back-and-pop-back"><a class="header-anchor" href="#1-4-push-back-and-pop-back">¶ </a>1.4 push_back and pop_back</h3>
+<p><code>push_back</code> appends a single character to the end of <code>std::string</code>. If there is not enough capacity, it will trigger reallocation.</p>
+<pre><code class="language-cpp">std::string str = &quot;Hello&quot;;
+str.push_back('!'); // same as str += '!'
+std::cout &lt;&lt; str &lt;&lt; std::endl; // Hello!
+</code></pre>
+<p><code>pop_back</code> removes a single character from the end of <code>std::string</code>.</p>
+<pre><code class="language-cpp">std::string str = &quot;Hello&quot;;
+str.pop_back();
+std::cout &lt;&lt; str &lt;&lt; std::endl; // Hell
+</code></pre>
+<p>Single-character operations are sometimes very convenient. For example, when you iterate through characters in a <code>for</code> loop, and you combine it with <code>reserve</code>, you can often ensure you stay within capacity.</p>
+<blockquote>
+<p>You will notice that these functions are used exactly like <code>std::vector</code>. That is because you can think of <code>std::string</code> as <code>std::vector&lt;char&gt;</code>—their nature is very similar.</p>
+</blockquote>
+<h2 id="2-std-string-vs-C-style-string"><a class="header-anchor" href="#2-std-string-vs-C-style-string">¶ </a>2. std::string vs C-style string</h2>
+<p>In C++, <code>std::string</code> is a powerful container, but traditional C-style strings (<code>char*</code>) are still unavoidable in some scenarios—for example, when interacting with C libraries that only accept C-style strings.</p>
+<h3 id="2-1-Convert-std-string-to-C-style-string"><a class="header-anchor" href="#2-1-Convert-std-string-to-C-style-string">¶ </a>2.1 Convert std::string to C-style string</h3>
+<p>Converting <code>std::string</code> to a C-style string is easy: just call <code>.c_str()</code> to get a <code>const char*</code>.</p>
+<pre><code class="language-cpp">std::string filename = &quot;data.txt&quot;;
+const char* c_filename = str.c_str();
+FILE* file = fopen(c_filename, &quot;w&quot;); // POSIX API only accepts C-style strings
+</code></pre>
+<p>If you need a non-<code>const</code> <code>char*</code>, you can allocate a new memory buffer using <code>std::vector&lt;char&gt;</code> or <code>std::array&lt;char&gt;</code>, and copy the string into it (e.g., using <code>memcpy</code>).</p>
+<h3 id="2-2-Convert-C-style-string-to-std-string"><a class="header-anchor" href="#2-2-Convert-C-style-string-to-std-string">¶ </a>2.2 Convert C-style string to std::string</h3>
+<p>Converting from a C-style string to <code>std::string</code> is also easy—just use a <code>std::string</code> constructor:</p>
+<pre><code class="language-cpp">const char* c_str = &quot;Hello&quot;;
+std::string str(c_str);
+std::cout &lt;&lt; str &lt;&lt; std::endl; // prints &quot;Hello&quot;
+</code></pre>
+<blockquote>
+<p>In modern C++ development, we should prefer <code>std::string</code> for string handling.</p>
+</blockquote>
+<h2 id="3-string-view"><a class="header-anchor" href="#3-string-view">¶ </a>3. string_view</h2>
+<p><code>std::string_view</code> is a type introduced in C++17. It provides a lightweight, non-owning string view. It is pointer-like: it can refer to an existing string without copying the data, reducing unnecessary memory overhead. <code>std::string_view</code> is especially suitable for partial string operations such as trimming prefixes/suffixes and taking substrings. Traditionally, doing those operations with <code>std::string</code> often incurs extra allocations and copies.</p>
+<blockquote>
+<p>Further reading: <a href="/post/2023/06/c++/stringview/">Still Using <code>const std::string &amp;</code>? Try <code>std::string_view</code>!</a></p>
+</blockquote>
+<h3 id="3-1-Basic-usage-of-string-view"><a class="header-anchor" href="#3-1-Basic-usage-of-string-view">¶ </a>3.1 Basic usage of string_view</h3>
+<p><code>std::string_view</code> can be initialized from <code>std::string</code> or a C-style string, and you can use many operations similar to <code>std::string</code>. The difference is: using <code>std::string_view</code> can avoid unnecessary string copying.</p>
+<pre><code class="language-cpp">#include &lt;string_view&gt;
+
+void print_string(std::string_view sv) &#123;
+    std::cout &lt;&lt; sv.substr(0,3) &lt;&lt; std::endl; // print substring
+&#125;
+
+int main() &#123;
+    std::string str = &quot;Hello, world!&quot;;
+    print_string(str); // pass std::string
+    print_string(&quot;Temporary C-string&quot;); // pass C-style string
+    return 0;
+&#125;
+</code></pre>
+<p>In the example above, we use <code>substr()</code> to obtain a substring. If this were <code>std::string::substr</code>, it would involve a memory copy. But <code>std::string_view</code> is a view: it refers to the original string’s memory. Therefore, the substring returned by <code>std::string_view::substr</code> is also a <code>std::string_view</code>, and there is no memory copy during the process!</p>
+<blockquote>
+<p>You must carefully manage the lifetime of <code>std::string_view</code>. It does not own the underlying data, so the underlying data must outlive the <code>std::string_view</code>. Avoid pointing <code>std::string_view</code> to temporary data (e.g., strings from local variables that go out of scope).</p>
+</blockquote>
+<h2 id="4-stringstream"><a class="header-anchor" href="#4-stringstream">¶ </a>4. stringstream</h2>
+<p><code>std::stringstream</code> is a string-based data stream. The concept is similar to <code>std::cin</code> and <code>std::cout</code>, except that <code>stringstream</code> reads/writes to a “string stream” while <code>cin/cout</code> read/write to I/O. <code>std::stringstream</code> is very useful for formatting, input/output, and data conversion.</p>
+<h3 id="4-1-Basic-usage"><a class="header-anchor" href="#4-1-Basic-usage">¶ </a>4.1 Basic usage</h3>
+<p>We can use <code>std::stringstream</code> to build strings, for example:</p>
+<pre><code class="language-cpp">#include &lt;sstream&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+int main() &#123;
+    std::vector&lt;int&gt; v = &#123;1, 2, 3&#125;;
+
+    std::stringstream ss;
+    ss &lt;&lt; &quot;[&quot;;
+
+    for (int i = 0; i &lt; v.size(); i++) &#123;
+        ss &lt;&lt; v[i];
+        if (i != v.size() - 1) &#123;
+            ss &lt;&lt; &quot;, &quot;;
+        &#125;
+    &#125;
+
+    ss &lt;&lt; &quot;]&quot;;
+
+    std::cout &lt;&lt; ss.str();  // [1, 2, 3]
+&#125;
+</code></pre>
+<p>In this example, we output an array as a string. You can see that <code>std::stringstream</code> lets us use <code>&lt;&lt;</code> just like <code>std::cout</code> to insert data into the stream. After building the content, we call <code>ss.str()</code> to get a <code>std::string</code>.</p>
+<p>In addition, <code>std::stringstream</code> can also output and read data like <code>std::cout</code> and <code>std::cin</code>. For example, it can convert numbers to strings, or parse numbers from a string:</p>
+<pre><code class="language-cpp">#include &lt;sstream&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+int main() &#123;
+    std::stringstream ss;
+    ss &lt;&lt; 123 &lt;&lt; &quot; &quot; &lt;&lt; 234; // write into stringstream
+    std::string result = ss.str(); // convert to std::string
+    std::cout &lt;&lt; result &lt;&lt; std::endl; // prints &quot;123 234&quot;
+    
+    // ss still holds &quot;123 234&quot;
+    int number;
+    ss &gt;&gt; number; // read from stringstream, left to right
+    std::cout &lt;&lt; number &lt;&lt; std::endl; // prints &quot;123&quot;
+    return 0;
+&#125;
+</code></pre>
+<h3 id="4-2-Applications-of-stringstream"><a class="header-anchor" href="#4-2-Applications-of-stringstream">¶ </a>4.2 Applications of stringstream</h3>
+<p>For example, when handling CSV or other structured data, we can use <code>std::stringstream</code> as the data source.</p>
+<pre><code class="language-cpp">#include &lt;sstream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;iostream&gt;
+
+int main() &#123;
+    std::string line = &quot;apple,banana,orange&quot;;
+    std::stringstream ss(line); // a data stream, could come from network or a file
+    
+    std::string item;
+    std::vector&lt;std::string&gt; items;
+
+    while (std::getline(ss, item, ',')) &#123;
+        items.push_back(item);
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<p>The definition of <code>std::getline</code> is <code>istream&amp; getline(istream&amp; input_stream, string&amp; output, char delim);</code>. The first parameter is an <code>std::istream</code>, and <code>std::stringstream</code> inherits from <code>std::istream</code>, so we can use <code>getline</code> directly on it. Similarly, if you have used <code>std::getline(std::cin, ...)</code>, <code>std::cin</code> also inherits from <code>std::istream</code>.</p>
+<h2 id="5-regex"><a class="header-anchor" href="#5-regex">¶ </a>5. regex</h2>
+<p>Regex (regular expression) is commonly used for pattern matching and searching in strings, including validating formats, searching for patterns, and doing string replacements. The C++ standard library provides <code>&lt;regex&gt;</code> for regex operations.</p>
+<blockquote>
+<p>If you have never used regex, you can first read <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions">MDN’s basic syntax guide</a>.</p>
+</blockquote>
+<h3 id="5-1-Basic-usage"><a class="header-anchor" href="#5-1-Basic-usage">¶ </a>5.1 Basic usage</h3>
+<p>The most common regex usage is to use a <code>std::regex</code> object together with <code>std::regex_match</code> or <code>std::regex_search</code>:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;regex&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::string input = &quot;hello123&quot;;
+    std::regex pattern(&quot;[a-z]+\\d+&quot;); // define regex pattern
+    if (std::regex_match(input, pattern)) &#123;
+        std::cout &lt;&lt; &quot;Input matches the pattern!&quot; &lt;&lt; std::endl;
+    &#125;
+    return 0;
+&#125;
+</code></pre>
+<p>In this example, the pattern <code>[a-z]+\\d+</code> means “one or more lowercase letters followed by one or more digits”. With <code>std::regex_match</code>, we can check whether the entire string matches the pattern.</p>
+<h3 id="5-2-Searching-and-replacing"><a class="header-anchor" href="#5-2-Searching-and-replacing">¶ </a>5.2 Searching and replacing</h3>
+<p>Besides <code>std::regex_match</code>, we can use <code>std::regex_search</code> to find matching parts inside a string, or use <code>std::regex_replace</code> to replace:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;regex&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::string input = &quot;abc123def456&quot;;
+    std::regex pattern(&quot;\\d+&quot;);
+
+    // search
+    std::smatch match;
+    if (std::regex_search(input, match, pattern)) &#123;
+        std::cout &lt;&lt; &quot;Found number: &quot; &lt;&lt; match.str() &lt;&lt; std::endl;
+    &#125;
+
+    // replace
+    std::string replaced = std::regex_replace(input, pattern, &quot;#&quot;);
+    std::cout &lt;&lt; &quot;Replaced string: &quot; &lt;&lt; replaced &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p>Here we use <code>std::regex_search</code> to find the first substring matching <code>\\d+</code> (one or more digits), and then use <code>std::regex_replace</code> to replace all digits with <code>#</code>.</p>
+<blockquote>
+<p>Although <code>regex</code> is powerful, it is very slow. This is intuitive: pattern matching repeatedly validates the string, so the complexity cannot be low. If you can solve the problem with a better method, try to avoid <code>regex</code>.</p>
+</blockquote>
+<h2 id="6-format"><a class="header-anchor" href="#6-format">¶ </a>6. format</h2>
+<p>Many languages have built-in string formatting tools, such as Python, Rust, and Golang. Finally, C++20 introduced <code>std::format</code>, a modern and safer formatting tool compared to traditional <code>std::sprintf</code> or <code>std::ostringstream</code>. <code>std::format</code> lets you format strings in a concise and readable way.</p>
+<p>Note that <code>std::format</code> requires C++20. In practice, you need at least <code>g++-13</code> (Ubuntu 24 default) to support it. If you can only use C++17, you can consider <a target="_blank" rel="noopener" href="https://github.com/fmtlib/fmt">libfmt</a>, which provides basically the same functionality, but is not part of the standard library, so project setup is a bit more work.</p>
+<h3 id="6-1-Basic-usage"><a class="header-anchor" href="#6-1-Basic-usage">¶ </a>6.1 Basic usage</h3>
+<p>Let’s start with the most basic usage:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;format&gt;
+
+int main() &#123;
+    int number = 42;
+    std::string name = &quot;Alice&quot;;
+
+    // format using std::format
+    std::string result = std::format(&quot;Hello, &#123;&#125;! Your number is &#123;&#125;.&quot;, name, number);
+    std::cout &lt;&lt; result &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p>In this example, <code>std::format</code> substitutes parameters into <code>&#123;&#125;</code>, similar to Python’s <code>str.format</code> or Rust’s <code>format!</code>. <code>std::format</code> automatically converts parameters into strings and inserts them.</p>
+<h3 id="6-2-Format-specifiers"><a class="header-anchor" href="#6-2-Format-specifiers">¶ </a>6.2 Format specifiers</h3>
+<p><code>std::format</code> supports various format specifiers, such as numeric base, width, padding, etc.</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;format&gt;
+
+int main() &#123;
+    int number = 255;
+
+    std::cout &lt;&lt; std::format(&quot;Hexadecimal: &#123;:#x&#125;\n&quot;, number); // hex
+    std::cout &lt;&lt; std::format(&quot;Padded number: &#123;:08&#125;\n&quot;, number); // pad with 0 to width 8
+    std::cout &lt;&lt; std::format(&quot;Scientific notation: &#123;:.2e&#125;\n&quot;, 12345.6789); // scientific notation
+
+    return 0;
+&#125;
+</code></pre>
+<p>Output:</p>
+<pre><code>Hexadecimal: 0xff
+Padded number: 00000255
+Scientific notation: 1.23e+04
+</code></pre>
+<p>In practice, it feels similar to <code>boost::format</code> or even <code>std::cout</code> in that there are many ways to configure formatting.</p>
+<h2 id="7-wstring"><a class="header-anchor" href="#7-wstring">¶ </a>7. wstring</h2>
+<p>For a normal <code>std::string</code>, each <code>char</code> occupies one byte, so it can represent at most 256 values. This is far from enough to represent Unicode (tens of thousands of characters). Depending on the language, characters may require different byte lengths. For example, many CJK characters are multibyte and may require 2 (UTF-16) to 4 (UTF-32) bytes. In such cases, we use <code>std::wstring</code>, which is the wide-character version of <code>std::string</code>. It stores each character as <code>wchar_t</code>, which is suitable for Unicode or other multibyte encodings.</p>
+<h3 id="7-1-Basic-usage"><a class="header-anchor" href="#7-1-Basic-usage">¶ </a>7.1 Basic usage</h3>
+<p>Using <code>std::wstring</code> is very similar to <code>std::string</code>, but you need to initialize with <code>L&quot;&quot;</code> literals:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::ios::sync_with_stdio(false);
+    std::wcout.imbue(std::locale(&quot;en_US.utf8&quot;));
+
+    std::wstring ws = L&quot;你好，世界&quot;; // initialize using L&quot;&quot; literal
+    std::wcout &lt;&lt; ws &lt;&lt; std::endl;
+    std::wcout &lt;&lt; &quot;Length: &quot; &lt;&lt; ws.size() &lt;&lt; std::endl; // 5
+
+    return 0;
+&#125;
+</code></pre>
+<p>Here we use <code>std::wcout</code> to output wide strings. When dealing with wide characters, you should be careful about whether your output stream and locale settings properly support them.</p>
+<blockquote>
+<p>Note that we don’t actually know which encoding the compiler/runtime uses internally—it could be UTF-16, UTF-32, or something else.</p>
+</blockquote>
+<blockquote>
+<p>We use <code>sync_with_stdio(false)</code> here because C++ is compatible with C by default. If you don’t disable that compatibility, wide characters may still be interpreted as narrow characters, causing incorrect output. See <a target="_blank" rel="noopener" href="https://stackoverflow.com/a/31577195/6798649">here</a> for details.</p>
+</blockquote>
+<p>Although we can store wide characters in a normal <code>std::string</code>, the wide characters will be stored as a sequence of <code>char</code>. If you want to process wide characters one by one, using <code>std::string</code> becomes inconvenient.</p>
+<p>For example, try the following:</p>
+<pre><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::ios::sync_with_stdio(false);
+    std::wcout.imbue(std::locale(&quot;en_US.utf8&quot;));
+
+    std::wstring ws = L&quot;你好，世界&quot;; // size = 5
+    std::string ns = &quot;你好，世界&quot;; // size = 15
+
+    for(auto c : ws) &#123;
+        std::wcout &lt;&lt; c &lt;&lt; std::endl;
+    &#125;
+
+    for(auto c : ns) &#123;
+        std::cout &lt;&lt; c &lt;&lt; std::endl;
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<p>You will see that with wide characters, each character prints correctly. In contrast, with a narrow <code>std::string</code>, the output becomes gibberish.</p>
+<h3 id="7-2-Encoding-conversion-with-codecvt"><a class="header-anchor" href="#7-2-Encoding-conversion-with-codecvt">¶ </a>7.2 Encoding conversion with codecvt</h3>
+<p>When converting between <code>std::string</code> and <code>std::wstring</code>, the <code>&lt;codecvt&gt;</code> library provides encoding conversion tools, including conversions between narrow and wide strings.</p>
+<p>Although <code>&lt;codecvt&gt;</code> was deprecated in C++17, it is still used in many existing projects. We can use <code>std::wstring_convert</code> and <code>std::codecvt_utf8</code> to convert between UTF-8 and wide strings:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;locale&gt;
+#include &lt;codecvt&gt;
+
+int main() &#123;
+    std::wstring wide_string = L&quot;こんにちは&quot;;
+    std::wstring_convert&lt;std::codecvt_utf8&lt;wchar_t&gt;&gt; converter;
+
+    // wide string to UTF-8
+    std::string utf8_string = converter.to_bytes(wide_string);
+    std::cout &lt;&lt; &quot;UTF-8: &quot; &lt;&lt; utf8_string &lt;&lt; std::endl;
+
+    // UTF-8 to wide string
+    std::wstring converted_back = converter.from_bytes(utf8_string);
+    std::wcout &lt;&lt; L&quot;Wide: &quot; &lt;&lt; converted_back &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p>Although <code>&lt;codecvt&gt;</code> still works, since it is deprecated, starting from C++20 it is recommended to use other Unicode libraries (e.g., Boost.Locale) for string encoding conversion.</p>
+<blockquote>
+<p>Before a new standard solution is defined, <code>&lt;codecvt&gt;</code> will not be removed. Therefore, it still exists in C++20.</p>
+</blockquote>
+<h2 id="8-small-string"><a class="header-anchor" href="#8-small-string">¶ </a>8. small string</h2>
+<p>Short String Optimization (SSO) is an optimization technique for short strings. Typically, <code>std::string</code> reserves a small fixed buffer internally to avoid dynamic allocations for short strings. If the string length is below some threshold (often 15 or 23 characters, depending on compiler and implementation), it stores the string data directly on the stack instead of allocating heap memory.</p>
+<p>Example:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::string small_string = &quot;short&quot;; // may use SSO
+    std::string large_string = &quot;this is a very long string that might not fit in SSO&quot;;
+
+    // Small string: size: 5, capacity: 15
+    std::cout &lt;&lt; &quot;Small string: size: &quot; &lt;&lt; small_string.size() &lt;&lt; &quot;, capacity: &quot; &lt;&lt; small_string.capacity() &lt;&lt; std::endl;
+
+    // Large string: size: 52, capacity: 52
+    std::cout &lt;&lt; &quot;Large string: size: &quot; &lt;&lt; large_string.size() &lt;&lt; &quot;, capacity: &quot; &lt;&lt; large_string.capacity() &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p>In this example, <code>small_string</code> likely uses SSO because it is short. You can see that even though it has only 5 characters, the capacity is 15. In contrast, <code>large_string</code> triggers heap allocation.</p>
+<p>SSO can significantly reduce allocation costs for short-string operations and thus improve performance. In most cases we do not need to worry about SSO, but in performance-sensitive scenarios, it is still worth understanding its impact.</p>
+<blockquote>
+<p>Further reading: <a href="/post/2022/06/c++/sso/">Short String Optimization (SSO) in C++</a></p>
+</blockquote>
+<h2 id="9-to-chars-from-chars"><a class="header-anchor" href="#9-to-chars-from-chars">¶ </a>9. to_chars &amp; from_chars</h2>
+<p>C++17 introduced a new numeric conversion library <code>&lt;charconv&gt;</code>. In particular, <code>std::to_chars</code> and <code>std::from_chars</code> provide efficient conversions between strings and numbers. <code>&lt;charconv&gt;</code> is header-only, so it is lightweight, and it uses modern algorithms with very high performance.</p>
+<blockquote>
+<p>Further learning: Talk <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=4P_kbF0EbZM">Stephan T. Lavavej “Floating-Point ＜charconv＞: Making Your Code 10x Faster With C++17’s Final Boss”</a>. Around minute 45, you can see benchmark results showing <code>&lt;charconv&gt;</code> can be several times faster than older approaches.</p>
+</blockquote>
+<h3 id="9-1-Basic-usage"><a class="header-anchor" href="#9-1-Basic-usage">¶ </a>9.1 Basic usage</h3>
+<h4 id="9-1-1-std-to-chars"><a class="header-anchor" href="#9-1-1-std-to-chars">¶ </a>9.1.1 std::to_chars</h4>
+<p>We can convert a number into a string. Here is a <code>std::to_chars</code> example:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;charconv&gt;
+#include &lt;array&gt;
+
+int main() &#123;
+    int number = 12345;
+    std::array&lt;char, 20&gt; buffer; // pre-allocated buffer
+
+    // convert using std::to_chars
+    auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), number);
+
+    if (ec == std::errc()) &#123; // check success
+        std::cout &lt;&lt; &quot;Converted number: &quot; &lt;&lt; std::string(buffer.data(), ptr) &lt;&lt; std::endl;
+    &#125; else &#123;
+        std::cout &lt;&lt; &quot;Conversion failed.&quot; &lt;&lt; std::endl;
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<p>In this example, we define a <code>buffer</code> and use <code>std::to_chars</code> to convert an integer to a string. <code>std::to_chars</code> returns a <code>std::to_chars_result</code> that contains the result pointer (<code>ptr</code>) and an error code (<code>ec</code>).</p>
+<p><code>ptr</code> points to the end of the successfully written output. Therefore, if conversion succeeds, <code>ptr</code> will point to the end of the converted string, and we can create the output string with <code>std::string(buffer.data(), ptr)</code>.</p>
+<h4 id="9-1-2-std-from-chars"><a class="header-anchor" href="#9-1-2-std-from-chars">¶ </a>9.1.2 std::from_chars</h4>
+<p>We can also convert a string into a number. Here is a <code>std::from_chars</code> example:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;charconv&gt;
+#include &lt;array&gt;
+
+int main() &#123;
+    std::string intStr = &quot;12345 abc&quot;;
+    int resultInt = 0;
+    
+    // Perform the conversion from string to int
+    auto [ptr, ec] = std::from_chars(intStr.data(), intStr.data() + intStr.size(), resultInt);
+    
+    if (ec == std::errc()) &#123;
+        std::cout &lt;&lt; &quot;Integer conversion successful: &quot; &lt;&lt; resultInt &lt;&lt; &quot;, ptr:&quot; &lt;&lt; ptr &lt;&lt; std::endl;
+    &#125; else &#123;
+        std::cout &lt;&lt; &quot;Integer conversion failed. ptr:&quot; &lt;&lt; ptr &lt;&lt; std::endl;
+    &#125;
+    return 0;
+&#125;
+</code></pre>
+<p>If conversion succeeds, <code>resultInt</code> contains the correct result. Otherwise, you can use <code>ptr</code> to check the last processed position, which means from that position onward, the original <code>intStr</code> is not a valid number.</p>
+<p>For example, if you pass <code>12345 abc</code>, you will get a success message and <code>ptr</code> will point to <code> abc</code>, because the latter part cannot be parsed. In contrast, if you pass <code>abc123</code>, you will get a conversion error and <code>ptr</code> points to the beginning of <code>abc123</code>.</p>
+<h3 id="9-2-Advanced-usage"><a class="header-anchor" href="#9-2-Advanced-usage">¶ </a>9.2 Advanced usage</h3>
+<p><code>std::to_chars</code> also supports different bases (e.g., hexadecimal) and floating-point conversions:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;charconv&gt;
+#include &lt;array&gt;
+
+int main() &#123;
+    double value = 3.14159;
+    std::array&lt;char, 20&gt; buffer;
+
+    // floating-point conversion
+    auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), value);
+
+    if (ec == std::errc()) &#123;
+        std::cout &lt;&lt; &quot;Converted float: &quot; &lt;&lt; std::string(buffer.data(), ptr) &lt;&lt; std::endl;
+    &#125; else &#123;
+        std::cout &lt;&lt; &quot;Conversion failed.&quot; &lt;&lt; std::endl;
+    &#125;
+
+    int value = 8;
+    std::array&lt;char, 20&gt; buffer;
+
+    // different base
+    [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), 8 /* 八進位 */);
+
+    if (ec == std::errc()) &#123;
+        std::cout &lt;&lt; &quot;Converted int: &quot; &lt;&lt; std::string(buffer.data(), ptr) &lt;&lt; std::endl;
+    &#125; else &#123;
+        std::cout &lt;&lt; &quot;Conversion failed.&quot; &lt;&lt; std::endl;
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<p>The results will be the string <code>3.14159</code> and the string <code>10</code> (decimal 8 equals octal 10).</p>
+<blockquote>
+<p>The <code>&lt;charconv&gt;</code> library is more suitable for simple conversions with high performance, but it cannot do complex formatting. If you need formatting, consider using <code>std::format</code>.</p>
+</blockquote>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/c/">
+                c++
+            </a>,&nbsp;
+        
+            <a href="/en/tags/string/">
+                string
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-std-string-as-a-container"><span class="toc-text">1. std::string as a container</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-capacity-vs-size"><span class="toc-text">1.1 capacity vs size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-resize"><span class="toc-text">1.2 resize</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-reserve"><span class="toc-text">1.3 reserve</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-push-back-and-pop-back"><span class="toc-text">1.4 push_back and pop_back</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-std-string-vs-C-style-string"><span class="toc-text">2. std::string vs C-style string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Convert-std-string-to-C-style-string"><span class="toc-text">2.1 Convert std::string to C-style string</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Convert-C-style-string-to-std-string"><span class="toc-text">2.2 Convert C-style string to std::string</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-string-view"><span class="toc-text">3. string_view</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Basic-usage-of-string-view"><span class="toc-text">3.1 Basic usage of string_view</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-stringstream"><span class="toc-text">4. stringstream</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Basic-usage"><span class="toc-text">4.1 Basic usage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Applications-of-stringstream"><span class="toc-text">4.2 Applications of stringstream</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-regex"><span class="toc-text">5. regex</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-Basic-usage"><span class="toc-text">5.1 Basic usage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-Searching-and-replacing"><span class="toc-text">5.2 Searching and replacing</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-format"><span class="toc-text">6. format</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-Basic-usage"><span class="toc-text">6.1 Basic usage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-Format-specifiers"><span class="toc-text">6.2 Format specifiers</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-wstring"><span class="toc-text">7. wstring</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-Basic-usage"><span class="toc-text">7.1 Basic usage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-Encoding-conversion-with-codecvt"><span class="toc-text">7.2 Encoding conversion with codecvt</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-small-string"><span class="toc-text">8. small string</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-to-chars-from-chars"><span class="toc-text">9. to_chars &amp; from_chars</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-Basic-usage"><span class="toc-text">9.1 Basic usage</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#9-1-1-std-to-chars"><span class="toc-text">9.1.1 std::to_chars</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-1-2-std-from-chars"><span class="toc-text">9.1.2 std::from_chars</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-Advanced-usage"><span class="toc-text">9.2 Advanced usage</span></a></li></ol></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/condition-variable-cpp/">
+        A Simple Example of Condition Variables in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/std-string-beginner/">
+        C++ std::string for Beginners: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/stringview/">
+        Still Using const std::string&amp;? Try std::string_view!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/05/c++/googletest/">
+        Writing C++ Unit Tests with GoogleTest
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

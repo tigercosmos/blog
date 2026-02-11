@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="日本,仕事,ソフトウェアエンジニア," />
+    <meta name="description"
+        content="本記事では、日本に関する背景がほぼない海外新卒として、3カ月間で東京のソフトウェアエンジニア職を探した経験を共有します。" />
+    <title>Neutrino&#39;s Blog: 2022年 海外新卒で東京のソフトウェアエンジニア職を探した経験 </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2022/06/japan/new-grad-find-swe-job-in-japan/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2022/06/japan/new-grad-find-swe-job-in-japan/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2022/06/japan/new-grad-find-swe-job-in-japan/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2022/06/japan/new-grad-find-swe-job-in-japan/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2022/06/japan/new-grad-find-swe-job-in-japan/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2022/06/japan/new-grad-find-swe-job-in-japan/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        2022年 海外新卒で東京のソフトウェアエンジニア職を探した経験
+    </h2>
+    <ul class="post-date">
+        <li>
+            2022-06-03
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2022/06/japan/new-grad-find-swe-job-in-japan/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2022/06/japan/new-grad-find-swe-job-in-japan/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p><img src="https://user-images.githubusercontent.com/18013815/171749459-e4a66d19-478a-43f7-80e8-6ee693b87d27.png" alt="Tokyo"><br>
+(Tokyo, credit to <a target="_blank" rel="noopener" href="https://www.flickr.com/photos/143951935@N07/28350408591">Derrick Brutel</a>, under CC BY-SA 2.0)</p>
+<p>修士 3 年のときにミラノへ交換留学に行きました。その目的の 1 つは、自分が海外で働くのが好きかどうかを確かめることでした。結論として、ミラノは「一番働きたい場所」ではないかもしれませんが、海外で働く体験や文化的多様性を肌で感じる機会になったのは間違いありません。自分は海外で働きたいのだと理解しました。外に出て挑戦したいし、カルチャーショックを楽しみたいし、自分を試したい。</p>
+<p>ところが 2022 年初頭、想定外の出来事がありました。ミラノで日本人の彼女ができ、卒業後はヨーロッパで就職するつもりだったのが、一気に「東京で仕事を探す」に目標が変わりました。私は海外で仕事が見つからないことをあまり心配していません。ソフトウェアエンジニアはどこにでも仕事があり、英語さえできれば十分なことも多いです。ミラノにいたときも、試しにソフトウェア開発のアルバイトを探してみたら、1 カ月も経たずに見つかりました。どこでも働けるという確信がさらに強まりました。</p>
+<p>私の背景はこうです。交大（NCTU）で CS 修士、研究は JavaScript の並列化オフローディング（広義ではシステム寄り）。学部は台大（NTU）の生機（バイオエンジニアリング）です。日本語は話せません。イタリア留学でイタリア語は身につきませんでしたが、英語はそこそこ話せるようになりました。日本の学歴もなく、日本語もできない（N6 レベル。日本語で仕事をする最低ラインはだいたい N2）、正社員経験もなし。外形的には日本で就職するには不利すぎます。日本が外国人エンジニアを採るとしても、基本的にはシニアを引き抜くのが好きです。日本に関する背景がほぼゼロの海外新卒なんて、誰が採るのでしょうか？</p>
+<p>2022 年 3 月にミラノから台湾へ戻り、卒業手続きをしながら東京の仕事探しを始めました。5 月初旬に修了し、5 月中旬に納得できるオファーを獲得し、5 月末にはケルンへ旅行に行きました。約 3 カ月のプロセスを経て、最終的に Mujin Corp. というとても良いオファーをもらい、受諾しました。本記事では、台湾で過ごした 3 カ月の転職活動の経験をまとめます。当初は周囲も悲観的でしたし、自分自身も疑いながら進めていました。それでも最終的には運良く仕事が見つかりました。同じような背景の人にとって参考になれば嬉しいです。</p>
+<h2 id="日本の新卒採用の概要"><a class="header-anchor" href="#日本の新卒採用の概要">¶ </a>日本の新卒採用の概要</h2>
+<p>日本の大学を卒業したばかりの社会人を「新卒」と呼びます。一般的に新卒の就活は、前の年に「内定」を取り、翌年に入社するという形で、台湾のキャンパスリクルーティングに近いです。ただ、台湾では下半期から始まることが多く、卒業の半年前に仕事が決まるケースが多い一方、卒業後に就活を始める人も少なくありません。</p>
+<p>日本の卒業シーズンは 4 月なので、一般企業の新卒採用は前年の 3 月ごろから始まることが多く、また 10 月ごろにも枠が少ない追加募集があることがあります。ただ、私たちは外国人なので、日本人向けの新卒採用の流れはあまり役に立ちません。一方で、楽天、LINE、メルカリなどの大手は、日本人新卒を採ると同時に、外国人新卒向けの枠も出すことがあります。外国人を採る大企業を狙うなら、時期にも注意が必要です。</p>
+<p>外資の採用、ヘッドハンター、LinkedIn の求人などのルートだと、時期の差はそこまでありません。外資は基本的に新卒は厳しく、タイトルに new grad と書いていないなら望みは薄いです。たとえ new grad を採っていても、海外新卒が通るのはさらに難しい印象です。ヘッドハンターにも相談しましたが、新卒にとってはほとんど役に立たないという結論でした。ヘッドハンターは基本的にシニアがターゲットで、新卒はそもそも仕事がないか、相手にされないことが多いです。私にとって一番役に立ったのは LinkedIn でした。LinkedIn に求人を出す会社は、大企業でも小規模スタートアップでも、外国人採用に比較的前向きで、私の面接機会も大半が LinkedIn 経由でした。日本の求人プラットフォーム（Quitta Jobs、Findy など）もありますが、基本的に日本語前提なので少し触ってすぐ諦めました。最後は紹介（リファラル）で、外国人エンジニアや日本在住の台湾人エンジニアに頼んで紹介してもらう方法です。ただ、全体として海外新卒は紹介があっても書類で落ちることが多い（あるいは私の条件が弱かっただけかもしれません）。</p>
+<p>給与相場を比較しやすいように、日本のソフトウェアエンジニアの相場を簡単に整理します。日本の大学卒の一般的な初任給は年収 400 万円程度です。Sony や SoftBank のような普通の日系企業が新卒 CS に出すのもだいたいこの水準で、これを「平均」とします。もう少し良い会社（楽天や LINE）だと 500 万円台、さらに良い会社（メルカリなど）だと 600 万円台で、これを「高めの相場」とします。さらに 700〜900 万円以上が出せる会社は「トップ水準」です。普通の日本人エンジニアがトップ水準に届くには 4〜5 年程度かかることが多いです。全体として台湾にも似ていて、台湾のエンジニアの多くは年収 100 万 TWD 前後から始まりますが、台清交の CS 卒なら新卒 1 年目で 150 万 TWD 以上に届くこともあります。スタートの給与は学歴や能力にも左右されます。</p>
+<h2 id="履歴書（Resume）"><a class="header-anchor" href="#履歴書（Resume）">¶ </a>履歴書（Resume）</h2>
+<p>履歴書は就活の要です。私は英語求人に応募していたので、英語の Resume の標準的な書き方に合わせました。日本語求人を狙う場合、日本の履歴書スタイルはかなり違います。私は Resume のバージョンを GitHub に残しているので、当時の Resume がどんな感じだったかは（<a target="_blank" rel="noopener" href="https://github.com/tigercosmos/resume/blob/40188f8f58ee86b1e4f1590bc2ba96b20f6071c1/resume.pdf">Link</a>）を見てください。履歴書の書き方はネット上に大量にあるので繰り返しませんが、私は 1 カ月以上かけて何度も修正し、先輩や先生に見てもらいながら、納得できる形まで仕上げました。</p>
+<p>多くの先輩に言われていますが、もう一度強調します。履歴書に書いたことは必ず聞かれます。自信がないことは書かない。書くなら徹底的に語れるようにする。多くの場合、私も書いた内容を聞かれ、さらに昔の経験まで聞かれることもありました。時間が経っていて準備していないと、回答は詰まります。また、私は以前 C++ のレベルを Proficient と書いていましたが、何度か試されてから Experienced に変えました。10 万行以上の意味のあるコードを書いたり、百万行規模の巨大プロジェクトに貢献したりするまでは、「できる」と軽々しく言わない方が良いと思います。</p>
+<h2 id="面接"><a class="header-anchor" href="#面接">¶ </a>面接</h2>
+<p>英語求人のソフトウェアエンジニア職を狙うなら、少なくとも英語が壊滅的では困りますよね（笑）。CS の訓練では、一般的に英語はそこまで苦手になりにくいと思います。コードは英語ですし、一次情報も英語が多い。OSS や国際コミュニティに参加していれば英語でのコミュニケーションもあります。ただ、台湾人は読む・聞くはできても、話すのが難しい人が多いです。英語を話す環境がないからです。話せるようになるには意図的な練習が必要で、私はミラノ留学で外国人と毎日混ざって話していたので、英語を使う量が増えました。高度な英語ではありませんが、少なくとも 2000 語程度で自分の考えをスムーズに伝えられるようになりました。</p>
+<p>私の面接経験では、外国人を採る英語求人は、社内エンジニアも外国人が多く、英語で話すのは楽でした。むしろ相手の英語の方が上手いことが多いです。日本人が面接官の場合もありますが、留学経験があって英語ができる人が多いです。ただし例外もあり、「外国人を採りたいのに英語ができない」（しかも英語求人）という会社は基本的に除外しました。英語で一番難しいのは政治・文化・趣味・議論・交渉のような話題だと思います。一方で、自分の経歴や「コードがどう動くか」を説明するのは比較的簡単です。練習すれば TOEFL 100 なくても十分話せるようになります。</p>
+<p>日本の面接は本来きちんとした服装が前提なので、最初はシャツくらいは着ていました。しかし、面接官が外国人中心で、雰囲気もカジュアルであることに気づきました。面接官が日本人でも欧米寄りのスタイルだったので、途中からは適当に着るようになりました。</p>
+<p>以前、永昱に「台湾の会社にも応募して練習した方がいい」と言われました。面接経験がない状態で海外就職を狙うとボコボコにされやすいし、外国人を採るなら平均以上の人材を求めるのは自然です。ただ、実際に私は台湾に適当に投げても面接機会はほぼ取れませんでした。仮に面接があっても心構えが良くなかったと思います。後から振り返ると、私のように海外に行くと決めているなら、台湾の求人は無理に投げなくても良いと思いました。もちろん、海外でも台湾でも良い人は両方試して良いと思います。</p>
+<p>面接期間中に LeetCode も少し解きました。30 問未満で、Easy を中心に Medium と Hard を少しだけです。結果として、LeetCode 系の白板問題を出す会社は少数でした。LeetCode 自体が就活に直接効いた感じはあまりありませんが、コーディングの手を温める効果はありました。実装力を見る会社もあり、例えばその場で LRU Cache を実装させたり、課題を出して RESTful Server を作らせたり、コードリーディングをさせたりします。さまざまな面接を経験すると、かなり視野が広がります。結局、短期の詰め込みより、長期の積み上げが重要です。</p>
+<p>面接準備としては、jserv の「<a target="_blank" rel="noopener" href="https://www.youtube.com/c/GUTS4tech/videos">資訊科技產業專案</a>」が割と役に立ちました。そこから学べることは多いと思います。また、先生や先輩、友人に相談して議論するのも効果的です。</p>
+<p>強く感じたのは、インターン経験やサイドプロジェクトがどれだけあっても、ないよりはマシですが、会社から見ると結局は「おままごと」に近いということです。正社員で必要な経験とノウハウは、小さなプロジェクトで学べるものより遥かに多い。たとえば C++ を少し書いた程度は、シニアにとっては hello world みたいなものです。あるいは私の研究は JavaScript の並列化でしたが、Parallelism と Concurrency の理解も薄い部分がありました。永昱の言う「実際には自分は何もできない」という感覚には同意します。今できることに固執するより、「CS の基礎がしっかりしていて、伸びしろがある」ことをどう示すかが重要です。新卒を採る会社が見ているのは、現時点での即戦力ではなく将来性です。</p>
+<p>面接は結局、学び続けるプロセスです。5〜6 回も面接すると適性質問も楽に答えられます。最初に一番困った質問は「なぜ日本に来たいのか」で、さすがに「彼女が日本にいるから」とは言えません 😂。そこで私は、自分でも穴がないと思える理由を用意しました。海外で挑戦したい、日本に友達が多い、日本は台湾に近くて親に会いに帰りやすい、子どもの頃から日本文化が好き、などです。要するに突っ込まれにくい理由です。面接は回数を重ねれば確実に慣れます。私は 20〜30 社応募してようやく最初の面接が取れました。その前は反応があっても書類落ちが多かったです。就活は粘りが大事で、最初の面接が取れると少しずつ流れが良くなります。</p>
+<h2 id="就活の流れ"><a class="header-anchor" href="#就活の流れ">¶ </a>就活の流れ</h2>
+<p>以下、会社ごとの経験を簡単にまとめます。私はシステム系の研究室でしたが、基本的には Full Stack Engineer と Backend Engineer を中心に狙いました。面接機会が取れたのはこの 2 種だけで、他の Developer / Engineer はほとんど反応がありませんでした。ここで紹介するのは、少なくとも面接機会があった会社、あるいは書いておく価値があると感じた会社です。これ以外にも、応募したが反応がなかった／落ちた会社は大量にあります。有名な大企業は公式サイトから応募しましたが、それ以外は毎日 LinkedIn を見て応募していました。</p>
+<h3 id="平淡な失敗例"><a class="header-anchor" href="#平淡な失敗例">¶ </a>平淡な失敗例</h3>
+<p><a target="_blank" rel="noopener" href="https://www.mercari.com/">Mercari</a>、<a target="_blank" rel="noopener" href="https://linecorp.com/ja/career/newgrads/">Line</a>、<a target="_blank" rel="noopener" href="https://global.rakuten.com/corp/careers/">Rakuten</a> は、外国人を採ることで有名な企業で、新卒でもチャンスがあります。Mercari は 3 月から外国人新卒枠を含む新卒採用が始まりましたが、私はオンラインテストで 1 問も解けず即落ちしました。Line は 3 月末に応募し、4 月末にオンラインテスト、5 月中旬に次の面接に進める通知が来ましたが、その時点で Mujin のオファーを受けていたので辞退しました。Line は全体的に遅く、彼女が応募していたデザイン新卒もプロセスが遅かったです。Rakuten はどのルートで面接に入ったか忘れてしまいました。公式サイト、<a target="_blank" rel="noopener" href="https://job.connectiu.com/">Connect Job</a> 経由、台湾のヘッドハンター経由など複数で応募していました。結果として Junior の面接に進み、プロセスは<a target="_blank" rel="noopener" href="https://kai-chin.medium.com/%E6%97%A5%E6%9C%AC%E6%A8%82%E5%A4%A9%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E9%9D%A2%E8%A9%A6%E5%88%86%E4%BA%AB-2021-rakuten-software-engineer-interview-515a71d63355">この体験談</a>と同じでした。まずは超 Easy なオンライン問題（鑑別力がない）、その後は雑談のみの 2 回面接。一次は外国人エンジニア 3 人が Resume を中心に質問し、二次は日本人マネージャ 2 人が背景や適性（学び方、問題の解決方法など）を聞く形式でした。二次は手応えがあり「いけた」と思ったのですが、結局落ちました。理由は分かりません。</p>
+<p>Amazon と IBM は、どんな職種で応募しても反応がありませんでした。紹介も試しましたが駄目でした。<a target="_blank" rel="noopener" href="https://www.smartnews.com/en/">SmartNews</a> も紹介してもらったが反応なし。<a target="_blank" rel="noopener" href="https://www.teamlab.art/">TeamLabs</a> はオンラインテスト後に音沙汰なし。<a target="_blank" rel="noopener" href="https://hennge.com/global/">Hennge</a> は良い会社だと思いますが、新卒はフルタイムインターンに参加してから正社員を検討する形式で、私はその時点ですでに就職先が決まっていたのでやめました。インターンは年に複数回あるので、日本に行きたい後輩は早めに計画すると良いです。<a target="_blank" rel="noopener" href="https://ridge-i.com/en/">Ridge-I</a> は Easy 3 問のオンラインテストで、30 分もかからず解けたのに落ちてしまい、理由が分からず困惑しました。<a target="_blank" rel="noopener" href="https://ascent.ai/">Ascent Robotics</a> は工場ロボット系で、外国人 CEO と話した後に音沙汰なし。<a target="_blank" rel="noopener" href="https://www.preferred.jp/en/">Preferred Network</a> はオンラインテストが必須でしたが、問題が鳥すぎて（複雑で意味がない）やめました。<a target="_blank" rel="noopener" href="https://www.nablas.com/">NABLAS Inc.</a> は AI 研究寄りの会社で、東大の向かいにオフィスがあり、AI 技術や HPC をやりたい人には良い会社だと思います。一次は会社説明、二次は 3 時間の技術面接で採否決定という形式で、給与は高標あたりだと推測しますが、その時点で Mujin のオファーがあったので二次を辞退しました。ほかにも、英語ができないのに外国人を採りたがる CEO（しかも英語求人）や、CEO 自身が会社紹介すらできない会社など、微妙な会社にも当たりました。CEO が自社を売れないなら、候補者にどう魅力を伝えるのでしょうか。さらに、600 万円未満しか出せない会社もあり、こういった会社は即除外しました。</p>
+<p>ちなみに、練習として台湾の外商 N 社にも応募しましたが、ボコボコにされました。並列化関連の職種に応募し、アルゴリズムを聞かれると思っていたら、最初は C++ クラス基本操作のデバッグ、その後に OpenMP の使用を聞かれました。答えられず面接は途中終了で、本来は GPU プログラミングも聞く予定だったようです。私の実力が適切に評価されたとは思えません。私の感覚では、OpenMP は必要になったら文法を調べればよいし、GPU 計算も毎回サンプルをコピーして改造します。面白いのは、最後に面接官が「並列プログラミングの授業を取っていないのか」と聞いてきたことです。履歴書をしっかり見ていないのが救いでした。もし私が並列プログラミングの TA で、優秀 TA 賞まで取っていると知ったらどう思ったでしょうか。さらに、その小主管はカメラも付けず、初めて見るレベルの無礼な面接官でした。途中も「普通は 10 分で解ける」などと急かされ、今回の就活で最悪の体験でした。</p>
+<h3 id="言及する価値のある失敗例"><a class="header-anchor" href="#言及する価値のある失敗例">¶ </a>言及する価値のある失敗例</h3>
+<p><a target="_blank" rel="noopener" href="https://www.japancv.co.jp/en/company/">Japan Computer Vision</a> は、就活で最初に面接機会をもらえた会社です。「矽谷輕鬆談」の Slack チャンネルで台湾人エンジニアを見つけ、紹介してもらいました。当時は応募しても反応がなく、最初の面接が取れたことで自信がかなり戻りました。この会社の面白いところは、日本企業なのに中国語を話すエンジニアが多かったことです。後になって、この現象は日本でもそれなりに見かけると知りました（中国人エンジニアが世界中にいる影響でしょう）。応募職種は Full Stack Engineer。一次はフロントエンドエンジニア 2 人が JavaScript の特性と操作を聞き、二次はバックエンドエンジニア 2 人で、片方が DP、片方がマルチスレッドの Key Value データ構造の実装を聞く形式でした。私はどちらも出来が悪く、特に DP で即死しました。修論は JavaScript だったのに、JS の理解も意外と浅いと気づきました（そして DP は結局、その後も真面目に練習していません 🤪）。この会社は SoftBank 傘下の新創で、良い会社だと思います。新卒を直接募集していないので、新卒で入れたら給与は高標〜頂標の間だと思います。</p>
+<p><a target="_blank" rel="noopener" href="https://boostdraft.com/">Boostdraft</a> は 6〜7 人規模のスタートアップで、弁護士向けの法律文書専用エディタを作っています。私はこのプロダクトは将来性が高いと思っています。面接は 3 回あり、1 回目は CEO との雑談、2 回目は文字列処理寄りのアルゴリズム問題で、テスト設計について「正しさを最も効率的に検証するにはどう設計するか」という、単に UnitTest と答えるだけでは足りない問いをされました。3 回目は別エンジニアによるアルゴリズム面接です。3 回目の後に落ちました。シニアを即戦力で採りたいのだと思いますが、私はこの会社の将来性にはかなり期待しています。強い人は検討する価値があると思います。給与は高標あたりだと予想します。</p>
+<p><a target="_blank" rel="noopener" href="https://www.asprova.com/en/">Asprova</a> は工場の人員スケジューリングソフトを作っている会社で、新卒給与は頂標以上（800 万〜1000 万円）です。<a target="_blank" rel="noopener" href="https://vocus.cc/article/6195ffd2fd89780001cff507">こちら</a>と<a target="_blank" rel="noopener" href="https://www.1point3acres.com/bbs/thread-830074-1-1.html">こちら</a>が参考になります。社員の英語力は高くなく、日本語ができない外国人も採るものの、日本語が多少できるか、今後必ず日本語を身につける覚悟がある方が良いと思います。面接はむしろ感動しました。ネットの体験談と違い、一次からいきなり主管面で、主管はほぼ英語ができません。私は DeepL を使って会話し、コミュニケーション効率が悪いので 3 時間半も話しました。単一人物との面接としては人生最長です。途中でコードリーディングの問題があり、長いコードを渡されて 30 分でメモリ配置を分析させられました。主管は人柄が良く、人を求めているのが伝わってきました。言語障害があっても誠意は強く感じました。その後、2 人のエンジニア（中国人とシンガポール人）とも 2 回話し、主管は「雑談だけで良い。Coding は不要」と言っていたようです。Asprova は候補者に時間をかけて話す誠意のある会社だと思います。ただ、会話を通じて自分には合わないと分かったので辞退しました。理由は 2 つで、プロダクトが成熟していて保守中心で革新が少ないこと、そして日本語が必須で、コミュニケーションに障害がある状態では良い仕事が難しいと感じたことです。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cogent.co.jp/en/">Cogent Lab</a> は AI で文書処理をする規模のあるスタートアップで、ここも外国人が多く、英語は英式寄りでした。一次は背景の雑談で、次に課題が出ました。内容は Node.js で RESTful Server を実装し、マルチプロセス対応、DBMS 連携、Message Queue 追加などのアーキテクチャも考えるというものです。期限は 2 週間でしたが、私は 3〜4 日で作りました。この課題で初めて Docker Compose を触りました。成果物は<a target="_blank" rel="noopener" href="https://github.com/tigercosmos/thumbnail-server">こちら</a>です。二次は実装の議論で、アーキテクチャを話し、現場で修正したり、想定していなかったエラーを直したりしました。アルゴリズム面接よりストレスが少なく、2 時間は楽に過ごせましたが、結局お祈りでした。課題の出来が足りなかったか、他の理由かは分かりませんが、シニアを採りたかったのだと思います。</p>
+<p><a target="_blank" rel="noopener" href="https://paidy.com/">Paidy</a> は金融決済系の会社で、ここも外国人が多いです。Backend Engineer で応募し、一次で主管と背景を話した後、課題が出ました。RESTful Server を実装するのですが Rust と Functional Programming を使うことが要件でした。大学以降 Rust は書いておらず、当時は並行プログラムも書いたことがなかったので、課題はむしろ面白かったです。Rust で並行プログラムを書く方法を学びました。成果物は<a target="_blank" rel="noopener" href="https://github.com/tigercosmos/simple_restaurant">こちら</a>で、個人的にはかなり満足しています。Rust は下手だったと思いますし、FP もほぼ使っていないかもしれませんが、プロジェクトとしては完成していて、動作もしていて、テストも付けました。この時点で Mujin のオファーはありましたが、面白かったので時間をかけて仕上げました。ただ、提出後は次の面接すらなく落ちました。課題だけ見て実力不足と判断されたのかもしれません。Paidy は良い会社だと思います。規模のある金融会社の Backend は退屈しないはずで、技術スタックも Rust + Go が中心です。給与は高標〜頂標あたりだと推測します。</p>
+<h3 id="オファーを獲得した例"><a class="header-anchor" href="#オファーを獲得した例">¶ </a>オファーを獲得した例</h3>
+<p><a target="_blank" rel="noopener" href="https://monoid.co.jp/">Monoid</a> はソフトウェアコンサル会社で、中国人留学生が創業し、正社員は 5 人。数年で受託収益が 2 億円に達し、メンバーの学歴も高いです。小規模な新創でここまで売上を出すのは本当に実力があると思います。面接は 1 回だけで 1 時間強。基本的なプログラミング概念とアルゴリズムを少し聞かれただけで、残りは会社紹介でした。あまりに早くて驚きましたが、ブログや GitHub など事前調査が入っており、最終確認だったのかもしれません。面接後すぐに正式オファーが届き、給与は高標水準。Offer compete にも応じてくれ、さらに上も出せそうな雰囲気で、「払えないのではなく、あなたがその価値に足りるかが重要」という感じでした。この会社には感謝しています。5 月初旬にオファーが来て、一気に自信がつきました。最悪でも日本で働けることが確定し、給与も良かったからです。</p>
+<blockquote>
+<p>Monoid に応募する方は、必ず「Neutrino’s Blog から来た」と書いてください。Monoid から美味しいものを奢ってもらえるように交渉します！</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://mujin-corp.com/">Mujin, Inc.</a> は工場ロボットのコントローラと管理プラットフォームを作っています。最初は Full Stack Engineer に応募しましたが、HR の調整で Backend System Engineer になりました。一次は HR と会社説明（補足: 2024 年以降は一次前に Online Coding Test もあります）。その後 2 週間ほど空き、落ちたと思ったら、社内調整の問題で遅れていただけでした。二次は部門主管で、雑談を省いていきなり C++ の試験。LRU Cache の実装だけで、大きな罠はなく、40 分程度で終わりました。その後 40 分ほど、技術や自分ができること、学べることを話しました。二次後に 48 時間の課題がありました。二次は普通難易度＋適性で、真の鑑別は課題だと思います。この課題は鑑別力が非常に強く、私も一度は諦めかけました。Mujin が社内で使うロボット系 OSS があり、まずはそれをビルドするところから始まります。TensorFlow や Chromium のようにドキュメントが豊富なプロジェクトではなく、ドキュメントはほぼコードそのもの。指定 OS でビルドする必要があり、コンパイルエラーが大量に出て、経験と勘で潰していくしかありません。指示は「ビルドしろ」の一言で、まるで会社で誰にも助けてもらえないタスクを投げられ、独力でやり切るような体験でした。私は 7〜8 時間ほど全く進まず（48 時間しかないのに）、本当に諦めそうになりましたが、最終的に解決できました。ビルド後は簡単な RESTful Server を実装し、ビルドしたコードを使って処理させます。つまり難所はビルドで、Server 実装はそこまで難しくありません。諦めかけたところから巻き返し、早めに提出できました。主管も満足してくれたようで、本来は課題内容の面接があるかもしれませんが、それも飛ばしてオファーに進みました。HR から新卒給与は 600〜900 万円と言われており、実際のオファーも頂標でした。加えて、永住権のポイント制度で Mujin 入社は +20 点（70 点で 3 年、80 点で 1 年で永住権が取れる）などのメリットもあり、システムソフトウェアを続けられる点も含め、総合的に非常に良い機会だと感じたので受諾しました。</p>
+<blockquote>
+<p>Mujin に応募するなら、ぜひ私に紹介させてください。可視性が上がり、私のボーナスにもなります。<br>
+Email: <a href="mailto:anchi.liu@mujin.co.jp">anchi.liu@mujin.co.jp</a> 連絡してください。Referral Link を送ります。書類通過率が上がる可能性があります。</p>
+</blockquote>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
+<p>いま私はドイツで旅行中ですが、振り返ると全てが信じられません。彼女の存在がなければ、人生初の正社員がいきなり東京で始まるとは思いもしませんでした。何の有利な背景もない海外新卒として、3 カ月で納得できるオファーを見つけられたのは本当に幸運です。日本で働けるなら、給与が平均〜高標でも受け入れる覚悟はありましたが、最終的には評価してくれる会社に出会い、待遇も良いオファーをもらえて嬉しいです。</p>
+<p>「とにかく勇気を持って動く」ことが大事だと思います。周囲は「新卒が日本で仕事を見つけるのは厳しい」と言い、私自身も疑っていました。それでも、義無反顧に突っ込めばチャンスはあると思います。CS を専攻し、ソフトウェアエンジニアを狙ったのは大きな強みでした。現代では、やる気があればどこでもソフトウェアエンジニアの仕事はあります。これが就活での最大の優位性でした。</p>
+<p>就活を通じて多くを学びました。外国人面接官との向き合い方、会社ごとの課題の作り方などです。私は特に、面白い課題を出す会社が好きで、就活のプロセス自体を楽しめました。作るのが楽しいし、新しいことも学べる。足りない点を指摘してくれた面接官にも感謝しています。改善を続けられます。</p>
+<p>唯一の小さな不安は、入社予定が 3 カ月後という点です。この期間に何も変わらず、無事に入社して東京生活を始められることを願っています。本記事が、将来、私のように日本でソフトウェアエンジニア職を探したい新卒の参考になれば幸いです。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/%E6%97%A5%E6%9C%AC/">
+                日本
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/%E4%BB%95%E4%BA%8B/">
+                仕事
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/">
+                ソフトウェアエンジニア
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E6%9C%AC%E3%81%AE%E6%96%B0%E5%8D%92%E6%8E%A1%E7%94%A8%E3%81%AE%E6%A6%82%E8%A6%81"><span class="toc-text">日本の新卒採用の概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B1%A5%E6%AD%B4%E6%9B%B8%EF%BC%88Resume%EF%BC%89"><span class="toc-text">履歴書（Resume）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%A2%E6%8E%A5"><span class="toc-text">面接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%B1%E6%B4%BB%E3%81%AE%E6%B5%81%E3%82%8C"><span class="toc-text">就活の流れ</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B3%E6%B7%A1%E3%81%AA%E5%A4%B1%E6%95%97%E4%BE%8B"><span class="toc-text">平淡な失敗例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A8%80%E5%8F%8A%E3%81%99%E3%82%8B%E4%BE%A1%E5%80%A4%E3%81%AE%E3%81%82%E3%82%8B%E5%A4%B1%E6%95%97%E4%BE%8B"><span class="toc-text">言及する価値のある失敗例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%82%AA%E3%83%95%E3%82%A1%E3%83%BC%E3%82%92%E7%8D%B2%E5%BE%97%E3%81%97%E3%81%9F%E4%BE%8B"><span class="toc-text">オファーを獲得した例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/07/c++/template-for-std-containter-conversion/">
+        C++ のテンプレート関数でコンテナ型を変換する（std::list&lt;int&gt; → std::vector&lt;double&gt;）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/condition-variable-cpp/">
+        C++ の Condition Variable：シンプルな例
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/std-string-beginner/">
+        C++ std::string 入門：この一篇で基礎を融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/stringview/">
+        まだ const std::string&amp; を使ってる？ std::string_view を試そう！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/05/c++/googletest/">
+        GoogleTest で書く C++ のユニットテスト
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

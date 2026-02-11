@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="JLPT,Japan,Japanese,language learning," />
+    <meta name="description"
+        content="This post shares how I self-studied Japanese over the past three months to reach the JLPT N4 level." />
+    <title>Neutrino&#39;s Blog: My Three-Month JLPT N4 Self-Study Experience </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2023/12/japan/learn-japanese-n4/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2023/12/japan/learn-japanese-n4/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2023/12/japan/learn-japanese-n4/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2023/12/japan/learn-japanese-n4/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2023/12/japan/learn-japanese-n4/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2023/12/japan/learn-japanese-n4/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        My Three-Month JLPT N4 Self-Study Experience
+    </h2>
+    <ul class="post-date">
+        <li>
+            2023-12-13
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2023/12/japan/learn-japanese-n4/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2023/12/japan/learn-japanese-n4/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p><img src="https://github.com/tigercosmos/blog/assets/18013815/bd8fa1da-43d0-4810-98ec-73e974d703f9" alt="cover image"></p>
+<h2 id="Introduction"><a class="header-anchor" href="#Introduction">¶ </a>Introduction</h2>
+<p>I took the JLPT N4 last week. I still do not know the results, but based on my mock test scores, I would say my chances of passing are around 50%. Whether I end up passing or not, I still think the experience is worth sharing.</p>
+<p>I took the test in Tokyo. When you register, the range of available test areas is quite broad. For example, I could only choose the Kanto area, and I could not even specify that I wanted to take the test within Tokyo. The system seems to assign a venue based on your address: even if you choose the same area (Kanto), someone living in Saitama will not be assigned a venue within Tokyo’s 23 wards. My venue ended up being in Shinagawa, which is actually about an hour from my home (Toyosu), so it is not exactly close.</p>
+<p>Japan’s JLPT venues were eye-opening. The Shinagawa venue was a huge convention hall that could hold close to a thousand people, so all test takers were packed into one large space. In Taiwan, the JLPT is usually held in a classroom at a school, or in a cram school classroom like when I took the TOEFL. This was my first time seeing around a thousand people crammed into a single room. From the organizer’s perspective, it probably reduces staffing and venue costs, but for test takers it is not great: roll call and distributing test papers took forever, getting in and out was chaotic, and there were far fewer restrooms than a school would have. The break was so short that it was barely enough time to stand in line for the restroom. There were clearly too few proctors, and they did not seem to have good control. During the listening section, someone’s phone even rang, which was unbelievable. Most test takers there were adults, probably language-school students, and the group was very diverse, with many people from Southeast Asia.</p>
+<h2 id="Why-Take-the-JLPT"><a class="header-anchor" href="#Why-Take-the-JLPT">¶ </a>Why Take the JLPT</h2>
+<p>I basically could not speak Japanese. My girlfriend is Japanese, but she speaks Chinese, so even after living in Japan for a year I still could not speak Japanese. Whenever I needed Japanese, I had to rely on her, which was not sustainable. Eventually I had enough and decided to seriously study Japanese.</p>
+<p>How much Japanese can you acquire in one year in Japan if you do not study at all? You can probably say a few phrases like “お冷 (cold water)”, “ブラックミルクティー (milk tea)”, and “おかわり (refill / another bowl)”. That is basically vocabulary-level Japanese.</p>
+<p>In day-to-day life, you actually do not need much Japanese. At convenience stores or supermarkets, as long as you can understand whether they ask if you want a bag, and you can say how you want to pay, you are fine. At restaurants, ordering often becomes “これ (this one)” all the way.</p>
+<p>If you really speak at all, “please”, “thank you”, and “sorry” account for about 90%, similar to how much Italian I could speak when I lived in Italy 😂</p>
+<p>But you only realize what you are missing when you need it. There are moments when you feel frustrated because you cannot speak Japanese: communicating at a clinic, getting into conflicts, or trying to advocate for yourself. In Europe, at least you can argue in English, but in Japan people often do not understand English either.</p>
+<p>Anyway, after a year here, I could not keep avoiding it, and I could not escape it either. So I signed up for the JLPT.</p>
+<p>Why take the JLPT? Based on my experience from childhood through adulthood, exam-oriented learning is the most efficient. The process gives you clear goals and direction, and the time pressure from exam preparation pushes you to study harder.</p>
+<p>By the time I decided to start studying, it was already September. The JLPT is held twice a year; the next session would be in December. That meant I had only three months. Given that in those three months I would probably spend at most one or two hours a day, a total of one or two hundred hours, aiming for N3 was unrealistic, but N4 seemed feasible. In fact, according to some <a target="_blank" rel="noopener" href="https://biz.rn-ac.jp/topics/jlpt0817.html">language schools’ estimated time requirements</a>, N4 typically takes around 300 hours. In other words, if you study for three months, you would need to study about three and a half hours per day to just hit that target. My own study time was around that range. If you also count the time I spent memorizing vocabulary when I was bored, and the time I spent watching Japanese videos, the total easily exceeds 400 hours.</p>
+<p>Of course, some people are exceptionally talented. The numbers above are just averages. Depending on how much time you study, if you study 15 hours a day, even reaching N1 in half a year is not impossible. But when you set goals, do not overreach. Many people say N3 is easy and you should just go for it, and that N3 is where it starts to matter. But if you are making a practical plan based on your available time, and you are taking the test mainly to support your learning, it is fine to go step by step.</p>
+<h2 id="How-I-Prepared"><a class="header-anchor" href="#How-I-Prepared">¶ </a>How I Prepared</h2>
+<p>Next, I will share the study approach I settled on. I read a lot of other people’s write-ups, but in the end what worked best for me was what I discovered through my own trial and error. Use this as a reference: everyone has their own preferences.</p>
+<p>In general, language learning is grammar plus vocabulary. Below, I will go through what to do over three months in chronological order.</p>
+<p>If you prefer learning grammar through videos, I recommend <a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLynCeSdpMqxCW-AfMtmIlASAMUVq8wX6k">出口仁</a>. If you prefer learning through text, I recommend <a target="_blank" rel="noopener" href="https://www.sigure.tw/">時雨日文</a>. Personally, I later found that text-based learning was more efficient for me.</p>
+<h3 id="Week-0"><a class="header-anchor" href="#Week-0">¶ </a>Week 0</h3>
+<p>Of course, you must be able to read hiragana. Go to a bookstore and get a vocabulary book that covers the N5 and N4 ranges. You do not need an excessive vocabulary list; think of it like English “the first 2,000 words”. You can also download apps. The “MOJi” family of apps is free and highly recommended. A good dictionary is also important. I recommend “MOji 辭書”. Next, you need to plan to finish memorizing all N5 and N4 vocabulary in about two and a half months. Memorizing Japanese vocabulary is a bit more troublesome than English: you need to be able to go from hiragana to Chinese, kanji to Chinese, Chinese to kanji, and Chinese to hiragana.</p>
+<h3 id="First-Two-Weeks"><a class="header-anchor" href="#First-Two-Weeks">¶ </a>First Two Weeks</h3>
+<p>Read <a target="_blank" rel="noopener" href="https://www.sigure.tw/learn-japanese/grammar/n5/">N5 Grammar</a>. N5 grammar is the foundation of the foundation. I think you need to spend some time to “get it”. It is fine if you do not fully understand at first. After you see more Japanese, it becomes easier to develop a feel for the structure of the language.</p>
+<h3 id="Weeks-3-4"><a class="header-anchor" href="#Weeks-3-4">¶ </a>Weeks 3-4</h3>
+<p>Read <a target="_blank" rel="noopener" href="https://www.sigure.tw/learn-japanese/grammar/n4/">N4 Grammar</a>. N4 grammar is more advanced and allows richer expression. If you are taking N4, the main focus is, of course, N4 grammar.</p>
+<h3 id="Month-2"><a class="header-anchor" href="#Month-2">¶ </a>Month 2</h3>
+<p>I think the fastest way to learn a language is to take tests. The way to verify whether you have learned something is to do practice questions: you will discover what you do not know, and reinforce what you are not comfortable with.</p>
+<p>Many people recommend <em><a target="_blank" rel="noopener" href="https://www.amazon.co.jp/%E6%96%B0%E3%81%AB%E3%81%BB%E3%82%93%E3%81%94500%E5%95%8F-N4-N5-Shin-Nihongo-500/dp/4872179404">新にほんご500問</a></em>. That is the only book I used. If you are outside Japan, you can buy the English version. I bought mine on Amazon Japan, so I got the English version. I did not feel any issues learning through English.</p>
+<p>By design, <em>新にほんご500問</em> is meant to be one month’s worth of work (four weeks, seven sets per week), so it fits perfectly as the second month. At that point, we have already learned the grammar, and we have started memorizing vocabulary, so we can use problems to deepen our memory. If you study this book properly, the daily workload will take about an hour. It includes both vocabulary and grammar problems, and you will also run into a lot of new words. I think you can just follow the plan. Unless you have a lot of study time, it is hard to accelerate much.</p>
+<h3 id="Month-3"><a class="header-anchor" href="#Month-3">¶ </a>Month 3</h3>
+<p>After the first two months of study, you should have about 60-70% of N4 under control.</p>
+<p>Next, we move on to mock exams. Why do mock exams? First, it is an exam, so you need to get comfortable with answering under test conditions. Second, the JLPT includes listening. Listening is something you should practice specifically for the test; casually listening to videos or podcasts is not a reliable substitute.</p>
+<p>For mock exams, I recommend buying 4 to 6 sets. The more detailed the explanations, the better. For listening, it is best if there are transcripts. I bought <em>怪物講師團隊的 N4 日檢 6 回</em>. I intentionally bought more sets because it seemed like better value, but in the end I only completed four.</p>
+<p>The N4 exam has three major sections: vocabulary/kanji, grammar/reading, and listening. A weekly plan can be: do one section per day, review the explanations in detail the next day, then do the next section. I occasionally slacked off, so in practice I finished about one mock exam per week. For listening, I did intensive listening. After answering, I replayed the audio until I could hear each sentence clearly.</p>
+<p>Ideally, one or two days before the exam, you can complete an entire mock exam in one sitting, as a dress rehearsal to build a sense of test-day pacing.</p>
+<p>Then it is exam day. If you study properly, you will have accumulated 300-400 hours of Japanese study time, and you will definitely pass!</p>
+<h2 id="Other-Learning-Resources"><a class="header-anchor" href="#Other-Learning-Resources">¶ </a>Other Learning Resources</h2>
+<p>I recommend browsing language-exchange communities. Many people recommend Japanese-learning channels and Instagram accounts. I especially recommend the <a target="_blank" rel="noopener" href="https://www.youtube.com/@naru1723">naru 💫日本語の先生</a> channel. The difficulty is roughly around N4. Of course, preferences vary, so it is worth exploring different channels.</p>
+<p>During my study period, I also watched the Japanese version of <em>Crayon Shin-chan</em> every day with Japanese subtitles. This was mainly to build intuition for the language. Since it is a children’s show, the language is not too difficult, roughly around N3/N4. That said, Shin-chan sometimes intentionally uses incorrect expressions, so be careful not to learn the wrong usage. I think it is even more effective if you watch together with someone who has strong Japanese skills.</p>
+<p>Finally, good luck with your studies!</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/jlpt/">
+                JLPT
+            </a>,&nbsp;
+        
+            <a href="/en/tags/japan/">
+                Japan
+            </a>,&nbsp;
+        
+            <a href="/en/tags/japanese/">
+                Japanese
+            </a>,&nbsp;
+        
+            <a href="/en/tags/language-learning/">
+                language learning
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-Take-the-JLPT"><span class="toc-text">Why Take the JLPT</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-I-Prepared"><span class="toc-text">How I Prepared</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Week-0"><span class="toc-text">Week 0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#First-Two-Weeks"><span class="toc-text">First Two Weeks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Weeks-3-4"><span class="toc-text">Weeks 3-4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Month-2"><span class="toc-text">Month 2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Month-3"><span class="toc-text">Month 3</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Other-Learning-Resources"><span class="toc-text">Other Learning Resources</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/condition-variable-cpp/">
+        A Simple Example of Condition Variables in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/std-string-beginner/">
+        C++ std::string for Beginners: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/stringview/">
+        Still Using const std::string&amp;? Try std::string_view!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/05/c++/googletest/">
+        Writing C++ Unit Tests with GoogleTest
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

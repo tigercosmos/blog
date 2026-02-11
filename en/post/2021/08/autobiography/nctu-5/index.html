@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="thoughts,graduate school,master&#39;s,NYCU ICSE,NCTU observations and reflections,art," />
+    <meta name="description"
+        content="This post records a few stories from the spring semester of my second year at the Institute of Computer Science and Engineering, NCTU/NYCU." />
+    <title>Neutrino&#39;s Blog: NCTU Observations and Reflections (5): Second Year (Spring) — Tech × Art </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2021/08/autobiography/nctu-5/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2021/08/autobiography/nctu-5/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2021/08/autobiography/nctu-5/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2021/08/autobiography/nctu-5/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2021/08/autobiography/nctu-5/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2021/08/autobiography/nctu-5/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        NCTU Observations and Reflections (5): Second Year (Spring) — Tech × Art
+    </h2>
+    <ul class="post-date">
+        <li>
+            2021-08-06
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2021/08/autobiography/nctu-5/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2021/08/autobiography/nctu-5/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Preface"><a class="header-anchor" href="#Preface">¶ </a>Preface</h2>
+<p>As usual, I write one post every semester to record what life was like. But somehow this semester felt like there was not much worth talking about—almost like I just muddled through the past six months without noticing.</p>
+<p>Still, quite a few things did happen. This post might be a bit messy, but I am going to write down whatever I still remember; otherwise I will probably forget everything in the future. Also, NCTU officially became NYCU, but I think I will keep the name of this series as-is.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/126494531-4c6a02cc-09d5-4194-a676-d6607926dd7d.png" alt="Yu-Ming"><br>
+(My good friend and favorite model, Yu-Ming, who helped me a lot on my path of learning photography)</p>
+<h2 id="Photography"><a class="header-anchor" href="#Photography">¶ </a>Photography</h2>
+<p>I started becoming interested in fine arts in the spring semester of my senior year. During graduate school at NCTU, I joined the Fine Arts Club and gradually became interested in art in a broader sense.</p>
+<p>Photography, surprisingly, started because I was annoyed that I could not properly capture monkeys at the zoo with an iPhone 11. Later, when I was doing online promotions for the Fine Arts Club, we needed to take a large number of photos for documentation, and I felt the limitations of phones were still too strong. So I bought my first interchangeable-lens camera (Fujifilm X-S10). After getting a camera, I realized photography is genuinely fun. As a result, I basically stopped doing research—every day I just went out to take photos XD</p>
+<p>NCTU also has a photography club. Although I was in the Fine Arts Club, once I got into photography I went to meet some people from the photography club. I also attended two of their club sessions: one on basic studio photography, and one on unconscious photography. Both were inspiring to me. It is a pity I discovered my interest in photography too late, so I did not have many chances to make more friends in the photography club.</p>
+<p>When I was starting out, my everyday hobby was watching photography-related videos on YouTube. I borrowed a lot of photography books as well, and I would scroll through Instagram from time to time to follow great photographers and models. In just three months, I spent a lot of money on the camera, lenses (I basically collected almost every focal length), and other accessories. I also looked widely for models to practice with, continuously accumulating experience in outdoor shoots, studio shoots, lighting, and so on, and gradually learning post-processing.</p>
+<p>Along the way, I unlocked quite a few “achievements”—for example, approaching girls in all kinds of situations to ask whether they could be a temporary model (and so far I have not failed), taking graduation photos for many friends at NTHU/NCTU, finding a model and doing my first full-nude large-format shoot, getting a very expensive professional model (a junior-high school classmate) to generously model for me for practice, taking couple kissing shots, and so on. Many models I photographed even changed their profile pictures to my photos, which is an incredible sense of accomplishment. Every time I finish a shoot in a new kind of setting, I feel like I have grown again.</p>
+<p>Half a year passed in the blink of an eye, and I feel I have improved a lot compared with when I first started. I think as long as I keep this interest alive, I will keep improving. I also want to especially thank my two good friends, Yi-Ting and Yu-Ming, for practicing with me so many times. Because they are friends, I am not afraid of taking ugly photos—if things do not go well, we can just laugh out loud. Shooting friends is still the most comfortable for me. I hope that when I go to Europe next, I can keep taking even more great photos.</p>
+<blockquote>
+<p>I will not post photos here in particular, but if you are interested, feel free to check out my <a target="_blank" rel="noopener" href="https://www.instagram.com/liu_an_chi/">photography IG</a> 😁</p>
+</blockquote>
+<h2 id="Research"><a class="header-anchor" href="#Research">¶ </a>Research</h2>
+<p>My advisor, Professor 游逸平, is a very laid-back person, so students have to be self-disciplined. In recent years, people in the lab almost always take about three years to graduate (I heard only one person from the cohort three years ago managed to finish in two). It is not that the professor intentionally holds people back; it is more that he does not push, so everyone’s pace ends up slow. I always believed that as long as I was disciplined enough, I could finish in two years on schedule. But after this semester, reality proved I failed.</p>
+<p>When others met their advisor once a month, I met mine once every two weeks; when others met once every two weeks, I was already meeting weekly. And yet, now that half of summer is already gone, I still have not even started writing my paper. Research feels like a fractal: inside every problem there are more problems, and it never truly ends.</p>
+<p>Not being able to finish in two years is partly my own fault. In the spring semester of my second year, I felt my progress was probably decent, so I spent a lot of time practicing photography—and later I realized I had been far too optimistic. Another part may be that I took some detours in the research process. In fact, the overall structure of my current research was already built during the summer after M1, but the original goal was too ambitious and hard to execute. It then took me more than half a year to narrow the topic down into something reasonable. And finally, maybe it is just the “curse”: no one escapes the destiny of graduating in three years (lol).</p>
+<p>The lab does have another “escape route”: if you are still not done by the third year but already have a job offer, the professor will tell you to wrap up and leave as quickly as possible. But if you care even a bit about the quality of your research, you will not want to cut corners. You will still want to complete the work properly—at which point, you are really going to spend the full three years.</p>
+<p>Because I was going to Italy as an exchange student in my third year, I originally hoped I could complete my thesis abroad within the year. But that is clearly not happening, so I will continue working on the research after I arrive in Italy.</p>
+<h2 id="Tech-and-Art"><a class="header-anchor" href="#Tech-and-Art">¶ </a>Tech and Art</h2>
+<p>I feel that in life I often get inspired by seniors, and this semester was no exception. Early in the semester I visited Professor 謝啟民 from the Institute of Applied Arts, and I also attended a talk by senior 吳冠儒 from the Department of Electrical Engineering. I learned a lot from both. They share a commonality: both have developed in the field of <strong>Tech × Art</strong>, with one in academia and the other in industry.</p>
+<p>At the beginning of the semester, I felt lost about my direction in life—mainly because my interests keep changing. My friends say that every time I talk about a goal, it has changed by the next gathering. In any case, as I mentioned earlier, I was obsessed with photography at the time, and I had always been interested in art. That made me wonder whether I could cross into an art-related interdisciplinary path. The reason I considered crossing over was that I find writing code by itself very boring. I also do not think I have extraordinary talent in computer science; I am at best reasonably good at it. I think programming is great as a hobby, but if I had to write code for the rest of my life, I would probably feel depressed. So I do not think being a software engineer should be my life’s calling—I should have better options. That is why “Tech × Art” became a direction I considered: both are things I am interested in, and combining rationality with sensibility just sounds super sexy.</p>
+<p>Because I took an “XR Project” course last semester, I knew that Professor 謝啟民 originally studied computer science and later moved toward art. So I thought it would be interesting to talk with him. His story of shifting into art is quite cool, but he does not seem to like sharing his story too directly, because he does not want students to only look at outcomes—he wants them to think through the context behind each decision. After all, everyone’s path is different. Every time I listen to a professor’s learning journey, I take away something, and I always listen with great interest. What inspired me the most was his team’s recent research: they try to “sketch from life” (in a computational sense) by following physical principles, letting a program automatically evolve a landscape painting. For example, how do you draw “water flow” in a Chinese landscape painting? Behind it there is not only basic fluid mechanics, but also computer science theory, plus more artistic evolutionary factors. Then the program iterates and simulates continuously, eventually producing water flows that look physically plausible yet still artistic. It fit my taste perfectly. Seeing the works on the spot moved me even more.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/128382456-3a32dbef-17b8-4f30-a0dc-dc0896062c6b.png" alt="A computational sketch-from-life work: The Oldest Landscape (〈最古老的風景〉)"><br>
+(A computational “sketch-from-life” work: “The Oldest Landscape” (〈最古老的風景〉). Image source: <a target="_blank" rel="noopener" href="https://theme.npm.edu.tw/exh107/NPMxNCTU/ch/page-2.html">National Palace Museum</a>)</p>
+<p>The image above is one of their works, “The Oldest Landscape” (〈最古老的風景〉), which was previously exhibited at the National Palace Museum. The following description is excerpted from the museum website:</p>
+<blockquote>
+<p>The computational &quot;sketch-from-life&quot; work &quot;The Oldest Landscape&quot; uses computer graphics theory and deep-learning methods in artificial intelligence, combines Chinese landscape painting theory with physics-based procedural computation, and gazes into the rivers and lakes of ancient times. It shows how a person who grew up on an island uses programming to sketch from life, narrating subtle observations of the sea and the emotions entrusted to it.</p>
+</blockquote>
+<p>In some sense, this creative approach is similar to physical simulation in movies. In film, physics only needs to look vivid; the underlying implementation may not be strictly physical. For the sake of creation, we can push this “believable physics” further, into something between physics and art. Today, if we want a Chinese landscape painting style, the simplest approach is to apply a deep-learning model to get an approximate result. But deep learning has a potential issue: you can force a style on top of things, and the result may feel less natural in terms of physics. Of course, models evolve quickly, and it is possible that an AI model in the future will be very physically consistent. Still, the reason I appreciate this “computational sketch-from-life” approach the most is probably a matter of sentiment. It really makes me feel that tech and art can blend, and that what you get from their interweaving can be genuinely astonishing.</p>
+<p>This semester I also attended a great talk by senior <a target="_blank" rel="noopener" href="http://wukuanju.com/">吳冠儒</a> from the Department of Electrical Engineering, titled “A Casual Talk on Creative Engineering and Electronic Arts.” Just the title was enough for me to know I would like it. He is a creative engineer or media artist who is good at using mechanical and electrical techniques to create multimedia art. This is exactly the kind of career I want. I like science and engineering, and I also like art. And I happen to have both a mechanical and an electrical background—if I become a creative engineer, then what I learned in mechanical engineering in undergrad will not have been wasted!</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/128377497-0ce95504-fc00-46c9-aa89-61399bb11204.png" alt="Teleportation binoculars"></p>
+<p>The image above is a screenshot from the video “<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=FAdK8MEej9k">Teleportation binoculars - Google &amp; Sydney Opera House</a>.” This was a project he worked on previously in collaboration with Google Creative Lab. Put simply, they took the kind of binoculars you see at scenic viewpoints and modified them: when users look through it, they see a street view from another location—for example, you might be in Taipei, but through the device you see Sydney. From this example, you can roughly imagine what creative engineers do: you have a retro-looking binocular device and electronic street-view technology, and you combine them into a piece of public art.</p>
+<p>Art engineering does not necessarily require deep technology or rock-solid robustness; what matters is whether you can build it, and whether it is creative. It seems more and more companies, both in Taiwan and abroad, are doing work in this area. If there is an opportunity, I might consider it as a career option, though I have heard the salary is not very high (of course, truly capable people can always make a lot). But in the end, passion is what matters most.</p>
+<h2 id="Fine-Arts-Club"><a class="header-anchor" href="#Fine-Arts-Club">¶ </a>Fine Arts Club</h2>
+<p>This semester I was still in the Fine Arts Club. Because I was the club’s social-media editor, I also helped take <a target="_blank" rel="noopener" href="https://www.facebook.com/nctu.finart/photos">event photos</a> as usual. The big event next semester was the joint club exhibition. I spent quite a bit of time helping with preparation, but I did not exhibit anything this year. I also felt that the overall cohesion of the club became much weaker in the second half of the semester—perhaps because the membership decreased this year, and after the exhibition people did not feel as motivated to come to the club anymore. Mostly, it was just a few close friends in the club arranging things ourselves. We often hung out in the club room—hot pot, snacks, making plum wine, and so on. Overall, I feel that the “daily activity” in the Fine Arts Club has basically stopped being about painting 😂</p>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>In short, it was a fairly pleasant spring semester of my second year. I hope my research will go smoothly, and I am also looking forward to gaining a lot from the exchange program in Italy.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/thoughts/">
+                thoughts
+            </a>,&nbsp;
+        
+            <a href="/en/tags/graduate-school/">
+                graduate school
+            </a>,&nbsp;
+        
+            <a href="/en/tags/master-s/">
+                master&#39;s
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nycu-icse/">
+                NYCU ICSE
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nctu-observations-and-reflections/">
+                NCTU observations and reflections
+            </a>,&nbsp;
+        
+            <a href="/en/tags/art/">
+                art
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Preface"><span class="toc-text">Preface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Photography"><span class="toc-text">Photography</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Research"><span class="toc-text">Research</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tech-and-Art"><span class="toc-text">Tech and Art</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fine-Arts-Club"><span class="toc-text">Fine Arts Club</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/condition-variable-cpp/">
+        A Simple Example of Condition Variables in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/std-string-beginner/">
+        C++ std::string for Beginners: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/stringview/">
+        Still Using const std::string&amp;? Try std::string_view!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/05/c++/googletest/">
+        Writing C++ Unit Tests with GoogleTest
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

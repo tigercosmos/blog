@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="c++,string," />
+    <meta name="description"
+        content="本記事では string の進階的な使い方を分かりやすく紹介します。進階の std::string、std::stringview、std::stringstream、std::regex、std::format、std::wstring、短字串最佳化、そして &lt;charconv&gt; を扱います。" />
+    <title>Neutrino&#39;s Blog: C++ std::string 進階：この一篇で応用まで融会貫通！ </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2024/11/c++/std-string-advanced/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2024/11/c++/std-string-advanced/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2024/11/c++/std-string-advanced/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2024/11/c++/std-string-advanced/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2024/11/c++/std-string-advanced/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2024/11/c++/std-string-advanced/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+    </h2>
+    <ul class="post-date">
+        <li>
+            2024-11-21
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2024/11/c++/std-string-advanced/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2024/11/c++/std-string-advanced/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p>文字列はプログラミング言語における最重要機能の 1 つです。本記事では C++ における進階的な文字列テクニックを学びます。<code>std::string</code> の進階 API、<code>std::stringview</code> を用いた効率的な文字列操作、<code>std::stringstream</code> によるデータストリーム処理、<code>std::regex</code> を用いた正規表現、<code>std::format</code> による文字列フォーマット、<code>std::wstring</code> によるワイド文字の扱い、短字串最佳化（SSO）とは何か、そして <code>&lt;charconv&gt;</code> ライブラリの使い方を紹介します。</p>
+<p>前篇：<a href="/post/2023/06/c++/std-string-beginner/">入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！</a><br>
+後篇：<a href="/post/2024/11/c++/std-string-advanced/">看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 進階篇！</a></p>
+<p><img src="https://github.com/user-attachments/assets/0e911498-715e-4e9c-84fb-2c1db0e92573" alt="封面照片"><br>
+（2024 攝於九寨溝）</p>
+<h2 id="1-string-のコンテナとしての考え方"><a class="header-anchor" href="#1-string-のコンテナとしての考え方">¶ </a>1. string のコンテナとしての考え方</h2>
+<p>C++ では <code>std::string</code> は単なる「文字列」ではなく、柔軟にサイズ変更できる強力なコンテナ（container）でもあります。<code>std::string</code> の容量管理を理解すると、文字列データをより効率的に扱えます。本節では、<code>capacity</code>、<code>size</code>、<code>resize</code>、<code>reserve</code>、そしてコンテナ操作として重要な <code>push_back</code> / <code>pop_back</code> を紹介します。</p>
+<h3 id="1-1-capacity-と-size"><a class="header-anchor" href="#1-1-capacity-と-size">¶ </a>1.1 capacity と size</h3>
+<p><code>std::string</code> を操作するとき、<code>size()</code> と <code>capacity()</code> に頻繁に遭遇します。<code>size()</code> は現在の文字列の実長（格納されている文字数）であり、<code>capacity()</code> は現在確保されているメモリ量（格納可能な文字数）、つまり容量です。常に <code>size &lt;= capacity</code> です。</p>
+<p>次の例は <code>size()</code> と <code>capacity()</code> の違いを示します：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+int main() &#123;
+    std::string str = &quot;Hello&quot;;
+    std::cout &lt;&lt; &quot;Size: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 5
+    std::cout &lt;&lt; &quot;Capacity: &quot; &lt;&lt; str.capacity() &lt;&lt; std::endl; // 15
+    return 0;
+&#125;
+</code></pre>
+<p><code>std::string</code> は再確保（reallocation）のコストを減らすため、実際に必要な量より多くのメモリを確保することが一般的です。上の例では <code>capacity</code> が 15、<code>size</code> が 5 です。次に文字を追加してもすぐには再確保されず、容量が尽きるまで再確保は起きません。再確保は高コストで、一般的には「より大きい（多くは 2 倍）領域を新規確保し、元のデータを新領域へコピーする」という処理になるためです。</p>
+<h3 id="1-2-resize"><a class="header-anchor" href="#1-2-resize">¶ </a>1.2 resize</h3>
+<p><code>resize</code> は文字列の長さを手動で変更します。新しい長さが元より長い場合、<code>std::string</code> は追加領域を自動で埋めます（デフォルトは <code>\0</code>）。短い場合は切り詰めます。</p>
+<pre><code class="language-cpp">std::string str = &quot;Hello&quot;;
+str.resize(10); // str 變成 &quot;Hello\0\0\0\0\0&quot;
+std::cout &lt;&lt; &quot;New Size: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 10
+str.resize(3); // str 變成 &quot;Hel&quot;
+std::cout &lt;&lt; &quot;New Size: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 3
+</code></pre>
+<p><code>resize</code> は「その長さまで埋める」動きなので、たとえば <code>str.resize(10)</code> をすると、その時点で <code>size</code> と <code>capacity</code> がともに 10 になります。</p>
+<h3 id="1-3-reserve"><a class="header-anchor" href="#1-3-reserve">¶ </a>1.3 reserve</h3>
+<p><code>std::string</code> の容量不足による再確保は非常に高コストです。そのため、必要なサイズが事前に分かっている場合は <code>reserve</code> で一括確保できます。<code>reserve</code> は <code>capacity</code> のみを変更し、<code>size</code> は変えません。</p>
+<pre><code class="language-cpp">std::string str;
+str.reserve(100); // 預先分配 100 字元的空間
+std::cout &lt;&lt; &quot;Capacity after reserve: &quot; &lt;&lt; str.capacity() &lt;&lt; std::endl; // 至少是 100
+std::cout &lt;&lt; &quot;Size after reserve: &quot; &lt;&lt; str.size() &lt;&lt; std::endl; // 0
+</code></pre>
+<p>領域を予約した後は <code>str += str2</code> や <code>str.push_back(c)</code> で文字列の末尾に追加できます。領域が事前に確保されているので、容量を使い切るまではアロケーションは発生しません。そのため <code>reserve</code> を使う場合は、後続操作で予約容量を超えないように注意する必要があります。</p>
+<p><code>reserve</code> を使うことで、膨大な文字列操作の際に再確保回数を減らし、性能を向上できます。大量操作が分かっているなら、先に確保しておくと無駄な再確保を避けられます。</p>
+<blockquote>
+<p>小提示：<code>size()</code> はすでに文字列が埋まっているので <code>str[i]</code> で内容を書き換えることが多いです。一方 <code>reserve()</code> は領域を予約するだけなので、<code>str += str2</code> や <code>str.push_back(c)</code> で末尾に追加するのが自然です。</p>
+</blockquote>
+<h3 id="1-4-push-back-と-pop-back"><a class="header-anchor" href="#1-4-push-back-と-pop-back">¶ </a>1.4 push_back と pop_back</h3>
+<p><code>push_back</code> は <code>std::string</code> の末尾に 1 文字追加します。容量が不足している場合は再確保が発生します。</p>
+<pre><code class="language-cpp">std::string str = &quot;Hello&quot;;
+str.push_back('!'); // 等同 str += '!'
+std::cout &lt;&lt; str &lt;&lt; std::endl; // Hello!
+</code></pre>
+<p><code>pop_back</code> は末尾から 1 文字削除します。</p>
+<pre><code class="language-cpp">std::string str = &quot;Hello&quot;;
+str.pop_back();
+std::cout &lt;&lt; str &lt;&lt; std::endl; // Hell
+</code></pre>
+<p>1 文字単位の操作は便利なことが多く、たとえば for ループで 1 文字ずつ処理し、<code>reserve</code> と組み合わせれば容量内に収めやすくなります。</p>
+<blockquote>
+<p>本節の関数は <code>std::vector</code> と全く同じ使い方だと気付くはずです。<code>std::string</code> は <code>std::vector&lt;char&gt;</code> と考えられ、本質的にはほぼ同じだからです。</p>
+</blockquote>
+<h2 id="2-string-と-C-style-string"><a class="header-anchor" href="#2-string-と-C-style-string">¶ </a>2. string と C-style string</h2>
+<p>C++ では <code>std::string</code> が強力なコンテナですが、従来の C-style 文字列（<code>char*</code>）も一部の場面では避けられません。たとえば C 言語ライブラリと連携する場合、C-style しか受け付けないことがあります。</p>
+<h3 id="2-1-C-style-文字列への変換"><a class="header-anchor" href="#2-1-C-style-文字列への変換">¶ </a>2.1 C-style 文字列への変換</h3>
+<p><code>std::string</code> を C-style に変換するのは簡単で、<code>.c_str()</code> を呼ぶだけで <code>const char*</code> を取得できます。</p>
+<pre><code class="language-cpp">std::string filename = &quot;data.txt&quot;;
+const char* c_filename = str.c_str();
+FILE* file = fopen(c_filename, &quot;w&quot;); // POSIX  API 只接受 C-style 字串
+</code></pre>
+<p><code>const</code> ではない <code>char*</code> が必要なら、<code>std::vector&lt;char&gt;</code> や <code>std::array&lt;char&gt;</code> で新しいメモリ領域を作り、<code>memcpy</code> などでコピーします。</p>
+<h3 id="2-2-C-style-文字列から-std-string-への変換"><a class="header-anchor" href="#2-2-C-style-文字列から-std-string-への変換">¶ </a>2.2 C-style 文字列から std::string への変換</h3>
+<p>C-style 文字列から <code>std::string</code> への変換も簡単で、<code>std::string</code> のコンストラクタを使うだけです：</p>
+<pre><code class="language-cpp">const char* c_str = &quot;Hello&quot;;
+std::string str(c_str);
+std::cout &lt;&lt; str &lt;&lt; std::endl; // 輸出 &quot;Hello&quot;
+</code></pre>
+<blockquote>
+<p>現代の C++ 開発では、文字列処理は基本的に <code>std::string</code> を優先するべきです。</p>
+</blockquote>
+<h2 id="3-string-view"><a class="header-anchor" href="#3-string-view">¶ </a>3. string_view</h2>
+<p><code>std::string_view</code> は C++17 で導入された新しい型で、軽量でデータの所有権を持たない文字列ビュー（string view）です。ポインタに似ており、既存の文字列を参照してデータをコピーせずに扱えるため、不要なメモリコストを削減できます。また、<code>std::string_view</code> は部分操作（先頭や末尾の削除、部分文字列の取得など）に非常に向いており、従来 <code>std::string</code> で同様の操作をすると追加のメモリコストが発生しがちです。</p>
+<blockquote>
+<p>延伸閱讀：<a href="/post/2023/06/c++/stringview/">還在用 <code>const std::string &amp;</code>? 試試 <code>std::string_view</code> 吧！</a></p>
+</blockquote>
+<h3 id="3-1-string-view-の基本用法"><a class="header-anchor" href="#3-1-string-view-の基本用法">¶ </a>3.1 string_view の基本用法</h3>
+<p><code>std::string_view</code> は <code>std::string</code> や C-style 文字列から初期化でき、<code>std::string</code> に似た操作関数を多く使えます。ただし <code>std::string_view</code> を使うことで不要な文字列コピーを避けられます。</p>
+<pre><code class="language-cpp">#include &lt;string_view&gt;
+
+void print_string(std::string_view sv) &#123;
+    std::cout &lt;&lt; sv.substr(0,3) &lt;&lt; std::endl; // 列印子字串
+&#125;
+
+int main() &#123;
+    std::string str = &quot;Hello, world!&quot;;
+    print_string(str); // 以 std::string 傳入
+    print_string(&quot;Temporary C-string&quot;); // 以 C-style 字串傳入
+    return 0;
+&#125;
+</code></pre>
+<p>上の例では <code>substr()</code> で部分文字列を取得しています。もし <code>std::string::substr</code> ならメモリコピーが発生します。しかし <code>std::string_view</code> はビューであり、元の文字列メモリを参照します。そのため <code>std::string_view::substr</code> の結果も <code>std::string_view</code> になり、過程でメモリコピーは発生しません！</p>
+<blockquote>
+<p><code>std::string_view</code> は生存期間の管理に注意が必要です。データを所有しないため、参照先データの寿命が <code>std::string_view</code> より長くなければいけません。<code>std::string_view</code> が一時データ（例：ローカル変数の文字列）を指すことを避けてください。</p>
+</blockquote>
+<h2 id="4-stringstream"><a class="header-anchor" href="#4-stringstream">¶ </a>4. stringstream</h2>
+<p><code>std::stringstream</code> は文字列のデータストリームです。概念は <code>std::cin</code> / <code>std::cout</code> と似ていますが、前者は「文字列ストリーム」へ入出力し、後者は I/O に入出力します。<code>std::stringstream</code> はフォーマット、入出力、データ変換などに非常に便利です。</p>
+<h3 id="4-1-基本用法"><a class="header-anchor" href="#4-1-基本用法">¶ </a>4.1 基本用法</h3>
+<p><code>std::stringstream</code> は文字列を編集する用途でよく使えます。例えば次のような書き方です：</p>
+<pre><code class="language-cpp">#include &lt;sstream&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+int main() &#123;
+    std::vector&lt;int&gt; v = &#123;1, 2, 3&#125;;
+
+    std::stringstream ss;
+    ss &lt;&lt; &quot;[&quot;;
+
+    for (int i = 0; i &lt; v.size(); i++) &#123;
+        ss &lt;&lt; v[i];
+        if (i != v.size() - 1) &#123;
+            ss &lt;&lt; &quot;, &quot;;
+        &#125;
+    &#125;
+
+    ss &lt;&lt; &quot;]&quot;;
+
+    std::cout &lt;&lt; ss.str();  // [1, 2, 3]
+&#125;
+</code></pre>
+<p>上の例は配列を文字列へ出力しています。<code>std::stringstream</code> に対しても <code>std::cout</code> と同様に <code>&lt;&lt;</code> でデータを流し込めます。最後に <code>ss.str()</code> を呼ぶと <code>std::string</code> に変換できます。</p>
+<p>また <code>std::stringstream</code> は <code>std::cout</code> / <code>std::cin</code> のように出力・入力もできます。たとえば数値を文字列に変換したり、文字列から数値を解析したりできます：</p>
+<pre><code class="language-cpp">#include &lt;sstream&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+int main() &#123;
+    std::stringstream ss;
+    ss &lt;&lt; 123 &lt;&lt; &quot; &quot; &lt;&lt; 234; // 將資料輸入 stringstream
+    std::string result = ss.str(); // 轉換成 std::string
+    std::cout &lt;&lt; result &lt;&lt; std::endl; // stdout 輸出 「123 234」
+    
+    // ss 裡面還保有「123 234」
+    int number;
+    ss &gt;&gt; number; // 從 stringstream 中讀取數字，從左到右開始
+    std::cout &lt;&lt; number &lt;&lt; std::endl; // stdout 輸出 「123」
+    return 0;
+&#125;
+</code></pre>
+<h3 id="4-2-stringstream-の応用"><a class="header-anchor" href="#4-2-stringstream-の応用">¶ </a>4.2 stringstream の応用</h3>
+<p>たとえば CSV やその他の構造化データを処理するとき、<code>std::stringstream</code> をデータストリームとして使えます。</p>
+<pre><code class="language-cpp">#include &lt;sstream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;iostream&gt;
+
+int main() &#123;
+    std::string line = &quot;apple,banana,orange&quot;;
+    std::stringstream ss(line); // 資料流，可以來自網路或檔案
+    
+    std::string item;
+    std::vector&lt;std::string&gt; items;
+
+    while (std::getline(ss, item, ',')) &#123;
+        items.push_back(item);
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<p><code>std::getline</code> の定義は <code>istream&amp; getline(istream&amp; input_stream, string&amp; output, char delim);</code> です。第 1 引数は <code>std::istream</code> を受け取ります。<code>std::stringstream</code> は <code>std::istream</code> を継承しているため、そのまま <code>getline</code> を使えます。同様に、<code>std::getline(std::cin, ...)</code> を使ったことがあるなら、<code>std::cin</code> も <code>std::istream</code> を継承しています。</p>
+<h2 id="5-regex"><a class="header-anchor" href="#5-regex">¶ </a>5. regex</h2>
+<p>regex（regular expression、正規表現）は文字列のパターンマッチングや検索によく使われます。フォーマットチェック、特定パターンの検索、文字列置換などができます。C++ の標準ライブラリは <code>&lt;regex&gt;</code> を提供しています。</p>
+<blockquote>
+<p>regex を使ったことがない場合は、まず <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions">MDN の基本文法ガイド</a> を読むと良いです。</p>
+</blockquote>
+<h3 id="5-1-基本用法"><a class="header-anchor" href="#5-1-基本用法">¶ </a>5.1 基本用法</h3>
+<p>よくある使い方は <code>std::regex</code> と <code>std::regex_match</code> / <code>std::regex_search</code> の組み合わせです：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;regex&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::string input = &quot;hello123&quot;;
+    std::regex pattern(&quot;[a-z]+\\d+&quot;); // 定義正規表示式的模式
+    if (std::regex_match(input, pattern)) &#123;
+        std::cout &lt;&lt; &quot;Input matches the pattern!&quot; &lt;&lt; std::endl;
+    &#125;
+    return 0;
+&#125;
+</code></pre>
+<p>この例では正規表現パターン <code>[a-z]+\\d+</code> を定義しています。意味は「1 文字以上の小文字に続いて 1 個以上の数字」です。<code>std::regex_match</code> で文字列全体がこのパターンに一致するかを確認できます。</p>
+<h3 id="5-2-文字列検索と置換"><a class="header-anchor" href="#5-2-文字列検索と置換">¶ </a>5.2 文字列検索と置換</h3>
+<p><code>std::regex_match</code> 以外に、<code>std::regex_search</code> で文字列中の一致部分を探したり、<code>std::regex_replace</code> で置換したりできます：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;regex&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::string input = &quot;abc123def456&quot;;
+    std::regex pattern(&quot;\\d+&quot;);
+
+    // 搜尋
+    std::smatch match;
+    if (std::regex_search(input, match, pattern)) &#123;
+        std::cout &lt;&lt; &quot;Found number: &quot; &lt;&lt; match.str() &lt;&lt; std::endl;
+    &#125;
+
+    // 替換
+    std::string replaced = std::regex_replace(input, pattern, &quot;#&quot;);
+    std::cout &lt;&lt; &quot;Replaced string: &quot; &lt;&lt; replaced &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p>ここでは <code>std::regex_search</code> を使って <code>\\d+</code>（1 個以上の数字）に一致する最初の部分を探し、その後 <code>std::regex_replace</code> で数字全体を <code>#</code> に置換しています。</p>
+<blockquote>
+<p><code>regex</code> は強力ですが性能は非常に低いです。直感的にも、パターンマッチングは文字列検証を繰り返すため、計算量が低くなることはありません。より良い方法があるなら <code>regex</code> は避けましょう。</p>
+</blockquote>
+<h2 id="6-format"><a class="header-anchor" href="#6-format">¶ </a>6. format</h2>
+<p>多くの言語（Python、Rust、Golang など）には文字列フォーマット機能が組み込まれています。C++20 でついに <code>std::format</code> が導入されました。これは従来の <code>std::sprintf</code> や <code>std::ostringstream</code> よりモダンで安全な文字列フォーマット機能です。<code>std::format</code> により簡潔で読みやすい形で文字列を整形できます。</p>
+<p><code>std::format</code> は C++20 が必要です。実際には <code>g++-13</code> 以上（Ubuntu24 のデフォルト）でないと使えません。C++17 しか使えない場合は、<a target="_blank" rel="noopener" href="https://github.com/fmtlib/fmt">libfmt</a> を検討できます。機能はほぼ同等ですが std の一部ではないため、プロジェクト設定が少し面倒になります。</p>
+<h3 id="6-1-基本用法"><a class="header-anchor" href="#6-1-基本用法">¶ </a>6.1 基本用法</h3>
+<p>まずは基本：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;format&gt;
+
+int main() &#123;
+    int number = 42;
+    std::string name = &quot;Alice&quot;;
+
+    // 使用 std::format 進行格式化
+    std::string result = std::format(&quot;Hello, &#123;&#125;! Your number is &#123;&#125;.&quot;, name, number);
+    std::cout &lt;&lt; result &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p><code>std::format</code> は <code>&#123;&#125;</code> の部分に引数を埋め込みます。Python の <code>str.format</code> や Rust の <code>format!</code> に似ています。引数は自動的に文字列へ変換され、埋め込まれます。</p>
+<h3 id="6-2-フォーマット指定子"><a class="header-anchor" href="#6-2-フォーマット指定子">¶ </a>6.2 フォーマット指定子</h3>
+<p><code>std::format</code> は進数、幅、埋め文字など様々な指定子をサポートします：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;format&gt;
+
+int main() &#123;
+    int number = 255;
+
+    std::cout &lt;&lt; std::format(&quot;Hexadecimal: &#123;:#x&#125;\n&quot;, number); // 16 進位表示
+    std::cout &lt;&lt; std::format(&quot;Padded number: &#123;:08&#125;\n&quot;, number); // 以 0 填充至 8 位數
+    std::cout &lt;&lt; std::format(&quot;Scientific notation: &#123;:.2e&#125;\n&quot;, 12345.6789); // 科學記號格式
+
+    return 0;
+&#125;
+</code></pre>
+<p>出力：</p>
+<pre><code>Hexadecimal: 0xff
+Padded number: 00000255
+Scientific notation: 1.23e+04
+</code></pre>
+<p>使い勝手は <code>boost::format</code> や <code>std::cout</code> と似た雰囲気で、多くの指定が可能です。</p>
+<h2 id="7-wstring"><a class="header-anchor" href="#7-wstring">¶ </a>7. wstring</h2>
+<p>通常の string の <code>char</code> は 1 バイトで、最大 256 種類の値しか表現できません。Unicode を扱うには不十分です（Unicode は何万もの文字があります）。言語によって 1 文字あたりのバイト数も異なり、CJK（中日韓）の文字はマルチバイト（multibyte）で 2（UTF-16）〜 4（UTF-32）バイトを必要とします。そこで <code>std::wstring</code> を使います。これは <code>std::string</code> のワイド文字（wide character）版で、各文字を <code>wchar_t</code> として保持し、Unicode などの扱いに適します。</p>
+<h3 id="7-1-基本用法"><a class="header-anchor" href="#7-1-基本用法">¶ </a>7.1 基本用法</h3>
+<p><code>std::wstring</code> の使い方は <code>std::string</code> と非常に似ていますが、初期化に <code>L&quot;&quot;</code> リテラルが必要です：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::ios::sync_with_stdio(false);
+    std::wcout.imbue(std::locale(&quot;en_US.utf8&quot;));
+
+    std::wstring ws = L&quot;你好，世界&quot;; // 使用 L&quot;&quot; 字面值初始化
+    std::wcout &lt;&lt; ws &lt;&lt; std::endl;
+    std::wcout &lt;&lt; &quot;Length: &quot; &lt;&lt; ws.size() &lt;&lt; std::endl; // 5
+
+    return 0;
+&#125;
+</code></pre>
+<p>ここでは <code>std::wcout</code> を用いてワイド文字列を出力しています。ワイド文字の出力では、出力ストリームの対応状況やロケール設定に注意が必要です。</p>
+<blockquote>
+<p>コンパイラ内部の実際のエンコーディング方式が UTF-16 / UTF-32 / その他のどれかは分かりません。</p>
+</blockquote>
+<blockquote>
+<p>ここで <code>sync_with_stdio(false)</code> を使うのは、C++ がデフォルトで C と互換であり、互換性を切らないとワイド文字が狭文字として解釈されて出力が壊れることがあるためです。細部は<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/31577195/6798649">こちら</a>を参照してください。</p>
+</blockquote>
+<p>ワイド文字を通常の string に入れることもできますが、その場合はワイド文字が <code>char</code> の列として格納されます。ワイド文字を 1 文字ずつ処理したい場合は string では扱いにくくなります。</p>
+<p>次の例を実行してみてください：</p>
+<pre><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::ios::sync_with_stdio(false);
+    std::wcout.imbue(std::locale(&quot;en_US.utf8&quot;));
+
+    std::wstring ws = L&quot;你好，世界&quot;; // size = 5
+    std::string ns = &quot;你好，世界&quot;; // size = 15
+
+    for(auto c : ws) &#123;
+        std::wcout &lt;&lt; c &lt;&lt; std::endl;
+    &#125;
+
+    for(auto c : ns) &#123;
+        std::cout &lt;&lt; c &lt;&lt; std::endl;
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<p>ワイド文字列なら各文字が正しく出力されますが、狭文字列では文字化けするはずです。</p>
+<h3 id="7-2-codecvt-によるエンコーディング変換"><a class="header-anchor" href="#7-2-codecvt-によるエンコーディング変換">¶ </a>7.2 codecvt によるエンコーディング変換</h3>
+<p><code>std::string</code> と <code>std::wstring</code> の変換には <code>&lt;codecvt&gt;</code> が提供する文字コード変換機能（狭文字 ↔ ワイド文字）を使えます。</p>
+<p><code>&lt;codecvt&gt;</code> は C++17 で非推奨になりましたが、既存プロジェクトではまだ使われています。<code>std::wstring_convert</code> と <code>std::codecvt_utf8</code> を使えば UTF-8 とワイド文字を変換できます：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;locale&gt;
+#include &lt;codecvt&gt;
+
+int main() &#123;
+    std::wstring wide_string = L&quot;こんにちは&quot;;
+    std::wstring_convert&lt;std::codecvt_utf8&lt;wchar_t&gt;&gt; converter;
+
+    // 寬字元轉換成 UTF-8
+    std::string utf8_string = converter.to_bytes(wide_string);
+    std::cout &lt;&lt; &quot;UTF-8: &quot; &lt;&lt; utf8_string &lt;&lt; std::endl;
+
+    // UTF-8 轉換成寬字元
+    std::wstring converted_back = converter.from_bytes(utf8_string);
+    std::wcout &lt;&lt; L&quot;Wide: &quot; &lt;&lt; converted_back &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p><code>&lt;codecvt&gt;</code> は動きますが非推奨であるため、C++20 以降では Boost.Locale のような別の Unicode ライブラリを使うことが推奨されます。</p>
+<blockquote>
+<p>新しい標準が策定されるまで <code>&lt;codecvt&gt;</code> は削除されないため、現状 C++20 でも利用できます。</p>
+</blockquote>
+<h2 id="8-small-string"><a class="header-anchor" href="#8-small-string">¶ </a>8. small string</h2>
+<p>C++ の短字串最佳化（short string optimization, SSO）は短い文字列を最適化する技術です。<code>std::string</code> は内部に短文字列用の固定バッファを持ち、短い場合は動的メモリ確保を避けます。文字列長が閾値（実装により 15 や 23 など）より小さい場合、ヒープではなくスタック上に文字列データを保持します。</p>
+<p>例：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() &#123;
+    std::string small_string = &quot;short&quot;; // 可能使用 SSO
+    std::string large_string = &quot;this is a very long string that might not fit in SSO&quot;;
+
+    // Small string: size: 5, capacity: 15
+    std::cout &lt;&lt; &quot;Small string: size: &quot; &lt;&lt; small_string.size() &lt;&lt; &quot;, capacity: &quot; &lt;&lt; small_string.capacity() &lt;&lt; std::endl;
+
+    // Large string: size: 52, capacity: 52
+    std::cout &lt;&lt; &quot;Large string: size: &quot; &lt;&lt; large_string.size() &lt;&lt; &quot;, capacity: &quot; &lt;&lt; large_string.capacity() &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p>この例では <code>small_string</code> が短いので SSO が効いている可能性があり、文字数は 5 なのに capacity が 15 になっているのが見えます。一方で <code>large_string</code> はヒープ確保が発生します。</p>
+<p>SSO は短文字列操作におけるアロケーションコストを大きく減らし、性能向上に寄与します。多くの場合、SSO を特別に意識する必要はありませんが、性能に敏感な場面では SSO の影響を理解しておくと役立ちます。</p>
+<blockquote>
+<p>延伸閱讀： <a href="/post/2022/06/c++/sso/">C++ 短字串最佳化（Short String Optimization）</a></p>
+</blockquote>
+<h2 id="9-to-chars-from-chars"><a class="header-anchor" href="#9-to-chars-from-chars">¶ </a>9. to_chars &amp; from_chars</h2>
+<p>C++17 では数値と文字列の変換のための新しいライブラリ <code>&lt;charconv&gt;</code> が導入されました。<code>std::to_chars</code> と <code>std::from_chars</code> は高性能な数値↔文字列変換を提供します。<code>&lt;charconv&gt;</code> は header-only で軽量であり、先進的なアルゴリズムで非常に高性能です。</p>
+<blockquote>
+<p>延伸學習：講演 <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=4P_kbF0EbZM">Stephan T. Lavavej “Floating-Point ＜charconv＞: Making Your Code 10x Faster With C++17’s Final Boss”</a>。45 分あたりで <code>&lt;charconv&gt;</code> が従来手法より何倍も速いベンチマーク結果が見られます。</p>
+</blockquote>
+<h3 id="9-1-基本用法"><a class="header-anchor" href="#9-1-基本用法">¶ </a>9.1 基本用法</h3>
+<h4 id="9-1-1-std-to-chars"><a class="header-anchor" href="#9-1-1-std-to-chars">¶ </a>9.1.1 std::to_chars</h4>
+<p>数値から文字列に変換できます。<code>std::to_chars</code> の例：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;charconv&gt;
+#include &lt;array&gt;
+
+int main() &#123;
+    int number = 12345;
+    std::array&lt;char, 20&gt; buffer; // 提前分配的緩衝區
+
+    // 使用 std::to_chars 進行轉換
+    auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), number);
+
+    if (ec == std::errc()) &#123; // 檢查是否成功
+        std::cout &lt;&lt; &quot;Converted number: &quot; &lt;&lt; std::string(buffer.data(), ptr) &lt;&lt; std::endl;
+    &#125; else &#123;
+        std::cout &lt;&lt; &quot;Conversion failed.&quot; &lt;&lt; std::endl;
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<p>この例では <code>buffer</code> を用意し、<code>std::to_chars</code> で整数を文字列に変換しています。<code>std::to_chars</code> は結果ポインタ <code>ptr</code> とエラーコード <code>ec</code> を含む <code>std::to_chars_result</code> を返します。</p>
+<p><code>ptr</code> は処理済みの末尾位置を指します。変換が成功した場合、<code>ptr</code> は変換結果文字列の末尾なので、<code>std::string(buffer.data(), ptr)</code> で結果文字列を作れます。</p>
+<h4 id="9-1-2-std-from-chars"><a class="header-anchor" href="#9-1-2-std-from-chars">¶ </a>9.1.2 std::from_chars</h4>
+<p>文字列から数値への変換もできます。<code>std::from_chars</code> の例：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;charconv&gt;
+#include &lt;array&gt;
+
+int main() &#123;
+    std::string intStr = &quot;12345 abc&quot;;
+    int resultInt = 0;
+    
+    // Perform the conversion from string to int
+    auto [ptr, ec] = std::from_chars(intStr.data(), intStr.data() + intStr.size(), resultInt);
+    
+    if (ec == std::errc()) &#123;
+        std::cout &lt;&lt; &quot;Integer conversion successful: &quot; &lt;&lt; resultInt &lt;&lt; &quot;, ptr:&quot; &lt;&lt; ptr &lt;&lt; std::endl;
+    &#125; else &#123;
+        std::cout &lt;&lt; &quot;Integer conversion failed. ptr:&quot; &lt;&lt; ptr &lt;&lt; std::endl;
+    &#125;
+    return 0;
+&#125;
+</code></pre>
+<p>変換が成功すれば <code>resultInt</code> に結果が入ります。失敗した場合は <code>ptr</code> で最後に処理できた位置を確認でき、その位置以降の <code>intStr</code> が数値として解釈できないことを意味します。</p>
+<p>たとえば <code>12345 abc</code> を与えると成功し、<code>ptr</code> は <code> abc</code> を指します（後半が解釈不能だからです）。一方 <code>abc123</code> を与えると変換エラーになり、<code>ptr</code> は先頭 <code>abc123</code> を指します。</p>
+<h3 id="9-2-進階用法"><a class="header-anchor" href="#9-2-進階用法">¶ </a>9.2 進階用法</h3>
+<p><code>std::to_chars</code> は異なる進数（例：16 進）や浮動小数点変換もサポートします：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;charconv&gt;
+#include &lt;array&gt;
+
+int main() &#123;
+    double value = 3.14159;
+    std::array&lt;char, 20&gt; buffer;
+
+    // 浮點數轉換
+    auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), value);
+
+    if (ec == std::errc()) &#123;
+        std::cout &lt;&lt; &quot;Converted float: &quot; &lt;&lt; std::string(buffer.data(), ptr) &lt;&lt; std::endl;
+    &#125; else &#123;
+        std::cout &lt;&lt; &quot;Conversion failed.&quot; &lt;&lt; std::endl;
+    &#125;
+
+    int value = 8;
+    std::array&lt;char, 20&gt; buffer;
+
+    // 不同進位
+    [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), 8 /* 八進位 */);
+
+    if (ec == std::errc()) &#123;
+        std::cout &lt;&lt; &quot;Converted int: &quot; &lt;&lt; std::string(buffer.data(), ptr) &lt;&lt; std::endl;
+    &#125; else &#123;
+        std::cout &lt;&lt; &quot;Conversion failed.&quot; &lt;&lt; std::endl;
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<p>解果はそれぞれ文字列の <code>3.14159</code> と文字列の <code>10</code>（10 進の 8 は 8 進で 10）になります。</p>
+<blockquote>
+<p><code>&lt;charconv&gt;</code> はシンプルな変換に向いており性能も高い一方で、複雑なフォーマットはできません。フォーマットが必要なら <code>std::format</code> を検討してください。</p>
+</blockquote>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/c/">
+                c++
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/string/">
+                string
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-string-%E3%81%AE%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%A8%E3%81%97%E3%81%A6%E3%81%AE%E8%80%83%E3%81%88%E6%96%B9"><span class="toc-text">1. string のコンテナとしての考え方</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-capacity-%E3%81%A8-size"><span class="toc-text">1.1 capacity と size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-resize"><span class="toc-text">1.2 resize</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-reserve"><span class="toc-text">1.3 reserve</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-push-back-%E3%81%A8-pop-back"><span class="toc-text">1.4 push_back と pop_back</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-string-%E3%81%A8-C-style-string"><span class="toc-text">2. string と C-style string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-C-style-%E6%96%87%E5%AD%97%E5%88%97%E3%81%B8%E3%81%AE%E5%A4%89%E6%8F%9B"><span class="toc-text">2.1 C-style 文字列への変換</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-C-style-%E6%96%87%E5%AD%97%E5%88%97%E3%81%8B%E3%82%89-std-string-%E3%81%B8%E3%81%AE%E5%A4%89%E6%8F%9B"><span class="toc-text">2.2 C-style 文字列から std::string への変換</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-string-view"><span class="toc-text">3. string_view</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-string-view-%E3%81%AE%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">3.1 string_view の基本用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-stringstream"><span class="toc-text">4. stringstream</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">4.1 基本用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-stringstream-%E3%81%AE%E5%BF%9C%E7%94%A8"><span class="toc-text">4.2 stringstream の応用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-regex"><span class="toc-text">5. regex</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">5.1 基本用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%96%87%E5%AD%97%E5%88%97%E6%A4%9C%E7%B4%A2%E3%81%A8%E7%BD%AE%E6%8F%9B"><span class="toc-text">5.2 文字列検索と置換</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-format"><span class="toc-text">6. format</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">6.1 基本用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E6%8C%87%E5%AE%9A%E5%AD%90"><span class="toc-text">6.2 フォーマット指定子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-wstring"><span class="toc-text">7. wstring</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">7.1 基本用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-codecvt-%E3%81%AB%E3%82%88%E3%82%8B%E3%82%A8%E3%83%B3%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%A4%89%E6%8F%9B"><span class="toc-text">7.2 codecvt によるエンコーディング変換</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-small-string"><span class="toc-text">8. small string</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-to-chars-from-chars"><span class="toc-text">9. to_chars &amp; from_chars</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">9.1 基本用法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#9-1-1-std-to-chars"><span class="toc-text">9.1.1 std::to_chars</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-1-2-std-from-chars"><span class="toc-text">9.1.2 std::from_chars</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E9%80%B2%E9%9A%8E%E7%94%A8%E6%B3%95"><span class="toc-text">9.2 進階用法</span></a></li></ol></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/07/c++/template-for-std-containter-conversion/">
+        C++ のテンプレート関数でコンテナ型を変換する（std::list&lt;int&gt; → std::vector&lt;double&gt;）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/condition-variable-cpp/">
+        C++ の Condition Variable：シンプルな例
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/std-string-beginner/">
+        C++ std::string 入門：この一篇で基礎を融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/stringview/">
+        まだ const std::string&amp; を使ってる？ std::string_view を試そう！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/05/c++/googletest/">
+        GoogleTest で書く C++ のユニットテスト
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
