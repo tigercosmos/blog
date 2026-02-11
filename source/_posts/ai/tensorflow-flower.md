@@ -2,6 +2,8 @@
 title: 使用 Tensorflow 開發花朵種類辨識 App
 date: 2017-07-28 00:42:09
 tags: [ai, tensorflow]
+lang: zh
+translation_key: tensorflow-flower
 ---
 
 # 前言

@@ -129,3 +129,4 @@ Although we can build a neural network like VGG16 by frameworks like Pytorch, it
 CPU computing stands in stark contrast to GPU computing. We can see the running time is enormously different. It is not to said we always choose GPU since it is faster. Some embedded hardwares only have CPU, so in that situation, CPU is the only choice. Sometimes we even don't use CPU or GPU: ALU or FPGA may run even faster.
 
 It is always a good practice to write something from scratch. I learned a lot after writing these simple stuffs. I hope this article do help you and I am looking forward to see your implementation.
+

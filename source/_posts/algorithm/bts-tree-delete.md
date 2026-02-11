@@ -3,6 +3,8 @@ title:  圖解刪除二元搜尋樹的節點（LeetCode 450 Delete Node in a BST
 date: 2025-02-05 01:00:00
 tags: [algorithm, binary search tree, 演算法, 二元搜尋樹, leetcode 450]
 des: "本文以圖解說明如何刪除二元搜尋樹的節點，並提供完整程式碼範例。"
+lang: zh
+translation_key: bts-tree-delete
 ---
 
 ## 題幹

@@ -1,5 +1,5 @@
 ---
-title: Red-Black Tree (RBT) Introduction
+title: "Red-Black Tree (RBT) Introduction"
 date: 2019-11-27 00:00:00
 tags: [algorithm, red black tree, data structures]
 lang: en

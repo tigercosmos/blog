@@ -3,20 +3,20 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 14
-- Missing EN translation files: 169
-- Missing JP translation files: 170
-- Source posts missing `translation_key`: 169
+- Posts with both EN+JP translations: 19
+- Missing EN translation files: 165
+- Missing JP translation files: 165
+- Source posts missing `translation_key`: 165
 
 ## Posts
 
 - [ ] `2021-new-year-resolution.md` — 2021 新年新希望—落實刻意練習演算法 (Tue Jan 05 2021 02:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `3-min-introduction-of-science-class.md` — 3分鐘搞懂科學班在幹嘛 (Sat Jan 23 2016 13:56:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `ai/googlenet.md` — GoogLeNet 簡介與小實驗 (Fri Oct 23 2020 07:15:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `ai/tensorflow-flower.md` — 使用 Tensorflow 開發花朵種類辨識 App (Fri Jul 28 2017 00:42:09 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `ai/vgg16-from-scratch.md` — VGG16 net from scratch in two ways: C++ on CPU and CUDA on GPU (Wed Dec 02 2020 05:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `algorithm/bts-tree-delete.md` — 圖解刪除二元搜尋樹的節點（LeetCode 450 Delete Node in a BST） (Wed Feb 05 2025 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `algorithm/red-black-tree.md` — 紅黑樹（Red Black Tree）介紹 (Wed Nov 27 2019 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ⬜, key ✅, src:zh
+- [x] `ai/googlenet.md` — GoogLeNet 簡介與小實驗 (Fri Oct 23 2020 07:15:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `ai/tensorflow-flower.md` — 使用 Tensorflow 開發花朵種類辨識 App (Fri Jul 28 2017 00:42:09 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `ai/vgg16-from-scratch.md` — VGG16 net from scratch in two ways: C++ on CPU and CUDA on GPU (Wed Dec 02 2020 05:30:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:en
+- [x] `algorithm/bts-tree-delete.md` — 圖解刪除二元搜尋樹的節點（LeetCode 450 Delete Node in a BST） (Wed Feb 05 2025 01:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `algorithm/red-black-tree.md` — 紅黑樹（Red Black Tree）介紹 (Wed Nov 27 2019 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `apply_nctu.md` — 半路出家申請國內資工研究所 (Wed Nov 21 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `autobiography/bime-semester-1-part1.md` — 台大觀察與心得(四)：生機系第一學期－課外活動篇 (Sat Jan 28 2017 23:57:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `autobiography/bime-semester-2.md` — 台大觀察與心得(五)：大二下 & 生機系第二學期 (Thu Jul 27 2017 08:23:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

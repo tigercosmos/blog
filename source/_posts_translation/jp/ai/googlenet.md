@@ -1,45 +1,45 @@
 ---
-title: GoogLeNet 簡介與小實驗
+title: "GoogLeNet の概要と簡単な実験"
 date: 2020-10-23 07:15:00
 tags: [ai, deep learning, googlenet, pytorch, python]
-des: "本文簡單介紹 GoogLeNet，並分享我亂改造 GoogLeNet 模型的實驗結果。"
-lang: zh
+des: "本記事では GoogLeNet を簡単に紹介し、モデルを少し改造して試した実験結果を共有します。"
+lang: jp
 translation_key: googlenet
 ---
 
-## 介紹
+## イントロダクション
 
-GoogLeNet 最早是發表在 Google 的 Paper：[Going deeper with convolutions](https://arxiv.org/pdf/1409.4842.pdf)，裡面介紹了 Inception V1/GoogLenet 架構，並在 ILSVRC-2014 比賽中在分辨項目第一名(Top-5 Error=6.67%)，他只有約 6.8 百萬個參數，比 AlexNet 少九倍，更比 VGG-16 少二十倍，也就是說 GoogleNet 的模型更為輕巧。
+GoogLeNet は、Google の論文 [Going deeper with convolutions](https://arxiv.org/pdf/1409.4842.pdf) で初めて提案されました。この論文では Inception V1 / GoogLeNet アーキテクチャが紹介され、ILSVRC-2014 の分類部門で 1 位（Top-5 Error = 6.67%）を獲得しています。パラメータ数は約 680 万で、AlexNet より 9 倍少なく、VGG-16 より 20 倍少ないため、非常に軽量なモデルです。
 
-本文簡單介紹 GoogLeNet，並分享我亂改造 GoogLeNet 模型的實驗結果。
+本記事では GoogLeNet を簡単に紹介し、私が適当に（？）改造した GoogLeNet で行った小さな実験結果を共有します。
 
-## GoogLeNet 模型介紹
+## GoogLeNet モデル概要
 
-在多數情況下我們不清楚何時何地該使用 Max-pooling 和 Convolution，所以 GoogLeNet 乾脆一次全都用，他同時將不同大小的 Kernel 的 Convolution 連同 Max-pooling，Concatenate 輸出成 Output，此稱作 Inception 模組，而整個 GoogLeNet 就是許多 Inception 模組所組成。
+多くの場合、Max-pooling と Convolution をどのタイミングで使うべきかは直感的に分かりづらいです。そこで GoogLeNet は、異なるカーネルサイズの Convolution と Max-pooling を並列に適用し、それらの出力を Concatenate して 1 つの出力にまとめます。これを Inception モジュールと呼び、GoogLeNet は多数の Inception モジュールを積み重ねて構成されています。
 
 ![GoogLeNet](https://user-images.githubusercontent.com/18013815/96935484-bd937500-14f6-11eb-9c1e-a87e2050bef4.png)
 
-上圖即為 Inception 模組示意圖，GoogLeNet 還有一個創意是提出 Bottleneck 的概念，可以看到左邊是一般的 Inception 模組，而右邊是改造過的，裡面引入 1x1 Convolution，藉由 1x1 Conv 我們可以大量減少參數，故稱為 Bottleneck。
+上図は Inception モジュールの模式図です。GoogLeNet のもう 1 つの重要なアイデアは、*Bottleneck* の概念です。図の左が通常の Inception モジュールで、右が改造版です。改造版では 1×1 Convolution を導入しており、1×1 Conv によってパラメータ数を大幅に削減できます。これを Bottleneck と呼びます。
 
 ![GoogLeNet Inception Parameters](https://user-images.githubusercontent.com/18013815/96935814-75c11d80-14f7-11eb-9a73-70d52ce63e1d.png)
 
-在沒有使用 Bottleneck 情況下，MAC (Multiply–Accumulate Operation) 數量是 $((28\times 28\times 5\times 5)\times 192)\times 32 ≃ 120$。
+Bottleneck を使わない場合、MAC（Multiply–Accumulate Operation）の回数は $((28\times 28\times 5\times 5)\times 192)\times 32 ≃ 120$ になります。
 
-反之在有 1x1 Conv 幫忙縮減之下，MAC 變成第一層 $((28\times 28\times 1\times 1)\times 192)\times 16 ≃ 2.4M$ 加上第二層 $((28\times 28\times 5\times 5)\times 16)\times 32 ≃ 10M $，總共約為 $12.4M$。所以可以觀察到 MAC 大約可以減少十倍左右的計算量，而事實上整個模型參數也大約減少十倍。
+一方で 1×1 Conv によって計算量を削減すると、MAC は第 1 層が $((28\times 28\times 1\times 1)\times 192)\times 16 ≃ 2.4M$、第 2 層が $((28\times 28\times 5\times 5)\times 16)\times 32 ≃ 10M $ となり、合計でおよそ $12.4M$ になります。MAC は概ね 10 倍程度減り、実際のパラメータ数も同様に約 10 倍減ることが分かります。
 
 ![GoogLeNet Architecture](https://user-images.githubusercontent.com/18013815/96936889-7fe41b80-14f9-11eb-8159-ffd97a34bd91.png)
 
-上圖示整個 GoogLeNet 的架構圖，大致上來說就是有九個 Inception Module。
+上図は GoogLeNet 全体のアーキテクチャです。大まかには 9 個の Inception モジュールから構成されています。
 
 ![GoogLeNet Parameter Table](https://user-images.githubusercontent.com/18013815/96937010-cafe2e80-14f9-11eb-8e33-d787171acff9.png)
 
-架構的細節配置參考上表。
+詳細な構成は上の表を参照してください。
 
-## Pytorch 實作 GoogLeNet
+## PyTorch による GoogLeNet 実装
 
-程式碼沒有很長，就直接全貼上來了，基本上就是將 Pytorch 範例中的 MNIST 拿來用，並使用 [pytorch-cifar100](https://github.com/weiaicunzai/pytorch-cifar100) 專案中的 GoogLenet 模組。
+コードはそれほど長くないので、そのまま全部貼ります。基本的には PyTorch の MNIST サンプルを土台にしつつ、[pytorch-cifar100](https://github.com/weiaicunzai/pytorch-cifar100) プロジェクトにある GoogLeNet モジュールを利用しています。
 
-Copy 以下程式碼，應該就可以直接執行了，我的環境是 Python3 + Pytorch 1.6 + Cuda 10.2。
+以下のコードをコピーすれば、そのまま実行できるはずです。私の環境は Python3 + PyTorch 1.6 + CUDA 10.2 です。
 
 <details>
 
@@ -296,14 +296,13 @@ if __name__ == '__main__':
 
 </details>
 
-## GoogLeNet 的小實驗
+## GoogLeNet の小さな実験
 
-接著我跑了一些實驗來看 GoogLeNet 的表現，首先包含有 Bottleneck 的 GoogLeNet，以及沒有的 Naïve GoogLeNet。除此之外我將原本 GoogLeNet 隨意加了兩層 Inception 稱為 GoogLeNet Long，並且隨意減少 Inception Layer 稱作 GoogLeNet Short，被我刪減最多的是 GoogLeNet Short4，裡面只剩下兩層 Inception。幾本上可以從 Parameters 數量去大概了解模型大小。
+次に、GoogLeNet の性能を見てみるためにいくつか実験をしました。Bottleneck ありの GoogLeNet と、Bottleneck なしの Naïve GoogLeNet を用意しました。さらに、元の GoogLeNet に Inception を適当に 2 層追加したものを GoogLeNet Long、Inception 層を適当に減らしたものを GoogLeNet Short と呼ぶことにします。最も削減したのが GoogLeNet Short4 で、Inception は 2 層しか残っていません。パラメータ数を見ると、モデルの大きさを大まかに把握できます。
 
-我使用這幾個模型去跑 CIFAR100 和 CIFAR10 資料集，並記錄 Top1 Error, Top5 Error, Parameters, Time。
+これらのモデルで CIFAR-100 と CIFAR-10 を学習し、Top-1 Error、Top-5 Error、Parameters、Time を記録しました。
 
-
-**GoogLeNet 執行 CIFAR100**：
+**CIFAR-100 での結果**：
 
 |                         |     Top   1 Error     |     Top 5 Error    |     Parameters    |     Time(14 epoch)    |
 |-------------------------|-----------------------|--------------------|-------------------|-----------------------|
@@ -315,7 +314,7 @@ if __name__ == '__main__':
 |     GoogleNet Short3    |     0.36              |     0.11           |     1985220       |     9m3s              |
 |     GoogleNet Short4    |     0.44              |     0.15           |     1650084       |     8m56s             |
 
-**GoogLeNet 執行 CIFAR10**：
+**CIFAR-10 での結果**：
 
 |                         |     Top   1 Error     |     Top 5 Error    |     Parameters    |     Time(14 epoch)    |
 |-------------------------|-----------------------|--------------------|-------------------|-----------------------|
@@ -327,8 +326,9 @@ if __name__ == '__main__':
 |     GoogleNet Short3    |     0.11              |     0.00           |     1892970       |     26m31s            |
 |     GoogleNet Short4    |     0.15              |     0.01           |     1557834       |     25m30s            |
 
-首先我們可以看到 Parameters 確實 Naïve 多了十倍，但是模型的 Accuracy 並沒有差異太大。此外可以看到除了 Short4 以外幾乎所有模型的結果都差不多，CIFAR100 基本上都在 Top 1 Error 0.35 & Top 5 Error 0.10 左右，而 CIFAR10 基本上都在 Top 1 Error 0.10 & Top 5 Error 0.00 (近乎零) 左右。
+まず、Naïve はパラメータ数が確かに 10 倍ほど多いものの、Accuracy の差はそれほど大きくありません。さらに Short4 を除けば、ほぼすべてのモデルの結果は同程度です。CIFAR-100 では Top-1 Error がだいたい 0.35、Top-5 Error が 0.10 前後で、CIFAR-10 では Top-1 Error が 0.10、Top-5 Error が 0.00（ほぼ 0）前後になっています。
 
-我猜這是因為 CIFAR100 和 CIFAR10 不夠複雜的緣故，所以對於圖片辨識來說，模型的深度影響就還好了，此外除了模型深度，Channel 數量也會對正確度有影響，如果 Channel 數量夠大，也許就不需要太深的網路。我也嘗試在 GoogleNet 裡面亂加 Max-Pooling Layer 和 Dropout Layer，基本上 Error 都大同小異，可見在圖片辨識上模型本身的容錯率應該是滿高的。
+これは CIFAR-100 / CIFAR-10 がそこまで複雑ではないため、画像認識においてはモデルの深さの影響が相対的に小さいからだと推測しています。また、深さ以外にもチャンネル数は精度に影響します。チャンネル数が十分大きければ、そこまで深いネットワークが必要ないのかもしれません。GoogLeNet に Max-Pooling 層や Dropout 層を適当に足してみる実験もしましたが、Error はほぼ同じでした。画像認識ではモデル自体の「許容度（頑健性）」がかなり高いのだと思います。
 
-不過以上實驗的推論僅適用簡單的測試集，在複雜的測試集中，模型本身造成的幾 % 正確度都非常重要，僅僅是小數點的差異就藏著無數的心血和巧思。不過 GoogleNet 最厲害的地方還是省去了一大堆參數，正確度卻幾乎差不多！
+ただし以上の推論は簡単なデータセットでの話に限られます。複雑なベンチマークでは、数 % の精度差が非常に重要であり、小数点以下の僅かな違いの裏に膨大な工夫と労力が隠れています。それでも、GoogLeNet のすごいところは、パラメータを大幅に減らしながら精度がほとんど変わらない点です！
+
