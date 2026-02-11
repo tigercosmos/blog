@@ -3,6 +3,8 @@ title: 如何使用 GoogleTest 寫 C++ 單元測試
 date: 2023-05-10 15:00:00
 tags: [c++, unit test, googletest]
 des: "本文簡單介紹使用 GoogleTest 幫 C++ 程式寫單元測試"
+lang: zh
+translation_key: googletest
 ---
 
 ![Cover](https://github.com/solvcon/modmesh/assets/18013815/d4b634f5-d4f4-4cb4-8f73-40aca4fe9349)

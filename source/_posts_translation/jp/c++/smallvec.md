@@ -1,23 +1,23 @@
 ---
-title: C++ 實作 Small Vector
+title: "C++ で Small Vector を実装する"
 date: 2022-06-22 15:00:00
 tags: [c++, small vector, vector, optimization]
-des: "本文簡單介紹 C++ 實作 Small Vector"
-lang: zh
+des: "本記事では C++ における Small Vector の実装を簡単に紹介します。"
+lang: jp
 translation_key: smallvec
 ---
 
-`std::vector` 應該是所有人使用 C++ 最常使用的容器了，Chandler Carruth 在 「[Efficiency with Algorithms, Performance with Data Structures (2014)](https://www.youtube.com/watch?v=fHNmRkzxHWs)」演講中也提到，絕大多數時候我們基本上只需要考慮使用 `std::vector`，理由是即使像是 `std::unordered_map` 似乎有著 $O(1)$ 的複雜度，但實際上考量到記憶體存取還有 Cache Miss，還不如使用 `std::vector` 的連續記憶體來的好。為了方便，後續都直接用 Vector 指 `std::vector`。
+`std::vector` は、おそらく C++ で最もよく使われるコンテナです。Chandler Carruth も講演「[Efficiency with Algorithms, Performance with Data Structures (2014)](https://www.youtube.com/watch?v=fHNmRkzxHWs)」で、ほとんどの場合は `std::vector` の利用だけを考えればよい、と述べています。理由は、`std::unordered_map` のように計算量が $O(1)$ に見えるものでも、実際にはメモリアクセスやキャッシュミスの影響を考えると、連続メモリを持つ `std::vector` のほうが有利な場面が多いからです。便宜上、以降は Vector という語で `std::vector` を指します。
 
-在使用 Vector 的時候，如果我們大概知道數量上限，可以使用 `reserve()` 來事先宣告要使用多少 Heap 記憶體，這樣可以避免重複分配新的記憶體和拷貝，但是我們仍然不能避免第一次使用時分配 Heap 記憶體，只要花一次時間做記憶體分配就會拖慢效能。
+Vector を使うとき、要素数の上限がだいたい分かっているなら、`reserve()` でヒープメモリを事前確保できます。これにより、拡張のたびに新しい領域を再確保してコピーするコストを避けられます。ただし、最初にヒープを確保するコスト自体は避けられません。たった 1 回でもアロケーションが入ると、性能を下げる要因になります。
 
-事實上，大多數時候我們用 Vector 的時候，很多時候可能數量都不超過 10 個，如果我們早就知道 Vector 只會存取少量元素，那我們應該可以透過用 Inline 記憶體，來避免額外去分配新的 Heap 記憶體。也就是我們讓物件本身擁有一段放在 Stack 記憶體的 Buffer，不需要額外分配記憶體就可以直接使用，這稱為 Small Objects Optimization，原理跟 Small String Optimization 基本上是一樣（可以參考我以前寫的[文章](/post/2022/06/c++/sso/)）。
+実際には、Vector に入れる要素数が 10 個を超えないケースも多いです。もし Vector が少量の要素しか保持しないことが分かっているなら、インラインメモリ（inline storage）を使って、追加のヒープ確保を避けられます。つまり、オブジェクト自身がスタック上にバッファを持ち、追加のアロケーションなしにそのまま使う方式です。これは Small Object Optimization と呼ばれ、原理は Small String Optimization と基本的に同じです（以前書いた[記事](/post/2022/06/c++/sso/)も参考にしてください）。
 
-那你可能會問如果我們只想要少量元素，那為啥不直接宣告 Array 就好了？因為我們同時想要有 Vector 提供的 API 帶來的便利性，像是可以用 `push_back()` 來放元素。於是乎，針對少量元素特製的 Small Vector 就很常可以在各大專案中看到，以前看的時候都不懂為啥要特地弄個 Small Vector 不直接使用 Vector 就好，原因就是我們希望效能快還要再快！
+「少量要素なら配列（Array）を宣言すればいいのでは？」と思うかもしれません。しかし、`push_back()` のような Vector の API が提供する利便性も同時に欲しいわけです。こうした理由から、少量要素向けに特化した Small Vector は多くのプロジェクトでよく見かけます。以前は「なぜわざわざ Small Vector を作るのか。Vector でいいじゃん」と思っていましたが、要するに「速さをさらに追求したい」からです。
 
 ## 簡易版 Small Vector
 
-我們先來實作最簡單版的 Small Vector，只包含一個基礎的建構子還有 `push_back` 函數。
+まずは最も簡単な Small Vector を実装します。基本的なコンストラクタと `push_back` 関数だけを持つものです。
 
 ```cpp
 template <typename T, size_t N = 10>
@@ -63,14 +63,14 @@ private:
 };
 ```
 
-如果元素小於 `N` 的話，就可以用 `SmallVec` 本身自帶的 `m_data` 來儲存，就可以省去分配一次 Heap 記憶體的時間。這樣做的成果是有效的，我們用 [Quick C++ Benchmark](https://quick-bench.com/) 執行以下來測時間：
+要素数が `N` 未満なら、`SmallVec` 自身が持つ `m_data` に格納できるため、最初のヒープ確保 1 回分を省けます。これは効果があります。[Quick C++ Benchmark](https://quick-bench.com/) で次のコードを実行して時間を測ってみます：
 
 ```cpp
-int K = 10; // 不超過 Small Vector 的 N
+int K = 10; // Small Vector の N を超えない
 
 static void SmallVector(benchmark::State& state) {
   for (auto _ : state) {
-    SmallVec<int> sv(0); // 使用 inline memory
+    SmallVec<int> sv(0); // inline memory を使用
     for(int i = 0 ; i < K; i++) {
         sv.push_back(i);
     }
@@ -82,7 +82,7 @@ BENCHMARK(SmallVector);
 static void StdVector(benchmark::State& state) {
   for (auto _ : state) {
     std::vector<int> v;
-    v.reserve(K); // 分配新的 Heap 記憶體
+    v.reserve(K); // 新しいヒープメモリを確保
     for(int i = 0 ; i < K; i++) {
         v.push_back(i);
     }
@@ -91,19 +91,19 @@ static void StdVector(benchmark::State& state) {
 BENCHMARK(StdVector);
 ```
 
-64bits,i3-10100,GCC11.2 執行環境下得到下圖（越低越好），證實 Small Vector 在少量元素的操作下確實會比 Vector 來的有效率，大概快了 2.6 倍，主要就是因為 Vector 需要多花分配新的 Heap 記憶體的時間。
+64bit / i3-10100 / GCC 11.2 の環境で次の結果（小さいほど良い）が得られます。少量要素の操作では Small Vector のほうが Vector より効率的であることが確認でき、だいたい 2.6 倍ほど速くなっています。主な理由は、Vector がヒープ確保に余分な時間を使うためです。
 
 ![comparison between small vector and std vector](https://user-images.githubusercontent.com/18013815/174789476-7c2693bd-55b1-47cd-a588-2be5c36d8dbc.png)
 
-> 關於 Small Vector 效能分析，楊志璿有提供[更詳細的討論](https://hackmd.io/@25077667/r1uUxVY59)，有興趣可以參考！
+> Small Vector の性能解析については、楊志璿が[より詳細な議論](https://hackmd.io/@25077667/r1uUxVY59)を提供しています。興味があれば参照してください。
 
 ## 完整版 Small Vector
 
-簡單版的 Small Vector 已經證實了效能確實會比較好，我就順手練習把完整的 Small Vector 也實作出來。
+簡易版で性能が良いことは確認できたので、ついでに完全版の Small Vector も練習として実装しました。
 
-完整的程式碼可以在文末點開檢視，或是去 [Gist 下載](https://gist.github.com/tigercosmos/4d939e90a350071424567b8ed4d9a378)。
+完全なコードは記事末尾で展開して確認できます。または [Gist からダウンロード](https://gist.github.com/tigercosmos/4d939e90a350071424567b8ed4d9a378)してください。
 
-簡單解釋一下程式碼，如果操作的元素數量小於預設 inline 的 `N`，就會直接使用內建的 `std::array`，如果超過的時候就會去 `new` 新的記憶體空間。剩下比較值得注意的就是在 Copy 或做 Move Semantics 的時候，指向儲存位置的 `m_head` 的操作稍微複雜一點。另外這邊實作的 Small Vector 僅適用基礎型別（`int`, `float`, etc.），這也符合會使用 Small Vector 的常見情景。
+コードを簡単に説明すると、操作対象の要素数がデフォルトのインライン容量 `N` を下回るときは内蔵の `std::array` を使い、`N` を超えると `new` で新しいメモリ領域を確保します。注意点として、コピーや Move Semantics の際に、格納先を指す `m_head` の扱いがやや複雑になります。また、ここで実装した Small Vector は基礎型（`int`, `float` など）向けであり、これは Small Vector が使われる典型的なシーンとも一致します。
 
 <details>
 
@@ -369,4 +369,3 @@ int main()
 ```
 
 </details>
-

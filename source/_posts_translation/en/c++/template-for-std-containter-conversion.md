@@ -1,28 +1,29 @@
 ---
-title: 如何用 C++ 模版函數將容器輸出成不同容器型別（std::list<int> 轉成 std::vector<double>）
+title: "Converting Between Container Types with C++ Template Functions (std::list<int> to std::vector<double>)"
 date: 2023-07-02 00:01:00
 tags: [c++, template, vector]
-des: "本文介紹如何使用模版函數將 C++ 的容器輸出成其他的容器型別，例如將 std::list<int> 輸出成 std::vector<double>，說明多種模版的操作方式以及思路。"
-lang: zh
+des: "This post explains how to use template functions to convert C++ containers into other container types (e.g., converting std::list<int> to std::vector<double>), and walks through multiple template techniques and ways of thinking."
+lang: en
 translation_key: template-for-std-containter-conversion
 ---
 
 ![Cover](https://github.com/tigercosmos/blog/assets/18013815/f695f82e-f849-400d-abf0-9c7ab23ebdd2)
-（富士山，下吉田本町通）
+(Mt. Fuji, Shimoyoshida Honcho-dori)
 
-## 前言
+## Preface
 
-這篇文章主要是翻譯整理 Raymond Chen 所寫的文章「[Reordering C++ template type parameters for usability purposes, and type deduction from the future](https://devblogs.microsoft.com/oldnewthing/20230609-00/?p=108318)」，修正了一些錯誤的程式碼，然後補上我自己鑽研時候的一些發現。
+This post is mainly a translated and organized version of Raymond Chen’s article: “[Reordering C++ template type parameters for usability purposes, and type deduction from the future](https://devblogs.microsoft.com/oldnewthing/20230609-00/?p=108318)”. I fixed some incorrect code and also added a few things I discovered while digging into the topic.
 
-想像一下，今天你有個需求，要做容器（Container）型別之間的轉換，例如有個 `std::list<int>` 你想要把他換成 `std::vector<double>`，這時候我們可以怎麼做？
+Imagine you have a requirement to convert between container types. For example, you have a `std::list<int>` and you want to convert it into a `std::vector<double>`. How can we do it?
 
-首先我們一定要寫一個函式對吧，然後為了讓我們函式更廣泛的使用，我們還要加上模版（Template），接著就讓我們來看可以怎用用模版還實現我們想要的功能。
+First, we obviously need to write a function. And to make that function reusable, we want to make it a template. So let’s see how we can use templates to achieve what we want.
 
-以下的所有範例程式都會以 `to_vectorN` 來標明，其中 `N` 為數字代表編號。
+All examples below are named `to_vectorN`, where `N` is a number indicating the version.
 
-## 作法 0 超級陽春版
+## Approach 0: The Super Barebones Version
 
-所以一個直觀的作法：
+A very direct approach:
+
 ```cpp
 template<typename Container>
 auto to_vector0(Container&& c)
@@ -34,33 +35,33 @@ auto to_vector0(Container&& c)
 }
 ```
 
-`decltype` 可以得到容器的元素（`*c.begin()`）的型別，但這型別可能是一個參考或是 const，例如 `const T&`，而使用 `decay_t` 可以得到什麼其他屬性都沒有的型別 `T`。
+`decltype` can obtain the type of the container element (`*c.begin()`), but that type could be a reference or `const`, e.g. `const T&`. With `decay_t`, we can get the plain type `T` without those extra qualifiers.
 
-然後我們就建立一個新的 `std::vector`，把資料一個一個從 `Container &&c` 拷貝到 Vector 裡面。
+Then we create a new `std::vector`, and copy elements one by one from `Container &&c` into the vector.
 
-透過上面程式碼，我們可以做到：
+With the code above, we can do:
 
 ```cpp
 std::list<int> l = {1, 2, 3, 4, 5};
 auto v = to_vector0(l);
 ```
 
-但這時候 `v` 是 `std::vector<int>`，如果我們想要裡面是其他數值型別呢？
+But now `v` is a `std::vector<int>`. What if we want the output element type to be another numeric type?
 
-一個比較實用函式應該可以讓我們指定想要的型別，所以我們希望可以使用 `to_vector<T>` 語法來直接指定輸出的型別。
+A more practical function should let us specify the desired output type. Ideally, we want a `to_vector<T>` syntax to directly specify the output element type:
 
 ```cpp
 std::list<int> l = {1, 2, 3, 4, 5};
-auto v = to_vector<double>(l); // 期待的用法
+auto v = to_vector<double>(l); // desired usage
 ```
 
-但是我們前面的範例程式 `to_vector0` 卻辦不到，因為 Vector 的元素型別會跟給定的 Container 元素型別一樣。
+However, our previous example `to_vector0` cannot do this, because the vector element type is always the same as the input container’s element type.
 
-## 作法 1 陽春修改版
+## Approach 1: Barebones Version (Modified)
 
-OK，那我們就多給 Template 一個參數吧，順便指定元素型別。
+OK, then let’s add another template parameter to specify the element type.
 
-於是乎，新的程式碼會長的像以下：
+The code becomes:
 
 ```cpp
 template <typename ElementType, typename Container>
@@ -71,29 +72,29 @@ auto to_vector1(Container &&c) {
 }
 ```
 
-`to_vector1` 可以達到我們的目的了，可以順利把 `std::list<int>` 轉成 `std::vector<double>`
+`to_vector1` achieves what we want: it can successfully convert `std::list<int>` into `std::vector<double>`:
 
 ```cpp
 std::list<int> l = {1, 2, 3, 4, 5};
 auto v1 = to_vector1<double>(l);
 ```
 
-可是這下連元素型別一樣，例如  `std::list<int>` 轉成 `std::vector<int>` 都得申明型別，這下用你程式的人就不樂意了，為啥要多打一次一樣的東西？
+But now even if the element type is the same—like converting `std::list<int>` to `std::vector<int>`—you still have to spell out the type. That’s annoying for users of your function. Why do they have to type the same thing again?
 
 ```cpp
 std::list<int> l = {1, 2, 3, 4, 5};
-auto v1 = to_vector1<int>(l); // 為啥 int 還要特地聲明？
+auto v1 = to_vector1<int>(l); // why do we have to explicitly write int?
 ```
 
-## 作法 2 陽春修改版（改）
+## Approach 2: Barebones Version (Modified Again)
 
-可是我們無法寫成以下，因為 `Container` 比 `ElementType` 還晚定義。
+We cannot write this, because `Container` is declared later than `ElementType`:
 
 ```cpp
-// 編譯錯誤
+// compilation error
 template <
     typename ElementType
-        = std::decay_t<decltype(*std::declval<Container>().begin())>, // Container 未定義
+        = std::decay_t<decltype(*std::declval<Container>().begin())>, // Container not defined yet
     typename Container> 
 auto to_vector2_wrong(Container &&c) {
     std::vector<ElementType> v;
@@ -102,7 +103,7 @@ auto to_vector2_wrong(Container &&c) {
 }
 ```
 
-但我們可以把順序交換，變成以下：
+But we can swap the order:
 
 ```cpp
 template <
@@ -116,18 +117,18 @@ auto to_vector2(Container &&c) {
 }
 ```
 
-不過這樣更慘，因為這下以後都得特地申明 Container 的型別了。
+Unfortunately, this is even worse, because now you always need to explicitly specify the `Container` type:
 
 ```cpp
 std::list<int> l = {1, 2, 3, 4, 5};
 auto v2 = to_vector2<std::list<int>&, double>(l);
 ```
 
-變的更麻煩！
+Even more annoying!
 
-## 作法 3 善用模版參數版
+## Approach 3: Leverage Template Parameters Properly
 
-好險其實要解決這問題不難，我們回去修改一下 `to_vector1`：
+Luckily, this problem is not hard to solve. Let’s go back and modify `to_vector1`:
 
 ```cpp
 template <typename ElementType = void, typename Container> 
@@ -140,11 +141,11 @@ auto to_vector3(Container &&c) {
 }
 ```
 
-對於剛剛 `ElementType` 會有 `Container` 還沒定義的情況，我們先把 `ElementType` 設定成 `void`，之後再用 `ActualElementType` 去取代，巧妙解決了問題！
+For the earlier case where `ElementType` would require `Container` but `Container` is not yet defined, we set `ElementType` to `void` first, and then replace it via `ActualElementType`. This cleverly solves the problem.
 
-翻譯一下 `ActualElementType` 的語意，如果 `ElementType` 還是預設的 `void`，代表使用者在使用 Template 時沒有填入 `ElementType`，那就是採用預設的 `Container` 的元素型別，否則就用使用者提供的 `ElementType` 型別。
+Let’s translate what `ActualElementType` means: if `ElementType` is still the default `void`, it means the user did not provide `ElementType` when using the template, so we use the input container’s element type as the default. Otherwise, we use the user-provided `ElementType`.
 
-這次沒問題了！
+Now it works!
 
 ```cpp
 std::list<int> l = {1, 2, 3, 4, 5};
@@ -152,13 +153,13 @@ auto v3_1 = to_vector3(l); // std::vector<int>
 auto v3_2 = to_vector3<double>(l); // std::vector<double>
 ```
 
-## 作法 4 客製化配置器版
+## Approach 4: Custom Allocator Version
 
-一般的容器函式庫都會允許使用客製化的配置器（Allocator）。
+Most container libraries allow a custom allocator.
 
-如果還想要加上客製化的 Allocator 怎麼辦？
+What if we also want to support a custom allocator?
 
-假設我們已經有個 `MyAllocator`，長的像以下（隨便讓 ChatGPT 給我生出來的）：
+Assume we already have a `MyAllocator`, like this (generated by ChatGPT just for the example):
 
 ```cpp
 template<typename T>
@@ -174,9 +175,9 @@ public:
 };
 ```
 
-情況變的更複雜了，因為你會需要將客製化的 `MyAllocator` 也傳入 `to_vector`，用法應該要是 `to_vector4<ElementType, AllocatorType>(container, allocator)`。
+Now it becomes more complex, because you need to pass the custom `MyAllocator` into `to_vector` as well. The desired usage would be `to_vector4<ElementType, AllocatorType>(container, allocator)`.
 
-套用我們剛剛學過的 `std::conditional_t<std::is_same_v<...>, ...>` 技巧，我們可以得到以下的程式碼：
+Using the `std::conditional_t<std::is_same_v<...>, ...>` trick we just learned, we can write:
 
 ```cpp
 template <
@@ -185,11 +186,11 @@ template <
     typename Container>
 auto to_vector4(
     Container &&c,
-    // 決定 Allocator 的參數型別
-    std::conditional_t<std::is_same_v<Allocator, void>, // Allocator 是否為預設
-        std::allocator<std::conditional_t<std::is_same_v<ElementType, void>, // ElementType 是否為預設
-            std::decay_t<decltype(*std::declval<Container>().begin())>, ElementType>>, // Container 元素型別或 ElementType 的 std::allocator
-    Allocator>  //採用客製化的 Allocator
+    // decide the parameter type of Allocator
+    std::conditional_t<std::is_same_v<Allocator, void>, // whether Allocator is default
+        std::allocator<std::conditional_t<std::is_same_v<ElementType, void>, // whether ElementType is default
+            std::decay_t<decltype(*std::declval<Container>().begin())>, ElementType>>, // std::allocator of Container element type or ElementType
+    Allocator>  // use custom Allocator
     al = {}
 ) {
     using ActualElementType =
@@ -203,25 +204,25 @@ auto to_vector4(
 }
 ```
 
-上面參數定義的地方有點複雜，讓我們用白話文解釋。
+The parameter definition is a bit complex, so let’s explain it in plain language.
 
-`to_vector4` 的第二個參數要收客製化的 Allocator 的型別，我們得依據 Template 的型別去做推定，於是乎會有一下的邏輯：
+The second parameter of `to_vector4` takes the custom allocator type, and we need to deduce it based on the template parameters. So the logic becomes:
 
 ```
-if Allocator 採用預設
-    if ElementType 採用預設
-        使用 Container 的元素型別的 std::allocator
+if Allocator uses the default
+    if ElementType uses the default
+        use std::allocator of the container's element type
     else
-        使用 ElementType 的 std::allocator
+        use std::allocator of ElementType
 else
-    使用使用者定義的 Allocator
+    use the user-defined Allocator
 ```
 
-是不是清楚多了呢！
+Much clearer, right?
 
-## 作法 5 支援客製化配置器簡潔版
+## Approach 5: Cleaner Version with Custom Allocator Support
 
-因為 `to_vector4` 這樣寫真的很亂，上面程式可以簡化成下面版本：
+Since `to_vector4` is pretty messy, we can simplify it into the following version:
 
 ```cpp
 template <typename ElementType = void,
@@ -239,7 +240,7 @@ auto to_vector5(Container &&c, ActualAllocator al = ActualAllocator()) {
 }
 ```
 
-使用方法為：
+Usage:
 
 ```cpp
 std::list<int> l = {1, 2, 3, 4, 5};
@@ -250,21 +251,21 @@ auto v5_2 = to_vector5<double>(l);
 auto v5_3 = to_vector5<double, MyAllocator<double>>(l, al);
 ```
 
-## 作法 6 函式模版多載版
+## Approach 6: Overloading Function Templates
 
-上面都是單一函數透過操控模版的參數的方法，事實上我們也可以透過函式模版多載（Overloading Function Templates）就好：
+All approaches above rely on a single function while manipulating template parameters. In practice, we can also solve it by overloading function templates:
 
 ```cpp
-// 編號一
+// version 1
 template <typename ElementType, typename Allocator = void, typename Container>
 constexpr auto to_vector6(Container &&c, Allocator al = {}) {
     return std::vector<ElementType, Allocator>(std::begin(c), std::end(c), al);
 }
-// 編號二
+// version 2
 template <typename ElementType, typename Container> constexpr auto to_vector6(Container &&c) {
     return to_vector6<ElementType>(std::forward<Container>(c), std::allocator<ElementType>{});
 }
-// 編號三
+// version 3
 template <typename Container> constexpr auto to_vector6(Container &&c) {
     return to_vector6<
         std::decay_t<typename std::iterator_traits<decltype(std::begin(std::declval<Container>()))>::value_type>>(
@@ -272,24 +273,24 @@ template <typename Container> constexpr auto to_vector6(Container &&c) {
 }
 ```
 
-是不是感覺乾淨很多？
+Doesn’t it look much cleaner?
 
-用法依舊一樣：
+The usage stays the same:
 
 ```cpp
 std::list<int> l = {1, 2, 3, 4, 5};
 MyAllocator<double> al;
 
-auto v6_1 = to_vector6(l); // 使用編號三
-auto v6_2 = to_vector6<double>(l); // 使用編號二
-auto v6_3 = to_vector6<double, MyAllocator<double>>(l, al); // 使用編號一
+auto v6_1 = to_vector6(l); // uses version 3
+auto v6_2 = to_vector6<double>(l); // uses version 2
+auto v6_3 = to_vector6<double, MyAllocator<double>>(l, al); // uses version 1
 ```
 
-## 總整理
+## Summary
 
-我知道大家很懶，幫你都整理在一起了，可以直接拿去抄 😂
+I know everyone is lazy, so I organized everything for you. You can copy it directly 😂
 
-點開就可以看了～
+Just expand it to see it~
 
 <details>
 
@@ -412,12 +413,11 @@ int main() {
 
 </details>
 
+## Conclusion
 
-## 結論
+By discussing several techniques for working with C++ templates, we walked step by step through how to convert one container type into another. You can see there are many possible approaches, and the deduction process itself is pretty fun.
 
-藉由討論如何操作 C++ 模版的幾種技巧，我們一步一步了解如何將一個容器型別轉換成另一個容器型別，可以發現作法可以有很多種，推導的過程也挺好玩的。
-
-不過本文的範例只需用到 C++17，更有趣的是，在 C++ 20 之後出了 Concept 的概念，又有更多的實作可能性：
+The examples in this post only require C++17. Even more interestingly, after C++20 introduced Concepts, there are even more ways to implement this:
 
 ```cpp
 template <typename ElementType, typename Container>
@@ -427,6 +427,6 @@ auto to_vector(Container&& c) {
 }
 ```
 
-這邊用到了 C++ 20 的 `std::constructible_from`，`std::ranges::range_value_t`，這邊就不多做介紹了，可以問一下 ChatGPT 😜
+This uses C++20’s `std::constructible_from` and `std::ranges::range_value_t`. I won’t go into details here—you can ask ChatGPT 😜
 
-帥吧！
+Cool, right?

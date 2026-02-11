@@ -3,6 +3,8 @@ title: C++ 雜湊值函式庫 std::hash 介紹
 date: 2024-12-27 01:00:00
 tags: [c++, hash, std::hash, std::unordered_map, std::unordered_set]
 des: "本文簡單介紹 std::hash 的使用方式，瞭解如何替客製化型別加入雜湊算法，並使用在 std::unordered_map 或 std::unordered_set 中。"
+lang: zh
+translation_key: hash
 ---
 
 大家在資料結構與演算法中應該學過雜湊（hash），其最大功用是查表時效率為 $\mathbf{O}(1)$，換句話說就是常數時間的速度，也就是最快的意思。在 C++ 中如果我們想要使用雜湊的資料結構，通常會使用 `std::unordered_map` 或 `std::unordered_set`，藉由這兩個資料結構達到快速查表的效果。
@@ -206,4 +208,3 @@ int main() {
 ```
 
 實際測試之後會發現就算 `std::hash` 定義的雜湊有碰撞時，C++ 依舊能正確將答案找出來，但可以預期因為發生碰撞，查表就會是線性的，也就失去雜湊原本速度上的優勢。
-

@@ -3,6 +3,8 @@ title:  入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::s
 date: 2023-06-21 00:01:00
 tags: [c++, string, ]
 des: "本文深入淺出介紹 std::string，完整介紹各種 string 的初級使用方法"
+lang: zh
+translation_key: std-string-beginner
 ---
 
 ## 1. string 簡介

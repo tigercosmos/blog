@@ -3,6 +3,8 @@ title: Condition Variable in C++ 一個簡單的範例
 date: 2023-06-25 3:00:00
 tags: [c++, condition variable]
 des: "本文提供了一個簡單的範例，介紹如何用 C++ 寫 Condition Variable"
+lang: zh
+translation_key: condition-variable-cpp
 ---
 
 ## 前言

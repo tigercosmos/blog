@@ -1,0 +1,196 @@
+# Translation Checklist
+
+This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
+
+- Total posts: 184
+- Posts with both EN+JP translations: 10
+- Missing EN translation files: 173
+- Missing JP translation files: 174
+- Source posts missing `translation_key`: 173
+
+## Posts
+
+- [ ] `2021-new-year-resolution.md` — 2021 新年新希望—落實刻意練習演算法 (Tue Jan 05 2021 02:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `3-min-introduction-of-science-class.md` — 3分鐘搞懂科學班在幹嘛 (Sat Jan 23 2016 13:56:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `ai/googlenet.md` — GoogLeNet 簡介與小實驗 (Fri Oct 23 2020 07:15:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `ai/tensorflow-flower.md` — 使用 Tensorflow 開發花朵種類辨識 App (Fri Jul 28 2017 00:42:09 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `ai/vgg16-from-scratch.md` — VGG16 net from scratch in two ways: C++ on CPU and CUDA on GPU (Wed Dec 02 2020 05:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `algorithm/bts-tree-delete.md` — 圖解刪除二元搜尋樹的節點（LeetCode 450 Delete Node in a BST） (Wed Feb 05 2025 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `algorithm/red-black-tree.md` — 紅黑樹（Red Black Tree）介紹 (Wed Nov 27 2019 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ⬜, key ✅, src:zh
+- [ ] `apply_nctu.md` — 半路出家申請國內資工研究所 (Wed Nov 21 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/bime-semester-1-part1.md` — 台大觀察與心得(四)：生機系第一學期－課外活動篇 (Sat Jan 28 2017 23:57:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/bime-semester-2.md` — 台大觀察與心得(五)：大二下 & 生機系第二學期 (Thu Jul 27 2017 08:23:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/first-semester-in-NTU.md` — 台大觀察與心得(一)：大氣系第一學期 (Sun Jan 17 2016 00:58:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/freshman-summer.md` — 台大觀察與心得(三)：大一暑假 (Wed Jan 25 2017 10:26:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/junior-in-bime-ntu-1.md` — 台大觀察與心得(六)：大三上 (Fri Jan 12 2018 00:57:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/nctu-1.md` — 交大觀察與心得(一)：碩一上 (Thu Jan 16 2020 09:33:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/nctu-2.md` — 交大觀察與心得(二)：碩一下修課篇 (Mon Jul 13 2020 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/nctu-3.md` — 交大觀察與心得(三)：碩一下課美術社&研究篇 (Wed Aug 19 2020 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/nctu-4.md` — 交大觀察與心得(四)：碩二上 (Wed Jan 27 2021 14:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/nctu-5.md` — 交大觀察與心得(五)：碩二下—科技X藝術 (Fri Aug 06 2021 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/nctu-6.md` — 交大觀察與心得(六)：碩三畢業 (Fri May 20 2022 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/ntu-9.md` — 台大觀察與心得(九)：大四下＆登出 (Wed Jun 26 2019 01:32:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/ntu-life-7.md` — 台大觀察與心得(七)：大三寒假與大三下 (Sat Jul 14 2018 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/ntu-life-8.md` — 台大觀察與心得(八)：大四上 (Mon Jan 14 2019 09:33:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `autobiography/second-semester-in-NTU.md` — 台大觀察與心得(二)：大氣系第二學期 (Fri Jul 22 2016 13:06:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `beyond-just-coding-book/newcomer.md` — 那一個夏天，女孩無法忘卻的軟體實習經歷 (Sat Dec 28 2024 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `beyond-just-coding-book/preface.md` — 每個軟體工程師都該具備的資工基本素養：《程式設計原來不只有寫 CODE！》之〈序〉 (Wed Dec 25 2024 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `beyond-just-coding-book/tcpdump.md` — 使用 tcpdump 分析網路封包 (Fri Jan 03 2025 00:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `beyond-just-coding-book/vim.md` — 每個工程師都應該懂的 Vim 基本技巧：《程式設計原來不只有寫 CODE！》之〈Vim〉章節 (Thu Dec 26 2024 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `beyond-just-coding-book/writing-experience.md` — 成為電腦技術書暢銷排行榜第一名有多難？《程式設計原來不只有寫 CODE！》歷時一年的寫書攻略大公開 (Fri May 02 2025 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `book-report/morris-chang-1964-2018.md` — 《張忠謀自傳：下冊 一九六四──二〇一八》讀後心得 (Wed Jan 01 2025 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `book-report/steve-jobs.md` — 《賈伯斯傳》讀後隨筆 (Thu Sep 18 2025 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `brownian-motion.md` — 高中科展(一)：布朗運動與擴散 (Thu Jul 23 2015 04:18:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_0.md` — 做一個瀏覽器之前，先來認識瀏覽器 (Mon Dec 11 2017 23:12:41 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_1.md` — 先來看看瀏覽器內核長怎樣吧！ (Tue Dec 12 2017 21:23:35 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_10.md` — 瀏覽器引擎處理版面佈局的簡易版（一） (Thu Dec 21 2017 23:31:34 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_11.md` — 瀏覽器引擎處理版面佈局的簡易版（二） (Fri Dec 22 2017 23:03:17 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_12.md` — 瀏覽器引擎處理版面佈局的簡易版（三） (Sat Dec 23 2017 23:31:29 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_13.md` — 瀏覽器引擎輸出畫面的簡易版 (Sun Dec 24 2017 23:33:56 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_14.md` — 瀏覽器開發進階實戰（一） value sanitization of input type (Mon Dec 25 2017 23:42:49 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_15.md` — 瀏覽器開發進階實戰（二）XML Serialize for HTML (Tue Dec 26 2017 20:53:22 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_16.md` — 談談 Servo 專案 (Wed Dec 27 2017 23:33:38 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_17.md` — 瀏覽器開發進階實戰（三）捲動 (Thu Dec 28 2017 23:21:25 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_18.md` — 為什麼手機上網速度比較慢呢？ (Fri Dec 29 2017 23:25:55 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_19.md` — 瀏覽器偷了我手機的電！？ (Sat Dec 30 2017 23:52:06 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_2.md` — 深入探討瀏覽器引擎如何進行解析 (Wed Dec 13 2017 23:08:30 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_20.md` — 用網頁相似性來優化瀏覽器 (Sun Dec 31 2017 23:38:34 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_21.md` — 瀏覽器開發進階實戰（四）font-family (Mon Jan 01 2018 22:18:07 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_22.md` — 瀏覽器的安全連線（HTTPS）與實作 (Tue Jan 02 2018 23:36:20 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_23.md` — 瀏覽器平行化 (Wed Jan 03 2018 23:48:55 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_24.md` — Cache 並不會讓手機的瀏覽器更快？ (Thu Jan 04 2018 23:49:02 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_25.md` — 再談影響行動裝置瀏覽器速度的因素 (Fri Jan 05 2018 23:09:25 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_26.md` — 市面瀏覽器個案分析：隱私篇 (Sat Jan 06 2018 23:54:04 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_27.md` — 瀏覽器快速與平行化佈局（ㄧ） (Sun Jan 07 2018 23:50:14 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_28.md` — 掩卷沈思瀏覽器 (Mon Jan 08 2018 18:44:38 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_29.md` — 瀏覽器快速與平行化佈局（二） (Tue Jan 09 2018 23:32:51 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_3.md` — 瀏覽器引擎處理 DOM 的簡易版 (Thu Dec 14 2017 23:47:47 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_30.md` — 手機上網好耗電，不如讓雲端幫手機省電吧！ (Wed Jan 10 2018 23:47:50 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_31.md` — 《來做個網路瀏覽器吧！》下台一鞠躬 (Thu Jan 11 2018 22:53:21 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_32.md` — <論文> Servo 案例分析：平行化瀏覽器效能-能源的預測模型 (Fri Jan 19 2018 17:49:09 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_33.md` — 《來做個網路瀏覽器吧！》文章列表 (Tue Feb 27 2018 22:51:23 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_34.md` — <論文> 網頁瀏覽器在異質運算多核心處理器平台上電量管理的工作量描述 (Tue Apr 10 2018 22:56:34 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_4.md` — 瀏覽器引擎處理 HTML 的簡易版 (Fri Dec 15 2017 22:43:03 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_5.md` — 瀏覽器引擎處理 CSS 的簡易版（一） (Sat Dec 16 2017 15:52:02 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_6.md` — 瀏覽器引擎處理 CSS 的簡易版（二） (Sun Dec 17 2017 21:15:08 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_7.md` — 瀏覽器引擎處理 CSS 的簡易版（三） (Mon Dec 18 2017 22:46:13 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_8.md` — Mozilla / Servo 瀏覽器引擎開發環境架設 (Tue Dec 19 2017 21:45:06 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/browser_series_9.md` — 站在巨人的肩膀上，一覽瀏覽器引擎研究 (Wed Dec 20 2017 22:08:08 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browser/build-chromium-windows.md` — 在 Windows 上編譯 Chromium (Mon Feb 17 2020 22:56:34 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `browsing-websites.md` — Browsing Websites (Mon Jan 21 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `c++/cmake-include-header-only-library.md` — 如何在 Cmake 中引入 Header-Only Library (Mon Dec 19 2022 15:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/condition-variable-cpp.md` — Condition Variable in C++ 一個簡單的範例 (Sun Jun 25 2023 03:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/googletest.md` — 如何使用 GoogleTest 寫 C++ 單元測試 (Wed May 10 2023 15:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/hash.md` — C++ 雜湊值函式庫 std::hash 介紹 (Fri Dec 27 2024 01:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/smallvec.md` — C++ 實作 Small Vector (Wed Jun 22 2022 15:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/sso.md` — C++ 短字串最佳化（Short String Optimization） (Sun Jun 12 2022 15:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/std-string-advanced.md` — 看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 進階篇！ (Thu Nov 21 2024 02:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/std-string-beginner.md` — 入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！ (Wed Jun 21 2023 00:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/stringview.md` — 還在用 const std::string &? 試試 std::string_view 吧！ (Wed Jun 07 2023 00:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `c++/template-for-std-containter-conversion.md` — 如何用 C++ 模版函數將容器輸出成不同容器型別（std::list<int> 轉成 std::vector<double>） (Sun Jul 02 2023 00:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [ ] `ca/forward-kinematics-time-warping.md` — 電腦動畫中的正向動力法 (Forward Kinematics) 和時間扭曲法 (Time Warping) (Sat May 23 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `ca/inverse-kinematics.md` — 電腦動畫中的反向動力法 (Inverse Kinematics) (Tue Jun 09 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `ca/rigid-body-simulation.md` — 剛體物理模擬—碰撞偵測、動量衝量、連結限制、數值方法 (Sat Apr 25 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `Cepave-interview.md` — 紀錄面試經驗──Cepave (Sun Jun 04 2017 02:37:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `Chang-Dai-Chien.md` — 巨匠的剪影——張大千特展之心得 (Wed May 29 2019 12:11:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `chaos.md` — Chaos (Thu Jan 24 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `code-beginner.md` — 程式設計入門—用對方法的學習指南 (Tue May 26 2020 20:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `cs-to-me.md` — 我對資工的興趣產生 (Mon Dec 02 2019 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `cv/3d-pointcloud-project-to-2d-image.md` — 3D Pointcloud Projection on 2D Image in C++ (Wed Oct 01 2025 20:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `cv/bag-of-visual-words.md` — 使用 Bag of Visual Words 做圖片分類 (Sat Jun 20 2020 14:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `cv/camera-calibration.md` — 二維模式相機校正 (2D Pattern Camera Calibration) (Mon Apr 06 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `cv/computation-photography-1.md` — 計算攝影學 (Computational Photography) 簡介（一） (Thu Jun 03 2021 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `cv/hybrid-image.md` — 混疊圖像 (Hybrid Image) 原理與實作 (Sun Apr 26 2020 20:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `cv/image-stitching.md` — 影像拼接 (Image Stitching) 基於特徵匹配 (Feature Matching) 和 RANSAC 演算法 (Fri May 22 2020 20:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `days-in-fusions360.md` — 我在臺灣金融科技公司的那些日子 (Sat May 27 2017 01:31:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `docker-note.md` — Docker 使用筆記 (Wed Mar 04 2020 01:31:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `engineer_class.md` — 軟體工程師必修的三門課 (Sat Dec 29 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `enter_mozilla_two_month.md` — 踏入 Mozilla Servo 兩個月的心得 (Tue Oct 17 2017 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `esun-scholarships.md` — 「玉山培育傑出人才」獎學金申請心得 (Wed Aug 12 2020 08:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `experience-of-science-class-entrance-exam.md` — 考科學班的心得和方針 (Mon Jul 13 2015 23:40:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `exposure-notification.md` — 「台灣社交距離」App 背後技術原理：接觸通知系統與保護隱私的接觸追蹤技術 (Thu May 13 2021 23:25:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `first_servo.md` — 你的第一份大型開源專案--Servo 瀏覽器 (Mon Jan 29 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `freshman_engineer.md` — 菜鳥程式設計師的精進之路 (Tue Apr 09 2019 01:23:39 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `happy-code-reading/preface.md` — 悅讀源碼 (#0)：序 (Thu Apr 30 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `infectious-disease.md` — 高中科展(二)：傳染病之數學模型與個體導向模擬 (Sun Jul 26 2015 08:24:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `italy/2021-exchange-polimi-arrive-milan-survive.md` — 2021 米蘭理工交換教戰手冊—抵達米蘭與生存篇 (Sat Oct 16 2021 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `italy/2021-exchange-polimi-school.md` — 2021 米蘭理工交換教戰手冊—米蘭理工概況與心得 (Fri Dec 24 2021 16:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `italy/2021-exchange-polimi.md` — 2021 米蘭理工交換教戰手冊—出國前準備篇 (Mon Oct 04 2021 14:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `italy/apply-visa.md` — 如何在台灣申請義大利學生簽證 (Fri Aug 13 2021 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `italy/first-two-days-milan.md` — 出發到抵達米蘭頭兩天雜記 (Mon Sep 20 2021 09:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `japan/before-work-in-japan.md` — 2022 赴日本東京工作全方位教戰手冊 (Fri Aug 19 2022 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `japan/find-swe-job-in-japan-2025.md` — 2025 秋季日本與台灣中階軟體工程師求職經驗分享 (Tue Oct 21 2025 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `japan/learn-japanese-n4.md` — 三個月日語 N4 自學經驗分享 (Wed Dec 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `japan/new-grad-find-swe-job-in-japan.md` — 2022 海外新卒找日本東京軟體工程師工作經驗分享 (Fri Jun 03 2022 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `js/emscripten-pthread-to-js-2.md` — 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (2) — Merge Sort (Mon Aug 10 2020 08:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `js/emscripten-pthread-to-js.md` — 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (Tue Jul 07 2020 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `js/js-array-for-methods.md` — JavaScript 遍歷 Array 的四種方法：for、for-in、for-of、forEach() (Sat Jun 12 2021 07:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `js/web-worker-evaluation.md` — Evaluation of Web Worker for Parallel Programming with Browsers, NodeJS and Deno (Fri Jun 26 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `js/webassembly-intro.md` — 完整介紹 WebAssembly 使用方式 (Mon Aug 17 2020 00:05:30 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `localize_rust.md` — Localize the Rust Website to Traditional Chinese (Wed Jun 19 2019 01:23:39 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `make_pr.md` — 我都怎麼發 PR？ (Sat Nov 11 2017 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `markov-chain-simulation.md` — 個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation (Sat Mar 19 2016 12:16:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/array.md` — 30 天 Javascript 從入門到進階：陣列 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/condition.md` — 30 天 Javascript 從入門到進階：條件判斷 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/file-io.md` — 30 天 Javascript 從入門到進階：檔案讀寫 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/function.md` — 30 天 Javascript 從入門到進階：函式 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/loop.md` — 30 天 Javascript 從入門到進階：迴圈 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/object.md` — 30 天 Javascript 從入門到進階：物件 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/preface.md` — 30 天 Javascript 從入門到進階：自序 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/setups.md` — 30 天 Javascript 從入門到進階：環境建設與執行第一個程式 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/table.md` — 30 天 Javascript 從入門到進階：目錄 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `master_js/variables.md` — 30 天 Javascript 從入門到進階：變數、資料型態以及算術運算式 (Sun Nov 11 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `mistake.md` — 我在大學期間犯下最畢生難忘的錯 (Fri Jan 25 2019 01:23:39 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `newbie.md` — How I & how a newbie to become a member of open source community? (Sun Sep 24 2017 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `paper/browsix-wasm.md` — [論文] 好像沒有那麼快：WebAssembly vs. Native Code 程式碼效能分析 (Wed Dec 18 2019 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `paper/datacenter-analysis-tpu.md` — [Paper Review] In-Datacenter Performance Analysis of a Tensor Processing Unit (Thu Dec 03 2020 23:46:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `paper/Deep-Learning-Hardware.md` — [Paper Review] Deep Learning Hardware: Past, Present, and Future (Wed Oct 21 2020 23:46:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `paper/deep-learning-nature2015.md` — [Paper Review] Deep learning (Wed Oct 21 2020 23:34:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `paper/machine-learning-at-Facebook.md` — [Paper Review] Machine Learning at Facebook: Understanding Inference at the Edge (Wed Oct 21 2020 23:25:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `probot.md` — 第一次 Probot 開發 Github App 就上手 (Sat Jun 02 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `puffin-os-phone.md` — 深度分析 Puffin OS Phone—搶攻第三世界的智慧手機 (Wed Jan 29 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `puffin.md` — How the Puffin Browser Works (Sat Sep 08 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `python/2023pycon-apac-sprint.md` — 在 PyCon APAC 2023 貢獻了第一支 CPython Pull Request (Mon Nov 27 2023 00:03:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `revision-control.md` — Revision Control (Fri Jan 18 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `rust2019.md` — Review of “Everything in Rust” of COSCUP 2019 (Mon Aug 26 2019 01:23:39 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `security/facebook-hack.md` — Facebook 帳號被駭一週後取回的心得感想 (Sat Mar 02 2024 00:03:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `shopify/pricing-method.md` — Shopify Pricing 踩雷紀錄：Managed Pricing & Manual Pricing 那邊設定？ (Wed Sep 17 2025 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `should-i-give-up-science.md` — 我成績不好，該放棄科學嗎？ (Wed Mar 23 2016 11:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `side-project.md` — Side Project—做自己想用的東西 (Sat Jun 06 2020 08:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `simple-pthread-usage.md` — 簡易 Pthreads 平行化範例與效能分析 (Thu Jul 02 2020 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `sir.md` — 傳染病 SIR 模型與機率模型介紹與簡易模擬 (Tue Mar 31 2020 11:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `software-engineer/software-engineer-grow-up-1.md` — 新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗 (Wed Feb 15 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `software-engineer/software-engineer-grow-up-2.md` — 新米工程師進修中（二）： 職場的社會化與生存 (Mon Nov 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `software-engineer/software-engineer-grow-up-3.md` — 新米工程師進修中（三）：飛越性成長，成為開源專案維護者 (Sun Sep 29 2024 04:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `software-engineer/software-engineer-grow-up-4.md` — 新米工程師進修中（四）：晉升中階工程師，辭職創業（完結篇） (Wed Jun 25 2025 21:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `startup/datra-1.md` — Datra AI 創業紀錄 (Sun Aug 31 2025 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `story/girlfriend.md` — 我與女友相遇的故事 (Tue Jan 28 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `story/japanese-girlfriend.md` — 突如其來在米蘭與櫻花妹展開不可思議的戀愛故事 (Fri Apr 08 2022 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `story/physics-dream.md` — 我所放棄的物理夢 (Tue Jan 05 2021 06:25:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `story/ta-of-parallel-programming-course.md` — 資工系所助教教戰手冊—以陽明交大平行程式課為例 (Tue May 04 2021 02:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `summer_cloudmosa.md` — 這個暑假我在 CloudMosa 所見所聞 (Sat Sep 08 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/cas-lock-free.md` — 使用 Compare and Swap 做到 Lock Free (Wed Oct 28 2020 02:25:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/cuda-basic.md` — CUDA 開發環境設定與簡易程式範例 (Thu Dec 10 2020 07:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/debug-gdb.md` — How to debug Rust via GDB (Mon Sep 21 2020 17:17:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/elixer-simple-server.md` — 使用 Elixir 建立簡易 HTTP Server (Mon Aug 24 2020 00:09:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/floating-number-cpu-gpu.md` — CPU 與 GPU 計算浮點數的差異 (Sat Dec 05 2020 00:06:40 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/intel-gpu-opencl.md` — 如何在 Intel GPU 上跑 OpenCL (Wed Sep 13 2023 00:18:40 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/measurement-bias.md` — 我們與誤差的距離——論系統軟體實驗測量誤差 (Sun Aug 30 2020 18:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/perf-basic.md` — 在 Linux 上使用 Perf 做效能分析(入門篇) (Sat Aug 29 2020 00:20:08 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/promiscuous-mode.md` — 如何利用 PcapPlusPlus 以混雜模式（Promiscuous Mode）進行網路封包分析 (Sun May 14 2023 18:20:08 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/reentrant-and-thread-safe-code.md` — 深入理解 Reentrancy 和 Thread-safe (Mon May 10 2021 06:20:08 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/spec-accel-opencl-amd-mi50.md` — Run SPEC ACCEL OpenCL benchmarks on AMD MI50 (Fri Aug 14 2020 00:08:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `system/spec-cpu-note.md` — SPEC CPU 2006 安裝執行 (Tue Jun 16 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `the-wind-rises.md` — 動畫＜風起＞心得隨筆 (Sun May 12 2019 01:17:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `thought-about-cs-student.md` — 資工系所學生的基本素養 (Fri Apr 24 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `tymphany-interview.md` — 紀錄面試經驗──Tymphany (Fri Jun 02 2017 10:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `unix/dns-setting.md` — Linux/Unix 用指令設定 DNS (Tue Apr 14 2020 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `unix/mmap.md` — Use `mmap` to create shared objects (Wed Nov 20 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `unix/sigaction.md` — Example of Signals by `sigaction` in Unix (Sun Nov 24 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `unix/simple-shell.md` — 簡明 Shell 原理與實作 (Sat Jan 18 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `unix/top-usage.md` — Unix/Linux TOP 指令使用詳解 (Thu Apr 16 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `weather_bot.md` — 來寫個氣象機器人吧！ (Mon May 21 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `web/cgi.md` — 簡明 CGI 原理與實作 (Fri Jan 24 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `web/js-parallel-worker-sharedarraybuffer.md` — JavaScript 平行化使用 Web Worker、SharedArrayBuffer、Atomics (Fri Feb 07 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `why-dont-choose-cs.md` — 為甚麼大學志願不該填資工系？ (Thu Jul 23 2020 07:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [ ] `windows-working-env.md` — Windows 平台打造極致の程式開發工作環境 (Sun Jun 14 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

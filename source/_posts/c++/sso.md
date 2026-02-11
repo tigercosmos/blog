@@ -3,6 +3,8 @@ title: C++ 短字串最佳化（Short String Optimization）
 date: 2022-06-12 15:00:00
 tags: [c++, string, sso, optimization]
 des: "本文簡單介紹 C++ 短字串最佳化（Short String Optimization）"
+lang: zh
+translation_key: sso
 ---
 
 C++ 的 `std::string` 是我們在學 C++ 最早且最常使用的函示庫了，我們在學習的時候大多是去理解 string 就是一個容器（container），基本上大概可以想成 `std::vector<char>`。

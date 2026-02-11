@@ -3,6 +3,8 @@ title: 還在用 const std::string &? 試試 std::string_view 吧！
 date: 2023-06-07 00:01:00
 tags: [c++, string_view, ]
 des: "本文介紹 C++17 的 std::string_view 特性以及提出範例"
+lang: zh
+translation_key: stringview
 ---
 
 ![COVER IMAGE](https://github.com/tigercosmos/blog/assets/18013815/e93fadda-2edc-4ba8-87fd-4df5569939e4)
