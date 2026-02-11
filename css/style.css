@@ -121,21 +121,12 @@ code {
   right: 0;
   margin: 0.5em 0 0;
   padding: 0.4em 0;
-  list-style: none;
   background: var(--container-bg);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.12);
   min-width: 90px;
   z-index: 5;
-}
-.header .links ul li.translation-switcher .translation-menu li {
-  display: block;
-  padding: 0;
-}
-.header .links ul li.translation-switcher .translation-menu li::after {
-  content: '';
-  margin: 0;
 }
 .header .links ul li.translation-switcher:hover .translation-menu {
   display: block;
@@ -151,6 +142,7 @@ code {
   text-transform: uppercase;
   font-size: 12px;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 .header .links ul li.translation-switcher .translation-lang.is-current {
   color: var(--accent-color);
@@ -306,7 +298,7 @@ code {
 .post .post-date li {
   display: inline-block;
 }
-.post .post-date li:not(:last-child)::after {
+.post .post-date li + li::before {
   content: "\00B7";
   margin: 0 0.75em;
 }
