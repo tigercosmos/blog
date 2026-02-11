@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 34
-- Missing EN translation files: 150
-- Missing JP translation files: 150
-- Source posts missing `translation_key`: 150
+- Posts with both EN+JP translations: 38
+- Missing EN translation files: 146
+- Missing JP translation files: 146
+- Source posts missing `translation_key`: 146
 
 ## Posts
 
@@ -159,10 +159,10 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `side-project.md` — Side Project—做自己想用的東西 (Sat Jun 06 2020 08:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `simple-pthread-usage.md` — 簡易 Pthreads 平行化範例與效能分析 (Thu Jul 02 2020 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `sir.md` — 傳染病 SIR 模型與機率模型介紹與簡易模擬 (Tue Mar 31 2020 11:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `software-engineer/software-engineer-grow-up-1.md` — 新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗 (Wed Feb 15 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `software-engineer/software-engineer-grow-up-2.md` — 新米工程師進修中（二）： 職場的社會化與生存 (Mon Nov 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `software-engineer/software-engineer-grow-up-3.md` — 新米工程師進修中（三）：飛越性成長，成為開源專案維護者 (Sun Sep 29 2024 04:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `software-engineer/software-engineer-grow-up-4.md` — 新米工程師進修中（四）：晉升中階工程師，辭職創業（完結篇） (Wed Jun 25 2025 21:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `software-engineer/software-engineer-grow-up-1.md` — 新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗 (Wed Feb 15 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `software-engineer/software-engineer-grow-up-2.md` — 新米工程師進修中（二）： 職場的社會化與生存 (Mon Nov 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `software-engineer/software-engineer-grow-up-3.md` — 新米工程師進修中（三）：飛越性成長，成為開源專案維護者 (Sun Sep 29 2024 04:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `software-engineer/software-engineer-grow-up-4.md` — 新米工程師進修中（四）：晉升中階工程師，辭職創業（完結篇） (Wed Jun 25 2025 21:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `startup/datra-1.md` — Datra AI 創業紀錄 (Sun Aug 31 2025 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `story/girlfriend.md` — 我與女友相遇的故事 (Tue Jan 28 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `story/japanese-girlfriend.md` — 突如其來在米蘭與櫻花妹展開不可思議的戀愛故事 (Fri Apr 08 2022 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

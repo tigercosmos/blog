@@ -28,5 +28,6 @@ translation_key: <unique_key>
 - Translation needs to **keep all the original text and images**. 
 - **Never try to shorten or summarize the content.** Polishing the sentence is fine.
 - Be careful when handling images or HTML.
+- Never modify the URL for links or images.
 
 3. Translations will be put under `source/_posts_translation/<lang>/<original_path>`

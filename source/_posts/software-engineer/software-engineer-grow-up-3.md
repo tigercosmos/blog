@@ -3,6 +3,8 @@ title: "新米工程師進修中（三）：飛越性成長，成為開源專案
 date: 2024-09-29 04:00:00
 tags: [日本,工作,軟體工程師,新米工程師進修中, japan,software engineer,開源,開源專案]
 des: "旅日菜鳥工程師在日本工作的第二年度心得，這一年中有飛越性的成長，甚至成為了 PcapPlusPlus 專案的維護者！"
+lang: zh
+translation_key: software-engineer-grow-up-3
 ---
 
 ## 前言

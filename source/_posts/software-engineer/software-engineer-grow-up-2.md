@@ -3,6 +3,8 @@ title: "新米工程師進修中（二）： 職場的社會化與生存"
 date: 2023-11-13 23:00:00
 tags: [日本,工作,軟體工程師,新米工程師進修中, japan, software engineer]
 des: "旅日菜鳥工程師進入日本 Mujin 的第二個半年的職場心得體驗，談談半年經歷的壓力、煎熬與成長，"
+lang: zh
+translation_key: software-engineer-grow-up-2
 ---
 
 ## 前言

@@ -3,6 +3,8 @@ title: "新米工程師進修中（四）：晉升中階工程師，辭職創業
 date: 2025-06-25 21:00:00
 tags: [日本,工作,軟體工程師,新米工程師進修中, japan,software engineer,創業]
 des: "旅日菜鳥工程師在日本工作的第三年度心得，離開 Mujin 並與朋友創立 Datra AI。"
+lang: zh
+translation_key: software-engineer-grow-up-4
 ---
 
 ## 前言
