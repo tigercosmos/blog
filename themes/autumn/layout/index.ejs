@@ -49,11 +49,7 @@
         <ul class="pagination">
             <% if (page.prev) { %>
             <li class="pagination-prev">
-                <% if (page.prev === 1) { %>
-                <a href="<%- url_for('/') %>">
-                    <% } else { %>
-                    <a href="<%- url_for(page.prev_link) %>">
-                        <% } %>
+                <a href="<%- url_for(page.prev_link) %>">
                         <span>Previous Page </span>
                     </a>
             </li>

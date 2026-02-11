@@ -6,6 +6,15 @@
     <meta name="description"
         content="<% if (page.des) {%><%= page.des %><% } else if (page.title) {%><%= page.title %><% }else { %><%= config.description %><% } %>" />
     <title><%= config.title %><% if (page.title){%>: <%= page.title %> <%}%></title>
+    <% const configuredLangs = (function () {
+        if (Array.isArray(config.language)) return config.language;
+        if (typeof config.language === 'string') return config.language.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+        if (typeof config.language === 'undefined' || config.language === null) return [];
+        return [String(config.language)];
+    })(); %>
+    <% const defaultLang = configuredLangs[0] || 'en'; %>
+    <% const hreflangLangs = configuredLangs.filter(function (lang) { return lang && lang !== 'default'; }); %>
+    <% const pageLang = page.lang || defaultLang; %>
     <% const translationEntries = translation_entries(page); %>
     <% if (translationEntries.length > 1) { %>
         <% translationEntries.forEach(function (entry) { %>
@@ -13,6 +22,18 @@
         <% }) %>
         <% const defaultEntry = translationEntries.find(function (entry) { return entry.isDefault; }) || translationEntries[0]; %>
         <link rel="alternate" hreflang="x-default" href="<%= defaultEntry.abs %>">
+    <% } else if (page.__index || page.archive || page.tag) { %>
+        <% const base = (config.url || '').replace(/\/$/, ''); %>
+        <% const currentUrlRaw = (typeof page.current_url === 'string') ? page.current_url : (page.path || ''); %>
+        <% const currentUrl = String(currentUrlRaw).replace(/^\/+/, ''); %>
+        <% let rel = currentUrl; %>
+        <% if (pageLang !== defaultLang && rel.startsWith(pageLang + '/')) rel = rel.slice(pageLang.length + 1); %>
+        <% hreflangLangs.forEach(function (lang) { %>
+            <% if (!lang) return; %>
+            <% const hrefPath = (lang === defaultLang ? '/' + rel : '/' + lang + '/' + rel).replace(/\/{2,}/g, '/'); %>
+            <link rel="alternate" hreflang="<%= lang %>" href="<%= base + hrefPath %>">
+        <% }) %>
+        <link rel="alternate" hreflang="x-default" href="<%= base + ('/' + rel).replace(/\/{2,}/g, '/') %>">
     <% } %>
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">

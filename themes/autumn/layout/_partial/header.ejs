@@ -1,7 +1,7 @@
 <header class="header">
     <nav class="mobile-menu" style="background: <%- theme.background %>">
         <h3 class="invisibile">
-            <a href="<%- url_for() %>" class="logo">
+            <a href="<%- url_for_lang('/', page.lang) %>" class="logo">
                 <%= config.title %>
             </a>
         </h3>
@@ -11,7 +11,7 @@
     <button class="ipad-menu menu">menu</button>
 
     <h1 class="title" id="main-title">
-        <a href="<%- url_for() %>" class="logo">
+        <a href="<%- url_for_lang('/', page.lang) %>" class="logo">
             <%= config.title %>
         </a>
     </h1>

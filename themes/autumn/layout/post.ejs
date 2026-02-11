@@ -55,7 +55,7 @@
     <div class="post-tag">
         tags:&nbsp;
         <% page.tags.forEach(function (tag) { %>
-            <a href="<%- url_for(tag.path) %>">
+            <a href="<%- url_for_lang(tag.path, page.lang) %>">
                 <%= tag.name %>
             </a>,&nbsp;
         <%  }) %>

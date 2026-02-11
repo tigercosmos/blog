@@ -7,6 +7,22 @@ function getDefaultLang(config) {
   return 'en';
 }
 
+function getLanguages(config) {
+  const lang = config.language;
+  const raw = Array.isArray(lang)
+    ? lang
+    : (typeof lang === 'string' ? lang.split(',') : []);
+  const seen = new Set();
+  const result = [];
+  raw.forEach((item) => {
+    const normalized = String(item || '').trim();
+    if (!normalized || normalized === 'default' || seen.has(normalized)) return;
+    seen.add(normalized);
+    result.push(normalized);
+  });
+  return result.length ? result : [getDefaultLang(config)];
+}
+
 function getTranslationPosts(hexo, page) {
   if (!page || !page.translation_key) return [];
   const posts = hexo.locals.get('posts');
@@ -34,9 +50,40 @@ function getPostSlugPath(post, lang) {
   return stripped;
 }
 
+function getListTranslationEntries(ctx, page) {
+  if (!page || !(page.__index || page.archive || page.tag)) return [];
+
+  const defaultLang = getDefaultLang(ctx.config);
+  const languages = getLanguages(ctx.config);
+  if (languages.length < 2) return [];
+
+  const pageLang = page.lang || defaultLang;
+  const currentUrlRaw = (typeof page.current_url === 'string') ? page.current_url : (page.path || '');
+  const currentUrl = String(currentUrlRaw).replace(/^\/+/, '');
+  let relativePath = currentUrl;
+
+  if (pageLang !== defaultLang && relativePath.startsWith(`${pageLang}/`)) {
+    relativePath = relativePath.slice(pageLang.length + 1);
+  }
+
+  const base = (ctx.config.url || '').replace(/\/$/, '');
+  return languages.map((lang) => {
+    const withPrefix = lang === defaultLang ? `/${relativePath}` : `/${lang}/${relativePath}`;
+    const path = withPrefix.replace(/\/{2,}/g, '/');
+    return {
+      lang,
+      path,
+      abs: `${base}${path}`,
+      title: page.title || '',
+      isCurrent: lang === pageLang,
+      isDefault: lang === defaultLang,
+    };
+  });
+}
+
 hexo.extend.helper.register('translation_entries', function (page) {
   const entries = getTranslationPosts(hexo, page);
-  if (!entries.length) return [];
+  if (!entries.length) return getListTranslationEntries(this, page);
 
   const base = (this.config.url || '').replace(/\/$/, '');
   const defaultLang = getDefaultLang(hexo.config);

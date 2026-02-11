@@ -2,7 +2,9 @@
 <div class="recent-post">
   <h2>Recent Posts</h2>
   <ul>
-    <% site.posts.sort('date', -1).limit(10).each(function(post){ %>
+    <% const defaultLang = Array.isArray(config.language) ? config.language[0] : config.language; %>
+    <% const pageLang = page.lang || defaultLang; %>
+    <% site.posts.filter(function (post) { return (post.lang || defaultLang) === pageLang; }).sort('date', -1).limit(10).each(function(post){ %>
     <li>
       <a href="<%- url_for(post.path) %>">
         <%= post.title || '(no title)' %>
