@@ -2,6 +2,8 @@
 title: 交大觀察與心得(一)：碩一上
 date: 2020-01-16 09:33:00
 tags: [研究所, 碩士, 資工, 想法, 交大資工所, 交大觀察與心得]
+lang: zh
+translation_key: nctu-1
 ---
 
 ![資工系館](https://user-images.githubusercontent.com/18013815/72513126-bcf2f180-3887-11ea-94f5-6af64b6a747e.jpg)

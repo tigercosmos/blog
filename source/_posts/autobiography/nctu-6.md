@@ -3,6 +3,8 @@ title: 交大觀察與心得(六)：碩三畢業
 date: 2022-05-20 00:00:00
 tags: [研究所, 碩士, 想法, 交大資工所, 交大觀察與心得,]
 des: "這篇記錄了我在念交大資工所的最後一年的心得感想"
+lang: zh
+translation_key: nctu-6
 ---
 
 ![我自己的照片](https://user-images.githubusercontent.com/18013815/169416614-08fb3993-846c-49af-9170-2b597494803d.jpg)

@@ -2,6 +2,8 @@
 title: 台大觀察與心得(九)：大四下＆登出
 date: 2019-06-26 01:32:00
 tags: [台大, 大學, 台大觀察與心得]
+lang: zh
+translation_key: ntu-9
 ---
 
 <style type="text/css">

@@ -2,6 +2,8 @@
 title: 台大觀察與心得(二)：大氣系第二學期
 date: 2016-07-22 13:06:00
 tags: [台大, 大氣, 大學, 想法, 台大觀察與心得]
+lang: zh
+translation_key: second-semester-in-NTU
 ---
 
 <div class="MsoNormal" style="line-height: 200%; text-align: center;">

@@ -2,6 +2,8 @@
 title: 台大觀察與心得(五)：大二下 & 生機系第二學期
 date: 2017-07-27 08:23:00
 tags: [台大, 大氣, 大學, 生機, 想法, 台大觀察與心得]
+lang: zh
+translation_key: bime-semester-2
 ---
 
 <div class="MsoNormal" style="line-height: 200%;">

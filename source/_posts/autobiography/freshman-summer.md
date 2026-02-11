@@ -2,6 +2,8 @@
 title: 台大觀察與心得(三)：大一暑假
 date: 2017-01-25 10:26:00
 tags: [台大, 大學, 專案, 程式, 台大觀察與心得]
+lang: zh
+translation_key: freshman-summer
 ---
 
 <div class="MsoNormal" style="line-height: 200%;">

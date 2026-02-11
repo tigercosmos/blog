@@ -2,6 +2,8 @@
 title: 台大觀察與心得(一)：大氣系第一學期
 date: 2016-01-17 00:58:00
 tags: [台大, 大氣, 大學, 生機, 想法, 台大觀察與心得]
+lang: zh
+translation_key: first-semester-in-NTU
 ---
 
 <div align="center" class="MsoNormal" style="text-align: center;">

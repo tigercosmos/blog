@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 19
-- Missing EN translation files: 165
-- Missing JP translation files: 165
-- Source posts missing `translation_key`: 165
+- Posts with both EN+JP translations: 34
+- Missing EN translation files: 150
+- Missing JP translation files: 150
+- Source posts missing `translation_key`: 150
 
 ## Posts
 
@@ -18,21 +18,21 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [x] `algorithm/bts-tree-delete.md` — 圖解刪除二元搜尋樹的節點（LeetCode 450 Delete Node in a BST） (Wed Feb 05 2025 01:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `algorithm/red-black-tree.md` — 紅黑樹（Red Black Tree）介紹 (Wed Nov 27 2019 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `apply_nctu.md` — 半路出家申請國內資工研究所 (Wed Nov 21 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/bime-semester-1-part1.md` — 台大觀察與心得(四)：生機系第一學期－課外活動篇 (Sat Jan 28 2017 23:57:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/bime-semester-2.md` — 台大觀察與心得(五)：大二下 & 生機系第二學期 (Thu Jul 27 2017 08:23:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/first-semester-in-NTU.md` — 台大觀察與心得(一)：大氣系第一學期 (Sun Jan 17 2016 00:58:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/freshman-summer.md` — 台大觀察與心得(三)：大一暑假 (Wed Jan 25 2017 10:26:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/junior-in-bime-ntu-1.md` — 台大觀察與心得(六)：大三上 (Fri Jan 12 2018 00:57:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/nctu-1.md` — 交大觀察與心得(一)：碩一上 (Thu Jan 16 2020 09:33:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/nctu-2.md` — 交大觀察與心得(二)：碩一下修課篇 (Mon Jul 13 2020 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/nctu-3.md` — 交大觀察與心得(三)：碩一下課美術社&研究篇 (Wed Aug 19 2020 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/nctu-4.md` — 交大觀察與心得(四)：碩二上 (Wed Jan 27 2021 14:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/nctu-5.md` — 交大觀察與心得(五)：碩二下—科技X藝術 (Fri Aug 06 2021 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/nctu-6.md` — 交大觀察與心得(六)：碩三畢業 (Fri May 20 2022 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/ntu-9.md` — 台大觀察與心得(九)：大四下＆登出 (Wed Jun 26 2019 01:32:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/ntu-life-7.md` — 台大觀察與心得(七)：大三寒假與大三下 (Sat Jul 14 2018 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/ntu-life-8.md` — 台大觀察與心得(八)：大四上 (Mon Jan 14 2019 09:33:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `autobiography/second-semester-in-NTU.md` — 台大觀察與心得(二)：大氣系第二學期 (Fri Jul 22 2016 13:06:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `autobiography/bime-semester-1-part1.md` — 台大觀察與心得(四)：生機系第一學期－課外活動篇 (Sat Jan 28 2017 23:57:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/bime-semester-2.md` — 台大觀察與心得(五)：大二下 & 生機系第二學期 (Thu Jul 27 2017 08:23:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/first-semester-in-NTU.md` — 台大觀察與心得(一)：大氣系第一學期 (Sun Jan 17 2016 00:58:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/freshman-summer.md` — 台大觀察與心得(三)：大一暑假 (Wed Jan 25 2017 10:26:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/junior-in-bime-ntu-1.md` — 台大觀察與心得(六)：大三上 (Fri Jan 12 2018 00:57:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/nctu-1.md` — 交大觀察與心得(一)：碩一上 (Thu Jan 16 2020 09:33:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/nctu-2.md` — 交大觀察與心得(二)：碩一下修課篇 (Mon Jul 13 2020 12:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/nctu-3.md` — 交大觀察與心得(三)：碩一下課美術社&研究篇 (Wed Aug 19 2020 12:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/nctu-4.md` — 交大觀察與心得(四)：碩二上 (Wed Jan 27 2021 14:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/nctu-5.md` — 交大觀察與心得(五)：碩二下—科技X藝術 (Fri Aug 06 2021 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/nctu-6.md` — 交大觀察與心得(六)：碩三畢業 (Fri May 20 2022 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/ntu-9.md` — 台大觀察與心得(九)：大四下＆登出 (Wed Jun 26 2019 01:32:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/ntu-life-7.md` — 台大觀察與心得(七)：大三寒假與大三下 (Sat Jul 14 2018 11:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/ntu-life-8.md` — 台大觀察與心得(八)：大四上 (Mon Jan 14 2019 09:33:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `autobiography/second-semester-in-NTU.md` — 台大觀察與心得(二)：大氣系第二學期 (Fri Jul 22 2016 13:06:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `beyond-just-coding-book/newcomer.md` — 那一個夏天，女孩無法忘卻的軟體實習經歷 (Sat Dec 28 2024 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `beyond-just-coding-book/preface.md` — 每個軟體工程師都該具備的資工基本素養：《程式設計原來不只有寫 CODE！》之〈序〉 (Wed Dec 25 2024 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `beyond-just-coding-book/tcpdump.md` — 使用 tcpdump 分析網路封包 (Fri Jan 03 2025 00:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

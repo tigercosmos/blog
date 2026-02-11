@@ -2,6 +2,8 @@
 title: 台大觀察與心得(八)：大四上
 date: 2019-01-14 09:33:00
 tags: [台大, 大學, 程式, 想法, 台大觀察與心得]
+lang: zh
+translation_key: ntu-life-8
 ---
 
 <div class="MsoNormal" style="line-height: 200%;">
