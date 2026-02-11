@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 10
-- Missing EN translation files: 173
-- Missing JP translation files: 174
-- Source posts missing `translation_key`: 173
+- Posts with both EN+JP translations: 14
+- Missing EN translation files: 169
+- Missing JP translation files: 170
+- Source posts missing `translation_key`: 169
 
 ## Posts
 
@@ -118,10 +118,10 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `italy/2021-exchange-polimi.md` — 2021 米蘭理工交換教戰手冊—出國前準備篇 (Mon Oct 04 2021 14:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `italy/apply-visa.md` — 如何在台灣申請義大利學生簽證 (Fri Aug 13 2021 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `italy/first-two-days-milan.md` — 出發到抵達米蘭頭兩天雜記 (Mon Sep 20 2021 09:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `japan/before-work-in-japan.md` — 2022 赴日本東京工作全方位教戰手冊 (Fri Aug 19 2022 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `japan/find-swe-job-in-japan-2025.md` — 2025 秋季日本與台灣中階軟體工程師求職經驗分享 (Tue Oct 21 2025 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `japan/learn-japanese-n4.md` — 三個月日語 N4 自學經驗分享 (Wed Dec 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `japan/new-grad-find-swe-job-in-japan.md` — 2022 海外新卒找日本東京軟體工程師工作經驗分享 (Fri Jun 03 2022 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `japan/before-work-in-japan.md` — 2022 赴日本東京工作全方位教戰手冊 (Fri Aug 19 2022 01:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `japan/find-swe-job-in-japan-2025.md` — 2025 秋季日本與台灣中階軟體工程師求職經驗分享 (Tue Oct 21 2025 01:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `japan/learn-japanese-n4.md` — 三個月日語 N4 自學經驗分享 (Wed Dec 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `japan/new-grad-find-swe-job-in-japan.md` — 2022 海外新卒找日本東京軟體工程師工作經驗分享 (Fri Jun 03 2022 01:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `js/emscripten-pthread-to-js-2.md` — 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (2) — Merge Sort (Mon Aug 10 2020 08:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `js/emscripten-pthread-to-js.md` — 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (Tue Jul 07 2020 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `js/js-array-for-methods.md` — JavaScript 遍歷 Array 的四種方法：for、for-in、for-of、forEach() (Sat Jun 12 2021 07:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

@@ -3,6 +3,8 @@ title: 2022 海外新卒找日本東京軟體工程師工作經驗分享
 date: 2022-06-03 01:00:00
 tags: [日本,工作,軟體工程師]
 des: "這篇文章分享身為一個沒任何日本背景的海外新人，在三個月期間找日本東京軟體工程師職缺的經驗。"
+lang: zh
+translation_key: new-grad-find-swe-job-in-japan
 ---
 
 ![Tokyo](https://user-images.githubusercontent.com/18013815/171749459-e4a66d19-478a-43f7-80e8-6ee693b87d27.png)

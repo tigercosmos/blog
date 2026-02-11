@@ -3,6 +3,8 @@ title: 三個月日語 N4 自學經驗分享
 date: 2023-12-13 23:00:00
 tags: [日本,日文,JLPT, 語言學習]
 des: "這篇分享了過去三個月我如何自學日語到 N4 程度"
+lang: zh
+translation_key: learn-japanese-n4
 ---
 
 ![cover image](https://github.com/tigercosmos/blog/assets/18013815/bd8fa1da-43d0-4810-98ec-73e974d703f9)
