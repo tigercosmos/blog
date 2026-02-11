@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="software engineer,work,Japan,New Software Engineer in Training," />
+    <meta name="description"
+        content="My first six months as a newbie software engineer in Japan—joining Mujin, learning fast, and getting a taste of how the workplace really works." />
+    <title>Neutrino&#39;s Blog: New Software Engineer in Training (1): My First On-the-Job Experience at Mujin in Japan </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2023/02/software-engineer/software-engineer-grow-up-1/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2023/02/software-engineer/software-engineer-grow-up-1/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2023/02/software-engineer/software-engineer-grow-up-1/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2023/02/software-engineer/software-engineer-grow-up-1/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2023/02/software-engineer/software-engineer-grow-up-1/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2023/02/software-engineer/software-engineer-grow-up-1/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        New Software Engineer in Training (1): My First On-the-Job Experience at Mujin in Japan
+    </h2>
+    <ul class="post-date">
+        <li>
+            2023-02-15
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2023/02/software-engineer/software-engineer-grow-up-1/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2023/02/software-engineer/software-engineer-grow-up-1/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Foreword"><a class="header-anchor" href="#Foreword">¶ </a>Foreword</h2>
+<p>Before I graduated, I wrote down my thoughts and feelings throughout my student years. After graduation, I decided to start this new series: “New Software Engineer in Training.” “新米” (shinmai) in Japanese basically means “newbie.” In this series, I’ll record my journey from a New Grad newbie engineer, slowly accumulating experience until I can finally grow out of the “Junior” stage. Even though the main character here is a software engineer, I believe engineers are engineers at their core. Beyond the skill tree itself, the challenges any engineer faces are similar: interpersonal dynamics, adapting to the environment, learning strategies, and so on.</p>
+<p>When it comes to career growth for software engineers, before I joined the industry I kept rereading Vgod’s “<a target="_blank" rel="noopener" href="https://vgod.medium.com/list/e731a8ecf20d">Training and Growth for Software Engineers</a>.” But most of what he wrote still felt far away to me—it’s mainly advice for engineers with a few years of experience. I also felt his description of the newbie stage was a bit too understated. After all, he’s looking back in hindsight; the setbacks he once hit probably feel minor now (and the key point is: he has a PhD from MIT!). What I want to share instead is how I truly felt in each moment: recording every frustration and every bit of growth. I believe this series can help others. In particular, I think very few people share the details of the path from newbie to senior—and those “small details” are often the key factors behind real transformation.</p>
+<p>This series (ongoing):</p>
+<ul>
+<li><a href="/post/2023/02/software-engineer/software-engineer-grow-up-1/">New Software Engineer in Training (1): My First On-the-Job Experience at Mujin in Japan</a> (this post)</li>
+<li><a href="/post/2023/11/software-engineer/software-engineer-grow-up-2/">New Software Engineer in Training (2): Workplace Socialization and Survival</a></li>
+<li><a href="/post/2024/09/software-engineer/software-engineer-grow-up-3/">New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer</a></li>
+<li><a href="/post/2025/06/software-engineer/software-engineer-grow-up-4/">New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)</a></li>
+</ul>
+<p><img src="https://user-images.githubusercontent.com/18013815/219051435-27c4ef39-b6d6-4b84-9f40-a1bb6c3163a8.png" alt="Skiing with coworkers"><br>
+(Skiing with coworkers)</p>
+<h2 id="Starting-My-Career"><a class="header-anchor" href="#Starting-My-Career">¶ </a>Starting My Career</h2>
+<p>Japan’s Mujin is my first full-time job after graduation (<a href="/post/2022/06/japan/new-grad-find-swe-job-in-japan/">background: my 2022 experience finding a software engineer job in Tokyo as an overseas new grad</a>). In the blink of an eye, I’d been working in Japan for nearly half a year—and suddenly it was already 2023. Since joining Mujin, all kinds of things have happened. For a newbie engineer, it has all been “shock therapy.”</p>
+<p>To describe it briefly along a timeline: starting work from day two, I fixed a simple bug in the first week. In weeks two to four, I implemented a small new feature. It felt like I was gradually getting on track, and I gained some confidence. Early in the second month, I built a few small features. They all “worked,” but after my manager’s code review, he basically refactored everything I wrote, and my confidence took a hit. From mid–second month to the fifth month, the company happened to be in the middle of a major project. Almost every engineer was involved in rewriting the company’s core codebase. It was a great opportunity: I could participate in a big plan, touch a wider surface area, and for the first time experience how long a single piece of work can take. At the beginning, I was stuck for more than a month. Later I gradually started to “get it” and finally felt like I was doing real work. But as the scope grew, I still felt I was far from being able to make truly major contributions.</p>
+<h2 id="Life-at-the-Company"><a class="header-anchor" href="#Life-at-the-Company">¶ </a>Life at the Company</h2>
+<p>I always wondered what you do on your first day at a company. Mujin wrote a blog post specifically describing that, so I won’t repeat the details here: <a target="_blank" rel="noopener" href="https://mujinspire.mujin.co.jp/en/2022/08/newcomer_firstday_en/">Let’s find out how is your first day at Mujin</a>. In short: the entire day is HR onboarding. At the end of the day, you return to your team, and coworkers start helping you set up the development environment and work through your first task.</p>
+<p>I don’t know if all companies treat foreign hires this way, but Mujin took great care of things from recruiting to pre-onboarding—I was very satisfied. They found short-term housing for you before departure. After arriving in Japan, they take you to the ward office for administrative procedures and to a bank to open an account (though I found scheduling with HR annoying, so I went to the ward office with my girlfriend instead. Also, in Japan, if you’re a foreigner and not going through company channels, you basically can’t open a bank account by yourself—typically you need to have stayed for at least half a year). I didn’t run into major issues. Even without a Japanese girlfriend, I don’t think it would have been a disaster. Still, there are things you end up relying on your girlfriend for: often it’s easier to have her translate Japanese. And HR isn’t reliable 100% of the time—sometimes they tell me the wrong thing, so I often have my girlfriend double-check.</p>
+<p>Mujin is probably best described as a Japanese–American hybrid (the founders are Japanese and American). The overall vibe leans more “foreign company,” but many small details still feel very Japanese—at least it’s not like a traditional Japanese company. Most engineers are foreigners. Other departments have more Japanese employees. But in the company, people basically speak English. What surprised me is that many foreigners here also have Japanese around N2/N3 level. There are also quite a few Chinese people, and sometimes we just speak Chinese at lunch because it’s easier.</p>
+<p>The company provides free lunch—it’s like an upgraded version of school lunch. It’s nice to have, but you get tired of it over time. The main reason lunch is provided is that the company is by the sea: the area is basically empty and there are no restaurants nearby. Eating out is usually over 1,000 JPY per meal, so you can save about 20,000 JPY a month on lunch. There’s also free coffee, drinks, and snacks. I’m probably the person who eats the most, and I’ve gained some weight. Every noon I play table tennis—usually for 30 minutes to an hour. It’s honestly awesome and makes me feel like I’ve already hit my exercise target for the day. After moving around, I go back to work feeling refreshed. When I want a break, I slack off a bit—sometimes I go to the gym, or play table tennis after work. Occasionally I play board games with coworkers after work, or go out for a meal. Sounds pretty chill, right? But in reality, a lot of people in this company still work overtime. Japanese employees, in particular, feel more intense. I prefer a comfortable pace, so most of the time I leave on time.</p>
+<h2 id="Technical-Skills"><a class="header-anchor" href="#Technical-Skills">¶ </a>Technical Skills</h2>
+<p>Even while preparing for interviews, I constantly felt like I didn’t know anything. After joining the company, I could clearly feel that I really didn’t know anything. At least I know how to use Git, GDB, and CMake? Sorry—those are as “obvious” as knowing how to type as a software engineer. A long time ago, I wrote “<a href="/post/2020/04/thought-about-cs-student/">The basic essentials for CS students</a>.” Having the fundamentals is just your entry ticket to a good company—once you’re in, that’s where learning truly begins.</p>
+<p>I’m not confident I could get into top-tier companies like Google or Apple—that’s still far away for me. Mujin is probably just a bit above my current level: enough to pressure me into growing, but not so much that I get crushed. I can feel that my boss and coworkers are very smart. I enjoy working with capable people, but at the same time, my lack of experience makes me feel insecure and frustrated. One thing I feel lucky about is that my manager is patient and willing to teach. I’ve learned a lot from him—not only technical things but also how to handle people and situations. The most impressive moment for me was watching him review my code and edit it on the spot. In a very short time, he understood what I was doing, then rapidly switched across multiple files and connected different parts together—almost without thinking. That was when I truly realized how far I still was from being “senior.”</p>
+<p>In my first month, I solved two problems. I spent tons of time reading the company’s code and finally completed the tasks, feeling proud of myself. Later, in a 1:1 with my manager, he said those first two tasks were actually very simple: one was fixing a known bug, and the other was writing an API within an existing framework—neither was truly challenging. I felt a bit embarrassed. I was overjoyed at finishing “simple” tasks, not realizing that what I considered “hard” was seen as easy by others. But then again, I had only just joined the company—everyone has to start with the basics. Soon after, I happened to get pulled into the company’s major project. I spent a whole month staring at code every day with no real progress, and I was frustrated. I kept staring at code in a daze. Then after another month or so, something suddenly clicked. I started to understand how the company’s code interacted across components, and I slowly began to produce real output. I finally understood why you need to stay at a company for two or three years: it took me three to four months just to feel like I vaguely had a handle on the codebase. To really become productive efficiently probably takes six months to a year. Early on is mostly “hitting walls”: learning the internal development process, internal tooling, and how to work with coworkers.</p>
+<p>Many people told me not to rush—and they’re right. You can’t become good overnight. Technical ability accumulates gradually. After half a year in the company, I did start to understand the high-level architecture better and how the organization operates. If my manager assigns me a task today, I’m confident I can get oriented faster and complete it faster. At the same time, I can also feel that I’m gradually gaining influence. As I write more code, more people come to me to discuss or ask about the features and projects I own.</p>
+<p>In school, you improve through homework and classes. In a company, you grow by taking on more and more tasks. The faster you complete your manager’s assignments, the more work you can touch—and the faster you can improve. In the beginning, tasks are always the simplest ones, even “grunt work.” Over time, as you touch more parts of the codebase, you gradually get access to harder tasks. Reading a lot is extremely important. A company codebase of any scale is easily hundreds of thousands or millions of lines—don’t be afraid to dig into code. The more you dig, the deeper you go, the more you understand the relationships among modules. Don’t just “skim”; try to understand the details. Also, remember where each piece of functionality lives in the project—later, when you need to modify related code, it helps a lot. I also think curiosity matters. When I don’t understand some code, I try to ask. Usually it’s either genuinely advanced and requires explanation, or the design itself has issues and needs improvement. In either case, asking is beneficial.</p>
+<p>As a newcomer, my feeling is: in three months, you can roughly understand how the company works; in six months, you can grasp the high-level architecture; after that, you can start making more valuable contributions. At the beginning I was impatient and wanted to contribute immediately. Later I accepted that I’m a newcomer who still doesn’t know much, and the only contribution I can make is to learn as quickly as possible. A healthier company should be able to give newcomers about half a year to get on track. Still, what frustrates me is that even after half a year, my manager said he still didn’t think I could “own things end-to-end,” and he still didn’t dare to assign me truly critical tasks. I guess I just need to keep improving.</p>
+<p>As a side note: whether it’s managers or senior engineers, many have told me the fastest way to improve is to build and learn outside of work—do a side project you’re interested in, or contribute to open source. That lets you learn technologies you might not touch at work, expanding your learning surface area. I’m not extremely disciplined about studying in my free time; most of the time I just want to slack off. But I still spend some time reading technical books or contributing a bit to open source projects.</p>
+<h2 id="Language-Skills"><a class="header-anchor" href="#Language-Skills">¶ </a>Language Skills</h2>
+<p>After spending a year in Europe, I thought my English was “fine”—as long as I could communicate. But I realized my English still needs a lot of work. Mujin’s official language is English, and many people are American or simply have very strong English. Often I can’t keep up with what they’re saying. Missing something occasionally is fine; missing things frequently makes communication inefficient. I can’t keep asking people to repeat themselves. When I’m thinking through more complex logic, even expressing it in Chinese can be tricky—doing it in English is a disaster. And that’s not even the worst part. The worst part is accidentally saying something mildly offensive to a native speaker. This is a “language intuition” issue: when your English isn’t strong enough, imprecise wording—or outright wrong wording—can directly cause misunderstandings or even offend someone. With friends, sloppy English is fine. In the workplace, you have to speak carefully and correctly. Fortunately, as people got to know me better, coworkers understood that my English wasn’t strong and didn’t hold my language mistakes against me. I also sincerely told them: if I say something wrong or impolite, please correct me directly.</p>
+<p>At the same time, since I work in Japan, in daily life I still have to speak Japanese constantly. Right now I rely on my girlfriend to translate. Honestly, it’s annoying and inconvenient. Japanese people basically don’t speak English. Unlike in Europe—where you can often just start with English—in Japan you really have to learn their language. But after working for a while, I didn’t study Japanese seriously anymore: work is in English, daily life doesn’t require much Japanese beyond the basics—like how to pay, whether you need a bag, whether you want something heated up. Still, if you can’t speak Japanese at all, you’ll always need your girlfriend when you have to do anything official. Sooner or later, I have to learn it. Also, not speaking the local language gives you a constant feeling of being a second-class citizen. That feeling is very uncomfortable—for example, it’s hard to communicate at the doctor’s office, or you get pulled over by the police and can only stammer.</p>
+<p>I think the most important point is: weak language skills seriously affect confidence. Because my English isn’t good, I started to dislike talking to coworkers. Every time I need to speak English with someone, I feel a lot of pressure. I can communicate, but I can’t do it as effortlessly as in Chinese. Being in Japan without Japanese makes me hesitant and timid. When I go out, I only want to be with my girlfriend or friends so someone else can speak Japanese for me. When I’m alone, I only want to go places where I don’t have to talk. Bad English and no Japanese makes me feel inferior all the time. If there were one reason that would make me leave Japan, it would definitely be my Japanese ability. I know in my head I should improve—but after work I still spend my time slacking off. When I get home, I just want to rest.</p>
+<h2 id="Working-with-People"><a class="header-anchor" href="#Working-with-People">¶ </a>Working with People</h2>
+<p>Harmony is valuable. Getting along with people is hard. In school, if you can’t get along with someone, you can just avoid them. In a company, if you run into a coworker you don’t click with, you still have to find a way to work with them—there’s no reason to make life difficult for your own paycheck. Interpersonal dynamics are also strongly tied to language. Not everyone has the patience to explain slowly or repeat themselves. If your English can’t keep up, or you can’t explain clearly, impatient people can get irritated. And if your wording is imprecise—or worse, offensive—conflicts happen more easily. When I first joined, I argued with coworkers a few times. Fortunately, no one wanted a toxic atmosphere. Every time we had a conflict, we reconciled and communicated quickly. Over time, I figured out people’s personalities and learned how to work with them. One coworker I used to argue with is now the person I vent to.</p>
+<h2 id="Leaving-on-Time"><a class="header-anchor" href="#Leaving-on-Time">¶ </a>Leaving on Time</h2>
+<p>Whether you can leave on time mainly depends on the overall workplace environment. If the culture demands overtime, you can only comply—otherwise you either get pushed out or you quit.</p>
+<p>When I first joined Mujin, I noticed that everyone on my team left very late. I thought, “I’m doomed.” But my manager told me he wasn’t trying to keep people late. People stayed because they found the work interesting or felt a sense of mission. At first I wasn’t sure I believed him, but after a few months, I genuinely do. Some of my coworkers’ passion for work and technology is beyond what I imagined. They stay late every day; some even work late at night or on weekends. I sincerely respect that. The company doesn’t pay overtime, and I personally want to keep my time for myself.</p>
+<p>The advice I got was: when you’re new and unfamiliar, it’s fine to stay a bit longer, because you don’t know anything yet and learning more is good. Don’t worry about whether that means you’ll be forced to stay late in the future. If a company doesn’t force overtime, once you’re familiar with the work, you can naturally go back to leaving on time. If a company has mandatory overtime as a norm, you can’t escape anyway. So the conclusion is: worrying doesn’t help. Just stay a bit longer early on to get up to speed. Looking back, that was true for me. At the beginning, I often got stuck on bugs or didn’t understand the system, and I felt my progress was too slow, so I voluntarily stayed to research more. Later, as I got on track, my output during work hours reached the bar, and leaving on time felt totally fine.</p>
+<h2 id="What-to-Talk-About-in-1-1s"><a class="header-anchor" href="#What-to-Talk-About-in-1-1s">¶ </a>What to Talk About in 1:1s</h2>
+<p>Vgod also wrote about what to discuss in 1:1s, but again—that’s more relevant after you have experience. As a newbie, you’re not going to tell your manager you want a chance to lead a project, or ask them to coordinate cross-team collaboration for you. So what <em>can</em> a newbie talk about? I’ll share my own approach here. Disclaimer: I’m not sure it’s the best approach, but I’ve had four 1:1s so far and I’ve been pretty satisfied.</p>
+<p>In the early conversations, I asked my manager what he expected from me: what I should be able to do in three months, and in six months. I also asked coworkers what their learning paths looked like so I could reference them. After working for a while, I asked for suggestions on my efficiency and any obvious weaknesses. I asked how to get familiar with the business faster, and how my manager himself grew over time. Sometimes we talk about bottlenecks and difficulties I’m facing, or about what happened when working with others. Sometimes we just discuss technical knowledge. Sometimes I use it as a chance to ask broader questions about how the company operates.</p>
+<p>My approach is: anything directly related to progress, blockers, or technical details—I discuss with my manager immediately. Anything not directly tied to output, I save for a 1:1. For example: once I felt there was a communication issue within the team causing misalignment, so in a 1:1 I discussed how to avoid that. Or I share how I’m feeling—like feeling underqualified or frustrated. A 1:1 is a more formal conversation, and it’s a good time for topics you might feel awkward bringing up during casual chat. It also fits questions where you want a more complete and detailed answer.</p>
+<p>However, it seems our company doesn’t have a fixed 1:1 culture. Usually employees have to proactively request a 1:1 with their manager. Recently my manager was busy and we skipped a 1:1, which I found unfortunate. Luckily, my teacher-and-friend <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/yungyuc">陳永昱</a> (my numerical software development instructor at NCTU, and a senior engineer at Synopsys) has been answering all sorts of my workplace questions—mindset, ways of working, learning strategies, and so on—so I didn’t need to ask those again in a company 1:1.</p>
+<h2 id="Workplace-Survival-Rules"><a class="header-anchor" href="#Workplace-Survival-Rules">¶ </a>Workplace Survival Rules</h2>
+<p>I think “workplace survival rules” are the second most important thing after technical ability. They include understanding internal culture, politics and factions, understanding your boss and your boss’s boss, how to report to your boss, how to shield your boss from trouble, and so on. I’m still very inexperienced and still learning. But I can feel that if I don’t learn fast, if the company ever does layoffs, I’ll be the first to go.</p>
+<p>I strongly recommend reading “<a target="_blank" rel="noopener" href="https://m.gelonghui.com/p/314636">4 years at AWS: some reflections from college hire to senior</a>.” It’s all about the “game rules” of the workplace. I feel I haven’t done many of those things well—like not creating extra trouble for your boss. After getting battered a bit, I also realized the importance of protecting yourself and not stepping into muddy waters, and knowing what you should and shouldn’t do. Once you enter society, you no longer have the “student immunity card.” I’m clumsy when it comes to “how to be a person,” and I hope I can learn faster.</p>
+<h2 id="Social-Life"><a class="header-anchor" href="#Social-Life">¶ </a>Social Life</h2>
+<p>Outside of work, Mujin’s social activities are pretty good. There’s a free team dinner every month; the team goes out for dinner and each person gets a 4,000 JPY budget. There’s also a “soccer night” every month where everyone plays soccer. In winter, people go skiing together. Many coworkers play table tennis at noon. Sometimes people also play board games together.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/219051743-946e3703-e96a-47c7-8b9f-8bb5772139cf.jpg" alt="photo_2023-02-15_23-12-35"><br>
+(Hiking with friends)</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/219051752-833cec32-af61-44c9-bb33-87a530eaa4c8.jpg" alt="photo_2023-02-15_23-12-26"><br>
+(Dinner with coworkers)</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/219051758-8d1bf2e8-3a68-4781-a6a8-4b0f5ac4583c.jpg" alt="photo_2023-02-15_23-12-41"><br>
+(The company’s monthly indoor soccer night)</p>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>To be honest, I don’t think the past half year has been smooth. In most of the areas I mentioned above, I’ve experienced frustration and anxiety: arguing with coworkers early on, being unable to write the code I wanted, being told to rewrite my code again and again. On top of that, I still hadn’t gotten permanent residency in Japan, and Mujin initially signs new hires on a one-year contract, so I was constantly worried about whether my performance was good enough. Also, after I moved to Japan for love, my girlfriend and I entered the “adjustment” stage and we argued from time to time. For all these reasons, the first half year wasn’t as beautiful as I’d hoped. I hope I can do better in the next half year.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/software-engineer/">
+                software engineer
+            </a>,&nbsp;
+        
+            <a href="/en/tags/work/">
+                work
+            </a>,&nbsp;
+        
+            <a href="/en/tags/japan/">
+                Japan
+            </a>,&nbsp;
+        
+            <a href="/en/tags/new-software-engineer-in-training/">
+                New Software Engineer in Training
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Foreword"><span class="toc-text">Foreword</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Starting-My-Career"><span class="toc-text">Starting My Career</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Life-at-the-Company"><span class="toc-text">Life at the Company</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Technical-Skills"><span class="toc-text">Technical Skills</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Language-Skills"><span class="toc-text">Language Skills</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Working-with-People"><span class="toc-text">Working with People</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Leaving-on-Time"><span class="toc-text">Leaving on Time</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-to-Talk-About-in-1-1s"><span class="toc-text">What to Talk About in 1:1s</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Workplace-Survival-Rules"><span class="toc-text">Workplace Survival Rules</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Social-Life"><span class="toc-text">Social Life</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/condition-variable-cpp/">
+        A Simple Example of Condition Variables in C++
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

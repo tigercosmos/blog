@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="日本,仕事,ソフトウェアエンジニア,新米エンジニア修行中," />
+    <meta name="description"
+        content="日本の Mujin で過ごした 2 つ目の半年を振り返り、半年間で感じたプレッシャー、消耗、そして成長について書きます。" />
+    <title>Neutrino&#39;s Blog: 新米エンジニア修行中（2）：職場の社会化とサバイバル </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2023/11/software-engineer/software-engineer-grow-up-2/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+    </h2>
+    <ul class="post-date">
+        <li>
+            2023-11-13
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2023/11/software-engineer/software-engineer-grow-up-2/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="はじめに"><a class="header-anchor" href="#はじめに">¶ </a>はじめに</h2>
+<p>また半年が過ぎました。日本に来て 1 年、初めての正社員として 1 年、Mujin に入って 1 年。1 年で何を学んだかと聞かれたら、私は「職場の現実と残酷さ、そしてさらに進んだ社会化」だと答えます。成果の出ない人は去り、身を粉にして働く人は昇格する。言ってしまえば当たり前ですが、自分の肌で感じて初めて深く理解できます。尖っていた自分が少しずつ角を丸め、目立たないように振る舞うことを覚えるのもまた社会化の一部です。入社から 1 年、深くため息をつきながらも、なんとか 1 年を生き延びました。</p>
+<p>本シリーズ（継続更新中）：</p>
+<ul>
+<li><a href="/post/2023/02/software-engineer/software-engineer-grow-up-1/">新米エンジニア修行中（1）：旅日ソフトウェアエンジニア、Mujin での職場初体験</a></li>
+<li><a href="/post/2023/11/software-engineer/software-engineer-grow-up-2/">新米エンジニア修行中（2）：職場の社会化とサバイバル</a>（本記事）</li>
+<li><a href="/post/2024/09/software-engineer/software-engineer-grow-up-3/">新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで</a></li>
+<li><a href="/post/2025/06/software-engineer/software-engineer-grow-up-4/">新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）</a></li>
+</ul>
+<p><img src="https://user-images.githubusercontent.com/18013815/282447510-427edb91-e209-4893-aba9-9e2cc5ebd711.jpg" alt="cover image"  width="500px"></img></p>
+<h2 id="英語の言語障壁"><a class="header-anchor" href="#英語の言語障壁">¶ </a>英語の言語障壁</h2>
+<p>優秀な人たちと働くのは、少なくとも居心地は良いです。周りは私の交大（NCTU）修士よりもさらに高い学歴背景の人ばかりで、思考力で私より“鈍い”人はいない。基本的にレベルは近く、むしろ自分の方が劣っているのではと不安になることの方が多いです。一方で、不快でもあります。IQ 的な土台は似ていても、相手は英語圏出身だったり英語圏の大学を出ていたりするので、コミュニケーション面でずっと不利を感じます。しかも 1 年経っても相変わらずです。</p>
+<p>言語は本当に不公平です。生まれながらにアメリカ人の人もいれば、アメリカの大学に行ける人もいる。幼少期からインターナショナルスクールの人だっている。もちろんこれは言い訳にはなりません。家の背景がなくても、自力で英語を圧倒的に伸ばした台湾人も見てきました。私はというと、思い出した時に少し練習する程度。とはいえ、このスタート地点の差は「もういいや」と諦めたくなることがあります。階級は複製されると思っているので、父には「少なくとも自分の世代でスタート地点を少し前に進めた。次は子どもに頑張ってもらう（アメリカの大学に送るとか）」と冗談交じりに言っています。</p>
+<p>私は以前、「矽股輕鬆談」（シリコンバレーで働くエンジニア夫婦がかつて運営していた Podcast）にコメントで質問を書き、英語に対する無力感を吐露したことがあります。そのときの返答がとても心に残りました。相手が言語的優位を持つ中で、私が拙い英語で“自分の 8 割”しか出せなくても、それでも対等にコミュニケーションし、一緒に働けているのだから、むしろ自分はすごいと思っていい、と。確かに、少し救われました。実際、時々思うのは「もし中国語で話せたら、こんなにぎこちなくならないのに」ということです。口論で負けないし、論理思考でも常に半拍遅れる感覚も減る。でも現実として英語は国際語で、慰めても解決しません。私は本来、話すことが怖いタイプではありません——中国語であれば。大学時代は“質問魔”扱いでした。海外に出ても無口にはならなかったけれど、話す量は減りました。英語で話すこと自体が怖い。聞き取れないのも怖いし、表現できないのも怖い。英語で簡潔に、素早く会話できない自分が嫌になることもあります。</p>
+<p>だんだん「英語しか使わない国際的な会社で働くメリットって何だろう」と思うようになりました。国際化は経験したし、もう井の中の蛙でもありません。それでも“快適圏の外”に居続ける必要はあるのか。正直、仕事で英語を使うのは何とかなるけれど、雑談で英語を話したくありません。英語は疲れる。英語が上達したかどうかに関係なく、英語を話す瞬間に脳を使う必要がある。私は中国語の“脳死で話せる”感覚が好きです。国際的な会社の良さは、世界トップクラスの人材と一緒に働けることかもしれませんが、それ以外では、台湾人や中国人と話す方が好きだと気づきました。快適圏に居たいだけなのかもしれない。でも、だから英語が伸びないのも事実です。何でも英語でどう言うかを知っていないといけないのが面倒です（特に仕事と関係ない専門用語の山）。中国と台湾の愛憎劇を英語で説明するのも億劫になりました。外国人が理解しているかどうかも、正直そこまで気にしない。英語で表現するのが難しすぎるからです。ただ、いわゆる“小粉紅”があまりに筋の悪いことを言ってきたら、皮肉で返すことはあります。少しでも頭があれば『晶片戦争』を読めば台湾の重要性は分かるはずだし、台湾海峡を理解していないのは「ウクライナとロシアが戦争していることを知らない」と言うのと同じくらい無知だと思います。それに中共の“精彩な振る舞い”は世界を驚かせています。ここにいる人はみんな高学歴で、分かる人は分かる。</p>
+<p>英語が流暢ではなくても、外国人が適当に英語をつぎはぎして話してきても、最低限コミュニケーションはできます。私は、コミュニケーションは文がどれだけ滑らかか、言葉がどれだけ華麗かで決まるのではなく、論理性で決まると思っています。英語は嫌いでも、自分の権利を守るべき場面では引きません。英語で人と議論できる自分に驚いたこともあります。もちろん刺々しい皮肉や煽り口調はしませんが、建設的な議論なら結局は論理思考です。語彙が 5,000 語を超えない範囲なら、それなりに戦えます。</p>
+<p>余談ですが、外国語を学ぶなら「人と喧嘩できるレベル」には到達してほしいと思っています。喧嘩したいわけではなくても、どうしても“ヤバい人”に遭遇することがある。日本でも何度かありました。英語で喧嘩しても通じないし、ガツンと言いたいなら日本語が必要。でも私は N4 程度なので、言いたいことが言えません。</p>
+<p>英語の話に戻ると、「少壮不努力、老大徒傷悲」という言葉がある通り、英語の重要性は誰でも分かっています。先生にも「最低でも 5〜6 年は英語環境に身を置いた方が良い」と言われました。英語の語感は時間をかけて磨くしかありません。学生時代に英語環境がなかったなら、職場で鍛えるしかない。私はこの言語障壁を少しずつ克服したい。言語が職場でどれほど居心地の悪さを生むかを痛感しています。台大の友人たちが流暢な英語を話せるのが本当に羨ましい。今後の転職を楽にし、キャリアをよりスムーズにしたい。だから短期的には、快適圏の外に居続けて自分を追い込むしかないと思っています。</p>
+<h3 id="Mujin-の事業を簡単に紹介"><a class="header-anchor" href="#Mujin-の事業を簡単に紹介">¶ </a>Mujin の事業を簡単に紹介</h3>
+<p>ここで Mujin を簡単に紹介しておきます。そうすると、後で私が書く細部も理解しやすくなるはずです。Mujin はロボットの自動化導入ソリューションを提供しています。業界で使われるさまざまなロボットを統合し、ソリューションとしてまとめて販売する。ロボット業界の IBM だと思ってもらえば近いです。</p>
+<p><img src="https://github.com/tigercosmos/blog/assets/18013815/909edfcd-fb6f-410e-a69e-4cf3e2622ae3" alt="工場のイメージ図"><br>
+（工場のイメージ図。Mujin YouTube の<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=ftL_wHH3fm0">公開動画</a>よりキャプチャ）</p>
+<p>上の図は、工場に自動化を導入するイメージです。右側に 2 台のロボットアーム、左側には小型 AGV（要するに荷物を運べる小型ロボット）がたくさん見えます。工場のラインにはロボットアームや AGV、場合によっては他の“奇妙な形”のロボットも使われます。ロボットを正しく動かすには、さらに各種センサーや装置が必要です。そうした諸々をまとめて統合するプラットフォームが Mujin の仕事です。</p>
+<h3 id="初めて本気で計算機ネットワークを学んだ"><a class="header-anchor" href="#初めて本気で計算機ネットワークを学んだ">¶ </a>初めて本気で計算機ネットワークを学んだ</h3>
+<p>この半年、会社でネットワーク関連プロジェクトを担当しました。その過程は、私が最も急速に成長した時期でもあります。どれだけ時間がかかるか見当もつかず、上司がタスクを振った時点でも「実現できるかどうか分からない」プロジェクトでした。結局、半年かけても完成せず、私一人で約 15,000 行のコードを書き、途中で 2 回、ほぼ書き直し級の大規模リファクタをしました。それでもこのプロセスは楽しかったです。修士で研究をしていた感覚に近く、その間に C++ もかなり上達しました。</p>
+<p>私は大学院から CS を学んだので、計算機ネットワークは履修していない科目でした。TCP/UDP や 7 層モデルといった概念は知っていても、表面的に知っているだけで、YouTube を見ている人と大差ないレベルでした。そして恥ずかしいことに、ARP という言葉を初めて聞いたのもこの時期です。このプロジェクトのおかげで、計算機ネットワークを腰を据えて学べました。さらに要件上必要だったので、TCP/UDP 上の工業系ネットワークプロトコルをいくつか自作もしました。</p>
+<p>このあたりに興味があれば、「<a href="/post/2023/05/system/promiscuous-mode/">PcapPlusPlus を使って混雑モード（Promiscuous Mode）でネットワークパケットを解析する方法</a>」も読んでみてください。また、<a target="_blank" rel="noopener" href="https://github.com/seladb/PcapPlusPlus">PcapPlusPlus</a> を大量に使ったので、いくつか PR も出しました。世界に少しでも何かを残せた気がして、素直に嬉しいです。</p>
+<h2 id="職場は誰も教えてくれない。ChatGPT-で自学"><a class="header-anchor" href="#職場は誰も教えてくれない。ChatGPT-で自学">¶ </a>職場は誰も教えてくれない。ChatGPT で自学</h2>
+<p>上司は基本的に忙しく、チームは新卒中心なので、学習はほぼ自己責任です。幸い、このタイミングで ChatGPT が登場しました。コードを書く人なら、ChatGPT がもたらした変化の大きさは理解できるはずです。昔は調べ物といえば Google 一択でしたが、今は 1 日に Google を使う確率が 10% 未満です。Google を使う時は正確性のために複数サイトを開いて確認しますが、ChatGPT は大半の回答が正しく、仮に間違っていても対話で誘導すれば欲しい答えに近づけます。本当にダメな時だけ Google に戻る感じです。ただし ChatGPT を使うには「嘘をついていないかを判断する力」が必要です。多くの場合、思考の筋は合っていますが、途中の手順を飛ばしたり、どこかを間違えたりします。経験のあるエンジニアなら気づけますが、初心者はそうとは限りません。</p>
+<p>また、オフィスを見渡すと多くの人が ChatGPT を開いたままコードを書いています。それだけ ChatGPT は偉大な発明です。私は GPT-4 から本当の意味で AI 時代に入ったと思っています。今の学生は本当に幸運です。AI はコードだけでなく、脚本、メール、論文修正など、無数の応用があります。もっと早く AI の助けがあったらどれほど良かったかと思いますが、少なくとも私がまだ若いうちに AI が立ち上がってきたのは救いです。</p>
+<h2 id="会社の急成長"><a class="header-anchor" href="#会社の急成長">¶ </a>会社の急成長</h2>
+<p>私が入社する前年は社員が 100 人程度でしたが、入社時には 200 人、1 年経った今は 300 人近い規模になりました。最近はシリーズ C で 9,000 万ドルを調達し、会社の拡大スピードに驚かされます。台湾人も何人か増えました。</p>
+<p>Mujin の採用力には驚くことが多いです。正直、給与水準は「悪くはない」程度で、日本で最高水準と言われる数字とはまだ差があります。それでも学歴・経歴の強い人材が多く集まっています。CMU や MIT、アメリカの CS 上位 30 校の New Grad もいますし、Google や Microsoft 出身のシニアエンジニアもいます。博士も少なくありません。</p>
+<p>理由としては、LinkedIn で日本国内の“完全英語環境”の会社を探すと、実は Mujin 以外にあまり選択肢がないこと。創業メンバーの学歴がネットワーク効果を生み、雪だるま式に人脈が広がること。ロボット業界での知名度があること。そして米国テックの採用凍結で、日本を一時的な避難先として選ぶ人が増えたこと。もちろん、私のように恋愛が理由で来た人もいます。</p>
+<p>最近ではヨーロッパにも拠点ができ、日・米・中・欧の 4 拠点体制になりました。おそらく今後も拡張できるでしょう。ただ、私のような末端社員にはそこまで実感はありません。重要なのは「この鉄飯碗が今のところ安定している」くらいです。</p>
+<h2 id="この半年の心境変化"><a class="header-anchor" href="#この半年の心境変化">¶ </a>この半年の心境変化</h2>
+<p>入社当初、新人として最初の仕事に就くと、期待と幻想でいっぱいになります。でも徐々に、熱量が削られていくのを感じました。昔は大人が「会社ってこうだよね」と言うのを聞いていましたが、ついに自分の番になりました。1 年働くと「本当に社会に出る」とはどういうことかが深く分かります。理不尽で意味不明な出来事に次々に遭遇し、理由のないルールを受け入れることを学んでいく。特に「なぜ？」のないルールは本当に腹が立ちます。でも結局、私は社会の底辺の小さなネジでしかないし、給料が遅れずに振り込まれればそれでいい——そう思うようになりました。</p>
+<p>給料の話をすると、世界中どこでも学歴で給与が決まる部分は大きいです。交大の学歴は大して評価されず、私は同じ職位の中で一番給料が低い方だと思います。たまに不公平に感じます。自分の能力が本当に低いとは思えません。</p>
+<p>Mujin の新入社員の多くは 1 年契約で、実質 1 年の試用期間のようなものです。その後、永久契約にするか、もう 1 年更新するかを会社が決めます。労働者側からすると保障が薄く、外国人が遠くから日本に来て「更新されるか」を心配し続けるのはかなりきつい。でもこれが資本市場の仕組みなのでしょう。私は契約満了の 3 カ月前から毎日不安で、念のため住居も会社名義から個人名義に変えました。更新されない人は聞いたことがありませんが、1 年更新の人は複数聞きました。私も当初は 1 年更新の予定でしたが、最近のシリーズ C で資金が増えたことや、人手不足もあってか、永久契約に切り替えてもらえました。少しホッとしましたが、その期間は心身ともに疲れ果てました。毎日落ち込み、体調も悪く、あれが本当に最悪の時期でした。</p>
+<p>テック業界はレイオフが起こりやすい業界だと分かってはいても、「社会で働く以上、安寧の日はない」と急に実感しました。この経験を通じて、レイオフされる人の心理や、会社が“切るか切らないか”の状態でビザに縛られている時の辛さも想像できるようになりました。幸い日本の法律は労働者保護が比較的強く、永久契約を取った後は会社が潰れない限り基本的に簡単には切れません。今は少し気持ちが楽です。そして、毎日プレッシャーで息が詰まる時に、彼女が離れずに支えてくれたことには心から感謝しています。異国で一人きりで心理的圧力に耐えるのは、私には想像もできません。</p>
+<p>また、この 1 年は自分をさらに理解する時間でもありました。27 年生きてきたのに、まだ自分がよく分からない。例えば、いつか“プログラミングの達人”になりたいと妄想する一方で、現実の私は残業が嫌で、余暇はほぼダラダラしている普通の人です。普通であることが良くない気がするのは、目に見えないプレッシャーのせいかもしれません。気づけば私は世俗的な価値観に縛られていて、“本当の自分”を生きていないのではないか。では本当の自分とは何か。まだ探っている途中です。非凡でありたい気持ちはあるけれど、その代償は大きい。もっと働く、もっと学ぶ——でも私はそれを実行するモチベーションがほとんどない。あるいは、心の底では淡々と生きたいのかもしれません。</p>
+<p>日本に来て 1 年。これからの人生設計もずっと考えています。日本に残るのか、別の国に行くのか、台湾に戻るのか、転職するのか、結婚するのか。短期的に答えが出る問題ではありません。まだ整理できていないことがたくさんあります。ただ、この 1 年で多少なりとも成長したのは確かだと思います。複雑な気持ちです。少しの安堵と、少しの不安。残りは時間に委ね、自然に任せるしかないのでしょう。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/%E6%97%A5%E6%9C%AC/">
+                日本
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/%E4%BB%95%E4%BA%8B/">
+                仕事
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/">
+                ソフトウェアエンジニア
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/">
+                新米エンジニア修行中
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB"><span class="toc-text">はじめに</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8B%B1%E8%AA%9E%E3%81%AE%E8%A8%80%E8%AA%9E%E9%9A%9C%E5%A3%81"><span class="toc-text">英語の言語障壁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mujin-%E3%81%AE%E4%BA%8B%E6%A5%AD%E3%82%92%E7%B0%A1%E5%8D%98%E3%81%AB%E7%B4%B9%E4%BB%8B"><span class="toc-text">Mujin の事業を簡単に紹介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E3%82%81%E3%81%A6%E6%9C%AC%E6%B0%97%E3%81%A7%E8%A8%88%E7%AE%97%E6%A9%9F%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%92%E5%AD%A6%E3%82%93%E3%81%A0"><span class="toc-text">初めて本気で計算機ネットワークを学んだ</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%B7%E5%A0%B4%E3%81%AF%E8%AA%B0%E3%82%82%E6%95%99%E3%81%88%E3%81%A6%E3%81%8F%E3%82%8C%E3%81%AA%E3%81%84%E3%80%82ChatGPT-%E3%81%A7%E8%87%AA%E5%AD%A6"><span class="toc-text">職場は誰も教えてくれない。ChatGPT で自学</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%9A%E7%A4%BE%E3%81%AE%E6%80%A5%E6%88%90%E9%95%B7"><span class="toc-text">会社の急成長</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%93%E3%81%AE%E5%8D%8A%E5%B9%B4%E3%81%AE%E5%BF%83%E5%A2%83%E5%A4%89%E5%8C%96"><span class="toc-text">この半年の心境変化</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/07/c++/template-for-std-containter-conversion/">
+        C++ のテンプレート関数でコンテナ型を変換する（std::list&lt;int&gt; → std::vector&lt;double&gt;）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/06/c++/condition-variable-cpp/">
+        C++ の Condition Variable：シンプルな例
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

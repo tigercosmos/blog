@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="software engineer,startup,work,Japan,New Software Engineer in Training," />
+    <meta name="description"
+        content="My third year working in Japan: leaving Mujin and founding Datra AI with a friend." />
+    <title>Neutrino&#39;s Blog: New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale) </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2025/06/software-engineer/software-engineer-grow-up-4/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+    </h2>
+    <ul class="post-date">
+        <li>
+            2025-06-25
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2025/06/software-engineer/software-engineer-grow-up-4/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Foreword"><a class="header-anchor" href="#Foreword">¶ </a>Foreword</h2>
+<p>Without realizing it, it’s been almost three years since I entered the workplace. This series, <a href="/tags/%E6%96%B0%E7%B1%B3%E5%B7%A5%E7%A8%8B%E5%B8%AB%E9%80%B2%E4%BF%AE%E4%B8%AD/">“New Software Engineer in Training”</a>, has also approached its end as I continued to improve. Today I’m no longer the clueless newbie engineer who just started working. After these years of training, I successfully got promoted to a mid-level engineer.</p>
+<p>As my capabilities improved, my growth within the company gradually slowed down. Mujin is a good company, but I need a better stage. Around the same time, a friend invited me to start a company around AI. After carefully evaluating things from multiple angles, I decided to join the startup and go all-in!</p>
+<p>This series:</p>
+<ul>
+<li><a href="/post/2023/02/software-engineer/software-engineer-grow-up-1/">New Software Engineer in Training (1): My First On-the-Job Experience at Mujin in Japan</a></li>
+<li><a href="/post/2023/11/software-engineer/software-engineer-grow-up-2/">New Software Engineer in Training (2): Workplace Socialization and Survival</a></li>
+<li><a href="/post/2024/09/software-engineer/software-engineer-grow-up-3/">New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer</a></li>
+<li><a href="/post/2025/06/software-engineer/software-engineer-grow-up-4/">New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)</a> (this post)</li>
+</ul>
+<img src="/img/mujin_pic_2025.png" alt="mujin backend team picture">
+(A photo with the Mujin backend team when I resigned. Over my three years at Mujin, coworkers came and went, and the team looked very different from when I first joined.)
+<h2 id="Finishing-the-book"><a class="header-anchor" href="#Finishing-the-book">¶ </a>Finishing the book</h2>
+<p>Starting last year, I spent a full year writing <a href="https://tigercosmos.xyz/img/new-book-banner-small.png"><em>Programming Is More Than Just Writing CODE!</em></a>. Fortunately, it even ranked on the bestseller list for three months. I recorded the details in “<a href="/post/2025/05/beyond-just-coding-book/writing-experience/">How hard is it to become #1 on the technical book bestseller chart? My one-year writing journey for <em>Programming Is More Than Just Writing CODE!</em></a>.”</p>
+<p><img src="/img/tenlong-202504-screenshot.png" alt="Screenshot of Programming Is More Than Just Writing CODE! at Tenlong Bookstore (2025/04)"><br>
+(Screenshot from Tenlong Bookstore. Ranked #1 in January 2025.)</p>
+<p>Finishing this book was a huge milestone in my life. I realized a dream I had as a student, and I believe this book will become the “bible” of CS fundamentals in the Chinese-speaking world. Reality repeatedly proves the necessity of writing this book: after I finished it, former coworkers and new coworkers kept asking me questions that are already covered in the book. Since I was still a student, I already knew this book would stand the test of time.</p>
+<p>Originally I planned to record a series of tutorial videos to pair with the book, but I haven’t executed on it. The reason is simple: writing books doesn’t really make money. Education itself is more like doing public good, but I also want a more stable stream of passive income, and videos are more promising for that. Books and videos complement each other too—they can make the entire learning package more complete.</p>
+<p>The idea is there. Now it’s just a matter of when I’ll act. I also thought about writing a book for years before I actually started. But if an online platform invited me directly, I could start immediately (lol).</p>
+<blockquote>
+<p>If you still haven’t <a href="/books/beyond-just-coding-book.html">bought the book</a>, go grab a copy!</p>
+</blockquote>
+<h2 id="Permanent-residency"><a class="header-anchor" href="#Permanent-residency">¶ </a>Permanent residency</h2>
+<p>Thanks to Japan’s Highly Skilled Professional points system, you can apply for permanent residency after just one year. After waiting one year and seven months, I finally received my permanent residency status. Under this system, the status is basically tied to your company, so once you get PR, you’re essentially free. I can live in Japan indefinitely, and I can change jobs freely—perfect timing to look for my next opportunity.</p>
+<p>Strictly speaking, because my wife is Japanese, my status wouldn’t have been a problem anyway. But PR holders only need to renew their status every seven years (a spouse visa is usually three years). And if I want to buy a house or start a company, having my own status directly is the most convenient.</p>
+<p>Being able to apply for PR after just one year is incredibly generous. And if you’re not in Tokyo, in places like Fukuoka or Hokkaido, PR might even be granted within half a year. For highly skilled immigrants, this is a great opportunity. Getting to the 80-point threshold is not as hard as you might think. There are many bonus categories, and even if your “innate stats” aren’t good, you can make up points later by passing Japanese language tests, technical certifications, and so on. Overall, I think Japan is very attractive in terms of immigration policy.</p>
+<h2 id="Promotion-to-mid-level-engineer"><a class="header-anchor" href="#Promotion-to-mid-level-engineer">¶ </a>Promotion to mid-level engineer</h2>
+<p>At Mujin, engineering levels can roughly be divided into E1, E2, and E3. If you map that to Google, it’s roughly like L3, L4, and L5. You can think of it as junior, mid-level, and senior. When I joined Mujin, I was a new grad, so I started at E1. I had been waiting to get promoted to E2. When I wrote my previous post (two years of experience), I already felt I should be promoted. Later, at the performance review around 2.5 years, I finally got promoted. This promotion didn’t come with tangible benefits—no raise, no management promotion—but it still felt like recognition and self-fulfillment.</p>
+<p>In my third year at Mujin, I could basically take on any big task. My manager would throw me tasks that were all over the place, simply because he knew I could handle them. The promotion itself wasn’t really in doubt, because I could clearly feel my skills had surpassed what a mid-level engineer required. For example, I had a strong understanding of Mujin’s overall system architecture. Implementing a new feature within a complex existing system was no longer a problem. I had also independently built two large systems inside the company. My coding fundamentals were solid. I was confident my code met a certain quality bar. And with my current ability, I should have no trouble mentoring a few junior engineers. In my view, these are the key factors for evaluating whether someone is mid-level. My only weakness is probably still my English—it’s still kind of bad even after three years, with little improvement.</p>
+<p>Even though I got promoted on paper, I felt I had hit a bottleneck at Mujin, both in compensation and in title. I believe I could challenge for at least a 30% raise, and I already met the conditions to become a team lead. At Mujin, in general, you can become a team lead once you reach E2. But at that time, there was no opportunity. Some coworkers around my age who didn’t go to grad school joined the company two to three years earlier than me. They happened to catch the perfect wave (rapid org expansion and reshuffling) and got promoted twice within just three years (first to team lead, then to manager). Meanwhile, I might have to wait another one or two years just to become a team lead. The company’s growth had slowed, and hiring was mostly for senior engineers. With fewer new hires, there was also less need to appoint new team leads. I ended up stuck in an awkward “not up, not down” position.</p>
+<p>There are two general career tracks for engineers: the management track and the pure technical track (individual contributor). For me, the former feels more meaningful. First, I’ve always dreamed of starting my own company in the future. Second, I believe an individual’s strength is ultimately limited; the ability to lead and multiply through others has limitless potential. That’s why I believe it’s better to start building management skills earlier. Starting as a small team lead and mentoring one or two junior engineers would be a very good beginning—and Mujin clearly couldn’t meet my needs.</p>
+<p>Whether you can keep climbing up isn’t only about effort; luck and opportunities matter too. Of course, you also need to be prepared. My later manager was lucky: he joined Mujin before the company’s rapid growth, and with his effort plus that growth wave, he secured a strong position. Now I needed to find my own opportunity—and fortunately, a great one came along!</p>
+<h2 id="Starting-a-company"><a class="header-anchor" href="#Starting-a-company">¶ </a>Starting a company</h2>
+<p>Since college, I’ve dreamed of becoming a business owner. In college I attended countless entrepreneur talks and read countless entrepreneur biographies. I always felt that in the future, I had to start a company and build something big for it to feel “cool enough.” But at the same time, I also realized I’m somewhat comfort-seeking. A high-pay, low-stress job close to home doesn’t sound that bad either. These two opposite mindsets kept battling inside me: sometimes pushing me toward a more ambitious direction, sometimes pulling me back toward a comfortable, ordinary life.</p>
+<p>A few months ago, Ryan stepped in and broke this balance directly. I’ve known him since college. He understands my personality, and he knows I’ve always wanted to start a company. So he came to me with an AI startup idea. At the beginning, I still resisted. Humans are like that—we fear the world outside our comfort zone. Starting a company used to feel so far away from me. I wasn’t even prepared. But when are you ever truly “prepared”? I had no confidence at all in that question.</p>
+<p>This is Ryan’s third startup. He failed once and succeeded once. That successful startup gave him enough momentum to come find me for his third venture. At first, I started part-time while being skeptical. Gradually I began to feel that this is exactly what I want to do. AI—or what you might call Software 3.0—is the wave of the coming years, a genuinely transformative new technology for humanity. We’re standing at a historical inflection point. We have to go for it—there’s no other choice.</p>
+<p>Another reason I was willing to commit is the people. Ryan’s business experience combined with my technical ability is a classic startup pairing. And I believe this team is strong; success or failure will largely come down to execution.</p>
+<p>So I decided to join full-time, and together with Ryan I founded Datra AI. The name comes from Data + Era: the AI era is built on massive amounts of data, and it also reflects the reality that Datra AI focuses on building vertical AI products, which requires a lot of data. Our first AI product will be built on the Shopify platform.</p>
+<p>There’s a saying: “You cannot earn wealth beyond your cognition.” It explains why perspective and knowledge matter. After starting a company, I gained a deeper understanding of capital markets. Money and valuations no longer feel impossibly distant. Ryan and I aim to make Datra AI a $1B AI startup. In the past, that number felt astronomical. Now, I think if we work hard, it’s absolutely possible.</p>
+<blockquote>
+<p>Datra AI is hiring (Taiwan, Japan). We welcome <strong>generalist</strong> engineers. The work includes frontend/backend development, AI model training, operations, UI design, and more. If you’re interested in AI, have a strong startup drive, and love software development, feel free to <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/liuanchi/">reach out to me</a>!</p>
+</blockquote>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>For software engineers, it’s pretty normal to change jobs every two or three years. After staying at Mujin for almost three years, I left to start a company. When I resigned, I felt a strange sense of sadness—it was my first full-time job, after all. But at the same time, I’m excited about the future. After solid training over the past few years, I believe I can walk a steadier, smoother path in the startup world. Whether Datra AI ultimately succeeds or not, I won’t regret choosing to start a company today. Life is more fun when you take risks!</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/software-engineer/">
+                software engineer
+            </a>,&nbsp;
+        
+            <a href="/en/tags/startup/">
+                startup
+            </a>,&nbsp;
+        
+            <a href="/en/tags/work/">
+                work
+            </a>,&nbsp;
+        
+            <a href="/en/tags/japan/">
+                Japan
+            </a>,&nbsp;
+        
+            <a href="/en/tags/new-software-engineer-in-training/">
+                New Software Engineer in Training
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Foreword"><span class="toc-text">Foreword</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Finishing-the-book"><span class="toc-text">Finishing the book</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Permanent-residency"><span class="toc-text">Permanent residency</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Promotion-to-mid-level-engineer"><span class="toc-text">Promotion to mid-level engineer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Starting-a-company"><span class="toc-text">Starting a company</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/06/c++/condition-variable-cpp/">
+        A Simple Example of Condition Variables in C++
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
