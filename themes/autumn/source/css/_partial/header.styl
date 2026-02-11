@@ -76,19 +76,12 @@
             right: 0
             margin: .5em 0 0
             padding: .4em 0
-            list-style: none
             background: var(--container-bg)
             border: 1px solid var(--border-color)
             border-radius: 6px
             box-shadow: 0 10px 30px rgba(0,0,0,.12)
             min-width: 90px
             z-index: 5
-            li
-              display: block
-              padding: 0
-              &::after
-                content: ''
-                margin: 0
           &:hover .translation-menu
             display: block
           &:focus-within .translation-menu
@@ -101,6 +94,7 @@
             text-transform: uppercase
             font-size: 12px
             letter-spacing: .5px
+            white-space: nowrap
             &.is-current
               color: var(--accent-color)
               font-weight: 700

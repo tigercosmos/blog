@@ -57,9 +57,9 @@
     font: 14px/1.6 Lato
     li 
       display: inline-block
-      &:not(:last-child)::after
-        content: "\00B7"
-        margin: 0 .75em
+    li + li::before
+      content: "\00B7"
+      margin: 0 .75em
     .post-languages
       .post-languages-label
         text-transform: uppercase

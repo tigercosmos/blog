@@ -37,23 +37,21 @@
             <% if (translationEntries.length > 1) { %>
             <li class="translation-switcher">
                 <% const currentEntry = translationEntries.find(function (entry) { return entry.isCurrent; }) || translationEntries[0]; %>
-                <button class="translation-button" aria-label="Translations" title="Translations">
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
                     <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
                         <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
                     </svg>
                     <span class="translation-current" aria-hidden="true"><%= currentEntry.lang %></span>
                 </button>
-                <ul class="translation-menu" aria-label="Translation menu">
+                <div class="translation-menu" aria-label="Translation menu">
                     <% translationEntries.forEach(function (entry) { %>
-                        <li>
-                            <% if (entry.isCurrent) { %>
-                                <span class="translation-lang is-current" lang="<%= entry.lang %>"><%= entry.lang %></span>
-                            <% } else { %>
-                                <a class="translation-lang" href="<%- entry.path %>" hreflang="<%= entry.lang %>" lang="<%= entry.lang %>"><%= entry.lang %></a>
-                            <% } %>
-                        </li>
+                        <% if (entry.isCurrent) { %>
+                            <span class="translation-lang is-current" lang="<%= entry.lang %>"><%= entry.lang %></span>
+                        <% } else { %>
+                            <a class="translation-lang" href="<%- entry.path %>" hreflang="<%= entry.lang %>" lang="<%= entry.lang %>"><%= entry.lang %></a>
+                        <% } %>
                     <% }) %>
-                </ul>
+                </div>
             </li>
             <% } %>
         </ul>
