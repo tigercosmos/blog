@@ -1,25 +1,25 @@
 ---
-title: 如何在 Intel GPU 上跑 OpenCL
+title: "How to Run OpenCL on an Intel GPU"
 date: 2023-09-13 00:18:40
 tags: [gpu, opencl, intel]
-des: "本文介紹如何在 Intel GPU 上跑 OpenCL，使用 AOT 事先編譯 Kernel 檔案，並使用編譯好的 Kernel Binary 來執行 OpenCL"
-lang: zh
+des: "This post explains how to run OpenCL on an Intel GPU: compile the kernel ahead of time (AOT) and execute OpenCL using the precompiled kernel binary."
+lang: en
 translation_key: intel-gpu-opencl
 ---
 
 ![many workers on GPU](https://github.com/tigercosmos/blog/assets/18013815/5d281088-938f-402c-bc63-fd6e3035870e)
 
-如何在 Intel GPU 上跑 OpenCL?
+How do you run OpenCL on an Intel GPU?
 
-首先，我們得先去裝 Intel 的 [Compute Runtime](https://github.com/intel/compute-runtime/releases/tag/23.22.26516.18) 來裝驅動程式，直接用 `apt install` 裝的可能會太舊。
+First, you need to install Intel’s [Compute Runtime](https://github.com/intel/compute-runtime/releases/tag/23.22.26516.18) as the driver. If you install via `apt install`, the version may be too old.
 
-裝完之後可以順邊裝一下 `sudo apt install clinfo`，然後使用 `clinfo` 指令看一下 OpenCL 是不是可以真的抓到 GPU 資訊。
+After installation, you can also install `sudo apt install clinfo`, and then run `clinfo` to check whether OpenCL can actually retrieve GPU information.
 
-雖然 OpenCL 可以執行時直接讀取 `.cl` 檔案來進行編譯 Kernel，但我們希望事先編譯好 Kernel，也就是使用 AOT 技術，這樣執行時才不用重新編譯，因此我們會需要使用 ocloc 編譯器事先編譯。根據平台我們要下的 `-device` 參數不一樣，可以在 Intel 文件中「[Use AOT for Integrated Graphics](https://www.intel.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2023-0/ahead-of-time-compilation.html)」找到對應的代碼。
+Although OpenCL can compile kernels at runtime by reading `.cl` files directly, we want to compile the kernel in advance—i.e., use AOT (Ahead-Of-Time) compilation—so we don’t have to recompile at runtime. Therefore, we need to use the `ocloc` compiler to precompile the kernel. Depending on the platform, the `-device` parameter differs. You can find the corresponding code name in Intel’s documentation, “[Use AOT for Integrated Graphics](https://www.intel.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2023-0/ahead-of-time-compilation.html)”.
 
-例如我使用的 Intel HD Graphics P530 其代碼就是 `glk`。
+For example, the code name for the Intel HD Graphics P530 I used is `glk`.
 
-以下以 CMake 作為範例，`CMakeList.txt` 中我們使用以下程式碼：
+Below is a CMake example. In `CMakeList.txt`, we use the following snippet:
 
 ```sh
 # 找到 OpenCL
@@ -41,11 +41,11 @@ execute_process(
 install(FILES "/tmp/kernel.bin_glk.bin" DESTINATION /somewhere/path/kernel.bin_glk.bin)
 ```
 
-> 題外話，即使設置 ` -output kernel.bin`，ocloc 編譯完還是會自動加後綴 `bin_glk` 其實有點惱人
+> Side note: even if you set ` -output kernel.bin`, after compilation `ocloc` still automatically appends the suffix `bin_glk`, which is honestly a bit annoying.
 
-這樣之後寫 OpenCL 程式的時候，就可以直接去 `/somewhere/path/kernel.bin_glk.bin` 讀取編譯好的 Kernel Binary 檔案。
+With this, when writing your OpenCL program later, you can directly read the precompiled kernel binary at `/somewhere/path/kernel.bin_glk.bin`.
 
-讀取 Binary 的部份是這樣寫：
+Reading the binary looks like this:
 
 ```c++
 #define CL_HPP_TARGET_OPENCL_VERSION 300 // use OpenCL 3.0
@@ -98,4 +98,4 @@ if (clError != CL_SUCCESS) {
 // 一般的 OpenCL 寫法 ...
 ```
 
-剩下的部分就是一般的 OpenCL 程式設計，本文就不多介紹了。
+The remaining parts are standard OpenCL programming, so I won’t go into detail here.

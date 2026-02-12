@@ -3,6 +3,8 @@ title: 在 Linux 上使用 Perf 做效能分析(入門篇)
 date: 2020-08-29 00:20:08
 tags: [linux, perf, 效能分析,]
 des: "本文將介紹 Linux 上的 perf 效能分析工具，藉由一個簡單的程式範例，示範如何使用 perf 去分析一隻程式，我們將會發現使用分析工具時能更輕易的發現問題根源。"
+lang: zh
+translation_key: perf-basic
 ---
 
 ## 簡介

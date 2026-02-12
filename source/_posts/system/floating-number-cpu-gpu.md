@@ -3,6 +3,8 @@ title: CPU 與 GPU 計算浮點數的差異
 date: 2020-12-05 00:06:40
 tags: [cpu, gpu, floating-point number, ‎IEEE 754]
 des: "CPU 與 GPU 在計算浮點數 (floating-point number) 時會有差異，本文實際舉例並解釋原因。"
+lang: zh
+translation_key: floating-number-cpu-gpu
 ---
 
 ## 簡介

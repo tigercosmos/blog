@@ -3,6 +3,8 @@ title: "使用 Compare and Swap 做到 Lock Free"
 date: 2020-10-28 02:25:00
 tags: [compare and swap, lock free, atomic, parallel programming]
 des: "本文介紹 Compare and Swap 原理，並實驗證明 CAS 的 Overhead 比 Lock 還小。"
+lang: zh
+translation_key: cas-lock-free
 ---
 
 ## 1. 簡介

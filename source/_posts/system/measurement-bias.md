@@ -3,6 +3,8 @@ title: 我們與誤差的距離——論系統軟體實驗測量誤差
 date: 2020-08-30 18:30:00
 tags: [system software, measurement, bias, spec cpu]
 des: "論文提出即便我們實驗看似都沒問題，但卻可能因為初始設定默默得到不正確的結果數據，原因在於在 Unix 系統中，環境變數的設置和 C++ 編譯器連結物件的順序改變，都可能導致程式跑出來的結果差異非常大。"
+lang: zh
+translation_key: measurement-bias
 ---
 
 ## 1. 簡介

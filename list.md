@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 38
-- Missing EN translation files: 146
-- Missing JP translation files: 146
-- Source posts missing `translation_key`: 146
+- Posts with both EN+JP translations: 50
+- Missing EN translation files: 134
+- Missing JP translation files: 134
+- Source posts missing `translation_key`: 134
 
 ## Posts
 
@@ -169,18 +169,18 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `story/physics-dream.md` — 我所放棄的物理夢 (Tue Jan 05 2021 06:25:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `story/ta-of-parallel-programming-course.md` — 資工系所助教教戰手冊—以陽明交大平行程式課為例 (Tue May 04 2021 02:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `summer_cloudmosa.md` — 這個暑假我在 CloudMosa 所見所聞 (Sat Sep 08 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/cas-lock-free.md` — 使用 Compare and Swap 做到 Lock Free (Wed Oct 28 2020 02:25:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/cuda-basic.md` — CUDA 開發環境設定與簡易程式範例 (Thu Dec 10 2020 07:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/debug-gdb.md` — How to debug Rust via GDB (Mon Sep 21 2020 17:17:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/elixer-simple-server.md` — 使用 Elixir 建立簡易 HTTP Server (Mon Aug 24 2020 00:09:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/floating-number-cpu-gpu.md` — CPU 與 GPU 計算浮點數的差異 (Sat Dec 05 2020 00:06:40 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/intel-gpu-opencl.md` — 如何在 Intel GPU 上跑 OpenCL (Wed Sep 13 2023 00:18:40 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/measurement-bias.md` — 我們與誤差的距離——論系統軟體實驗測量誤差 (Sun Aug 30 2020 18:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/perf-basic.md` — 在 Linux 上使用 Perf 做效能分析(入門篇) (Sat Aug 29 2020 00:20:08 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/promiscuous-mode.md` — 如何利用 PcapPlusPlus 以混雜模式（Promiscuous Mode）進行網路封包分析 (Sun May 14 2023 18:20:08 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/reentrant-and-thread-safe-code.md` — 深入理解 Reentrancy 和 Thread-safe (Mon May 10 2021 06:20:08 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/spec-accel-opencl-amd-mi50.md` — Run SPEC ACCEL OpenCL benchmarks on AMD MI50 (Fri Aug 14 2020 00:08:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `system/spec-cpu-note.md` — SPEC CPU 2006 安裝執行 (Tue Jun 16 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `system/cas-lock-free.md` — 使用 Compare and Swap 做到 Lock Free (Wed Oct 28 2020 02:25:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/cuda-basic.md` — CUDA 開發環境設定與簡易程式範例 (Thu Dec 10 2020 07:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/debug-gdb.md` — How to debug Rust via GDB (Mon Sep 21 2020 17:17:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:en
+- [x] `system/elixer-simple-server.md` — 使用 Elixir 建立簡易 HTTP Server (Mon Aug 24 2020 00:09:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/floating-number-cpu-gpu.md` — CPU 與 GPU 計算浮點數的差異 (Sat Dec 05 2020 00:06:40 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/intel-gpu-opencl.md` — 如何在 Intel GPU 上跑 OpenCL (Wed Sep 13 2023 00:18:40 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/measurement-bias.md` — 我們與誤差的距離——論系統軟體實驗測量誤差 (Sun Aug 30 2020 18:30:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/perf-basic.md` — 在 Linux 上使用 Perf 做效能分析(入門篇) (Sat Aug 29 2020 00:20:08 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/promiscuous-mode.md` — 如何利用 PcapPlusPlus 以混雜模式（Promiscuous Mode）進行網路封包分析 (Sun May 14 2023 18:20:08 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/reentrant-and-thread-safe-code.md` — 深入理解 Reentrancy 和 Thread-safe (Mon May 10 2021 06:20:08 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/spec-accel-opencl-amd-mi50.md` — Run SPEC ACCEL OpenCL benchmarks on AMD MI50 (Fri Aug 14 2020 00:08:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `system/spec-cpu-note.md` — SPEC CPU 2006 安裝執行 (Tue Jun 16 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `the-wind-rises.md` — 動畫＜風起＞心得隨筆 (Sun May 12 2019 01:17:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `thought-about-cs-student.md` — 資工系所學生的基本素養 (Fri Apr 24 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `tymphany-interview.md` — 紀錄面試經驗──Tymphany (Fri Jun 02 2017 10:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

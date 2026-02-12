@@ -3,6 +3,8 @@ title: 使用 Elixir 建立簡易 HTTP Server
 date: 2020-08-24 00:09:00
 tags: [http server, elixir]
 des: "本文介紹如何用 Elixir 建立一個簡單的 HTTP Server，藉此來學習開發 Elixir 專案，其中包含如何用 Mix 新建一個專案，用 Hex 做套件管理，解釋一些 Elixir 語言特性，介紹如何用 Cowboy、Plug、Poison 等套件，以及如何執行專案。"
+lang: zh
+translation_key: elixer-simple-server
 ---
 
 ## 簡介

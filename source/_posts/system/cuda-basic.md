@@ -3,6 +3,8 @@ title: "CUDA 開發環境設定與簡易程式範例"
 date: 2020-12-10 07:00:00
 tags: [cuda, gpu, parallel programming]
 des: "本文簡單介紹 CUDA 開發環境設置，並解說簡單的 CUDA 程式範例。"
+lang: zh
+translation_key: cuda-basic
 ---
 
 ## 1. 簡介

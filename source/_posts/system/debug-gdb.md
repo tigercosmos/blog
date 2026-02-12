@@ -3,6 +3,8 @@ title: How to debug Rust via GDB
 date: 2020-09-21 17:17:00
 tags: [ servo, debug, gdb, rust, english,]
 des: "I will teach you some tips to use GDB developing and debugging your Rust code and the Servo project. The debug method can be also applied to C/C++ as well."
+lang: en
+translation_key: debug-gdb
 ---
 
 ## Introduction

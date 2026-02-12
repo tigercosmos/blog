@@ -3,6 +3,8 @@ title: SPEC CPU 2006 安裝執行
 date: 2020-06-16 00:00:00
 tags: [spec cpu, note]
 des: "這篇介紹怎樣在 Ubuntu 16.04 上安裝執行 SPEC CPU 2006 v1.1，預期會有一些錯誤，這篇指出該怎樣去解決。"
+lang: zh
+translation_key: spec-cpu-note
 ---
 
 ## 前言

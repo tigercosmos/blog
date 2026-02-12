@@ -3,6 +3,8 @@ title: 深入理解 Reentrancy 和 Thread-safe
 date: 2021-05-10 06:20:08
 tags: [parallel programming, reentrancy, thread-safe, system]
 des: "本文詳細介紹 Reentrancy 和 Thread-safe，並搭配程式碼範例解說。"
+lang: zh
+translation_key: reentrant-and-thread-safe-code
 ---
 
 ## 1. 並行與平行

@@ -3,6 +3,8 @@ title: Run SPEC ACCEL OpenCL benchmarks on AMD MI50
 date: 2020-08-14 00:08:00
 tags: [spec accel, note, amd mi50, opencl, benchmark]
 des: "本文介紹如何拿 SPEC ACCEL 中的 OpenCL Benchmarks 來測試 AMD MI50，並針對測試的數據簡單做分析，並與 SPEC 官網上提供的 GeForce GTX 1050 跑出來的數據做比較。"
+lang: zh
+translation_key: spec-accel-opencl-amd-mi50
 ---
 ## 簡介
 
