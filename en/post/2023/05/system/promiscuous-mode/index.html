@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="network,promiscuous mode,network analysis,pcap,PcapPlusPlus," />
+    <meta name="description"
+        content="This post introduces how to analyze network packets with PcapPlusPlus in promiscuous mode, including how to send, receive, and parse packets, and finally provides an ARP example program." />
+    <title>Neutrino&#39;s Blog: Network Packet Analysis with PcapPlusPlus in Promiscuous Mode </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2023/05/system/promiscuous-mode/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2023/05/system/promiscuous-mode/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2023/05/system/promiscuous-mode/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2023/05/system/promiscuous-mode/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2023/05/system/promiscuous-mode/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2023/05/system/promiscuous-mode/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Network Packet Analysis with PcapPlusPlus in Promiscuous Mode
+    </h2>
+    <ul class="post-date">
+        <li>
+            2023-05-14
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2023/05/system/promiscuous-mode/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2023/05/system/promiscuous-mode/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Introduction"><a class="header-anchor" href="#Introduction">¶ </a>Introduction</h2>
+<p>Promiscuous mode is a mode of operation for a Network Interface Card (NIC) when receiving and transmitting network packets. In normal mode, a NIC only receives packets sent to itself or broadcast packets sent to all NICs, and it will not receive other packets.</p>
+<p>In promiscuous mode, the NIC can receive packets sent to any NIC, even if those packets are not addressed to itself. This mode allows the NIC to monitor the entire network and capture all transmitted data, including communication between other hosts. Therefore, promiscuous mode is commonly used for network troubleshooting, network analysis, and security monitoring—but it can also be abused for illegal sniffing and attacks.</p>
+<p>Common packet analysis tools such as tcpdump and Wireshark are based on promiscuous mode under the hood.</p>
+<p>On Linux, to perform packet analysis, we can use a <code>socket</code> with <code>SOCK_RAW</code> and listen to all protocols via <code>ETH_P_ALL</code>.</p>
+<p>We also need to use <code>setsockopt</code> to set the socket to <code>PACKET_MR_PROMISC</code>, i.e., promiscuous mode. (See <a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man7/packet.7.html">packet(7)</a>.)</p>
+<pre><code class="language-c">int sock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+
+struct packet_mreq mr;
+memset(&amp;mr, 0, sizeof(mr));
+mr.mr_ifindex = if_nametoindex(iface);
+mr.mr_type = PACKET_MR_PROMISC;
+setsockopt(sock, SOL_PACKET, PACKET_ADD_MEMBERSHIP, &amp;mr, sizeof(mr));
+</code></pre>
+<p>Also, before using promiscuous mode, remember to configure the NIC:</p>
+<pre><code class="language-sh">sudo ip link set &lt;interface_name&gt; promisc on
+</code></pre>
+<p>This way you can capture all packets that traverse the interface; otherwise the NIC may filter out packets whose destination MAC address is not yours.</p>
+<p><img src="https://github.com/tigercosmos/blog/assets/18013815/3100c948-f555-43ad-b58f-71047a0d3a3c" alt="COVER IMAGE"></p>
+<h2 id="An-Introduction-to-PcapPlusPlus"><a class="header-anchor" href="#An-Introduction-to-PcapPlusPlus">¶ </a>An Introduction to PcapPlusPlus</h2>
+<p>Working directly with syscalls is tiring. A more advanced option is libpcap. “pcap” stands for Packet Capture. It was originally developed as a C library by the tcpdump developers, with wrappers to make it easier to use. PcapPlusPlus is a higher-level wrapper built on top of libpcap. It provides a simpler interface and more features. PcapPlusPlus supports cross-platform development on Windows, Linux, and macOS. It makes it easy to capture, parse, and modify network packets. It also supports analysis and decoding for various network protocols. This means we don’t have to implement messy protocol parsing ourselves, which saves a lot of time.</p>
+<p>Below I will introduce how to use PcapPlusPlus (abbreviated as PCPP). You can also refer to its GitHub repository, which contains complete <a target="_blank" rel="noopener" href="https://github.com/seladb/PcapPlusPlus/tree/master/Examples">example programs</a>.</p>
+<h2 id="Installing-PcapPlusPlus"><a class="header-anchor" href="#Installing-PcapPlusPlus">¶ </a>Installing PcapPlusPlus</h2>
+<p>The official PcapPlusPlus <a target="_blank" rel="noopener" href="https://pcapplusplus.github.io/docs/install/linux">installation guide</a> is a bit complicated. In practice, you can install it easily using CMake.</p>
+<pre><code class="language-sh"># pre-requirement
+sudo apt-get install libpcap-dev
+
+git clone https://github.com/seladb/PcapPlusPlus.git
+cd PcapPlusPlus/
+
+mkdir build; cd build; cmake ..; make -j8; sudo make install
+</code></pre>
+<p>After installation, the default include and library paths are <code>/usr/local/include/pcapplusplus/</code> and <code>/usr/local/lib/</code>.</p>
+<h2 id="Example-Code-for-This-Post"><a class="header-anchor" href="#Example-Code-for-This-Post">¶ </a>Example Code for This Post</h2>
+<p>After installing PcapPlusPlus, download the <a target="_blank" rel="noopener" href="https://github.com/tigercosmos/promiscuous-mode-tutorial">example code for this post</a>:</p>
+<pre><code>git clone https://github.com/tigercosmos/promiscuous-mode-tutorial
+
+cd promiscuous-mode-tutorial
+
+mkdir build; cd build; cmake ..; make 
+</code></pre>
+<h2 id="CMake-Setup"><a class="header-anchor" href="#CMake-Setup">¶ </a>CMake Setup</h2>
+<p>Next, let’s see how to set up CMake.</p>
+<pre><code class="language-makefile">cmake_minimum_required(VERSION 3.1)
+project(MyPcapPlusPlusProject)
+
+# Set C++ standard to C++17
+set(CMAKE_CXX_STANDARD 17)
+
+# Find PcapPlusPlus library
+find_package(PcapPlusPlus REQUIRED)
+
+# Add your project source files
+add_executable(main main.cpp)
+
+# Link against PcapPlusPlus library
+target_link_libraries(main PcapPlusPlus::Packet++ PcapPlusPlus::Pcap++ PcapPlusPlus::Common++)
+</code></pre>
+<p>There are three libraries to link: <code>Packet++</code>, <code>Pcap++</code>, and <code>Common++</code>. It is safer to prefix them with <code>PcapPlusPlus::</code>, because sometimes CMake may not find them otherwise.</p>
+<h2 id="PcapPlusPlus-Hello-World"><a class="header-anchor" href="#PcapPlusPlus-Hello-World">¶ </a>PcapPlusPlus Hello World</h2>
+<p>Now let’s do a “Hello World”. See <a target="_blank" rel="noopener" href="https://github.com/tigercosmos/promiscuous-mode-tutorial/blob/master/hello_world.cpp">promiscuous-mode-tutorial/hello_world.cpp</a>.</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;pcapplusplus/PcapLiveDevice.h&gt;
+#include &lt;pcapplusplus/PcapLiveDeviceList.h&gt;
+
+int main(int argc, char *argv[])
+&#123;
+    // 可以用 ifconfig 找一下網卡的名字，例如 lo, eth0
+    pcpp::PcapLiveDevice *dev = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDeviceByIpOrName(&quot;eth0&quot;);
+
+    // 輸出網卡資訊
+    std::cout
+        &lt;&lt; &quot;Interface info:&quot; &lt;&lt; std::endl
+        &lt;&lt; &quot;   Interface name:        &quot; &lt;&lt; dev-&gt;getName() &lt;&lt; std::endl           // get interface name
+        &lt;&lt; &quot;   Interface description: &quot; &lt;&lt; dev-&gt;getDesc() &lt;&lt; std::endl           // get interface description
+        &lt;&lt; &quot;   MAC address:           &quot; &lt;&lt; dev-&gt;getMacAddress() &lt;&lt; std::endl     // get interface MAC address
+        &lt;&lt; &quot;   Default gateway:       &quot; &lt;&lt; dev-&gt;getDefaultGateway() &lt;&lt; std::endl // get default gateway
+        &lt;&lt; &quot;   Interface MTU:         &quot; &lt;&lt; dev-&gt;getMtu() &lt;&lt; std::endl;           // get interface MTU
+
+    if (dev-&gt;getDnsServers().size() &gt; 0)
+        std::cout &lt;&lt; &quot;   DNS server:            &quot; &lt;&lt; dev-&gt;getDnsServers().at(0) &lt;&lt; std::endl;
+
+    return 0;
+&#125;
+</code></pre>
+<p><code>PcapLiveDevice *dev</code> is the object corresponding to a network interface. Although it is a pointer, we do not need to worry about its lifetime in this program—it is effectively a <code>static</code> object.</p>
+<p>Later we will call <code>dev-&gt;open()</code> to open the interface connection in promiscuous mode.</p>
+<h2 id="Capturing-Packets-with-PcapPlusPlus"><a class="header-anchor" href="#Capturing-Packets-with-PcapPlusPlus">¶ </a>Capturing Packets with PcapPlusPlus</h2>
+<p>For this section, see <a target="_blank" rel="noopener" href="https://github.com/tigercosmos/promiscuous-mode-tutorial/blob/master/capture.cpp">promiscuous-mode-tutorial/capture.cpp</a>.</p>
+<p>PCPP provides both synchronous and asynchronous ways to process packets. In synchronous mode, the main thread blocks. In asynchronous mode, another thread is created to capture packets, while the main thread can continue doing other work. For network troubleshooting, asynchronous capture is more common, so I will use the asynchronous version here.</p>
+<p>Starting capture is easy: just use <code>PcapLiveDevice::startCapture</code>. There are several overloads, but the idea is the same. Here is one of them:</p>
+<pre><code class="language-cpp">pcpp::PcapLiveDevice::startCapture(pcpp::OnPacketArrivesCallback onPacketArrives, void *onPacketArrivesUserCookie)
+</code></pre>
+<p>After <code>startCapture</code> is called, PCPP starts a new thread to capture packets. When a packet arrives, the callback <code>pcpp::OnPacketArrivesCallback</code> is invoked to process it. If you want to pass something into the callback, you can use <code>void *onPacketArrivesUserCookie</code> to pass a pointer and cast it back later.</p>
+<pre><code class="language-cpp">dev-&gt;startCapture(onPacketArrives, &amp;stats);
+</code></pre>
+<p>The callback signature is:</p>
+<pre><code class="language-cpp">static void onPacketArrives(pcpp::RawPacket *packet, pcpp::PcapLiveDevice *dev, void *cookie)
+</code></pre>
+<p>It has three parameters: <code>RawPacket</code> (raw bytes), the source device, and the cookie pointer passed above.</p>
+<pre><code class="language-cpp">static void onPacketArrives(pcpp::RawPacket *packet, pcpp::PcapLiveDevice *dev, void *cookie)
+&#123;
+    // 把傳入的 cookie 做轉型原本的 PacketStats 物件
+    PacketStats *stats = (PacketStats *)cookie;
+
+    // 把 RawPacket 變成分析過的 Packet
+    pcpp::Packet parsedPacket(packet);
+
+    // 如果封包是 IPv4
+    if (parsedPacket.isPacketOfType(pcpp::IPv4))
+    &#123;
+        // 找出 Source IP 跟 Destination IP
+        pcpp::IPv4Address srcIP = parsedPacket.getLayerOfType&lt;pcpp::IPv4Layer&gt;()-&gt;getSrcIPv4Address();
+        pcpp::IPv4Address destIP = parsedPacket.getLayerOfType&lt;pcpp::IPv4Layer&gt;()-&gt;getDstIPv4Address();
+
+        std::cout &lt;&lt; &quot;Source IP is '&quot; &lt;&lt; srcIP &lt;&lt; &quot;'; Dest IP is '&quot; &lt;&lt; destIP &lt;&lt; &quot;'&quot; &lt;&lt; std::endl;
+    &#125;
+
+    // 讓 PacketStats 去做統計
+    stats-&gt;consumePacket(parsedPacket);
+&#125;
+</code></pre>
+<p>Note that we use <code>getLayerOfType&lt;pcpp::IPv4Layer&gt;()</code> to get a specific layer, and decoding is handled for us—very convenient.</p>
+<p>Compile and run. Remember you must use <code>sudo</code>. You should see output like:</p>
+<pre><code class="language-bash">$ sudo ./capture
+Interface info:
+   Interface name:        lo
+   Interface description: 
+   MAC address:           00:00:00:00:00:00
+   Default gateway:       0.0.0.0
+   Interface MTU:         65536
+
+Starting async capture...
+Source IP is '127.0.0.1'; Dest IP is '127.0.0.1'
+Source IP is '127.0.0.1'; Dest IP is '127.0.0.1'
+...
+...
+...
+Source IP is '127.0.0.1'; Dest IP is '127.0.0.1'
+Source IP is '127.0.0.1'; Dest IP is '127.0.0.1'
+Source IP is '127.0.0.1'; Dest IP is '127.0.0.1'
+Ethernet packet count: 87
+IPv4 packet count:     87
+IPv6 packet count:     0
+TCP packet count:      85
+UDP packet count:      0
+DNS packet count:      0
+HTTP packet count:     0
+SSL packet count:      0
+</code></pre>
+<p>Because I tested this in WSL and set the interface to <code>lo</code>, the packets look a bit boring. If you are on Linux, you can set the device to <code>eth0</code>, and you should see packets from various source IPs.</p>
+<h2 id="Sending-Packets-with-PcapPlusPlus"><a class="header-anchor" href="#Sending-Packets-with-PcapPlusPlus">¶ </a>Sending Packets with PcapPlusPlus</h2>
+<p>For this section, see <a target="_blank" rel="noopener" href="https://github.com/tigercosmos/promiscuous-mode-tutorial/blob/master/create_send.cpp">promiscuous-mode-tutorial/create_send.cpp</a>。</p>
+<p>A network packet consists of multiple layers. When sending packets, we fill in each layer’s fields in order. PCPP provides a nice abstraction: we only need to create layers (e.g., <code>pcpp::EthLayer</code>, <code>pcpp::IPv4Layer</code>, <code>pcpp::UdpLayer</code>) and add them into a <code>pcpp::Packet</code>.</p>
+<pre><code class="language-cpp">    // 建立 Ethernet layer
+    pcpp::EthLayer newEthernetLayer(
+        pcpp::MacAddress(&quot;00:50:43:11:22:33&quot;), // Source MAC
+        pcpp::MacAddress(&quot;aa:bb:cc:dd:ee&quot;));   // Destination MAC
+
+    // 建立IPv4 layer
+    pcpp::IPv4Layer newIPLayer(
+        pcpp::IPv4Address(&quot;192.168.1.1&quot;), // Source Ip
+        pcpp::IPv4Address(&quot;10.0.0.1&quot;));   // Destination IP
+    newIPLayer.getIPv4Header()-&gt;ipId = pcpp::hostToNet16(2000);
+    newIPLayer.getIPv4Header()-&gt;timeToLive = 64;
+
+    // 建立 UDP layer
+    pcpp::UdpLayer newUdpLayer(12345, 53); // 分別為 Source Port 和 Destination Port
+
+    //建立 DNS layer
+    pcpp::DnsLayer newDnsLayer;
+    newDnsLayer.addQuery(
+        &quot;localhost&quot;,         // Domain Name 設為 localhost
+        pcpp::DNS_TYPE_A,    // Type A 代表 IPv4
+        pcpp::DNS_CLASS_IN); // CLASS IN 則是 Internet
+
+    // 建立一個 Packet，預設 Size 是 100，概念跟 std::string 一樣
+    pcpp::Packet newPacket(100);
+
+    // 把 Layer 都加上 Packet
+    newPacket.addLayer(&amp;newEthernetLayer);
+    newPacket.addLayer(&amp;newIPLayer);
+    newPacket.addLayer(&amp;newUdpLayer);
+    newPacket.addLayer(&amp;newDnsLayer);
+
+    // 去計算要怎麼把 Layer 加上 Packet
+    newPacket.computeCalculateFields();
+
+    // 發送 Packet
+    dev-&gt;sendPacket(&amp;newPacket);
+</code></pre>
+<p>You can see we can freely fill in the source IP address and source MAC address. This is also one of the “benefits” of promiscuous-mode style tooling: we can craft packets and spoof identities to send packets for testing purposes.</p>
+<p>Open two shells: run <code>./create_send</code> in one (it will send packets on <code>lo</code>), and run tcpdump in the other to monitor packets on <code>lo</code>.</p>
+<pre><code class="language-sh">(base) tigercosmos@LAPTOP-P7QFA4QB:/mnt/c/Users/tiger$ sudo tcpdump -i lo udp -v -x
+tcpdump: listening on lo, link-type EN10MB (Ethernet), capture size 262144 bytes
+14:27:50.161985 IP (tos 0x0, ttl 64, id 0, offset 0, flags [none], proto UDP (17), length 55)
+    192.168.1.1.12345 &gt; 192.168.1.3.domain: 0 A? localhost. (27)
+        0x0000:  4500 0037 0000 0000 4011 f761 c0a8 0101
+        0x0010:  c0a8 0103 3039 0035 0023 93c4 0000 0000
+        0x0020:  0001 0000 0000 0000 096c 6f63 616c 686f
+        0x0030:  7374 0000 0100 01
+</code></pre>
+<p>We can see tcpdump shows packet fields matching what we filled in the program: sent from <code>192.168.1.1</code> to <code>192.168.1.3</code>.</p>
+<h2 id="Sending-and-Capturing-ARP-with-PcapPlusPlus"><a class="header-anchor" href="#Sending-and-Capturing-ARP-with-PcapPlusPlus">¶ </a>Sending and Capturing ARP with PcapPlusPlus</h2>
+<p>Finally, let’s put everything together and send an ARP packet.</p>
+<p>For this section, see <a target="_blank" rel="noopener" href="https://github.com/tigercosmos/promiscuous-mode-tutorial/blob/master/arp.cpp">promiscuous-mode-tutorial/arp.cpp</a>。</p>
+<p>On the receiving side, we filter ARP packets and only pick ARP Reply packets:</p>
+<pre><code class="language-cpp">static void onPacketArrives(pcpp::RawPacket *packet, pcpp::PcapLiveDevice *dev, void *cookie)
+&#123;
+    // 把 RawPacket 變成分析過的 Packet
+    pcpp::Packet parsedPacket(packet);
+
+    // 檢查是否為 ARP 封包
+    if (parsedPacket.isPacketOfType(pcpp::ARP))
+    &#123;
+        pcpp::ArpLayer *arpLayer = parsedPacket.getLayerOfType&lt;pcpp::ArpLayer&gt;();
+
+        // 檢查 APR 是否為 APR Reply
+        if (be16toh(arpLayer-&gt;getArpHeader()-&gt;opcode) == pcpp::ARP_REPLY) // 要做 be16toh 因為網路的編碼是 Big Endian，一般電腦則是 Little Endian
+        &#123;
+            std::cout &lt;&lt; arpLayer-&gt;getSenderIpAddr() &lt;&lt; &quot;: &quot; &lt;&lt; arpLayer-&gt;getSenderMacAddress() &lt;&lt; std::endl;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>On the sending side, we change our source IP to match the target IP’s subnet. This is because some devices configure a subnet mask, and then we must change the source IP to “trick” the device we want to probe.</p>
+<pre><code>void sendARPRequest(const std::string &amp;dstIpAddr, pcpp::PcapLiveDevice *dev)
+&#123;
+    // Create an ARP packet and change its fields
+    pcpp::Packet arpRequest(500);
+
+    // 把來源 IP 換一個跟目標同域的任一 IP
+    std::string srcIPAddr = dstIpAddr;
+    while (srcIPAddr.back() != '.')
+    &#123;
+        srcIPAddr.pop_back();
+    &#125;
+    srcIPAddr.push_back('2'); // 隨意換一個數字，不要跟目標一樣就好
+
+    pcpp::MacAddress macSrc = dev-&gt;getMacAddress();
+    pcpp::MacAddress macDst(0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+    pcpp::EthLayer ethLayer(macSrc, macDst, (uint16_t)PCPP_ETHERTYPE_ARP);
+    pcpp::ArpLayer arpLayer(pcpp::ARP_REQUEST,
+                            macSrc,     // 來源 MAC，不一定要是真的
+                            macDst,     // 目標 MAC
+                            pcpp::IPv4Address(srcIPAddr),  // 來源 IP，一樣可以造假
+                            pcpp::IPv4Address(dstIpAddr)); // 目標 IP
+
+    arpRequest.addLayer(&amp;ethLayer);
+    arpRequest.addLayer(&amp;arpLayer);
+    arpRequest.computeCalculateFields();
+
+    // 發送 ARP
+    dev-&gt;sendPacket(&amp;arpRequest);
+&#125;
+</code></pre>
+<p>Run the program:</p>
+<pre><code class="language-sh">$ sudo ./arp eth0 172.22.240.1
+172.22.240.1: 00:15:5d:0c:4f:60
+</code></pre>
+<p>We successfully get the answer!</p>
+<p>We can also observe the process with tcpdump:</p>
+<pre><code class="language-sh">$ sudo tcpdump -i eth0 arp -vv -x
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
+15:45:53.569243 ARP, Ethernet (len 6), IPv4 (len 4), Request who-has LAPTOP-P7QFA4QB.mshome.net tell 172.22.240.2, length 28
+        0x0000:  0001 0800 0604 0001 0015 5dc6 5986 ac16
+        0x0010:  f002 0000 0000 0000 ac16 f001
+15:45:53.569456 ARP, Ethernet (len 6), IPv4 (len 4), Reply LAPTOP-P7QFA4QB.mshome.net is-at 00:15:5d:0c:4f:60 (oui Unknown), length 28
+        0x0000:  0001 0800 0604 0002 0015 5d0c 4f60 ac16
+        0x0010:  f001 0015 5dc6 5986 ac16 f002
+</code></pre>
+<p>Here, <code>LAPTOP-P7QFA4QB.mshome.net</code> corresponds to <code>172.22.240.1</code>. We indeed get the correct result <code>00:15:5d:0c:4f:60</code>!</p>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>With the help of PcapPlusPlus, we can analyze network packets in promiscuous mode and collect and inspect packets in network traffic. Promiscuous mode enables a network interface to monitor the entire network: it can capture not only packets addressed to the local interface, but also packets sent by other hosts. However, be aware that enabling promiscuous mode comes with security risks.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/network/">
+                network
+            </a>,&nbsp;
+        
+            <a href="/en/tags/promiscuous-mode/">
+                promiscuous mode
+            </a>,&nbsp;
+        
+            <a href="/en/tags/network-analysis/">
+                network analysis
+            </a>,&nbsp;
+        
+            <a href="/en/tags/pcap/">
+                pcap
+            </a>,&nbsp;
+        
+            <a href="/en/tags/pcapplusplus/">
+                PcapPlusPlus
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#An-Introduction-to-PcapPlusPlus"><span class="toc-text">An Introduction to PcapPlusPlus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Installing-PcapPlusPlus"><span class="toc-text">Installing PcapPlusPlus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Example-Code-for-This-Post"><span class="toc-text">Example Code for This Post</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMake-Setup"><span class="toc-text">CMake Setup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PcapPlusPlus-Hello-World"><span class="toc-text">PcapPlusPlus Hello World</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Capturing-Packets-with-PcapPlusPlus"><span class="toc-text">Capturing Packets with PcapPlusPlus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sending-Packets-with-PcapPlusPlus"><span class="toc-text">Sending Packets with PcapPlusPlus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sending-and-Capturing-ARP-with-PcapPlusPlus"><span class="toc-text">Sending and Capturing ARP with PcapPlusPlus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/09/system/intel-gpu-opencl/">
+        How to Run OpenCL on an Intel GPU
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

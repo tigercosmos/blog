@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="parallel programming,reentrancy,thread-safe,system," />
+    <meta name="description"
+        content="This post explains reentrancy and thread safety in detail, with code examples." />
+    <title>Neutrino&#39;s Blog: Understanding Reentrancy and Thread Safety in Depth </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2021/05/system/reentrant-and-thread-safe-code/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2021/05/system/reentrant-and-thread-safe-code/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2021/05/system/reentrant-and-thread-safe-code/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2021/05/system/reentrant-and-thread-safe-code/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2021/05/system/reentrant-and-thread-safe-code/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2021/05/system/reentrant-and-thread-safe-code/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Understanding Reentrancy and Thread Safety in Depth
+    </h2>
+    <ul class="post-date">
+        <li>
+            2021-05-10
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2021/05/system/reentrant-and-thread-safe-code/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2021/05/system/reentrant-and-thread-safe-code/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-Concurrency-vs-Parallelism"><a class="header-anchor" href="#1-Concurrency-vs-Parallelism">¶ </a>1. Concurrency vs Parallelism</h2>
+<p>Concurrency and parallelism are closely related concepts. Concurrency means different computations make progress in an interleaved way: compared to sequential execution, one computation can start before another finishes. Parallelism means the same computation is split into parts and executed simultaneously.</p>
+<p>At first glance they seem similar. Using the definition from <a target="_blank" rel="noopener" href="https://www.oreilly.com/library/view/the-art-of/9780596802424/">The Art of Concurrency</a>:</p>
+<blockquote>
+<p>A system is said to be concurrent if it can support two or more actions in progress at the same time. A system is said to be parallel if it can support two or more actions executing simultaneously. The key concept and difference between these definitions is the phrase “in progress.”</p>
+</blockquote>
+<p>In other words, the key difference is whether actions are merely “in progress” (interleaved) versus actually executing at exactly the same time (simultaneously).</p>
+<p>Concurrency can be achieved even on a single-core CPU by interleaving tasks. Interestingly, concurrency can also be implemented on multi-core CPUs in a parallel manner. In a sense, concurrency and parallelism can look similar, but the phrase “in progress” captures the distinction well. Also, the word “simultaneously” implies “happening or being done at exactly the same time”.</p>
+<p>If you are not familiar with concurrency and parallelism, consider reviewing “Threads &amp; Concurrency” in Chapter 4 of Operating System Concepts, or the “Concurrency” chapter of <a target="_blank" rel="noopener" href="https://pages.cs.wisc.edu/~remzi/OSTEP/">Operating Systems: Three Easy Pieces</a>.</p>
+<p>In both concurrency and parallelism, to ensure correctness of program logic and data, we need to discuss what reentrancy and thread safety actually mean.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/117589349-823b5980-b15b-11eb-825d-55307d4c044b.png" alt="Cover"></p>
+<h2 id="2-Reentrancy"><a class="header-anchor" href="#2-Reentrancy">¶ </a>2. Reentrancy</h2>
+<p>In computer science, <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%AF%E9%87%8D%E5%85%A5">reentrancy</a> means that code in a program or subroutine can be “interrupted at any time (interruption), then the operating system schedules and runs other code, and when execution returns to the original code, it still works correctly.”</p>
+<p>Why can a program be interrupted? It can be caused by internal behavior such as <code>jump</code> or <code>call</code>, or by external events such as interrupts or signals. In other words, interrupts can happen regardless of whether an OS exists: even without an OS, the program’s own control flow may introduce reentrant situations. So reentrancy still matters.</p>
+<p>Reentrancy can be discussed even in a single-thread scenario: for example, can a program resume correctly after being interrupted by the OS? Put differently, if execution must continue after an interruption, the code should be reentrant—otherwise the result may be wrong after returning. Here is an interesting related question: <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/18132580/does-an-interrupt-handler-have-to-be-reentrant">Does an interrupt handler have to be reentrant?</a> The short answer is: unless your handler is nested (one handler can interrupt another), you usually do not need to worry. For example, Linux uses masking to prevent another interrupt from interrupting the current interrupt.</p>
+<p>Reentrancy is important because in concurrent programming, we need to ensure that asynchronous programs remain correct when switching tasks; interruptions should not break correctness. Also, when using recursion, we expect the code to be reentrant; otherwise it may fail.</p>
+<h2 id="3-Thread-Safety"><a class="header-anchor" href="#3-Thread-Safety">¶ </a>3. Thread Safety</h2>
+<p>On the other hand, <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-tw/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8">thread safety</a> means that when a function or library is called in a multi-threaded environment, it can correctly handle shared variables (global variables, shared variables) across threads so that the program’s functionality completes correctly.</p>
+<p>Thread safety is important in parallel programming because parallel computation often involves shared data. When shared data is accessed concurrently, it is easy to introduce <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Race_condition#Computing">race conditions</a>. Therefore, ensuring correct reads and writes across threads is critical.</p>
+<p>So thread safety is fundamentally about avoiding data races. You can achieve it via reentrancy, but also via thread-local data, immutable objects, mutexes, or atomic operations.</p>
+<h2 id="4-Reentrancy-vs-Thread-Safety"><a class="header-anchor" href="#4-Reentrancy-vs-Thread-Safety">¶ </a>4. Reentrancy vs Thread Safety</h2>
+<p>So the key question: what is the relationship between reentrancy and thread safety?</p>
+<p>They are not equivalent, but they overlap. Reentrancy may or may not be thread-safe, and thread-safe code may or may not be reentrant.</p>
+<p>Below I use code examples to explain the different cases.</p>
+<h3 id="4-1-Reentrancy-❌-Thread-safe-❌"><a class="header-anchor" href="#4-1-Reentrancy-❌-Thread-safe-❌">¶ </a>4.1 Reentrancy ❌ | Thread-safe ❌</h3>
+<pre><code class="language-c">int t;
+
+void swap(int *x, int *y) &#123;
+  t = *x;
+  *x = *y;
+  
+  // 這邊可能呼叫 my_func();
+  
+  *y = t;
+&#125;
+
+void my_func() &#123;
+  int x = 1, y = 2;
+  swap(&amp;x, &amp;y);
+&#125;
+</code></pre>
+<ul>
+<li>❌ Reentrancy
+<ul>
+<li><code>t</code> is external. If <code>swap</code> is interrupted midway and someone else modifies <code>t</code>, then when execution returns, the behavior becomes incorrect.</li>
+</ul>
+</li>
+<li>❌ Thread-safe
+<ul>
+<li><code>t</code> is global.</li>
+<li>When another thread calls <code>my_func</code>, <code>t</code> may belong to the same execution context, so the behavior of <code>t</code> becomes unpredictable.</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-2-Reentrancy-❌-Thread-safe-✅"><a class="header-anchor" href="#4-2-Reentrancy-❌-Thread-safe-✅">¶ </a>4.2 Reentrancy ❌ | Thread-safe ✅</h3>
+<pre><code class="language-c">#include &lt;threads.h&gt;
+
+// `t` 是每個 thread 自己的
+thread_local int t;
+
+void swap(int *x, int *y) &#123;
+  t = *x;
+  *x = *y;
+
+  // 這邊可能呼叫 my_func();
+
+  *y = t;
+&#125;
+
+void my_func() &#123;
+  int x = 1, y = 2;
+  swap(&amp;x, &amp;y);
+&#125;
+</code></pre>
+<ul>
+<li>❌ Reentrancy
+<ul>
+<li>Even though <code>t</code> belongs to the thread, within the same thread, nested calls can still change <code>t</code> across multiple invocations.</li>
+</ul>
+</li>
+<li>✅ Thread-safe
+<ul>
+<li>Now <code>t</code> is per-thread; other threads cannot affect it.</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-3-Reentrancy-✅-Thread-safe-❌"><a class="header-anchor" href="#4-3-Reentrancy-✅-Thread-safe-❌">¶ </a>4.3 Reentrancy ✅ | Thread-safe ❌</h3>
+<p>This is a deliberately constructed scenario, but you can imagine it happening in a complex program.</p>
+<pre><code class="language-c">int t;
+
+void swap(int *x, int *y) &#123;
+  int s;
+  // 存下全域變數
+  s = t;
+  
+  t = *x;
+  *x = *y;
+
+  // `my_func()` 可以在這邊被呼叫
+
+  *y = t;
+
+  // 恢復全域變數
+  t = s;
+&#125;
+
+void my_func() &#123;
+  int x = 1, y = 2;
+  swap(&amp;x, &amp;y);
+&#125;
+</code></pre>
+<ul>
+<li>✅ Reentrancy
+<ul>
+<li>Before and after <code>swap</code>, <code>t</code> remains unchanged. The key here is that <code>swap</code> does not affect external state; all state changes stay within <code>swap</code>.</li>
+</ul>
+</li>
+<li>❌ Thread-safe
+<ul>
+<li><code>t</code> is a global variable, for the same reason as earlier.</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-4-Reentrancy-✅-Thread-safe-✅"><a class="header-anchor" href="#4-4-Reentrancy-✅-Thread-safe-✅">¶ </a>4.4 Reentrancy ✅ | Thread-safe ✅</h3>
+<p>The fix in this example is surprisingly simple: remove the global variable.</p>
+<pre><code class="language-c">void swap(int *x, int *y) &#123;
+  int t = *x;
+  *x = *y;
+
+  // `my_func()` 執行
+  *y = t;
+&#125;
+
+void my_func() &#123;
+  int x = 1, y = 2;
+  swap(&amp;x, &amp;y);
+&#125;
+
+</code></pre>
+<ul>
+<li>✅ Reentrancy
+<ul>
+<li>All data lives on the stack, so it will not be impacted.</li>
+</ul>
+</li>
+<li>✅ Thread-safe
+<ul>
+<li>There is no shared data, so there is no data race.</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-Principles-for-Reentrancy-and-Thread-Safety"><a class="header-anchor" href="#5-Principles-for-Reentrancy-and-Thread-Safety">¶ </a>5. Principles for Reentrancy and Thread Safety</h2>
+<p>After the examples above, if you want to write reentrant or thread-safe code, you can follow these principles:</p>
+<p>Reentrancy:</p>
+<ul>
+<li>Must not contain static (global) non-constant data.</li>
+<li>Must not return the address of static (global) non-constant data.</li>
+<li>Must only operate on data provided by the caller (passed via parameters).</li>
+<li>Any functions it calls must also be reentrant.</li>
+</ul>
+<p>Thread safety:</p>
+<ul>
+<li>Fundamentally, avoid race conditions.</li>
+<li>Locks are your good friend.</li>
+</ul>
+<h2 id="6-Reentrant-and-Thread-Safe-Libraries"><a class="header-anchor" href="#6-Reentrant-and-Thread-Safe-Libraries">¶ </a>6. Reentrant and Thread-Safe Libraries</h2>
+<p>Reentrant and thread-safe libraries are important when we write parallel code or develop asynchronous programs.</p>
+<p>In the GNU C Library, there are safety levels such as MT-Safe (Multi-Thread-Safe), AS-Safe (Async-Signal-Safe), AC-Safe (Async-Cancel-Safe), and various unsafe levels.</p>
+<p>Some standard C library functions, such as <code>ctime</code> and <code>strtok</code>, are not reentrant. But they often have a corresponding reentrant version whose name typically has an <code>_r</code> suffix, such as <code>strtok_r</code> or <code>rand_r</code>.</p>
+<p>In fact, we can also check via <code>man</code>. For example, on Ubuntu 16, I ran <code>man rand_r</code> and got the following snippet:</p>
+<pre><code>ATTRIBUTES
+       For an explanation of the terms used in this section, see attributes(7).
+
+       ┌──────────────────────────┬───────────────┬─────────┐
+       │Interface                 │ Attribute     │ Value   │
+       ├──────────────────────────┼───────────────┼─────────┤
+       │rand(), rand_r(), srand() │ Thread safety │ MT-Safe │
+       └──────────────────────────┴───────────────┴─────────┘
+</code></pre>
+<p>We can see <code>rand_r</code> is MT-Safe, which means we can use it in parallel programs. MT-Safe emphasizes that in a multi-threaded environment, the expected functionality (here, random number generation) is still correct, and there should not be additional functional safety bugs introduced by multi-threading.</p>
+<p>However, note that MT-Safe does not mean “completely safe” in all situations. For example, behavior may still be surprising when repeatedly calling MT-Safe functions in certain patterns.</p>
+<p>You might ask: what if I use a non-MT-Safe function in a parallel program? Two things can happen. First, you may get incorrect results, because it is not safe. Second, performance may degrade, because it may contend on external state. For example, if you call <code>rand</code> (instead of <code>rand_r</code>) in a parallel program, you may find random number generation becomes extremely slow (and may even be incorrect), because <code>rand</code> uses <code>static</code> state internally.</p>
+<h2 id="7-References"><a class="header-anchor" href="#7-References">¶ </a>7. References</h2>
+<ol>
+<li>cjwind’s note. 2017. <a target="_blank" rel="noopener" href="http://www.cjwind.idv.tw/Reentrancy-and-Thread-safety/">Reentrancy and Thread-safety</a></li>
+<li>Mike Choi. 2017. <a target="_blank" rel="noopener" href="https://deadbeef.me/2017/09/reentrant-threadsafe">Reentrant and Threadsafe Code</a></li>
+<li>IBM. 1997. <a target="_blank" rel="noopener" href="https://sites.ualberta.ca/dept/chemeng/AIX-43/share/man/info/C/a_doc_lib/aixprggd/genprogc/writing_reentrant_thread_safe_code.htm">AIX Version 4.3 General Programming Concepts: Writing Reentrant and Thread-safe Code</a></li>
+<li><a target="_blank" rel="noopener" href="http://GNU.ORG">GNU.ORG</a>. 2021. <a target="_blank" rel="noopener" href="https://www.gnu.org/software/libc/manual/html_node/POSIX-Safety-Concepts.html">POSIX Safety Concepts</a></li>
+</ol>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/parallel-programming/">
+                parallel programming
+            </a>,&nbsp;
+        
+            <a href="/en/tags/reentrancy/">
+                reentrancy
+            </a>,&nbsp;
+        
+            <a href="/en/tags/thread-safe/">
+                thread-safe
+            </a>,&nbsp;
+        
+            <a href="/en/tags/system/">
+                system
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Concurrency-vs-Parallelism"><span class="toc-text">1. Concurrency vs Parallelism</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Reentrancy"><span class="toc-text">2. Reentrancy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Thread-Safety"><span class="toc-text">3. Thread Safety</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Reentrancy-vs-Thread-Safety"><span class="toc-text">4. Reentrancy vs Thread Safety</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Reentrancy-%E2%9D%8C-Thread-safe-%E2%9D%8C"><span class="toc-text">4.1 Reentrancy ❌ | Thread-safe ❌</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Reentrancy-%E2%9D%8C-Thread-safe-%E2%9C%85"><span class="toc-text">4.2 Reentrancy ❌ | Thread-safe ✅</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-Reentrancy-%E2%9C%85-Thread-safe-%E2%9D%8C"><span class="toc-text">4.3 Reentrancy ✅ | Thread-safe ❌</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-Reentrancy-%E2%9C%85-Thread-safe-%E2%9C%85"><span class="toc-text">4.4 Reentrancy ✅ | Thread-safe ✅</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Principles-for-Reentrancy-and-Thread-Safety"><span class="toc-text">5. Principles for Reentrancy and Thread Safety</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Reentrant-and-Thread-Safe-Libraries"><span class="toc-text">6. Reentrant and Thread-Safe Libraries</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-References"><span class="toc-text">7. References</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/09/system/intel-gpu-opencl/">
+        How to Run OpenCL on an Intel GPU
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

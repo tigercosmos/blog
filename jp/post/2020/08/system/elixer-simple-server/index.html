@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="http server,elixir," />
+    <meta name="description"
+        content="本記事では Elixir でシンプルな HTTP サーバーを作りながら、Mix によるプロジェクト作成、Hex による依存管理、Elixir の言語特性の説明、Cowboy/Plug/Poison などのパッケージの利用方法、そして実行方法まで、Elixir プロジェクト開発の練習として一通り紹介します。" />
+    <title>Neutrino&#39;s Blog: Elixir で簡易 HTTP サーバーを作る </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/08/system/elixer-simple-server/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/08/system/elixer-simple-server/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/08/system/elixer-simple-server/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/08/system/elixer-simple-server/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/08/system/elixer-simple-server/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2020/08/system/elixer-simple-server/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Elixir で簡易 HTTP サーバーを作る
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-08-24
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/08/system/elixer-simple-server/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2020/08/system/elixer-simple-server/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="イントロダクション"><a class="header-anchor" href="#イントロダクション">¶ </a>イントロダクション</h2>
+<p><a target="_blank" rel="noopener" href="https://elixir-lang.org/">Elixir</a> は動的型付けの関数型プログラミング言語で、スケーラブルで保守性の高いシステムを構築するために設計されています。</p>
+<p>Elixir は Erlang VM 上に構築されており、低レイテンシ・分散・フォールトトレラント（fault-tolerant）が求められるシステムに向いています。また、Web 開発、組込みソフトウェア、データ処理、マルチメディア処理など幅広い用途で利用できます。「<a target="_blank" rel="noopener" href="https://serokell.io/blog/history-of-erlang-and-elixir">Game of Phones: History of Erlang and Elixir</a>」という記事では Elixir の背景が紹介されており、読む価値があります。</p>
+<p>Elixir は書いていてとても面白い言語です。実際に触ってみると、JavaScript や Rust が関数型プログラミングから多くの概念を取り入れていることに気づきます。そのため、Elixir をゼロから学ぶ過程でも、Pattern Matching や Enumerable といった FP の特徴は、以前に触れた経験があるものとして自然に理解できます。</p>
+<p><a target="_blank" rel="noopener" href="https://elixir-lang.org/getting-started/introduction.html">公式の言語ガイド</a> を読んだあと、小さなプロジェクトを書いてより慣れる必要があると感じたため、Elixir で簡単な HTTP サーバーを作る方法を調べました。</p>
+<span id="more"></span>
+<p>本文のサンプルは Wes Dunn の「<a target="_blank" rel="noopener" href="https://www.jungledisk.com/blog/2018/03/19/tutorial-a-simple-http-server-in-elixir/">Elixir Programming: Creating a Simple HTTP Server in Elixir</a>」を参考にしています。ただし、原文の一部を削減し、原文にはない内容も補足しています。簡易 HTTP サーバーの作成を通して、Elixir プロジェクト開発の練習をしていきましょう。</p>
+<p>本記事は、ぜひ実際に手を動かしながら進めることを強くおすすめします。Elixir 開発の感覚がぐっと掴みやすくなります。</p>
+<h2 id="Elixir-環境のセットアップ"><a class="header-anchor" href="#Elixir-環境のセットアップ">¶ </a>Elixir 環境のセットアップ</h2>
+<p>Elixir のインストールは <a target="_blank" rel="noopener" href="https://elixir-lang.org/install.html">公式ドキュメント</a> を参照してください。</p>
+<p>macOS の場合は <code>brew install elixir</code> でインストールできます。</p>
+<p>Linux の場合は <code>yum install elixir</code> または <code>apt install elixir</code> を使えます。ただ、私の場合 apt では失敗しました。その際は <code>asdf</code> というバージョン管理ツール（なかなか攻めた名前）を使ってインストールする方法もあります。こちらの <a target="_blank" rel="noopener" href="https://gist.github.com/rubencaro/6a28138a40e629b06470">Gist</a> が参考になります。</p>
+<h2 id="Elixir-プロジェクトの準備"><a class="header-anchor" href="#Elixir-プロジェクトの準備">¶ </a>Elixir プロジェクトの準備</h2>
+<p>まず Elixir プロジェクトを作成します。</p>
+<pre><code class="language-shell">$ mkdir simple_server &amp;&amp; cd simple_server
+$ mix new . --sup --app simple_server
+</code></pre>
+<p><code>mix</code> は Elixir のプロジェクト管理ツールです。<code>mix new</code> の後には作成先を指定します。<code>.</code> はカレントディレクトリを意味します（すでに <code>simple_server</code> に入っているため）。<code>--app simple_server</code> はアプリケーション名の指定です。</p>
+<p><code>--sup</code> は「Supervisor」アプリケーションであることを意味します。つまり Elixir がこのプロセスとその子孫プロセスを監視します。HTTP サーバーではリクエスト処理のプロセスを管理する必要があるため、Supervisor を使う意義があります（定義は下記参照）。</p>
+<p>Supervisor について：</p>
+<blockquote>
+<p>The act of supervising a process includes three distinct responsibilities. The first one is to start child processes. Once a child process is running, the supervisor may restart a child process, either because it terminated abnormally or because a certain condition was reached. For example, a supervisor may restart all children if any child dies. Finally, a supervisor is also responsible for shutting down the child processes when the system is shutting down</p>
+</blockquote>
+<p>実行すると次のようになります：</p>
+<pre><code class="language-shell">$ mix new . --sup --app simple_server
+* creating README.md
+* creating .formatter.exs
+* creating .gitignore
+* creating mix.exs
+* creating lib
+* creating lib/simple_server.ex
+* creating lib/simple_server/application.ex
+* creating test
+* creating test/test_helper.exs
+* creating test/simple_server_test.exs
+
+Your Mix project was created successfully.
+You can use &quot;mix&quot; to compile it, test it, and more:
+
+    mix test
+
+Run &quot;mix help&quot; for more commands.
+</code></pre>
+<h2 id="Hex-による依存管理"><a class="header-anchor" href="#Hex-による依存管理">¶ </a>Hex による依存管理</h2>
+<p>Elixir は Hex でパッケージ管理を行います。まずシステムに Hex をインストールします：</p>
+<pre><code class="language-shell">$ mix local.hex
+Are you sure you want to install &quot;https://repo.hex.pm/installs/1.10.0/hex-0.20.5.ez&quot;? [Yn] y
+* creating /Users/tigercosmos/.mix/archives/hex-0.20.5
+</code></pre>
+<p><code>mix local.hex</code> は Hex をシステムにインストールするコマンドです。<code>Users/tigercosmos</code> 配下の <code>.mix</code> に <code>hex</code> が追加されているのが確認できます。</p>
+<p>ここで使う主なパッケージは次の通りです：</p>
+<ul>
+<li>Cowboy: Erlang/OTP の HTTP サーバーパッケージ</li>
+<li>Plug: Erlang VM と接続するためのレイヤ</li>
+<li>plug_cowboy: Cowboy のアダプタ</li>
+<li>Poison: JSON 解析</li>
+</ul>
+<p>Elixir の <code>mix.exs</code> は Node.js の <code>package.json</code> に相当し、基本的にはプロジェクト設定ファイルです。</p>
+<p><code>mix.exs</code> の <code>deps</code> 関数を探し、<code>[]</code> の中に次を追加します：</p>
+<pre><code>&#123;:plug_cowboy, &quot;~&gt; 2.3&quot;&#125;,
+&#123;:cowboy, &quot;~&gt; 2.8&quot;&#125;,
+&#123;:plug, &quot;~&gt; 1.10&quot;&#125;,
+&#123;:poison, &quot;~&gt; 3.1&quot;&#125;
+</code></pre>
+<p>次に <code>mix.exs</code> の <code>application</code> を次のように変更します：</p>
+<pre><code>def application do
+[
+  extra_applications: [:logger, :cowboy, :plug, :poison],
+  mod: &#123;SimpleServer.Application, []&#125;
+]
+end
+</code></pre>
+<p>変更後、<code>mix deps.get</code> を実行して依存関係を取得します：</p>
+<pre><code class="language-shell">$ mix deps.get
+Resolving Hex dependencies...
+Dependency resolution completed:
+Unchanged:
+  cowboy 2.8.0
+  cowlib 2.9.1
+  mime 1.4.0
+  plug 1.10.4
+  plug_cowboy 2.3.0
+  plug_crypto 1.1.2
+  poison 3.1.0
+  ranch 1.7.1
+  telemetry 0.4.2
+...
+...
+</code></pre>
+<h2 id="サーバー設定"><a class="header-anchor" href="#サーバー設定">¶ </a>サーバー設定</h2>
+<p>次に <code>lib/simple_server/application.ex</code> を開き、<code>start</code> 内の <code>children</code> を次のように変更します：</p>
+<pre><code>children = [
+  Plug.Adapters.Cowboy.child_spec(
+    scheme: :http,
+    plug: SimpleServer.Router,
+    options: [port: 8085]
+  )
+]
+</code></pre>
+<p>これは <code>Cowboy</code> でサーバーを起動し、HTTP の 8085 ポートを監視する設定です。<code>plug</code> はルーティング（Route）を定義する場所を指定します。</p>
+<p>続いてルーティング用のファイル <code>simple_server_router.ex</code> を作成します：</p>
+<pre><code class="language-shell">touch lib/simple_server/simple_server_router.ex
+</code></pre>
+<p>そして次を記述します：</p>
+<pre><code>defmodule SimpleServer.Router do
+  use Plug.Router
+  use Plug.Debugger
+  require Logger
+plug(Plug.Logger, log: :debug)
+
+
+plug(:match)
+
+plug(:dispatch)
+
+# &gt;&gt;&gt;
+# TODO: 加入路由！
+# &lt;&lt;&lt;
+
+end
+</code></pre>
+<p><code>SimpleServer.Router</code> モジュールを作り、<code>Plug</code> を使って Cowboy と接続します。Cowboy に接続が入ると Router が呼び出され、次に <code>:match</code> plug が走って <code>match/2</code> でルートを選択し、その後 <code>:dispatch</code> plug が処理をディスパッチして該当コードを実行します。</p>
+<h2 id="ルートの追加"><a class="header-anchor" href="#ルートの追加">¶ </a>ルートの追加</h2>
+<p>先ほどの TODO 部分に次のコードを挿入します：</p>
+<pre><code># &gt;&gt;&gt;
+
+  # 簡單的 GET
+  get &quot;/hello&quot; do
+    conn
+    |&gt; put_resp_content_type(&quot;text/plain&quot;)
+    |&gt; send_resp(200, &quot;Hello world&quot;)
+  end
+
+  # 基本的 POST 處理 JSON
+  post &quot;/post&quot; do
+    &#123;:ok, body, conn&#125; = read_body(conn)
+
+    body = Poison.decode!(body)
+
+    IO.inspect(body) # 印出 body
+
+    send_resp(conn, 201, &quot;created: #&#123;get_in(body, [&quot;message&quot;])&#125;&quot;)
+  end
+
+  # 沒匹配到的預設回應
+  match _ do
+    send_resp(conn, 404, &quot;not found&quot;)
+  end
+
+# &lt;&lt;&lt;
+</code></pre>
+<p>上のコードは概ね直感的です。ルーティングは Elixir の <a target="_blank" rel="noopener" href="https://elixir-lang.org/getting-started/pattern-matching.html">Pattern Matching</a>（模式匹配）を使って判定します。</p>
+<p><code>/hello</code> は単純な GET リクエストです。<code>Plug</code> は <a target="_blank" rel="noopener" href="https://github.com/elixir-plug/plug#the-plugconn-struct"><code>conn</code> Struct</a> を提供しており、これはリクエスト情報を表します。これを Pipe（<code>|&gt;</code>）で <code>put_resp_content_type</code> に渡し、さらに Pipe で <code>send_resp</code> に渡してレスポンスを返します。<a target="_blank" rel="noopener" href="https://elixir-lang.org/getting-started/enumerables-and-streams.html#the-pipe-operator">Pipe</a> は Elixir の面白い演算子で、データを順に関数へ渡していく点がシェルのパイプに似ています。</p>
+<p><code>/post</code> の部分では、<code>read_body</code> は <code>Plug</code> が提供する関数で、リクエストを分解します。Body を取り出して <code>Poison.decode!</code> で JSON を解析し、最後にレスポンスを返します。</p>
+<p>最後の <code>match _</code> は残りすべてを包含するデフォルトで、ここでは未定義パスに対して <code>404</code> を返すようにしています。</p>
+<h2 id="サーバー起動"><a class="header-anchor" href="#サーバー起動">¶ </a>サーバー起動</h2>
+<p>コードを変更し終えたら、サーバーを起動します：</p>
+<pre><code class="language-shell">$ mix run --no-halt
+$ iex -S mix # 互動模式
+</code></pre>
+<p><code>mix run</code> はプロジェクトを起動し、<code>mix.exs</code> を実行します。ただしデフォルトではコールバックが一度返ると VM が終了してしまうため、VM を動かし続けるには <code>--no-halt</code> を付けます。別の方法として <code>iex -S mix</code> もあり、こちらは対話的なシェルを開きます。<code>iex</code> により、プログラムが動作している状態で対話しながら操作できます。</p>
+<p>次のリクエストでテストできます：</p>
+<pre><code class="language-shell">$ curl -v &quot;http://localhost:8085/hello&quot;
+$ curl -v &quot;http://localhost:8085/should-be-404&quot;
+$ curl -v -H 'Content-Type: application/json' &quot;http://localhost:8085/post&quot; -d '&#123;&quot;message&quot;: &quot;hello world&quot; &#125;'
+</code></pre>
+<p>Elixir の出力は次のようになります：</p>
+<pre><code class="language-shell">23:53:47.295 [debug] GET /hello
+23:53:47.295 [debug] Sent 200 in 52µs
+
+23:53:53.553 [debug] GET /should-be-404
+23:53:53.553 [debug] Sent 404 in 89µs
+
+23:53:59.919 [debug] POST /post
+%&#123;&quot;message&quot; =&gt; &quot;hello world&quot;&#125;
+23:53:59.933 [debug] Sent 201 in 14ms
+</code></pre>
+<p>やった！期待通りの応答になっています。</p>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
+<p>本記事では Elixir でシンプルな HTTP サーバーを作りながら、Mix によるプロジェクト作成、Hex による依存管理、Elixir の言語特性の説明、Cowboy/Plug/Poison などのパッケージの利用方法、そして実行方法まで紹介しました。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/http-server/">
+                http server
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/elixir/">
+                elixir
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%A4%E3%83%B3%E3%83%88%E3%83%AD%E3%83%80%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3"><span class="toc-text">イントロダクション</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Elixir-%E7%92%B0%E5%A2%83%E3%81%AE%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97"><span class="toc-text">Elixir 環境のセットアップ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Elixir-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E6%BA%96%E5%82%99"><span class="toc-text">Elixir プロジェクトの準備</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hex-%E3%81%AB%E3%82%88%E3%82%8B%E4%BE%9D%E5%AD%98%E7%AE%A1%E7%90%86"><span class="toc-text">Hex による依存管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E8%A8%AD%E5%AE%9A"><span class="toc-text">サーバー設定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%AB%E3%83%BC%E3%83%88%E3%81%AE%E8%BF%BD%E5%8A%A0"><span class="toc-text">ルートの追加</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E8%B5%B7%E5%8B%95"><span class="toc-text">サーバー起動</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/09/system/intel-gpu-opencl/">
+        Intel GPU 上で OpenCL を動かす方法
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/07/c++/template-for-std-containter-conversion/">
+        C++ のテンプレート関数でコンテナ型を変換する（std::list&lt;int&gt; → std::vector&lt;double&gt;）
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

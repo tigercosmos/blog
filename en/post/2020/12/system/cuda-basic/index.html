@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="parallel programming,cuda,gpu," />
+    <meta name="description"
+        content="This post briefly introduces how to set up a CUDA development environment and explains a simple CUDA program example." />
+    <title>Neutrino&#39;s Blog: Setting Up a CUDA Development Environment and a Simple Program Example </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/12/system/cuda-basic/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/12/system/cuda-basic/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/12/system/cuda-basic/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/12/system/cuda-basic/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/12/system/cuda-basic/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2020/12/system/cuda-basic/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Setting Up a CUDA Development Environment and a Simple Program Example
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-12-10
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/12/system/cuda-basic/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2020/12/system/cuda-basic/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-Introduction"><a class="header-anchor" href="#1-Introduction">¶ </a>1. Introduction</h2>
+<p>GPUs were originally used for graphics. Later, with the emergence of General Purpose GPU computing (General Purpose GPU, GPGPU), GPUs became widely used for general computation. Because GPU architectures provide a massive number of threads, we can offload large-scale numerical computation to the GPU while keeping the control and logic on the CPU—this is a common GPGPU usage pattern. NVIDIA was the first company to propose the concept of GPGPU, and it introduced the <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/CUDA">CUDA</a> technology, which allows developers to drive GPUs for computation using C-like syntax.</p>
+<h2 id="2-Installing-CUDA"><a class="header-anchor" href="#2-Installing-CUDA">¶ </a>2. Installing CUDA</h2>
+<p>CUDA has many versions. If you simply run <code>apt install cuda</code>, you may not get the version you actually need.</p>
+<p>Besides writing CUDA programs directly, you may also want CUDA for PyTorch or TensorFlow. A better approach is to find the version you need on NVIDIA’s official website. Make sure you select the version on the <a target="_blank" rel="noopener" href="https://developer.nvidia.com/CUDA-TOOLKIT-ARCHIVE">CUDA Toolkit Archive</a> page; otherwise, NVIDIA’s website will redirect you to the latest version.</p>
+<p>You can follow the steps below to install it.</p>
+<h3 id="2-1-CUDA-Installation"><a class="header-anchor" href="#2-1-CUDA-Installation">¶ </a>2.1 CUDA Installation</h3>
+<p>Here I use CUDA 11.0 as an example. First, go to the Archive page, select 11.0, and then choose the options that match your environment.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/101561057-94c03400-39ff-11eb-9351-303e3cedc170.png" alt="CUDA 11.0 installation example"></p>
+<p>For example, the screenshot above selects x86 Ubuntu 20.04, and you can then choose runfile, deb local, or deb network.</p>
+<p>The differences are: a large standalone installer, a large installer packaged as a deb, and a deb installer that downloads everything from the network. Whether it’s a deb package affects whether you can manage it later via your package manager.</p>
+<p>I usually choose deb local, but you can pick whatever you prefer.</p>
+<p>After you select the options, the page conveniently provides a long list of commands. In practice, you can just run them as-is to finish the installation.</p>
+<p>CUDA 11.0 on Ubuntu 20.04 x86 installation steps:</p>
+<pre><code class="language-shell">wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda-repo-ubuntu2004-11-0-local_11.0.3-450.51.06-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu2004-11-0-local_11.0.3-450.51.06-1_amd64.deb
+sudo apt-key add /var/cuda-repo-ubuntu2004-11-0-local/7fa2af80.pub
+sudo apt-get update
+sudo apt-get -y install cuda
+</code></pre>
+<p>If <code>dpkg -i</code> has issues, you can also use <code>apt ./xxx.deb</code> as a replacement.</p>
+<h3 id="2-2-cuDNN-Installation"><a class="header-anchor" href="#2-2-cuDNN-Installation">¶ </a>2.2 cuDNN Installation</h3>
+<p>You can also install cuDNN. It is a library optimized for deep learning in CUDA, and you will need it if you use PyTorch. Remember to adjust the link for your OS; for example, <code>ubuntu18.04</code> means Ubuntu 18.</p>
+<pre><code class="language-shell">$ sudo bash -c 'echo &quot;deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /&quot; &gt; /etc/apt/sources.list.d/cuda_learn.list'
+$ sudo apt install libcudnn7
+</code></pre>
+<h3 id="2-3-OpenCL-Installation"><a class="header-anchor" href="#2-3-OpenCL-Installation">¶ </a>2.3 OpenCL Installation</h3>
+<p>If you installed CUDA, you can usually install OpenCL along the way as well, because on NVIDIA GPUs, OpenCL is backed by CUDA. Then you can run OpenCL programs directly later.</p>
+<pre><code class="language-shell">$ sudo apt install -y nvidia-opencl-dev
+$ sudo apt install opencl-headers
+</code></pre>
+<h3 id="2-4-System-Configuration"><a class="header-anchor" href="#2-4-System-Configuration">¶ </a>2.4 System Configuration</h3>
+<p>First, you <strong>must reboot</strong>. This is very important!!!</p>
+<p>After installation, remember to set up your paths. Add the following lines to <code>~/.bashrc</code>:</p>
+<pre><code class="language-shell">export PATH=$PATH:/usr/local/cuda/bin
+export CUDADIR=/usr/local/cuda
+</code></pre>
+<h3 id="2-5-Verify-Installation"><a class="header-anchor" href="#2-5-Verify-Installation">¶ </a>2.5 Verify Installation</h3>
+<p>Now you can check whether everything is installed correctly.</p>
+<p>If CUDA is installed properly, the following commands should all work.</p>
+<pre><code class="language-shell">$ nvidia-smi  # Driver 
+$ nvcc --version # CUDA
+$ /sbin/ldconfig -N -v $(sed 's/:/ /' &lt;&lt;&lt; $LD_LIBRARY_PATH) 2&gt;/dev/null | grep libcudnn # CuDNN
+</code></pre>
+<h3 id="2-6-Others"><a class="header-anchor" href="#2-6-Others">¶ </a>2.6 Others</h3>
+<p>If the installation method above doesn’t work for you, these articles may be helpful:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@ayush.goc/easy-installation-of-cuda-toolkit-on-ubuntu-18-04-7931394c1233">Easy installation of Cuda Toolkit on Ubuntu 18.04</a></li>
+<li><a target="_blank" rel="noopener" href="https://sh-tsang.medium.com/tutorial-cuda-v10-2-cudnn-v7-6-5-installation-ubuntu-18-04-3d24c157473f">Tutorial: CUDA v10.2 + CUDNN v7.6.5 Installation @ Ubuntu 18.04</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@stephengregory_69986/installing-cuda-10-1-on-ubuntu-20-04-e562a5e724a0">Installing CUDA 10.1 on Ubuntu 20.04</a></li>
+</ul>
+<h2 id="3-A-CUDA-Program-Example"><a class="header-anchor" href="#3-A-CUDA-Program-Example">¶ </a>3. A CUDA Program Example</h2>
+<p>The best way to learn CUDA is to read the official tutorial documentation, <a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html">CUDA C++ Programming Guide</a>, since it is NVIDIA’s own product. The book <a target="_blank" rel="noopener" href="https://www.tenlong.com.tw/products/9787111557685?list_name=srh">Multicore and GPU Programming: An Integrated Approach</a> by Gerassimos is also quite good and is suitable for beginners.</p>
+<p>Here is a simple example:</p>
+<p><code>matadd.cu</code>:</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;cuda.h&gt;
+#include &lt;cuda_runtime.h&gt;
+
+#define N 512
+#define BLOCK_SIZE 16
+
+// GPU 的 Kernel
+__global__ void MatAdd(float *A, float *B, float *C)
+&#123;
+    // 根據 CUDA 模型，算出當下 thread 對應的 x 與 y
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+
+    // 換算成線性的 index
+    int idx = j * N + i;
+
+    if (i &lt; N &amp;&amp; j &lt; N)
+    &#123;
+        C[idx] = A[idx] + B[idx];
+    &#125;
+&#125;
+
+int main()
+&#123;
+
+    float *h_A, *h_B, *h_C;
+    float *d_A, *d_B, *d_C;
+
+    int i;
+
+    // 宣告 Host 記憶體 (線性)
+    h_A = (float *)malloc(N * N * sizeof(float));
+    h_B = (float *)malloc(N * N * sizeof(float));
+    h_C = (float *)malloc(N * N * sizeof(float));
+
+    // 初始化 Host 的數值
+    for (i = 0; i &lt; (N * N); i++)
+    &#123;
+        h_A[i] = 1.0;
+        h_B[i] = 2.0;
+        h_C[i] = 0.0;
+    &#125;
+
+    // 宣告 Device (GPU) 記憶體
+    cudaMalloc((void **)&amp;d_A, N * N * sizeof(float));
+    cudaMalloc((void **)&amp;d_B, N * N * sizeof(float));
+    cudaMalloc((void **)&amp;d_C, N * N * sizeof(float));
+
+    // 將資料傳給 Device
+    cudaMemcpy(d_A, h_A, N * N * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B, N * N * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_C, h_C, N * N * sizeof(float), cudaMemcpyHostToDevice);
+
+    dim3 blockSize(BLOCK_SIZE, BLOCK_SIZE);
+    dim3 numBlock(N / BLOCK_SIZE, N / BLOCK_SIZE);
+
+    // 執行 MatAdd kernel
+    MatAdd&lt;&lt;&lt;numBlock, blockSize&gt;&gt;&gt;(d_A, d_B, d_C);
+
+    // 等待 GPU 所有 thread 完成
+    cudaDeviceSynchronize();
+
+    // 將 Device 的資料傳回給 Host
+    cudaMemcpy(h_C, d_C, N * N * sizeof(float), cudaMemcpyDeviceToHost);
+
+    // 驗證正確性
+    for (i = 0; i &lt; (N * N); i++)
+    &#123;
+        if (h_C[i] != 3.0)
+        &#123;
+            printf(&quot;Error:%f, idx:%d\n&quot;, h_C[i], i);
+            break;
+        &#125;
+    &#125;
+
+    printf(&quot;PASS\n&quot;);
+
+    // free memory
+
+    free(h_A);
+    free(h_B);
+    free(h_C);
+
+    cudaFree(d_A);
+    cudaFree(d_B);
+    cudaFree(d_C);
+
+    return 0;
+&#125;
+</code></pre>
+<p>In GPU computing, the smallest execution unit is called a kernel, which corresponds to the function executed by each thread on the GPU. That’s why we declare <code>__global__ void MatAdd()</code>: <code>__global__</code> tells the compiler this is a GPU function, and <code>MatAdd()</code> simply adds matrices A and B at the same index into C.</p>
+<p>Data is divided into the host side and the device side. Host refers to the CPU, and device refers to the GPU. Allocating memory on the host uses the normal <code>malloc</code>, while allocating GPU memory uses <code>cudaMalloc</code>.</p>
+<p>Since we want to move computation to the GPU, the host data must be copied to the GPU first via <code>cudaMemcpy</code> before we can run <code>MatAdd&lt;&lt;&lt;numBlock, blockSize&gt;&gt;&gt;</code>. After the computation, we need to copy the data back from the GPU to the CPU via <code>cudaMemcpy</code> so the host can use the results.</p>
+<p>When launching a kernel, the syntax <code>MatAdd&lt;&lt;&lt;numBlock, blockSize&gt;&gt;&gt;</code> is related to the GPU thread hierarchy.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/101697693-381e5100-3ab3-11eb-8ea7-d6698b9f8a31.png" alt="GPU thread grid"></p>
+<p>As shown above, a GPU contains many blocks, and each block contains many threads. Therefore, when launching a kernel, you must specify how many blocks to use and how many threads to use within each block.</p>
+<p>Once you roughly understand what is happening, you can compile and run:</p>
+<pre><code class="language-shell">$ nvcc matadd.cu; ./a.out
+PASS
+</code></pre>
+<p>While it is running, you can call <code>nvidia-smi</code> in another terminal window to see GPU usage by <code>matadd</code>.</p>
+<p>You can also use <code>nvprof</code> to take a look at CUDA performance:</p>
+<pre><code class="language-shell">$ nvprof ./a.out
+==27161== NVPROF is profiling process 27161, command: ./a.out
+PASS
+==27161== Profiling application: ./a.out
+==27161== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   70.06%  263.96us         3  87.986us  87.581us  88.285us  [CUDA memcpy HtoD]
+                   21.55%  81.181us         1  81.181us  81.181us  81.181us  [CUDA memcpy DtoH]
+                    8.40%  31.647us         1  31.647us  31.647us  31.647us  MatAdd(float*, float*, float*)
+      API calls:   98.65%  133.57ms         3  44.524ms  3.6540us  133.50ms  cudaMalloc
+                    0.78%  1.0564ms         4  264.10us  169.89us  383.89us  cudaMemcpy
+                    0.19%  256.03us         3  85.342us  20.249us  148.41us  cudaFree
+                    0.14%  187.38us         1  187.38us  187.38us  187.38us  cuDeviceTotalMem
+                    0.13%  169.85us        97  1.7510us     193ns  69.776us  cuDeviceGetAttribute
+                    0.07%  98.576us         1  98.576us  98.576us  98.576us  cudaDeviceSynchronize
+                    0.02%  29.226us         1  29.226us  29.226us  29.226us  cudaLaunchKernel
+                    0.02%  26.508us         1  26.508us  26.508us  26.508us  cuDeviceGetName
+                    0.00%  4.0950us         1  4.0950us  4.0950us  4.0950us  cuDeviceGetPCIBusId
+                    0.00%  1.3720us         3     457ns     266ns     811ns  cuDeviceGetCount
+                    0.00%  1.0800us         2     540ns     192ns     888ns  cuDeviceGet
+                    0.00%     365ns         1     365ns     365ns     365ns  cuDeviceGetUuid
+</code></pre>
+<p>The output above shows that most of the time is spent on data transfers, which makes sense. The computation itself is very simple, so the overhead is dominated by memory copies.</p>
+<h2 id="4-Conclusion"><a class="header-anchor" href="#4-Conclusion">¶ </a>4. Conclusion</h2>
+<p>This post briefly introduced how to set up a CUDA development environment and explained a simple CUDA program example. GPGPU can effectively accelerate computation for large-scale workloads, and many numerical libraries as well as machine learning and deep learning frameworks also use GPGPU to speed up their computations.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/parallel-programming/">
+                parallel programming
+            </a>,&nbsp;
+        
+            <a href="/en/tags/cuda/">
+                cuda
+            </a>,&nbsp;
+        
+            <a href="/en/tags/gpu/">
+                gpu
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Introduction"><span class="toc-text">1. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Installing-CUDA"><span class="toc-text">2. Installing CUDA</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-CUDA-Installation"><span class="toc-text">2.1 CUDA Installation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-cuDNN-Installation"><span class="toc-text">2.2 cuDNN Installation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-OpenCL-Installation"><span class="toc-text">2.3 OpenCL Installation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-System-Configuration"><span class="toc-text">2.4 System Configuration</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Verify-Installation"><span class="toc-text">2.5 Verify Installation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-Others"><span class="toc-text">2.6 Others</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-A-CUDA-Program-Example"><span class="toc-text">3. A CUDA Program Example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Conclusion"><span class="toc-text">4. Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/09/system/intel-gpu-opencl/">
+        How to Run OpenCL on an Intel GPU
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/07/c++/template-for-std-containter-conversion/">
+        Converting Between Container Types with C++ Template Functions (std::list&lt;int&gt; to std::vector&lt;double&gt;)
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

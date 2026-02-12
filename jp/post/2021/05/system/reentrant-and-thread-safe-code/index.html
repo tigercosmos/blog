@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="parallel programming,reentrancy,thread-safe,system," />
+    <meta name="description"
+        content="本記事では Reentrancy と Thread-safe を詳しく解説し、コード例も交えて説明します。" />
+    <title>Neutrino&#39;s Blog: Reentrancy と Thread-safe を深く理解する </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2021/05/system/reentrant-and-thread-safe-code/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2021/05/system/reentrant-and-thread-safe-code/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2021/05/system/reentrant-and-thread-safe-code/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2021/05/system/reentrant-and-thread-safe-code/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2021/05/system/reentrant-and-thread-safe-code/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2021/05/system/reentrant-and-thread-safe-code/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Reentrancy と Thread-safe を深く理解する
+    </h2>
+    <ul class="post-date">
+        <li>
+            2021-05-10
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2021/05/system/reentrant-and-thread-safe-code/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2021/05/system/reentrant-and-thread-safe-code/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-並行と平行"><a class="header-anchor" href="#1-並行と平行">¶ </a>1. 並行と平行</h2>
+<p>Concurrency（並行）と Parallelism（平行）は非常に似た概念です。前者は「異なる計算が並行に進む」こと、つまり逐次（Sequentially）実行に比べて、ある計算が終わる前に別の計算が開始され得ることを指します。後者は「同じ計算を分割して同時に実行する」ことを指します。</p>
+<p>一見すると両者はほとんど同じことを言っているように見えますが、<a target="_blank" rel="noopener" href="https://www.oreilly.com/library/view/the-art-of/9780596802424/">The Art of Concurrency</a> の定義では次のように区別されています：</p>
+<blockquote>
+<p>A system is said to be concurrent if it can support two or more actions in progress at the same time. A system is said to be parallel if it can support two or more actions executing simultaneously. The key concept and difference between these definitions is the phrase “in progress.”</p>
+</blockquote>
+<p>つまり、両者の鍵となる差は “in progress”（進行中）という表現にあります。並行は「複数の動作が進行中である」ことを許容し、平行は「複数の動作がまさに同時に実行されている」ことを意味します。さらに英語の simultaneously には “happening or being done at exactly the same time” という性質があります。</p>
+<p>並行化は単一コア（Single Core）でも、タスクを交互に実行することで実現できます。また興味深いことに、並行化はマルチコア上で平行に実行される形でも実現できます。ある意味、両者は似たように見えることもありますが、“in progress” という言葉が両者の違いを的確に表しています。</p>
+<p>並行と平行に不慣れな方は、Operating System Concepts 第 4 章「Threads &amp; Concurrency」や、<a target="_blank" rel="noopener" href="https://pages.cs.wisc.edu/~remzi/OSTEP/">Operating Systems: Three Easy Pieces</a> の「Concurrency」章を復習するとよいです。</p>
+<p>そして、並行／平行の世界では、プログラムの実行ロジックとデータの正しさを保証するために、Reentrancy と Thread-safe が何を意味するかを理解する必要があります。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/117589349-823b5980-b15b-11eb-825d-55307d4c044b.png" alt="Cover"></p>
+<h2 id="2-Reentrancy"><a class="header-anchor" href="#2-Reentrancy">¶ </a>2. Reentrancy</h2>
+<p>計算機科学における <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%AF%E9%87%8D%E5%85%A5">Reentrancy（可重入）</a> とは、あるプログラム（またはサブルーチン）のコードが「任意のタイミングで割り込み（Interruption）を受け、OS が別のコードをスケジュールして実行した後、元のコードに戻ってきても正しく動作する」性質を指します。</p>
+<p>そもそもなぜ割り込みが起きるのでしょうか。内部の制御フロー（<code>jump</code> や <code>call</code>）で起きることもあれば、外部イベント（割り込みやシグナル）で起きることもあります。つまり、割り込みは OS の有無とは無関係に起こり得ます。OS がなくても、プログラム自身の挙動で割り込みに似た状況は発生するため、Reentrancy の影響には注意が必要です。</p>
+<p>Reentrancy は単一スレッドでも議論できます。たとえば、OS によって中断された後に、そのまま正しく再開できるか？という問題です。言い換えると、中断後に継続して正しく実行できるためには、コードが Reentrant であるべきで、そうでなければ戻ってきたときに結果が壊れる可能性があります。関連して面白い問いとして「<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/18132580/does-an-interrupt-handler-have-to-be-reentrant">Interrupt handler は Reentrant である必要があるか？</a>」があります。簡単に言うと、ハンドラがネスト（ある割り込み処理中に別の割り込みが入る）しない限り、基本的には心配しなくてよいです。また Linux では、別の割り込みが現在の割り込みを中断しないようにマスクされます。</p>
+<p>Reentrancy が重要なのは、並行プログラミング（Concurrent Programming）において、非同期プログラム（Asynchronous Program）がタスク切り替えを行う際に、割り込みによって正しさが壊れないことを保証する必要があるからです。また、再帰（recursive call）を使うとき、通常は Reentrant であることを前提にしており、そうでなければ破綻します。</p>
+<h2 id="3-Thread-safe"><a class="header-anchor" href="#3-Thread-safe">¶ </a>3. Thread-safe</h2>
+<p>一方で <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-tw/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8">Thread-safe（スレッド安全）</a> とは、関数やライブラリがマルチスレッド環境で呼ばれたときに、共有変数（グローバル変数、共有変数）を複数スレッド間で正しく扱い、プログラムの機能が正しく完了する性質を指します。</p>
+<p>Thread-safe は平行プログラミングで特に重要です。平行計算では多くのデータが共有されることが多く、共有データを扱うと <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Race_condition#Computing">Race condition</a> が発生しやすいからです。したがって、各スレッドでデータの read/write を正しく行えるようにすることが鍵になります。</p>
+<p>Thread-safe は本質的には Data race を避けることです。その実現方法として Reentrancy を使うこともできますし、Thread-local data（そのスレッドにだけ存在するデータ）、Immutable objects（不変オブジェクト）、Mutex（相互排他）、Atomic operations（原子操作）などを使うこともできます。</p>
+<h2 id="4-Reentrancy-と-Thread-safe-の関係"><a class="header-anchor" href="#4-Reentrancy-と-Thread-safe-の関係">¶ </a>4. Reentrancy と Thread-safe の関係</h2>
+<p>ここが本題です。Reentrancy と Thread-safe の関係はどうなっているのでしょうか？</p>
+<p>両者は同一ではありませんが、一部重なりがあります。つまり Reentrancy は Thread-safe である場合もあればそうでない場合もあり、逆に Thread-safe も Reentrancy である場合とそうでない場合があります。</p>
+<p>以下ではコード例でそれぞれのケースを説明します。</p>
+<h3 id="4-1-Reentrancy-❌-Thread-safe-❌"><a class="header-anchor" href="#4-1-Reentrancy-❌-Thread-safe-❌">¶ </a>4.1 Reentrancy ❌ | Thread-safe ❌</h3>
+<pre><code class="language-c">int t;
+
+void swap(int *x, int *y) &#123;
+  t = *x;
+  *x = *y;
+  
+  // 這邊可能呼叫 my_func();
+  
+  *y = t;
+&#125;
+
+void my_func() &#123;
+  int x = 1, y = 2;
+  swap(&amp;x, &amp;y);
+&#125;
+</code></pre>
+<ul>
+<li>❌ Reentrancy
+<ul>
+<li><code>t</code> が外部にあるため、<code>swap</code> の途中で割り込みが入り、別の処理が <code>t</code> を変更すると、戻ってきたときの挙動が正しくなくなります。</li>
+</ul>
+</li>
+<li>❌ Thread-safe
+<ul>
+<li><code>t</code> はグローバルです。</li>
+<li>別スレッドが <code>my_func</code> を呼ぶと、<code>t</code> が同じ実行コンテキストに属してしまう可能性があり、挙動は予測不能になります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-2-Reentrancy-❌-Thread-safe-✅"><a class="header-anchor" href="#4-2-Reentrancy-❌-Thread-safe-✅">¶ </a>4.2 Reentrancy ❌ | Thread-safe ✅</h3>
+<pre><code class="language-c">#include &lt;threads.h&gt;
+
+// `t` 是每個 thread 自己的
+thread_local int t;
+
+void swap(int *x, int *y) &#123;
+  t = *x;
+  *x = *y;
+
+  // 這邊可能呼叫 my_func();
+
+  *y = t;
+&#125;
+
+void my_func() &#123;
+  int x = 1, y = 2;
+  swap(&amp;x, &amp;y);
+&#125;
+</code></pre>
+<ul>
+<li>❌ Reentrancy
+<ul>
+<li><code>t</code> はスレッドローカルですが、同じスレッド内でネストした呼び出しなどが起きると、複数回の呼び出しで <code>t</code> が書き換えられ得ます。</li>
+</ul>
+</li>
+<li>✅ Thread-safe
+<ul>
+<li><code>t</code> はスレッドごとに独立しており、他スレッドが <code>t</code> に影響を与えることはできません。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-3-Reentrancy-✅-Thread-safe-❌"><a class="header-anchor" href="#4-3-Reentrancy-✅-Thread-safe-❌">¶ </a>4.3 Reentrancy ✅ | Thread-safe ❌</h3>
+<p>これは意図的に作った状況ですが、プログラムが複雑だと似た状況が起き得ます。</p>
+<pre><code class="language-c">int t;
+
+void swap(int *x, int *y) &#123;
+  int s;
+  // 存下全域變數
+  s = t;
+  
+  t = *x;
+  *x = *y;
+
+  // `my_func()` 可以在這邊被呼叫
+
+  *y = t;
+
+  // 恢復全域變數
+  t = s;
+&#125;
+
+void my_func() &#123;
+  int x = 1, y = 2;
+  swap(&amp;x, &amp;y);
+&#125;
+</code></pre>
+<ul>
+<li>✅ Reentrancy
+<ul>
+<li><code>swap</code> の前後で <code>t</code> は元に戻ります。重要なのは <code>swap</code> が外部状態に影響を残さない点です。つまり、変数の変化は <code>swap</code> の中に閉じています。</li>
+</ul>
+</li>
+<li>❌ Thread-safe
+<ul>
+<li><code>t</code> はグローバル変数なので、理由は前と同じです。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-4-Reentrancy-✅-Thread-safe-✅"><a class="header-anchor" href="#4-4-Reentrancy-✅-Thread-safe-✅">¶ </a>4.4 Reentrancy ✅ | Thread-safe ✅</h3>
+<p>この例の解決は意外と簡単で、グローバル変数を消すだけです。</p>
+<pre><code class="language-c">void swap(int *x, int *y) &#123;
+  int t = *x;
+  *x = *y;
+
+  // `my_func()` 執行
+  *y = t;
+&#125;
+
+void my_func() &#123;
+  int x = 1, y = 2;
+  swap(&amp;x, &amp;y);
+&#125;
+
+</code></pre>
+<ul>
+<li>✅ Reentrancy
+<ul>
+<li>すべてのデータはスタック上にあり、外部から影響を受けません。</li>
+</ul>
+</li>
+<li>✅ Thread-safe
+<ul>
+<li>共有データがないため Data race が起きません。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-Reentrancy-と-Thread-safe-の原則"><a class="header-anchor" href="#5-Reentrancy-と-Thread-safe-の原則">¶ </a>5. Reentrancy と Thread-safe の原則</h2>
+<p>上の例を見た上で、Reentrant または Thread-safe なコードを書くには、次の原則を守るとよいです。</p>
+<p>Reentrancy：</p>
+<ul>
+<li>static（global）な非定数（non-constant）データを含まないこと。</li>
+<li>static（global）な非定数データのアドレスを返さないこと。</li>
+<li>呼び出し側（Caller）が提供するデータのみを処理すること（引数で受け取る）。</li>
+<li>呼び出す関数も Reentrant である必要があること。</li>
+</ul>
+<p>Thread-safe：</p>
+<ul>
+<li>基本的には Race condition を避ければよい</li>
+<li>Lock は友達</li>
+</ul>
+<h2 id="6-Reentrant-Thread-Safe-なライブラリ"><a class="header-anchor" href="#6-Reentrant-Thread-Safe-なライブラリ">¶ </a>6. Reentrant / Thread-Safe なライブラリ</h2>
+<p>Reentrant / Thread-Safe なライブラリは、平行プログラミングや非同期プログラム開発で重要です。</p>
+<p>GNU C Library には、MT-Safe（Multi-Thread-Safe）、AS-Safe（Async-Signal-Safe）、AC-Safe（Async-Cancel-Safe）などの安全レベルと、さまざまな非安全レベルがあります。</p>
+<p>標準 C ライブラリ関数のうち、<code>ctime</code> や <code>strtok</code> は Reentrant ではありません。ただし多くの場合、対応する Reentrant 版が用意されており、名前に <code>_r</code> サフィックスが付くことが多いです（例：<code>strtok_r</code> や <code>rand_r</code>）。</p>
+<p>また <code>man</code> コマンドでも確認できます。たとえば Ubuntu 16 で <code>man rand_r</code> を見ると次のような（抜粋）結果になります：</p>
+<pre><code>ATTRIBUTES
+       For an explanation of the terms used in this section, see attributes(7).
+
+       ┌──────────────────────────┬───────────────┬─────────┐
+       │Interface                 │ Attribute     │ Value   │
+       ├──────────────────────────┼───────────────┼─────────┤
+       │rand(), rand_r(), srand() │ Thread safety │ MT-Safe │
+       └──────────────────────────┴───────────────┴─────────┘
+</code></pre>
+<p>ここから <code>rand_r</code> が MT-Safe であることが分かります。これはマルチスレッド（MT）環境でも、期待する機能（ここでは乱数生成）が正しく動作し、マルチスレッド化による不具合（functional safety の破綻）が起きないことを強調します。</p>
+<p>ただし、<code>MT-Safe</code> は「完全に安全」を意味しません。たとえば MT-Safe な関数を連続して呼び出す場合、状況によっては予期しない挙動が起こり得ます。</p>
+<p>では、平行プログラムで MT-Safe ではない関数を使うとどうなるでしょうか。大きく 2 つの可能性があります。1 つ目は、そもそも安全ではないため誤った結果になる可能性があること。2 つ目は、外部状態を奪い合うことで性能が悪化する可能性があることです。たとえば平行プログラムで <code>rand_r</code> ではなく <code>rand</code> を呼ぶと、乱数生成が非常に遅くなったり（あるいは不正確になったり）することがあります。<code>rand</code> の実装には <code>static</code> が使われているからです。</p>
+<h2 id="7-参考資料"><a class="header-anchor" href="#7-参考資料">¶ </a>7. 参考資料</h2>
+<ol>
+<li>cjwind’s note. 2017. <a target="_blank" rel="noopener" href="http://www.cjwind.idv.tw/Reentrancy-and-Thread-safety/">Reentrancy and Thread-safety</a></li>
+<li>Mike Choi. 2017. <a target="_blank" rel="noopener" href="https://deadbeef.me/2017/09/reentrant-threadsafe">Reentrant and Threadsafe Code</a></li>
+<li>IBM. 1997. <a target="_blank" rel="noopener" href="https://sites.ualberta.ca/dept/chemeng/AIX-43/share/man/info/C/a_doc_lib/aixprggd/genprogc/writing_reentrant_thread_safe_code.htm">AIX Version 4.3 General Programming Concepts: Writing Reentrant and Thread-safe Code</a></li>
+<li><a target="_blank" rel="noopener" href="http://GNU.ORG">GNU.ORG</a>. 2021. <a target="_blank" rel="noopener" href="https://www.gnu.org/software/libc/manual/html_node/POSIX-Safety-Concepts.html">POSIX Safety Concepts</a></li>
+</ol>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/parallel-programming/">
+                parallel programming
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/reentrancy/">
+                reentrancy
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/thread-safe/">
+                thread-safe
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/system/">
+                system
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%A6%E8%A1%8C%E3%81%A8%E5%B9%B3%E8%A1%8C"><span class="toc-text">1. 並行と平行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Reentrancy"><span class="toc-text">2. Reentrancy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Thread-safe"><span class="toc-text">3. Thread-safe</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Reentrancy-%E3%81%A8-Thread-safe-%E3%81%AE%E9%96%A2%E4%BF%82"><span class="toc-text">4. Reentrancy と Thread-safe の関係</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Reentrancy-%E2%9D%8C-Thread-safe-%E2%9D%8C"><span class="toc-text">4.1 Reentrancy ❌ | Thread-safe ❌</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Reentrancy-%E2%9D%8C-Thread-safe-%E2%9C%85"><span class="toc-text">4.2 Reentrancy ❌ | Thread-safe ✅</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-Reentrancy-%E2%9C%85-Thread-safe-%E2%9D%8C"><span class="toc-text">4.3 Reentrancy ✅ | Thread-safe ❌</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-Reentrancy-%E2%9C%85-Thread-safe-%E2%9C%85"><span class="toc-text">4.4 Reentrancy ✅ | Thread-safe ✅</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Reentrancy-%E3%81%A8-Thread-safe-%E3%81%AE%E5%8E%9F%E5%89%87"><span class="toc-text">5. Reentrancy と Thread-safe の原則</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Reentrant-Thread-Safe-%E3%81%AA%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA"><span class="toc-text">6. Reentrant &#x2F; Thread-Safe なライブラリ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%8F%82%E8%80%83%E8%B3%87%E6%96%99"><span class="toc-text">7. 参考資料</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/09/system/intel-gpu-opencl/">
+        Intel GPU 上で OpenCL を動かす方法
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/07/c++/template-for-std-containter-conversion/">
+        C++ のテンプレート関数でコンテナ型を変換する（std::list&lt;int&gt; → std::vector&lt;double&gt;）
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
