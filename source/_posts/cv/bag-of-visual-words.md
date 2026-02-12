@@ -3,6 +3,8 @@ title: 使用 Bag of Visual Words 做圖片分類
 date: 2020-06-20 14:00:00
 tags: [電腦視覺, computer vision, bag of words, bag of visual words, python]
 des: "本篇介紹如何用 Bag of Visual Words (BoVW) 模型來做圖片辨識，先將取得圖片集的特徵篩選出有哪些群集，然後對每張照片根據其特徵得到他們的 Histogram，最後用分類器來辨識測試圖片屬於哪一種類的圖片。"
+lang: zh
+translation_key: bag-of-visual-words
 ---
 
 ## 1. 簡介

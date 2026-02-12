@@ -3,6 +3,8 @@ title: 二維模式相機校正 (2D Pattern Camera Calibration)
 date: 2020-04-06 00:00:00
 tags: [電腦視覺, camera calibration, computer vision, 2D pattern, python]
 des: "相機校正 (Camera Calibration) 是指取得相機的各種參數，包含 intrinsic parameters (相機本身參數) 和 extrinsic parameters (定向參數)。本文著重於 Zhengyou Zhang 在〈A Flexible New Technique for Camera Calibration〉所提出用 2D 模式來做相機校正的方法，針對其數學做更明白的解釋和程式碼示例。"
+lang: zh
+translation_key: camera-calibration
 ---
 
 ## 1. 簡介

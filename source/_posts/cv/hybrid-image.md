@@ -3,6 +3,8 @@ title: 混疊圖像 (Hybrid Image) 原理與實作
 date: 2020-04-26 20:00:00
 tags: [電腦視覺, hybrid image, computer vision, python, image processing]
 des: "混疊圖像 (Hybrid Image) 是指將兩張圖片，分別取其中的高頻與低頻部分，合成成新的圖片。本文介紹混疊圖像的原理與實作。"
+lang: zh
+translation_key: hybrid-image
 ---
 
 ## 1. 簡介

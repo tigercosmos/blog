@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 50
-- Missing EN translation files: 134
-- Missing JP translation files: 134
-- Source posts missing `translation_key`: 134
+- Posts with both EN+JP translations: 56
+- Missing EN translation files: 128
+- Missing JP translation files: 128
+- Source posts missing `translation_key`: 128
 
 ## Posts
 
@@ -96,12 +96,12 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `chaos.md` — Chaos (Thu Jan 24 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `code-beginner.md` — 程式設計入門—用對方法的學習指南 (Tue May 26 2020 20:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `cs-to-me.md` — 我對資工的興趣產生 (Mon Dec 02 2019 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `cv/3d-pointcloud-project-to-2d-image.md` — 3D Pointcloud Projection on 2D Image in C++ (Wed Oct 01 2025 20:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `cv/bag-of-visual-words.md` — 使用 Bag of Visual Words 做圖片分類 (Sat Jun 20 2020 14:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `cv/camera-calibration.md` — 二維模式相機校正 (2D Pattern Camera Calibration) (Mon Apr 06 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `cv/computation-photography-1.md` — 計算攝影學 (Computational Photography) 簡介（一） (Thu Jun 03 2021 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `cv/hybrid-image.md` — 混疊圖像 (Hybrid Image) 原理與實作 (Sun Apr 26 2020 20:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `cv/image-stitching.md` — 影像拼接 (Image Stitching) 基於特徵匹配 (Feature Matching) 和 RANSAC 演算法 (Fri May 22 2020 20:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `cv/3d-pointcloud-project-to-2d-image.md` — 3D Pointcloud Projection on 2D Image in C++ (Wed Oct 01 2025 20:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `cv/bag-of-visual-words.md` — 使用 Bag of Visual Words 做圖片分類 (Sat Jun 20 2020 14:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `cv/camera-calibration.md` — 二維模式相機校正 (2D Pattern Camera Calibration) (Mon Apr 06 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `cv/computation-photography-1.md` — 計算攝影學 (Computational Photography) 簡介（一） (Thu Jun 03 2021 12:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `cv/hybrid-image.md` — 混疊圖像 (Hybrid Image) 原理與實作 (Sun Apr 26 2020 20:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `cv/image-stitching.md` — 影像拼接 (Image Stitching) 基於特徵匹配 (Feature Matching) 和 RANSAC 演算法 (Fri May 22 2020 20:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `days-in-fusions360.md` — 我在臺灣金融科技公司的那些日子 (Sat May 27 2017 01:31:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `docker-note.md` — Docker 使用筆記 (Wed Mar 04 2020 01:31:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `engineer_class.md` — 軟體工程師必修的三門課 (Sat Dec 29 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

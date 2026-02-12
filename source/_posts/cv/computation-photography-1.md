@@ -3,6 +3,8 @@ title: 計算攝影學 (Computational Photography) 簡介（一）
 date: 2021-06-03 12:00:00
 tags: [computational photography, camera, digital processing, HDR, time stacking, computer vision, image processing]
 des: "本文介紹何謂計算攝影學，翻譯自 Vasily Zubarev 所寫的 Computational Photography 介紹"
+lang: zh
+translation_key: computation-photography-1
 ---
 
 > 本文經作者同意翻譯自 Vasily Zubarev 所寫的「[Computational Photography-From Selfies to Black Holes](https://vas3k.com/blog/computational_photography/)」。大部分內容衷於呈現原意，少部分會根據譯者對原文詮釋稍作修改，內文中的「我」皆是指原作者，而譯者的註解會特別標示「譯按」。原文實在太長了，所以我將分成幾篇文章逐一翻譯。

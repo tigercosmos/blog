@@ -3,6 +3,8 @@ title: 影像拼接 (Image Stitching) 基於特徵匹配 (Feature Matching) 和 
 date: 2020-05-22 20:00:00
 tags: [電腦視覺, image stitching, computer vision, python, image processing, ransac, feature matching, key point]
 des: "影像拼接是指將兩張相片根據重疊的部分，黏接合成一張一張新的相片。影像拼接的一種是找到兩張圖片中的關鍵點，根據關鍵點進行特徵匹配。做完特徵匹配後會使用兩張照片的關鍵點使用法 RANSAC 演算法算出兩張照片的 Homography，如此我們便能將兩張照片拼接在一起。"
+lang: zh
+translation_key: image-stitching
 ---
 
 ## 1. 簡介

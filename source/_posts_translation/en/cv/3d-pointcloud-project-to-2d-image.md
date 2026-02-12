@@ -1,22 +1,24 @@
 ---
-title: 3D Pointcloud Projection on 2D Image in C++
+title: "3D Point Cloud Projection onto a 2D Image in C++"
 date: 2025-10-1 20:00:00
-tags: [電腦視覺, computer vision, opencv, eigen, pointcloud, projection, c++]
-des: "這篇文章介紹如何將 3D 點雲圖投射到 2D 圖片上，包含解釋背後的數[內碼] 學，以及展示範例程式碼。"
-lang: zh
+tags: [computer vision, opencv, eigen, point cloud, projection, c++]
+des: "This post explains how to project a 3D point cloud onto a 2D image plane, including the underlying math and a complete C++ example."
+lang: en
 translation_key: 3d-pointcloud-project-to-2d-image
 ---
 
-在機器人領域或自駕車領域，為了得知目前場域（scene）裡面的 3D 建模實況，會透過 3D 攝影機或是光達來取得點雲圖（pointcloud），基本上就是一堆 3D 座標的點組成的 3x3 矩陣。透過分析這些 3D 點雲我們可以知道機器人要抓取的目標位置，或是得知自駕車周遭是否有障礙物。一種常見的分析方法是將 3D 點雲以一個相機的視角，投射到 2D 座標上做分析，就如同我們使用相機將 3D 的世界拍成一張 2D 的圖片一樣，在處理一些問題時可以讓維度直接降低，減少複雜度。
+In robotics and autonomous driving, we often need a 3D reconstruction of the current scene. A common way to obtain it is to use a 3D camera or LiDAR to capture a point cloud—a collection of 3D coordinates that you can think of as an *N×3* array (each row is a point).
 
-## 座標投射的數學
+By analyzing point clouds, we can infer the target location for a robot to grasp, or detect obstacles around an autonomous vehicle. A very common workflow is to take the point cloud and, from a camera’s viewpoint, project it onto a 2D coordinate system for analysis—similar to how a camera captures the 3D world as a 2D image. Doing so can reduce dimensionality and complexity for certain problems.
 
-座標的投射基本上就是矩陣運算，我們會用以下算式將一個點從世界座標系統（World Coordinate System，客觀的視角）轉換到相機座標系統（Camera Coordinate System，以相機視角來看的座標）：
+## The Math Behind Coordinate Projection
+
+Projection is essentially matrix multiplication. We use the following equation to transform a point from the world coordinate system (World Coordinate System, an objective viewpoint) into the camera coordinate system (Camera Coordinate System, coordinates as seen from the camera):
 
 $$\begin{bmatrix} u' \\\\ v' \\\\ w \end{bmatrix} = \mathbf{K} \begin{bmatrix} \mathbf{R} & \mathbf{t} \end{bmatrix} \begin{bmatrix} X_w \\\\ Y_w \\\\ Z_w \\\\ 1 \end{bmatrix}$$
 
 
-其中 $K$ 是 3x3 矩陣，是觀測相機的內在參數，專有名稱是 intrinsics，其定義為：
+Here, $K$ is a 3×3 matrix that represents the camera’s intrinsic parameters (intrinsics). It is defined as:
 $$\mathbf{K} = \begin{bmatrix}
 f_x & s & c_x \\\\
 0 & f_y & c_y \\\\
@@ -24,47 +26,47 @@ f_x & s & c_x \\\\
 \end{bmatrix}$$
 
 
-其中：
-- $f_x, f_y$: x 和 y 方向的焦點
-- $c_x, c_y$: 投射到圖片的 x 和 y 方向的中心點
-- $s$: 扭曲量，非零代表有光學上的扭曲
+Where:
+- $f_x, f_y$: focal lengths in the x and y directions
+- $c_x, c_y$: principal point (the center of projection on the image) in x and y
+- $s$: skew; non-zero indicates optical skew/distortion
 
-> intrinsics 在一個系統中通常會永遠固定，因為相機的參數應該是一個固定的常數
+> In a system, the intrinsics are usually fixed, because the camera parameters should be constants.
 
-$R$ 是 3x3 矩陣，代表朝著相機旋轉變化（rotation），而 $t$ 則是 1x3 的面向相機的位移向量（translation），這兩個加起來組成 4x3 向量，將點以相機為原點做轉移（transformation），這個 4x3 矩陣又稱作 extrinsics。
+$R$ is a 3×3 matrix representing rotation with respect to the camera, and $t$ is a 1×3 translation vector (translation) toward the camera. Together they form a 3×4 matrix that transforms the point using the camera as the origin. This 3×4 matrix is also called the extrinsics.
 
-舉例來說，以下的 extrinsics 代表沒有旋轉（左方旋轉矩陣各方向維持 1 ），並朝相機座標的 z 軸 +20 方向平移：
+For example, the following extrinsics represent no rotation (the rotation matrix is identity), and a translation of +20 along the camera coordinate z-axis:
 $$\mathbf{Extrinsics} = \begin{bmatrix}
 1 & 0 & 0 & 0 \\\\
 0 & 1 & 0 & 0 \\\\
 0 & 0 & 1 & 20
 \end{bmatrix}$$
 
-> extrinsics 在系統中是一個變數，取決於觀測者想要如何進行觀測
+> In a system, the extrinsics are variables: they depend on how the observer wants to observe the scene.
 
-最後我們看到世界座標系中的 3D 點是一個四維向量 $(X_w, Y_w, Z_w, 1)$，這是因為他是以齊次座標（homogeneous coordinates）來表示，在做投影時會將維度擴展一度以讓數學能正確運算。
+Finally, the 3D point in world coordinates is written as a 4D vector $(X_w, Y_w, Z_w, 1)$ because it uses homogeneous coordinates. During projection, we add one extra dimension so that the math works out cleanly.
 
 
-現在我們可以算出新的座標了，將 intrinsics 和 extrinsics 相乘，再乘上原始的世界座標，於是我們可以得到新的 3D 座標 $(u', v', w)$。
+Now we can compute the new coordinates. Multiply intrinsics and extrinsics, then multiply by the original world coordinate vector, and we obtain a new 3D coordinate $(u', v', w)$.
 
-新座標是以相機視角投射的新作標，但我們只需要 2D 的座標來投射到圖片上，所以需要做正規化處理，將 z 統一為 1 ，於是我們會得到最終 3D 點投射到 2D 平面的座標 $(u, v)$：
+This new coordinate is the projected result from the camera viewpoint, but to place it onto the 2D image plane, we need to normalize it by making the z term equal to 1. Then we get the final 2D coordinates $(u, v)$:
 
 $$u = \frac{u'}{w}, \quad v = \frac{v'}{w}$$
 
-> 注意到 $w$ 代表相機座標的 Z 軸，除了用來正規化外，也可以保留作為平面點的深度資訊。
+> Note that $w$ corresponds to the camera-coordinate Z axis. Besides normalization, you can also keep it as depth information for later use (e.g., coloring).
 
-## 程式
+## Code
 
-這邊我用 C++ 來做解釋，你需要事先安裝 Eigen 和 OpenCV，這兩個函式庫都可以透過 apt 或 brew 來安裝，應該是相對簡單的。雖然這邊用 C++ 來示範，但概念其實用任何程式語言或函式庫都是一樣的。
+Here I explain it in C++. You need to install Eigen and OpenCV first—both can be installed via apt or brew, which should be straightforward. Although the example is in C++, the concept is the same in any language or library.
 
-首先我們會定義好 3D 點雲、intrinsics、extrinsics：
+First, define the 3D point cloud, intrinsics, and extrinsics:
 ```c++
 std::vector<Eigen::Vector3d> points;   // All 3D points in world coordinates
 Eigen::Matrix3d K;                     // Intrinsic matrix
 Eigen::Matrix<double, 3, 4> extrinsic; // Extrinsic matrix
 ```
 
-根據我們前面提到的公式，我們可以去做投影：
+Then apply the formula above to project:
 
 ```c++
 std::vector<Eigen::Vector3d> project() {
@@ -83,9 +85,9 @@ std::vector<Eigen::Vector3d> project() {
 }
 ```
 
-基本上就是照著公式做矩陣運算而已，並沒有特別的地方。
+This is simply the matrix computation from the equation—nothing particularly special.
 
-完整的程式碼：
+Full code:
 <details>
 
 ```c++
@@ -235,16 +237,15 @@ int main() {
 
 </details>
 
-這個程式會生成兩個畫面，一個是 2D 的投射圖片，一個是 3D 的點雲模型。
+This program opens two windows: one for the 2D projected image, and one for the 3D point cloud model.
 
-其中 3D 的點雲你可以去做各種旋轉：
+In the 3D point cloud window, you can rotate the model freely:
 ![](/img/cv/cube-3d-pointcloud.gif)
 
-
-紅軸是 X 軸、綠軸是 Y 軸、藍軸是 Z 軸，當我們將 3D 模型的座標軸與圖片對齊之後（圖片是以左上角為原點），就會發現畫面長一樣，也證明說我們做的投影是正確的。
+The red axis is X, the green axis is Y, and the blue axis is Z. After aligning the 3D model axes with the image coordinate system (the image uses the top-left corner as the origin), you will see that the views match, which also confirms that the projection is correct.
 
 ![](/img/cv/cube-3d-pointcloud-projection.png)
-（左邊是圖片，右邊是點雲）
+（Left: image, right: point cloud）
 
+I recommend running the code yourself. The current point cloud is a cube, but you can also generate point clouds of other shapes and experiment!
 
-推薦大家實際執行看看程式，另外目前點雲是一個方塊，你也可以自己生成各種樣子的點雲來試試！
