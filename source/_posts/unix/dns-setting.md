@@ -2,6 +2,8 @@
 title: Linux/Unix 用指令設定 DNS 
 date: 2020-04-14 11:01:00
 tags: [unix, network, dns, note, squid]
+lang: zh
+translation_key: dns-setting
 ---
 
 事情是這樣的，從昨天開始我實驗室的主機突然不能上網了，平常我都用那台當作 proxy，因為有時候查論文需要用交大 IP。然後我一開始以為是 Squid 出問題，在那邊弄了老半天設定，才發現問題好像也不是 Squid。接著我很震驚地發現，原來我可以 SSH 進主機，卻不能從他連出去。

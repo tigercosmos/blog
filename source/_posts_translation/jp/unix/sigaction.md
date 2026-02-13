@@ -1,20 +1,20 @@
 ---
-title: Example of Signals by `sigaction` in Unix 
+title: "Unix における `sigaction` を使ったシグナルの例"
 date: 2019-11-24 11:01:00
 tags: [unix, network programming, signal, sigaction]
-lang: zh
+lang: jp
 translation_key: sigaction
 ---
 
-Unix 中 processes 之間溝通有很多種，本篇介紹 signal 的簡易使用。可以先閱讀 [Beej 的介紹](http://beej.us/guide/bgipc/html/single/bgipc.html#signals)。顧名思義，signal 就是程序發送和接受訊號，例如我們在使用 Shell 的時候，之所以 `Ctrl-C` 可以中斷程式執行，就是因為 Shell 捕捉到 `Ctrl-C` 發送的 `SIGINT` 訊號，知道有一個 interrupt signal，所以將程式中斷。
+Unix ではプロセス間通信の方法がいくつもあります。本記事では signal（シグナル）の簡単な使い方を紹介します。まずは [Beej の紹介](http://beej.us/guide/bgipc/html/single/bgipc.html#signals) を読むと良いです。名前のとおり、signal はプロセスが送受信する通知です。例えばシェルを使っているときに `Ctrl-C` でプログラムを中断できるのは、シェルが `Ctrl-C` によって送られた `SIGINT` シグナルを捕捉し、interrupt signal（割り込み）だと判断して実行中のプログラムを停止するためです。
 
-發送 signal 可以用 [`sigaction()`](http://man7.org/linux/man-pages/man2/sigaction.2.html) 或 [`signal()`](http://man7.org/linux/man-pages/man7/signal.7.html)，不過建議使用 `sigaction` 因為比較新，詳細差別可以看 Stack Overflow 這篇 「[What is the difference between sigaction and signal?](https://stackoverflow.com/questions/231912/what-is-the-difference-between-sigaction-and-signal)」。
+signal を送るには [`sigaction()`](http://man7.org/linux/man-pages/man2/sigaction.2.html) または [`signal()`](http://man7.org/linux/man-pages/man7/signal.7.html) を使えますが、より新しい `sigaction` の利用をおすすめします。詳細な違いは Stack Overflow の「[What is the difference between sigaction and signal?](https://stackoverflow.com/questions/231912/what-is-the-difference-between-sigaction-and-signal)」が参考になります。
 
-如果想觸發 signal，可以用 [`kill()`](http://man7.org/linux/man-pages/man2/kill.2.html) 或 [`sigqueue()`](http://man7.org/linux/man-pages/man3/sigqueue.3.html)，差別在於後者僅限 Linux，但後者可以藉由傳送 `siginfo` 加一些資訊在 signal 中。此外一些 system call 本身也會觸發 signal，例如如果嘗試 `send()` 到不存在的 `socket`，就會觸發 `SIGPIPE`。
+signal を発生させたい場合は [`kill()`](http://man7.org/linux/man-pages/man2/kill.2.html) または [`sigqueue()`](http://man7.org/linux/man-pages/man3/sigqueue.3.html) を使えます。後者は Linux 限定ですが、`siginfo` を通じて signal に追加情報を載せられます。また、いくつかの system call 自体が signal を発生させることもあります。例えば存在しない `socket` に対して `send()` しようとすると `SIGPIPE` が発生します。
 
 <!-- more -->
 
-以下為簡單範例，如果想知道更詳盡參數設定，還是要去看 man：
+以下は簡単な例です。より詳しいパラメータ設定を知りたい場合は man を参照してください：
 
 <pre><code class="c++">// signal.cc
 #include &lt;signal.h&gt;
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
 
 </pre></code>
 
-執行結果如下
+実行結果は以下のとおりです：
 
 <pre><code class="shell">$ g++ signal.cc
 $ ./a.out
@@ -154,3 +154,4 @@ Tick #13.
 Tick #14.
 Tick #15.
 </pre></code>
+

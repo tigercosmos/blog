@@ -1,18 +1,18 @@
 ---
-title: Use `mmap` to create shared objects 
+title: "Using `mmap` to Create Shared Objects"
 date: 2019-11-20 11:01:00
 tags: [unix, network programming, mmap, shared memory, shared object]
-lang: zh
+lang: en
 translation_key: mmap
 ---
 
-當我們有很多 processes 時，並想用實現 shared memory 處理共用資料時，就可以使用 shared memory，來實作。建立 shared memory 可以使用 `mmap` 或是 System V `shmget`，但根據 Stack Overflow 「[How to use shared memory with Linux in C](https://stackoverflow.com/questions/5656530/how-to-use-shared-memory-with-linux-in-c)」回答，`shmget` 已經有點過時，`mmap` 則比較新和彈性。
+When you have many processes and want to implement shared memory to handle shared data, you can use shared memory to build the solution. To create shared memory, you can use `mmap` or System V `shmget`. However, according to the Stack Overflow answer “[(How to use shared memory with Linux in C)](https://stackoverflow.com/questions/5656530/how-to-use-shared-memory-with-linux-in-c)”, `shmget` is somewhat outdated, while `mmap` is newer and more flexible.
 
-Shared memory 讓我們可以建立一塊共用的記憶體空間，`mmap` 會回傳一塊記憶體空間的指標，型別是 `void *`，如果我們想要放資料進去，可以用 `memcpy` 將物件、字串或任何東西拷貝進去。我們也可以直接將 `void *` 轉型成物件指標，這樣就建立 shared object，不同 process 可以直接對 process 存取物件。
+Shared memory allows us to create a region of memory that can be shared. `mmap` returns a pointer to that region, with type `void *`. If we want to put data into it, we can use `memcpy` to copy objects, strings, or anything else into the shared region. We can also cast the `void *` directly to an object pointer—this way we create a shared object, and different processes can access the object directly.
 
 <!-- more -->
 
-實作範例：
+Example implementation:
 
 <pre><code class="bash">$ g++ mmap.cc -std=c++17
 </pre></code>
@@ -96,11 +96,11 @@ int main() {
 }
 </pre></code>
 
-不過要注意的是，shared object 不能放 STD container，因為 container 產生的指標只能在當下那個 process 所用，其他 process 讀不到。
+One important caveat: you cannot place STL containers inside a shared object, because pointers created by the container are only valid in the current process; other processes cannot dereference them correctly.
 
-我想到兩種解法可以處理，一種是自己實作 STD container 的 allocator；另一種是將大物件的 container 裡面的小物件都先建立在 shared memory 中，大物件初始化的時候再把小物件一個一個塞回 container。
+I can think of two approaches to address this. One is to implement a custom allocator for STL containers. The other is to allocate each element (the “small objects” inside the big container) in shared memory first, and then, when initializing the “big object”, insert those elements back into the container one by one.
 
-第二種實作大概像這樣：
+The second approach looks roughly like this:
 
 <pre><code class="c++">
 struct Foo {
@@ -135,3 +135,4 @@ void main() {
   // ...
 }
 </pre></code>
+

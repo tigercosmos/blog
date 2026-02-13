@@ -3,6 +3,8 @@ title: Unix/Linux TOP 指令使用詳解
 date: 2020-04-16 15:01:00
 tags: [unix, linux, shell, top command]
 des: "本文介紹 Unix/Linux TOP 指令使用方式。top 指令 (top command) 可以說是使用 Unix/Linux 最基本的工具了，他就像 Windows 系統中的工作管理員，可以監看目前所有程式的執行狀況。top 也是最簡單監控程式的方法，用它來觀察程式運行所花的記憶體、CPU 還有各種其他資訊。"
+lang: zh
+translation_key: top-usage
 ---
 
 ## TOP 簡介

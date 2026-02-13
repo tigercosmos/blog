@@ -1,20 +1,20 @@
 ---
-title: Example of Signals by `sigaction` in Unix 
+title: "An Example of Signals with `sigaction` on Unix"
 date: 2019-11-24 11:01:00
 tags: [unix, network programming, signal, sigaction]
-lang: zh
+lang: en
 translation_key: sigaction
 ---
 
-Unix 中 processes 之間溝通有很多種，本篇介紹 signal 的簡易使用。可以先閱讀 [Beej 的介紹](http://beej.us/guide/bgipc/html/single/bgipc.html#signals)。顧名思義，signal 就是程序發送和接受訊號，例如我們在使用 Shell 的時候，之所以 `Ctrl-C` 可以中斷程式執行，就是因為 Shell 捕捉到 `Ctrl-C` 發送的 `SIGINT` 訊號，知道有一個 interrupt signal，所以將程式中斷。
+There are many ways for processes to communicate on Unix. This post introduces a simple way to use signals. You can first read [Beej’s introduction](http://beej.us/guide/bgipc/html/single/bgipc.html#signals). As the name suggests, a signal is a notification sent and received by processes. For example, when you use a shell, `Ctrl-C` can interrupt a program because the shell catches the `SIGINT` signal triggered by `Ctrl-C`, recognizes it as an interrupt signal, and terminates the program.
 
-發送 signal 可以用 [`sigaction()`](http://man7.org/linux/man-pages/man2/sigaction.2.html) 或 [`signal()`](http://man7.org/linux/man-pages/man7/signal.7.html)，不過建議使用 `sigaction` 因為比較新，詳細差別可以看 Stack Overflow 這篇 「[What is the difference between sigaction and signal?](https://stackoverflow.com/questions/231912/what-is-the-difference-between-sigaction-and-signal)」。
+To send signals, you can use [`sigaction()`](http://man7.org/linux/man-pages/man2/sigaction.2.html) or [`signal()`](http://man7.org/linux/man-pages/man7/signal.7.html). I recommend `sigaction` because it’s newer. For a detailed comparison, see the Stack Overflow thread “[What is the difference between sigaction and signal?](https://stackoverflow.com/questions/231912/what-is-the-difference-between-sigaction-and-signal)”.
 
-如果想觸發 signal，可以用 [`kill()`](http://man7.org/linux/man-pages/man2/kill.2.html) 或 [`sigqueue()`](http://man7.org/linux/man-pages/man3/sigqueue.3.html)，差別在於後者僅限 Linux，但後者可以藉由傳送 `siginfo` 加一些資訊在 signal 中。此外一些 system call 本身也會觸發 signal，例如如果嘗試 `send()` 到不存在的 `socket`，就會觸發 `SIGPIPE`。
+If you want to trigger a signal, you can use [`kill()`](http://man7.org/linux/man-pages/man2/kill.2.html) or [`sigqueue()`](http://man7.org/linux/man-pages/man3/sigqueue.3.html). The difference is that the latter is Linux-only, but it lets you attach additional information via `siginfo`. In addition, some system calls can trigger signals as well. For example, if you try to `send()` to a non-existent socket, you’ll get a `SIGPIPE`.
 
 <!-- more -->
 
-以下為簡單範例，如果想知道更詳盡參數設定，還是要去看 man：
+Below is a simple example. If you want to understand the full set of parameters, you still need to read the man pages:
 
 <pre><code class="c++">// signal.cc
 #include &lt;signal.h&gt;
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
 
 </pre></code>
 
-執行結果如下
+The output looks like this:
 
 <pre><code class="shell">$ g++ signal.cc
 $ ./a.out
@@ -154,3 +154,4 @@ Tick #13.
 Tick #14.
 Tick #15.
 </pre></code>
+

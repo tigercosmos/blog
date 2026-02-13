@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 56
-- Missing EN translation files: 128
-- Missing JP translation files: 128
-- Source posts missing `translation_key`: 128
+- Posts with both EN+JP translations: 61
+- Missing EN translation files: 123
+- Missing JP translation files: 123
+- Source posts missing `translation_key`: 123
 
 ## Posts
 
@@ -184,11 +184,11 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `the-wind-rises.md` — 動畫＜風起＞心得隨筆 (Sun May 12 2019 01:17:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `thought-about-cs-student.md` — 資工系所學生的基本素養 (Fri Apr 24 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `tymphany-interview.md` — 紀錄面試經驗──Tymphany (Fri Jun 02 2017 10:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `unix/dns-setting.md` — Linux/Unix 用指令設定 DNS (Tue Apr 14 2020 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `unix/mmap.md` — Use `mmap` to create shared objects (Wed Nov 20 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `unix/sigaction.md` — Example of Signals by `sigaction` in Unix (Sun Nov 24 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `unix/simple-shell.md` — 簡明 Shell 原理與實作 (Sat Jan 18 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `unix/top-usage.md` — Unix/Linux TOP 指令使用詳解 (Thu Apr 16 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `unix/dns-setting.md` — Linux/Unix 用指令設定 DNS (Tue Apr 14 2020 11:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `unix/mmap.md` — Use `mmap` to create shared objects (Wed Nov 20 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `unix/sigaction.md` — Example of Signals by `sigaction` in Unix (Sun Nov 24 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `unix/simple-shell.md` — 簡明 Shell 原理與實作 (Sat Jan 18 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `unix/top-usage.md` — Unix/Linux TOP 指令使用詳解 (Thu Apr 16 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `weather_bot.md` — 來寫個氣象機器人吧！ (Mon May 21 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `web/cgi.md` — 簡明 CGI 原理與實作 (Fri Jan 24 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `web/js-parallel-worker-sharedarraybuffer.md` — JavaScript 平行化使用 Web Worker、SharedArrayBuffer、Atomics (Fri Feb 07 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

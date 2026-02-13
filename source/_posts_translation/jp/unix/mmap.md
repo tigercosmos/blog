@@ -1,18 +1,18 @@
 ---
-title: Use `mmap` to create shared objects 
+title: "`mmap` を使って共有オブジェクトを作る"
 date: 2019-11-20 11:01:00
 tags: [unix, network programming, mmap, shared memory, shared object]
-lang: zh
+lang: jp
 translation_key: mmap
 ---
 
-當我們有很多 processes 時，並想用實現 shared memory 處理共用資料時，就可以使用 shared memory，來實作。建立 shared memory 可以使用 `mmap` 或是 System V `shmget`，但根據 Stack Overflow 「[How to use shared memory with Linux in C](https://stackoverflow.com/questions/5656530/how-to-use-shared-memory-with-linux-in-c)」回答，`shmget` 已經有點過時，`mmap` 則比較新和彈性。
+多数のプロセスがあり、共有データを扱うために shared memory（共有メモリ）を実装したい場合、shared memory を使って実現できます。shared memory の作成には `mmap` または System V の `shmget` を使えますが、Stack Overflow の回答「[How to use shared memory with Linux in C](https://stackoverflow.com/questions/5656530/how-to-use-shared-memory-with-linux-in-c)」によると、`shmget` はやや古く、`mmap` のほうが新しく柔軟です。
 
-Shared memory 讓我們可以建立一塊共用的記憶體空間，`mmap` 會回傳一塊記憶體空間的指標，型別是 `void *`，如果我們想要放資料進去，可以用 `memcpy` 將物件、字串或任何東西拷貝進去。我們也可以直接將 `void *` 轉型成物件指標，這樣就建立 shared object，不同 process 可以直接對 process 存取物件。
+shared memory を使うと、プロセス間で共有できるメモリ領域を作れます。`mmap` はその領域へのポインタを返し、型は `void *` です。そこにデータを入れたい場合は、`memcpy` でオブジェクトや文字列などを共有領域へコピーできます。また、`void *` をそのままオブジェクトポインタへキャストすれば shared object（共有オブジェクト）を作れます。こうすると別々のプロセスが同じオブジェクトへ直接アクセスできます。
 
 <!-- more -->
 
-實作範例：
+実装例：
 
 <pre><code class="bash">$ g++ mmap.cc -std=c++17
 </pre></code>
@@ -96,11 +96,11 @@ int main() {
 }
 </pre></code>
 
-不過要注意的是，shared object 不能放 STD container，因為 container 產生的指標只能在當下那個 process 所用，其他 process 讀不到。
+ただし注意点があります。shared object の中に STL コンテナを置くことはできません。コンテナが内部で生成するポインタはそのプロセス内でしか有効ではなく、他のプロセスからは正しく参照できないためです。
 
-我想到兩種解法可以處理，一種是自己實作 STD container 的 allocator；另一種是將大物件的 container 裡面的小物件都先建立在 shared memory 中，大物件初始化的時候再把小物件一個一個塞回 container。
+これを解決する方法として 2 つ考えられます。1 つは STL コンテナ用の allocator を自作する方法。もう 1 つは、大きなコンテナの要素（小さなオブジェクト）を最初に shared memory に作っておき、大きなオブジェクトを初期化するときにそれらを 1 つずつコンテナへ戻していく方法です。
 
-第二種實作大概像這樣：
+2 つ目の方法は大まかに以下のようになります：
 
 <pre><code class="c++">
 struct Foo {
@@ -135,3 +135,4 @@ void main() {
   // ...
 }
 </pre></code>
+
