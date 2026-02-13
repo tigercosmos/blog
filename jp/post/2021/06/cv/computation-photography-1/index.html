@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="computer vision,computational photography,camera,digital processing,HDR,time stacking,image processing," />
+    <meta name="description"
+        content="計算写真学（Computational Photography）とは何かを紹介します。Vasily Zubarev による Computational Photography の解説記事を翻訳したものです。" />
+    <title>Neutrino&#39;s Blog: 計算写真学（Computational Photography）入門（その1） </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2021/06/cv/computation-photography-1/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2021/06/cv/computation-photography-1/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2021/06/cv/computation-photography-1/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2021/06/cv/computation-photography-1/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2021/06/cv/computation-photography-1/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2021/06/cv/computation-photography-1/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        計算写真学（Computational Photography）入門（その1）
+    </h2>
+    <ul class="post-date">
+        <li>
+            2021-06-03
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2021/06/cv/computation-photography-1/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2021/06/cv/computation-photography-1/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <blockquote>
+<p>本記事は著者の許可を得て、Vasily Zubarev の「<a target="_blank" rel="noopener" href="https://vas3k.com/blog/computational_photography/">Computational Photography-From Selfies to Black Holes</a>」を翻訳したものです。大部分は原意に忠実に訳し、少数の箇所は訳者の解釈に基づいてわずかに調整しています。本文中の「私」は原著者を指し、訳者注は「訳者注」と明記します。原文が非常に長いため、数本の記事に分けて順次翻訳します。</p>
+</blockquote>
+<p>いまスマートフォンがこれほどまでに普及した大きな理由の1つは、そこに搭載されたカメラです。Pixel は真っ暗な状況でも良い写真が撮れますし、Huawei のズームは双眼鏡のようで、Samsung は8枚構成のレンズを載せ、iPhone は友人の前でちょっと優越感までくれます。こうしたスマホカメラの裏側には、信じられないほどの革新が隠れています。</p>
+<p>一方で、一眼レフ（DSLR）は徐々に影が薄くなっているように見えます。Sony は今でも毎年驚くような新製品を出していますが、メーカー全体としてはアップデートの頻度が明らかに落ちており、主要な収益源は映像クリエイター向けに寄ってきています。</p>
+<blockquote>
+<p>訳者注：とはいえ Sony はやはりすごいです。2021年に発表されたハイエンド旗艦機 Sony A1 の技術的な詳細はこちら：<a target="_blank" rel="noopener" href="https://www.mobile01.com/topicdetail.php?f=254&amp;t=6311416">Sony A1 絕對影像王者 頂尖技術力的展現</a></p>
+</blockquote>
+<p>私は3000ドルの Nikon を持っています。それでも旅行のときは iPhone で写真を撮ってしまう。なぜでしょう？</p>
+<p>この答えをネットで探してみると、「アルゴリズム」や「ニューラルネットワーク」の話は山ほど出てきますが、それらが実際に写真の見え方にどう影響するのかを、明快に説明してくれる人はほとんどいません。記者は製品スペックの数字を並べるだけ。ブロガーは開封記事を量産するだけ。カメラマニアは色が気に入るかどうかだけ。ああ、インターネット。情報はたくさんくれるのに、肝心な説明はない。</p>
+<p>そこで私は、この裏側の原理を理解するために人生のかなりの時間を費やしました。このシリーズでは、スマホカメラの背後で起きていることを全部説明します。そうしないと、たぶんすぐ忘れてしまうので。</p>
+<h2 id="計算写真学とは何か"><a class="header-anchor" href="#計算写真学とは何か">¶ </a>計算写真学とは何か</h2>
+<p>計算写真学（Computational Photography）について、どこで調べても、例えば <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Computational_photography">Wikipedia</a> を見ても、だいたい次のような定義が出てきます：「計算写真学とは、光学的な過程ではなくデジタル計算を用いてデジタル画像を生成したり、画像処理を行ったりすること」。大筋は合っていますが、いくつか微妙な点もあります。例えば計算写真学にはオートフォーカスも含まれますし、実用的な <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Light-field_camera">ライトフィールドカメラ</a> も含みます。公式っぽい定義はまだ曖昧で、結局「計算写真学って何？」がよく分からないままです。</p>
+<blockquote>
+<p>ライトフィールドカメラは、シーンが作る光場（light field）情報を取得するカメラです。位置ごとの光の強度や色に加え、光線の方向も記録します。通常のカメラは位置ごとの光の強度しか記録できません。</p>
+</blockquote>
+<p>スタンフォード大学の Marc Levoy 教授は計算写真学の先駆者で、現在は Google Pixel のカメラ開発に携わっています。彼は<a target="_blank" rel="noopener" href="https://medium.com/hd-pro/a25d34f37b11">記事</a>の中で別の説明を提示しています：「計算イメージング技術はデジタル写真の可能性を強化・拡張する。私たちが撮る写真はあまりに“普通”に見えるが、伝統的なカメラではほとんど不可能だ」。私はこの定義のほうが好きで、以降はこの定義に従います。</p>
+<p>つまり、スマートフォンこそがすべての根源です。スマートフォンは、人々に新しい撮影技術をもたらす以外に選択肢がなかった――<em><strong>計算写真学</strong></em>です。</p>
+<p>スマホにはノイズの多いセンサーと、比較的粗いレンズが載っています。物理法則から言えば、ひどい画像しか出ないはずでした。しかし開発者は物理的制約を破る方法を見つけます：高速な電子シャッター、強力なプロセッサ、そして優れたソフトウェア。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/120586863-e9041800-c466-11eb-84a3-e9d50c3b1a41.jpg" alt="數位單眼跟智慧手機比較"></p>
+<p>計算写真学の重要な研究の多くは 2005〜2015 年に集中していました。ただ、それはもう「過去の科学」です。いま私たちの目の前にあり、ポケットに入っているのは、前例のない新しい技術と知識です。</p>
+<p>計算写真学は HDR や夜間セルフィーモードだけではありません。最近のブラックホール撮影は、最新の計算写真学なしには絶対に実現できません。普通の望遠鏡でブラックホールを撮るなら地球サイズのレンズが必要ですが、地球上の8基の電波望遠鏡を配置し、そして<a target="_blank" rel="noopener" href="https://achael.github.io/_pages/imaging/">かなりイケてる Python コード</a>を動かすことで、私たちは世界初の事象の地平線（event horizon）の写真を得ました。</p>
+<img src="https://i.vas3k.ru/87c.jpg" alt="event horizon" width=50%>
+<p>とはいえ、セルフィー用途にも十分役立ちます。心配しないで。</p>
+<p>📝 <a target="_blank" rel="noopener" href="http://alumni.media.mit.edu/~jaewonk/Publications/Comp_LectureNote_JaewonKim.pdf">Computational Photography: Principles and Practice</a><br>
+📝 <a target="_blank" rel="noopener" href="https://graphics.stanford.edu/talks/compphot-publictalk-may08.pdf">Marc Levoy: New Techniques in Computational photography</a></p>
+<blockquote>
+<p>本シリーズでは、私が良いと思った記事 📝 や動画 🎥 へのリンクを途中に挟みます。短い記事で全部は説明できないので、興味のあるところを深掘りできるようにするためです。</p>
+</blockquote>
+<h2 id="起源：デジタル処理（Digital-Processing）"><a class="header-anchor" href="#起源：デジタル処理（Digital-Processing）">¶ </a>起源：デジタル処理（Digital Processing）</h2>
+<p>2010年に戻りましょう。Justin Bieber がデビューアルバムを出し、ブルジュ・ハリファ（Burj Khalif）がドバイで開業し、私たちはまだ壮大な宇宙現象を記録できませんでした。なぜなら、写真はノイズまみれの 200 万画素 JPEG だったからです。</p>
+<p>そんな写真に直面したとき、私たちの心からの願いはただ1つ。「Vintage」フィルタでスマホカメラの貧弱な画質をごまかしたい。そうして Instagram が誕生しました。</p>
+<p><img src="https://i.vas3k.ru/88i.jpg" alt=""></p>
+<h1>数学と Instagram</h1>
+<p>Instagram の登場で、誰でも簡単に写真フィルタを使えるようになりました。「研究目的」で X-Pro II、Lo-Fi、Valencia（いずれもフィルタ名）をリバースエンジニアリングした男として、私はこれらのフィルタが基本的に次の3つで構成されていることを覚えています：</p>
+<ul>
+<li>
+<p>色設定（色相、彩度、明るさ、コントラスト、レベルなど）は基本パラメータで、昔の写真家が使っていたフィルタと同じようなものです。<br>
+<img src="https://i.vas3k.ru/85k.jpg" alt=""></p>
+</li>
+<li>
+<p>トーンマッピング（Tone Mapping）は値のベクトルに対する写像で、例えば「赤のトーン 128 は 240 に変えるべき」といった指示をします。単一色の補正で使われることが多いです。<a target="_blank" rel="noopener" href="https://github.com/danielgindi/Instagram-Filters/blob/master/InstaFilters/Resources_for_IF_Filters/xproMap.png">これ</a>は X-Pro II フィルタの例です。<br>
+<img src="https://i.vas3k.ru/85i.jpg" alt=""></p>
+</li>
+<li>
+<p>オーバーレイ（Overlay）は、埃・粒状感・小さなイラストなどが入った半透明画像を別の画像に重ねて新しい効果を作る方法です。頻繁には使われません。<br>
+<img src="https://i.vas3k.ru/85t.jpg" alt=""></p>
+</li>
+</ul>
+<p>現代のフィルタはこの3つだけではありませんが、数学的にはさらに複雑になります。スマホはハードウェアシェーダ（shader）計算や <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OpenCL">OpenCL</a> をサポートしているので、こうした計算を GPU 上で簡単に実行できます。マジでクールです。これは2012年にはもうできていました。いまやどんな子どもでも <a target="_blank" rel="noopener" href="https://una.im/CSSgram/">CSS</a> で同じようなことができますが、彼がプロムに誘えるかどうかは別問題です。</p>
+<p>とはいえ、フィルタの進化は続いています。例えば <a target="_blank" rel="noopener" href="http://blog.dehancer.com/category/examples/">Dehancer</a> では、単純なマッピング変更とは異なる非線形フィルタが実装されています。彼らは派手で複雑な変換関数（transformations）を使い、フィルタの可能性を広げています。</p>
+<p>非線形変換関数でできることは非常に多い一方、処理は複雑になります。そして人間は複雑な作業が得意ではありません。幸運なことに、数値計算やニューラルネットワークを使えば、同じことをずっと簡単に実現できます！</p>
+<h2 id="自動調整と「ワンクリック」の夢"><a class="header-anchor" href="#自動調整と「ワンクリック」の夢">¶ </a>自動調整と「ワンクリック」の夢</h2>
+<p>みんながフィルタに慣れると、フィルタはカメラに統合されました。誰が最初にカメラにフィルタを入れたかは分かりませんが、少なくとも iOS 5.0（2011年）時点で、すでに<a href="(https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_autoadjustment/ci_autoadjustmentSAVE.html)">「自動増強画像」の公開 API</a>がありました。Jobs は公開 API より前から、フィルタが長く使われていることに気づいていたのでしょう。</p>
+<p>自動調整がやっていることは、画像編集ソフトで私たちがやる作業とほぼ同じです。ハイライトとシャドウの補正、明るさの追加、赤目除去、肌色補正など。ユーザーは、この「魔法の強化カメラ」が実は数行のコードで動いているとは思いもしません。</p>
+<p><img src="https://i.vas3k.ru/865.jpg" alt="ML Enhance in Pixelmator"><br>
+(Pixelmator の機械学習エンハンス機能)</p>
+<p>そして今日、「ワンクリック生成」の戦いは機械学習領域へ移りました。面倒なスタイルマッピングに疲れた人々は <a target="_blank" rel="noopener" href="http://vas3k.com/blog/machine_learning/">CNN や GAN</a> に寄りかかり、コンピュータにレタッチのスライダを勝手に動かしてもらうようになります。つまり、画像を渡すと機械が光学的パラメータを自分で決め、私たちが認知する「良い写真」に近づけた画像を生成するのです。Photoshop や Pixelmator Pro の公式ページを見れば、最新の ML 機能でいかに購買意欲を煽っているかが分かります。ML が永遠に万能ではないことは想像がつくでしょう。でも、たくさんのデータセットで自分の ML モデルを訓練すれば、より良い結果は作れます。以下のリソースが役に立つかもしれないし、立たないかもしれません 😂</p>
+<p>📝 <a target="_blank" rel="noopener" href="https://paperswithcode.com/task/image-enhancement">Image Enhancement Papers</a><br>
+📝 <a target="_blank" rel="noopener" href="http://people.ee.ethz.ch/~ihnatova/#dataset">DSLR-Quality Photos on Mobile Devices with Deep Convolutional Networks</a></p>
+<h1>スタッキング（Stacking）：スマホの90%の功労者</h1>
+<p>本当の計算写真学はスタッキングから生まれます。スタッキングとは、複数の写真を1枚ずつ重ねる技術です。スマホなら1秒で数十枚撮ることは容易です。スマホ内部にはシャッター速度を調整する機械部品がなく（絞りも固定）、電子シャッター（機械シャッターではない）を使うためです。プロセッサはセンサーに「何ミリ秒ぶん光子を集めるべきか」を指示し、それで1枚の写真が得られます。</p>
+<p>技術的には、スマホは動画のような速度で写真を撮れます（普通、60fpsで写真は撮らないですよね？）。さらに、写真並みの画質で動画を撮ることも理屈の上では可能です（一般に4K動画は高画質でも約4000万画素ですが、写真は簡単に1億画素を超えます）。ただしそれはデータ転送と処理負荷を増やすため、結局ソフトウェアはハードウェア制約を受けます。</p>
+<p>スタッキング技術自体は昔からあります。Photoshop を使って異常にシャープな HDR 写真を作ったり、18000×600 ピクセルのパノラマを作ったりする人もいます。まだまだ試せることはたくさんあります。あなた次第です！</p>
+<p>こうした後処理は「<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Epsilon_photography">Epsilon Photography</a>（微調整写真）」とも呼ばれます。露出・フォーカス・位置といったカメラパラメータを変え続け、単発撮影では不可能な画像を合成で作る、という意味です。ただ実務では、私たちはこれを単にスタッキングと呼びます。今日のモバイルカメラ革新の90%はこれに基づいています。</p>
+<p><img src="https://i.vas3k.ru/85d.jpeg" alt=""></p>
+<p>多くの人はスマホカメラの仕組みに興味がないかもしれませんが、スマホ写真を理解するには極めて重要な事実があります：<strong>現代のスマホカメラは、開いた瞬間から撮影を始めている</strong>。画面にプレビューを出す必要があるので合理的です。連続撮影するだけでなく、高解像度フレームをリングバッファ（循環バッファ）に保存し、数秒間保持しています。</p>
+<blockquote>
+<p>あなたが「撮影」ボタンを押したとき、実際にはスマホはずっと前に写真を撮っています。カメラは単にバッファ内の最後の1枚を使っているだけです。</p>
+</blockquote>
+<p>これが現在のスマホカメラの動作です（少なくともハイエンド機では）。バッファリングによりゼロ<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Shutter_lag">シャッターラグ</a>（ボタンを押してから撮影されるまでの遅延）が実現できます。写真家が長年望んできた機能で、場合によっては「シャッターラグは負であってほしい」とまで言われます。ボタンを押すとスマホは「過去」を遡り、バッファから直近の 5〜10 枚を掬い上げ、猛烈に解析して合成を始めます。つまり、HDR や夜景モードをユーザーが意識しなくても、スマホ側がバッファから適切に処理してしまい、ユーザーは「加工されている」ことに気づかないことすらあります。</p>
+<p>実際、いまの iPhone や Pixel がやっているのはこれです。</p>
+<p><img src="https://i.vas3k.ru/88j.jpg" alt=""></p>
+<h2 id="露出スタッキング（Exposure-Stacking）：HDR-と光の制御"><a class="header-anchor" href="#露出スタッキング（Exposure-Stacking）：HDR-と光の制御">¶ </a>露出スタッキング（Exposure Stacking）：HDR と光の制御</h2>
+<p><img src="https://i.vas3k.ru/85x.jpg" alt=""></p>
+<p>長年の論争として、カメラセンサーが<a target="_blank" rel="noopener" href="https://www.cambridgeincolour.com/tutorials/cameras-vs-human-eye.htm">人間の目が見える輝度レンジ全体を捕捉できるか</a>という話があります。否定派は「目は最大 25 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/F-number">f-stops</a> を見られるが、最高級のフルサイズセンサーでもせいぜい 14 だ」と言います。一方で「目は脳に補助されている。脳が瞳孔を自動調整し、神経で画像を“完成”させる。だから瞬間的ダイナミックレンジは 10〜14 f-stops 以上ではない」と主張する人もいます。難しすぎる！この議論は科学者に任せましょう。</p>
+<p>それでも問題は残ります。青空を背にした友人をスマホで撮ると、HDR がなければ「空は綺麗だが友人が黒い」か、「友人は明るいが空が白飛び」かのどちらかになりがちです。</p>
+<p>この解決策は昔からあります――HDR（High Dynamic Range）で輝度レンジを広げることです。輝度レンジが広すぎるシーンでは、3段階（またはそれ以上）に分けて撮影できます。露出を変えて「普通」「明るい」「暗い」写真を撮り、明るい写真で影を埋め、暗い写真で白飛び領域を復元します。</p>
+<p>最後に必要なのはオートブラケティングの解決です。各フレームの露出をどう配分・調整すれば、合成結果が過露出にならないかを知る必要があります。しかし今日では、理工系の大学生なら少しの Python コードでそれを実現できます。</p>
+<p><img src="https://i.vas3k.ru/86t.jpg" alt=""></p>
+<p>最新の iPhone・Pixel・Galaxy のカメラ内の単純なアルゴリズムが「晴天で撮影している」と検知すると、自動的に HDR を有効にします。バッファモード（Buffer Mode）に切り替わってより多くの画像を保存する様子も分かることがあります。FPS が下がり、プレビューが鮮やかになる。iPhone X ではその切り替わる瞬間がはっきり見えました。次にスマホを使うとき、ぜひ観察してみてください。</p>
+<p>ブラケットHDRの最大の欠点は、暗所で驚くほど役に立たないことです。家庭の照明下でも写真は暗く、スマホでもうまく整列・スタックできないことがあります。これを解決するため、Google は 2013 年の Nexus スマホで別の HDR 手法を発表しました。時間方向にスタックする（Time Stacking）方法です。</p>
+<p>📝 <a target="_blank" rel="noopener" href="https://www.videoproc.com/resource/high-dynamic-range.htm">What Is HDR: Concepts, Standards, and Related Aspects</a></p>
+<h2 id="タイムスタッキング（Time-Stacking）：長時間露光とタイムラプス"><a class="header-anchor" href="#タイムスタッキング（Time-Stacking）：長時間露光とタイムラプス">¶ </a>タイムスタッキング（Time Stacking）：長時間露光とタイムラプス</h2>
+<p><img src="https://i.vas3k.ru/85v.jpg" alt=""></p>
+<p>タイムスタッキングは、短時間露光の写真列から長時間露光の効果を得る方法です。夜空の星の軌跡（star trails）を撮る天文ファンが最初に考えたと言われています。三脚を使っても、2時間シャッターを開けっぱなしにするのは現実的ではありません。設定の事前計算が必要で、少しの揺れで結果が台無しになるからです。そこで彼らは、数分単位の写真をたくさん撮り、Photoshop で重ねることにしました。</p>
+<p><img src="https://i.vas3k.ru/86u.jpg" alt="These star patterns are always glued together from a series of photos. That make it easier to control exposure"><br>
+(星の軌跡は写真列を重ねて作られます。これにより露出制御が容易になります)</p>
+<p>つまりカメラは実際には長時間露光をしていません。連続ショットを組み合わせて効果を“模擬”しています。このテクニックは昔からスマホアプリで使われてきましたが、いまでは多くのメーカーが標準機能として組み込んでいます。</p>
+<p><img src="https://i.vas3k.ru/86f.jpg" alt="A long exposure made of iPhone's Live Photo in 3 clicks"><br>
+(iPhone の Live Photo を3クリックで長時間露光風にした例)</p>
+<p>Google の夜間 HDR に戻りましょう。時間方向のブラケティングを使うと、暗所でもそれなりの HDR が作れることが分かりました。この技術は Nexus 5 に初めて搭載され、HDR+ と呼ばれました。いまでも人気が高く、最新の Pixel のプレゼンでも<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=iLtWyLVjDg0&amp;t=0">褒められています</a>。</p>
+<p>HDR+ の仕組みはとてもシンプルです。カメラが暗所撮影を検知すると、バッファから直近の 8〜15 枚の RAW を取り出してスタックします。これにより暗部の情報をより多く集め、ノイズピクセルを最小化し、何らかの理由で特定フレームに光子が入らなかった場合の失敗も避けます。</p>
+<p>例えば、あなたが <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Capybara">Capybara</a>（動物）を見たことがないとして、5人に聞いてみるとします。話の筋は似ていますが、それぞれが固有のディテールを言い、1人に聞くより多くの情報が得られます。写真のピクセルも同じです。情報が増え、よりシャープで、ノイズが減ります。</p>
+<p>📝 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2014/10/hdr-low-light-and-high-dynamic-range.html">HDR+: Low Light and High Dynamic Range photography in the Google Camera App</a></p>
+<p>同じ場所で撮った写真をスタックすることは、先ほどの星の軌跡の例と同じく、擬似的な長時間露光を生みます。数十枚の露出を合成すれば、ある1枚の誤差は別の1枚で補正できます。これを DSLR でやるなら、シャッターボタンを何回連打する必要があるでしょうか。</p>
+<p><img src="https://i.vas3k.ru/86g.jpg" alt="Pixel ad that glorifies HDR+ and Night Sight"></p>
+<p>残る最後の課題は、自動的な色空間マッピングです。暗所写真は色バランスが崩れやすく（黄み、緑み）、手動で修正が必要になります。初期の HDR+ では、Instagram のフィルタのような簡単な自動トーン補正で対処していましたが、後にニューラルネットワークで色を復元するようになりました。</p>
+<p><a target="_blank" rel="noopener" href="https://www.blog.google/products/pixel/see-light-night-sight/">Night Sight</a> はこうして生まれました。Pixel 2、3 以降の「夜間撮影」機能です。説明では「HDR+ は機械学習技術に基づく」とされています。実際には、ニューラルネットワークと HDR+ の後処理一式の“オシャレな呼び名”です。「Before/After」データセットで学習させることで、暗くて荒れた写真群から美しい画像を作れます。</p>
+<p><img src="https://i.vas3k.ru/88k.jpg" alt=""></p>
+<p>ちなみに、この学習データセットは公開されています。Apple の人がこれを取り込んで、「世界最高のカメラ」に暗所撮影を教える日が来るかもしれません。</p>
+<p>さらに Night Sight は、フレーム中の物体の<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Optical_flow">モーションベクトル</a>を計算し、手ぶれ補正（stabilization）によってブレを扱います。長時間露光はブレやすいので、スマホは別フレームからシャープな部分を取り出してスタックし、ブレた部分を消していきます。</p>
+<p>📝 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2018/11/night-sight-seeing-in-dark-on-pixel.html" title=".block-link">Night Sight: Seeing in the Dark on Pixel Phones</a><br>
+📝 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2018/02/introducing-hdr-burst-photography.html" title=".block-link">Introducing the HDR+ Burst Photography Dataset</a></p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/computer-vision/">
+                computer vision
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/computational-photography/">
+                computational photography
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/camera/">
+                camera
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/digital-processing/">
+                digital processing
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/hdr/">
+                HDR
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/time-stacking/">
+                time stacking
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/image-processing/">
+                image processing
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A8%88%E7%AE%97%E5%86%99%E7%9C%9F%E5%AD%A6%E3%81%A8%E3%81%AF%E4%BD%95%E3%81%8B"><span class="toc-text">計算写真学とは何か</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%B7%E6%BA%90%EF%BC%9A%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E5%87%A6%E7%90%86%EF%BC%88Digital-Processing%EF%BC%89"><span class="toc-text">起源：デジタル処理（Digital Processing）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">数学と Instagram</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8B%95%E8%AA%BF%E6%95%B4%E3%81%A8%E3%80%8C%E3%83%AF%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%80%8D%E3%81%AE%E5%A4%A2"><span class="toc-text">自動調整と「ワンクリック」の夢</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">スタッキング（Stacking）：スマホの90%の功労者</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%B2%E5%87%BA%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AD%E3%83%B3%E3%82%B0%EF%BC%88Exposure-Stacking%EF%BC%89%EF%BC%9AHDR-%E3%81%A8%E5%85%89%E3%81%AE%E5%88%B6%E5%BE%A1"><span class="toc-text">露出スタッキング（Exposure Stacking）：HDR と光の制御</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AD%E3%83%B3%E3%82%B0%EF%BC%88Time-Stacking%EF%BC%89%EF%BC%9A%E9%95%B7%E6%99%82%E9%96%93%E9%9C%B2%E5%85%89%E3%81%A8%E3%82%BF%E3%82%A4%E3%83%A0%E3%83%A9%E3%83%97%E3%82%B9"><span class="toc-text">タイムスタッキング（Time Stacking）：長時間露光とタイムラプス</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        C++で3D点群を2D画像へ投影する
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/09/system/intel-gpu-opencl/">
+        Intel GPU 上で OpenCL を動かす方法
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="python,computer vision,bag of words,bag of visual words,image classification,kmeans,knn,svm," />
+    <meta name="description"
+        content="This post introduces Bag of Visual Words (BoVW) for image recognition: build clusters from local features, represent each image as a histogram over clusters, and train a classifier to recognize test images." />
+    <title>Neutrino&#39;s Blog: Image Classification with Bag of Visual Words (BoVW) </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/06/cv/bag-of-visual-words/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/06/cv/bag-of-visual-words/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/06/cv/bag-of-visual-words/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/06/cv/bag-of-visual-words/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/06/cv/bag-of-visual-words/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2020/06/cv/bag-of-visual-words/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Image Classification with Bag of Visual Words (BoVW)
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-06-20
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/06/cv/bag-of-visual-words/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2020/06/cv/bag-of-visual-words/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-Introduction"><a class="header-anchor" href="#1-Introduction">¶ </a>1. Introduction</h2>
+<p>The Bag of Visual Words (BoVW) model is derived from the Bag of Words (BoW) model and is a method for image classification.</p>
+<p>In information retrieval, BoW “packs” the words contained in a document into different bags. Different documents contain different sets of words, and thus correspond to different bags. For example, suppose we have three bags containing:</p>
+<ul>
+<li>“car, motorcycle, road”</li>
+<li>“doctor, cold, illness”</li>
+<li>“cat, goldfish, dog”</li>
+</ul>
+<p>If a document mentions “car”, we are more likely to believe it belongs to the first bag. In short, BoW classifies documents in this way.</p>
+<p>Similarly, in BoVW we classify images, so the “words” are image features. For example, if a bag contains a person’s “eyes, nose, mouth”, then when we recognize an image and see similar features (e.g., it contains “nose, mouth”), we can classify it into that bag. Conversely, if an image contains features like “table legs, armrests”, then it likely does not belong to that bag. With this idea, we can do image classification.</p>
+<h2 id="2-BoVW-Principles-and-Implementation"><a class="header-anchor" href="#2-BoVW-Principles-and-Implementation">¶ </a>2. BoVW Principles and Implementation</h2>
+<h3 id="2-1-Finding-K-means-Clusters"><a class="header-anchor" href="#2-1-Finding-K-means-Clusters">¶ </a>2.1 Finding K-means Clusters</h3>
+<p>Suppose we want to recognize a set of photos, and the photos may belong to multiple categories (e.g., buildings, forests, animals, etc.).</p>
+<p>First, we collect all features from all images. They may include features corresponding to furniture, rooftops, leaves, cat tails, branches, and so on.</p>
+<p>Then we use K-means to summarize these features and find different clusters. These clusters correspond to the “bags” in BoVW. If features are similar, they are likely assigned to the same bag. For instance, cat tails and dog ears are both animal body parts, so they might end up in the same bag.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/85189084-21eebf80-b2de-11ea-93e3-4116ac2b4fcf.png" alt="Kmeans 示意圖"></p>
+<p>You can choose the number of K-means clusters. A common heuristic is to set it to about 10× the number of classes. For example, if you want to classify photos into 5 categories, you may set K-means to create 50 clusters. Each cluster can be viewed as a set of similar features. As shown above, features similar to “mountains” are grouped into the “mountain” feature set.</p>
+<p>Below is an example of how to extract features and build K-means clusters:</p>
+<pre><code class="language-py">import numpy as np
+import cv2
+from cyvlfeat.kmeans import kmeans
+from cyvlfeat.sift.dsift import dsift
+
+def get_clusters(images, cluster_size, method=&quot;dsift&quot;):
+
+    bag_of_features = []
+
+    for img in images: # 遍歷所有圖片
+
+      if(method == &quot;dsift&quot;):
+        _keypoints, descriptors = dsift(img, step=[5,5], fast=True) 
+      elif(method == &quot;orb&quot;):
+        orb = cv2.ORB_create()
+        _keypoints, descriptors = orb.detectAndCompute(img, None)
+      elif(method == &quot;sift&quot;):
+        sift = cv2.xfeatures2d.SIFT_create()
+        _keypoints, descriptors = sift.detectAndCompute(img, None)
+
+      if descriptors is not None:
+          for des in descriptors:
+              bag_of_features.append(des)
+
+    clusters = kmeans(np.array(bag_of_features).astype('float32'),
+                      cluster_size, initialization=&quot;PLUSPLUS&quot;)
+
+    return clusters
+
+feature_clusters = get_clusters(images, 150, method=&quot;dsift&quot;)
+</code></pre>
+<p>In the implementation above, a <code>descriptor</code> is a feature descriptor from an image—i.e., a “word”. It is typically a matrix describing a local region. There are many ways to extract features; the code shows three options: DSIFT (Dense SIFT), SIFT, and ORB. Based on experiments, DSIFT performs best for this classification task, which I will discuss later.</p>
+<p>Many Python libraries provide K-means. In my experiments, <code>cyvlfeat</code> is faster than <code>sklean</code> and <code>scipy</code>. If you need even more speed, there are other libraries that implement K-means with different algorithms—the performance can vary depending on dataset size and the number of clusters.</p>
+<h3 id="2-2-Image-Histograms"><a class="header-anchor" href="#2-2-Image-Histograms">¶ </a>2.2 Image Histograms</h3>
+<p>An image contains many features, and each feature belongs to one of the K-means clusters obtained above.</p>
+<p>If an image is of mountains, most of its features should belong to clusters related to mountains, peaks, etc. So we can count how many of the image’s features fall into each cluster, and then infer which category the image belongs to. This is the core idea of BoVW.</p>
+<p>In practice, we represent BoVW using a histogram that records the distribution of clusters for an image.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/85189274-18665700-b2e0-11ea-90a1-5429862d3b81.png" alt="histogram 示意圖"></p>
+<p>From the diagram above, you can see that each image has a different histogram. Based on this, we can infer which class it belongs to. For example, furniture/buildings may have more “red” features, while natural scenes may have more “blue” features.</p>
+<pre><code class="language-py">def image_histogram(image, feature_clusters, method=&quot;dsift&quot;):
+            
+    # 這邊我只寫出 dsift 以節省空間
+    if(method == &quot;dsift&quot;):
+      _keypoints, descriptors = dsift(image), step=[5,5], fast=True)
+    
+    # 比較這張照片的特徵和群集的特徵
+    dist = distance.cdist(feature_clusters, descriptors, metric='euclidean')
+    
+    # 替這張照片每個特徵選最接近的群集特徵
+    idx = np.argmin(dist, axis=0)
+    
+    # 建立 Histogram
+    hist, bin_edges = np.histogram(idx, bins=len(feature_clusters))
+    hist_norm = [float(i)/sum(hist) for i in hist]
+
+    return hist_norm
+</code></pre>
+<p>One important note: <code>get_clusters</code> and <code>image_histogram</code> must use the same feature extraction method (e.g., both use <code>dsift</code>).</p>
+<h3 id="2-3-KNN-Classification"><a class="header-anchor" href="#2-3-KNN-Classification">¶ </a>2.3 KNN Classification</h3>
+<p>To recognize images, we typically have a training set and a test set. The training set is used to learn what histograms look like for each class, and the test set is used to evaluate classification accuracy.</p>
+<p>After we compute histograms for the training images, we compute the histogram of a test image. By finding which class histogram it is closest to, we can predict the class of the test image.</p>
+<p>You can use a K Nearest Neighbors (KNN) classifier. The algorithm is:</p>
+<ol>
+<li>Compute the histogram of the test image</li>
+<li>Compare it with histograms of all training images (vector distance)</li>
+<li>Select the K training images with the smallest distance</li>
+<li>Count the class distribution among these K neighbors</li>
+<li>Pick the class with the most votes as the predicted class</li>
+</ol>
+<h3 id="2-4-SVM-Classification"><a class="header-anchor" href="#2-4-SVM-Classification">¶ </a>2.4 SVM Classification</h3>
+<p>KNN accuracy is roughly around 40–50%. You can consider using <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA">SVM</a>, which can reach about 60–70%. When you are not sure which classifier to use, SVM is often a good baseline. It is also relatively fast.</p>
+<p>Intuitively, SVM tries to separate different groups with a line (or hyperplane), while keeping a certain margin from both sides, as shown below:</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/85191168-7438dc00-b2f0-11ea-9a69-7d28fe3465eb.png" alt="SVM image"><br>
+(Source: <a target="_blank" rel="noopener" href="https://towardsdatascience.com/demystifying-support-vector-machines-8453b39f7368">Dhairya Kumar</a>)</p>
+<p>For SVM principles and implementation, you can refer to: “<a target="_blank" rel="noopener" href="https://towardsdatascience.com/support-vector-machine-introduction-to-machine-learning-algorithms-934a444fca47">Support Vector Machine — Introduction to Machine Learning Algorithms</a>”.</p>
+<p>In practice, you can use <a target="_blank" rel="noopener" href="https://scikit-learn.org/stable/modules/svm.html_">Scikit-Learn SVM</a> or <a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~cjlin/libsvm/#python">LibSVM</a>. Feed the training histograms into SVM to learn, and then let SVM predict the class of test images.</p>
+<p><strong>A complete code example can be found here: <a target="_blank" rel="noopener" href="https://gist.github.com/tigercosmos/a5af5359b81b99669ef59e82839aed60">link</a></strong></p>
+<h2 id="3-Discussion"><a class="header-anchor" href="#3-Discussion">¶ </a>3. Discussion</h2>
+<p>Given a batch of photos, we use BoVW to classify them. The photos are divided into 15 classes. Each class has 100 grayscale images of size 256×256 as the training set. In addition, each class has 10 images of the same specification as the test set.</p>
+<p>The classes are:<br>
+<img src="https://user-images.githubusercontent.com/18013815/85193818-00053500-b2fe-11ea-95f7-cc8343688817.png" alt="圖片種類"></p>
+<p>The test environment is a MacBook Pro 2017 with a 2.3 GHz Intel Core i5, using Python 3.6.</p>
+<p>The results are:</p>
+<table>
+<thead>
+<tr>
+<th>Descriptor</th>
+<th>Kmeans Cluster</th>
+<th>KNN(%)</th>
+<th>Linear SVM(%)</th>
+<th>Time(min)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DSIFT</td>
+<td>60</td>
+<td>49.3</td>
+<td>58</td>
+<td>12:10</td>
+</tr>
+<tr>
+<td>DSIFT</td>
+<td>150</td>
+<td>40.7</td>
+<td>57.3</td>
+<td>20:52</td>
+</tr>
+<tr>
+<td>DSIFT</td>
+<td>300</td>
+<td>39.3</td>
+<td><strong>60.7</strong></td>
+<td>51:19</td>
+</tr>
+<tr>
+<td>SIFT</td>
+<td>60</td>
+<td>30</td>
+<td>42.7</td>
+<td>4:33</td>
+</tr>
+<tr>
+<td>SIFT</td>
+<td>150</td>
+<td>24.7</td>
+<td>38.7</td>
+<td>6:33</td>
+</tr>
+<tr>
+<td>SIFT</td>
+<td>300</td>
+<td>22.7</td>
+<td>34.7</td>
+<td>9:57</td>
+</tr>
+<tr>
+<td>ORB</td>
+<td>60</td>
+<td>12.7</td>
+<td>14</td>
+<td>0:30</td>
+</tr>
+<tr>
+<td>ORB</td>
+<td>150</td>
+<td>12.7</td>
+<td>17.3</td>
+<td>1:15</td>
+</tr>
+<tr>
+<td>ORB</td>
+<td>300</td>
+<td>10.0</td>
+<td>13.3</td>
+<td>2:23</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-1-Differences-Between-Feature-Algorithms"><a class="header-anchor" href="#3-1-Differences-Between-Feature-Algorithms">¶ </a>3.1 Differences Between Feature Algorithms</h3>
+<p>You can see that DSIFT takes the most time but also performs best. Surprisingly, ORB is very fast but performs poorly.</p>
+<p>This is understandable: DSIFT is a dense feature extraction method—plainly speaking, it samples many local features. This can be advantageous for recognizing object shapes. In contrast, ORB is mainly used for detecting key points; it has weaker understanding of the overall structure, so it is harder to recognize shapes in this setup.</p>
+<h3 id="3-2-Differences-in-the-Number-of-K-means-Clusters"><a class="header-anchor" href="#3-2-Differences-in-the-Number-of-K-means-Clusters">¶ </a>3.2 Differences in the Number of K-means Clusters</h3>
+<p>K-means needs to balance distinctiveness and robustness. With fewer clusters, cluster differences are larger. With more clusters, differences may become smaller, but results may be more robust. This affects performance.</p>
+<p>In this experiment, I set the number of K-means clusters to 60, 120, and 300, corresponding to 2×, 4×, and 20× the number of image classes. DSIFT performs best with 300 clusters, but only slightly better, while the cost is almost more than double the time. This is because the complexity of K-means is $O(t \times k \times n \times d)$, where $t$ is the number of iterations, $k$ is the number of clusters, $n$ is the number of points, and $d$ is the dimensionality of each point.</p>
+<p>You can also observe that SIFT achieves its best result at 60 clusters, while ORB peaks at 150 clusters.</p>
+<p>So under this experimental setup, we may not need a large number of clusters—perhaps because the image classes are quite distinct, and a small number of clusters is enough to separate them.</p>
+<p>In practice, if classification performance is poor, you can try hierarchical clustering—i.e., further splitting the original clusters into smaller sub-clusters.</p>
+<h3 id="3-3-Different-Classifiers"><a class="header-anchor" href="#3-3-Different-Classifiers">¶ </a>3.3 Different Classifiers</h3>
+<p>From the experiments, SVM performs better than KNN.</p>
+<h2 id="4-Conclusion"><a class="header-anchor" href="#4-Conclusion">¶ </a>4. Conclusion</h2>
+<p>This post introduced how to use Bag of Visual Words (BoVW) for image recognition: build clusters from features extracted from an image set, compute a histogram for each image based on its features, and then use a classifier to recognize which class a test image belongs to.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/python/">
+                python
+            </a>,&nbsp;
+        
+            <a href="/en/tags/computer-vision/">
+                computer vision
+            </a>,&nbsp;
+        
+            <a href="/en/tags/bag-of-words/">
+                bag of words
+            </a>,&nbsp;
+        
+            <a href="/en/tags/bag-of-visual-words/">
+                bag of visual words
+            </a>,&nbsp;
+        
+            <a href="/en/tags/image-classification/">
+                image classification
+            </a>,&nbsp;
+        
+            <a href="/en/tags/kmeans/">
+                kmeans
+            </a>,&nbsp;
+        
+            <a href="/en/tags/knn/">
+                knn
+            </a>,&nbsp;
+        
+            <a href="/en/tags/svm/">
+                svm
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Introduction"><span class="toc-text">1. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-BoVW-Principles-and-Implementation"><span class="toc-text">2. BoVW Principles and Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Finding-K-means-Clusters"><span class="toc-text">2.1 Finding K-means Clusters</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Image-Histograms"><span class="toc-text">2.2 Image Histograms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-KNN-Classification"><span class="toc-text">2.3 KNN Classification</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-SVM-Classification"><span class="toc-text">2.4 SVM Classification</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Discussion"><span class="toc-text">3. Discussion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Differences-Between-Feature-Algorithms"><span class="toc-text">3.1 Differences Between Feature Algorithms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Differences-in-the-Number-of-K-means-Clusters"><span class="toc-text">3.2 Differences in the Number of K-means Clusters</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Different-Classifiers"><span class="toc-text">3.3 Different Classifiers</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Conclusion"><span class="toc-text">4. Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/09/system/intel-gpu-opencl/">
+        How to Run OpenCL on an Intel GPU
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="computer vision,computational photography,camera,digital processing,HDR,time stacking,image processing," />
+    <meta name="description"
+        content="This post introduces what computational photography is. It is translated from Vasily Zubarev’s introduction to Computational Photography." />
+    <title>Neutrino&#39;s Blog: Computational Photography (Part 1): An Introduction </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2021/06/cv/computation-photography-1/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2021/06/cv/computation-photography-1/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2021/06/cv/computation-photography-1/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2021/06/cv/computation-photography-1/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2021/06/cv/computation-photography-1/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2021/06/cv/computation-photography-1/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Computational Photography (Part 1): An Introduction
+    </h2>
+    <ul class="post-date">
+        <li>
+            2021-06-03
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2021/06/cv/computation-photography-1/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2021/06/cv/computation-photography-1/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <blockquote>
+<p>With the author’s permission, this post is translated from Vasily Zubarev’s “<a target="_blank" rel="noopener" href="https://vas3k.com/blog/computational_photography/">Computational Photography — From Selfies to Black Holes</a>”. Most of the content stays faithful to the original meaning; a small portion is adjusted based on the translator’s interpretation. The “I” in the text refers to the original author. Translator notes are explicitly marked as “Translator’s note”. The original post is extremely long, so I split it into multiple parts and translate them one by one.</p>
+</blockquote>
+<p>One major reason modern smartphones became so widely popular is the cameras they carry. Pixel can produce great results in near-complete darkness; Huawei zooms as if you were using binoculars; Samsung phones ship with eight-element lens stacks; and iPhones can even make you feel a bit superior among friends. Behind these phone cameras, there are some truly incredible innovations.</p>
+<p>By contrast, DSLR cameras seem to be gradually fading. Even though Sony still releases impressive new products every year, the pace of updates from manufacturers is clearly slowing down, and their primary revenue increasingly comes from video creators.</p>
+<blockquote>
+<p>Translator’s note: Sony is indeed impressive. Here are technical details of the flagship Sony A1 announced in 2021: <a target="_blank" rel="noopener" href="https://www.mobile01.com/topicdetail.php?f=254&amp;t=6311416">Sony A1 絕對影像王者 頂尖技術力的展現</a></p>
+</blockquote>
+<p>I personally own a $3000 Nikon camera, but whenever I travel, I still take photos with an iPhone. Why?</p>
+<p>I tried to find an answer online. I found plenty of discussions about “algorithms” and “neural networks”, but almost nobody clearly explained how these technologies actually affect what a photo looks like. Journalists just list product spec numbers; bloggers keep posting more unboxing articles; camera enthusiasts only care whether the colors look pleasing. Oh internet, you give us so much information. We love you.</p>
+<p>So I spent a large part of my life trying to understand what’s really going on. In this post, I’ll explain everything I know about what’s behind smartphone cameras—otherwise I’ll probably forget it all soon anyway.</p>
+<h2 id="What-Is-Computational-Photography"><a class="header-anchor" href="#What-Is-Computational-Photography">¶ </a>What Is Computational Photography?</h2>
+<p>If you look up computational photography anywhere, including <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Computational_photography">Wikipedia</a>, you’ll likely see a definition along the lines of: “Computational photography is the use of digital computation to enhance or extend the capabilities of digital photography and image processing, rather than relying on optical processes alone.” Most of this is correct, except for some details—for example, computational photography can even include autofocus, and it also includes useful things like <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Light-field_camera">light-field cameras</a>. It seems the “official” definition is still a bit vague, and we still don’t really understand what computational photography actually is.</p>
+<blockquote>
+<p>A light-field camera captures the light field formed by a scene. Besides recording the intensity and color of light at different positions, it also records the direction of the incoming light rays. A regular camera can only record intensity at different positions.</p>
+</blockquote>
+<p>Professor Marc Levoy at Stanford is a pioneer in computational photography. He is currently working on the Google Pixel camera. In his <a target="_blank" rel="noopener" href="https://medium.com/hd-pro/a25d34f37b11">article</a>, he offers another explanation: “Computational imaging lets us enhance and extend what’s feasible in digital photography—making the photos we take look so ordinary, yet they are nearly impossible to achieve with traditional cameras.” I agree with this definition more, and I will follow it in the rest of this series.</p>
+<p>Therefore, smartphones are the root of everything—smartphones had no choice but to bring people a new kind of photography technology: <em><strong>computational photography</strong></em>.</p>
+<p>Smartphones have noisy sensors and relatively mediocre lenses. According to the laws of physics, they should only give us terrible images—until developers figured out how to break the physical limits: faster electronic shutters, powerful processors, and better software.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/120586863-e9041800-c466-11eb-84a3-e9d50c3b1a41.jpg" alt="數位單眼跟智慧手機比較"></p>
+<p>Most important research in computational photography happened around 2005–2015, but that is already “old science”. What we see today, and what we carry in our pockets, is a new era of technology and knowledge.</p>
+<p>Computational photography is not just HDR or “night selfie mode”. Recent black hole imaging would be absolutely impossible without modern computational methods. If we tried to photograph a black hole with a normal telescope, we’d need a lens as large as the Earth. But by placing eight radio telescopes around the globe and running some <a target="_blank" rel="noopener" href="https://achael.github.io/_pages/imaging/">pretty cool Python code</a>, we obtained the world’s first photo of an event horizon.</p>
+<img src="https://i.vas3k.ru/87c.jpg" alt="event horizon" width=50%>
+<p>But for selfies, it’s also very useful—don’t worry too much.</p>
+<p>📝 <a target="_blank" rel="noopener" href="http://alumni.media.mit.edu/~jaewonk/Publications/Comp_LectureNote_JaewonKim.pdf">Computational Photography: Principles and Practice</a><br>
+📝 <a target="_blank" rel="noopener" href="https://graphics.stanford.edu/talks/compphot-publictalk-may08.pdf">Marc Levoy: New Techniques in Computational photography</a></p>
+<blockquote>
+<p>Throughout this series I’ll include links that point to articles 📝 or videos 🎥 that I think are great, so you can go deeper into what you’re interested in—because I can’t explain everything in a short post.</p>
+</blockquote>
+<h2 id="Origins-Digital-Processing"><a class="header-anchor" href="#Origins-Digital-Processing">¶ </a>Origins: Digital Processing</h2>
+<p>Back in 2010, Justin Bieber released his first album, Burj Khalif had just opened in Dubai, and we still couldn’t capture spectacular cosmic phenomena—because our photos were noisy 2-megapixel JPEGs.</p>
+<p>When faced with such photos, our first heartfelt wish was to hide the embarrassing image quality behind “Vintage” photo filters. And that’s when Instagram was born!</p>
+<p><img src="https://i.vas3k.ru/88i.jpg" alt=""></p>
+<h1>Math and Instagram</h1>
+<p>Thanks to Instagram, anyone could easily apply photo filters. As a man who once reverse-engineered X-Pro II, Lo-Fi, and Valencia (filter names) for “research purposes”, I still remember that these filters basically had three components:</p>
+<ul>
+<li>
+<p>Color settings (hue, saturation, brightness, contrast, levels, etc.) are the basic parameters—similar to traditional photographic filters used by photographers long ago.<br>
+<img src="https://i.vas3k.ru/85k.jpg" alt=""></p>
+</li>
+<li>
+<p>Tone mapping is a mapping over a vector of values—for example, it tells us “a red tone of 128 should be changed to 240.” It is usually used for single-color adjustments. Here is <a target="_blank" rel="noopener" href="https://github.com/danielgindi/Instagram-Filters/blob/master/InstaFilters/Resources_for_IF_Filters/xproMap.png">an example</a>: an X-Pro II tone map.<br>
+<img src="https://i.vas3k.ru/85i.jpg" alt=""></p>
+</li>
+<li>
+<p>Overlay—using a semi-transparent image with dust, grain, small illustrations, or anything else, and overlaying it on top of the base image to create a new effect. It is not used as often.<br>
+<img src="https://i.vas3k.ru/85t.jpg" alt=""></p>
+</li>
+</ul>
+<p>Modern filters do far more than these three pieces, and things get more mathematically complex. With hardware shader support and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OpenCL">OpenCL</a> on phones, these computations are easy to run on the GPU—honestly, it’s insanely cool. We could already do this in 2012. Today, any kid can do similar effects <a target="_blank" rel="noopener" href="https://una.im/CSSgram/">with CSS</a>, though he still might not get invited to prom.</p>
+<p>However, progress in filters continues. For example, some people implement nonlinear filters on <a target="_blank" rel="noopener" href="http://blog.dehancer.com/category/examples/">Dehancer</a>. Unlike simple “mapping” changes, they use fancy and complex transformation functions, which opens up more possibilities for filters.</p>
+<p>With nonlinear transformations you can achieve many variations, but processing becomes complicated—and humans are not good at complicated work. Fortunately, we can use numerical methods or neural networks to do the same things, but much more easily!</p>
+<h2 id="Automated-Adjustments-and-the-Dream-of-“One-Click”"><a class="header-anchor" href="#Automated-Adjustments-and-the-Dream-of-“One-Click”">¶ </a>Automated Adjustments and the Dream of “One Click”</h2>
+<p>Once everyone got used to filters, we even integrated filters directly into the camera. Who first thought of putting filters into a camera is hard to trace, but we do know that as early as iOS 5.0 (released in 2011), we already had a public API for <a href="(https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_autoadjustment/ci_autoadjustmentSAVE.html)">“auto enhance image”</a>. It seems Jobs realized filters had been in use for a long time even before the API was made public.</p>
+<p>Automatic image adjustment is essentially the same thing we do in photo editing software: fix highlights and shadows, add brightness, remove red-eye, correct skin tones, and so on. Users never think that this “magical enhanced camera” is backed by just a few lines of code.</p>
+<p><img src="https://i.vas3k.ru/865.jpg" alt="ML Enhance in Pixelmator"><br>
+(Machine learning enhancement in Pixelmator)</p>
+<p>Today, the “one-click generation” war has moved into the domain of machine learning. People who are tired of manually crafting style mappings now turn to <a target="_blank" rel="noopener" href="http://vas3k.com/blog/machine_learning/">CNNs and GANs</a> and let computers adjust the retouching sliders for us. In other words, we give the machine an image, and it decides various “optical” parameters on its own, producing an image closer to what we perceive as a “good photo”. You can visit the official pages of tools like Photoshop or Pixelmator Pro and see how they advertise their latest ML-powered features. You can probably guess that ML won’t work perfectly forever—but you can always train your own model with lots of data and get better results. The resources below might help you… or not 😂</p>
+<p>📝 <a target="_blank" rel="noopener" href="https://paperswithcode.com/task/image-enhancement">Image Enhancement Papers</a><br>
+📝 <a target="_blank" rel="noopener" href="http://people.ee.ethz.ch/~ihnatova/#dataset">DSLR-Quality Photos on Mobile Devices with Deep Convolutional Networks</a></p>
+<h1>Stacking: The 90% Contributor in Smartphones</h1>
+<p>Real computational photography comes from stacking—a technique that stacks multiple images one by one. For smartphones, taking dozens of photos within a second is easy. Because the mechanical design inside phones doesn’t have components to adjust shutter speed (the aperture is fixed), they use an electronic shutter (as opposed to a traditional mechanical shutter). The processor simply tells the sensor how many milliseconds of photons it should collect, and you get a photo.</p>
+<p>Technically, a phone can take photos at video-like speeds (we don’t usually take photos at 60fps, right?). It can even record video at photo-level quality (4K video is already “high quality” at around 40 megapixels, while photos can easily go beyond 100 megapixels). But doing so increases data transfer and processing load, so software is ultimately constrained by hardware.</p>
+<p>Stacking has existed for a while. Some people use Photoshop to produce insanely sharpened HDR photos or panoramas at 18000×600 pixels. And there are even more things you can try—waiting for you to explore!</p>
+<p>People call this kind of post-processing “<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Epsilon_photography">Epsilon Photography</a>”. It means continuously tweaking camera parameters (exposure, focus, or position) and combining them into an image that would be impossible with a single shot. In practice, we call it stacking. Today, 90% of innovations in mobile device cameras are based on it.</p>
+<p><img src="https://i.vas3k.ru/85d.jpeg" alt=""></p>
+<p>Although many people don’t care how phone cameras work, it is crucial to understanding smartphone photography as a whole: <strong>a modern smartphone camera starts taking photos the moment you open it</strong>. This makes sense, because it needs to show you an image on the screen. Besides continuously capturing frames, it also stores high-resolution images in a circular buffer and keeps them for a few seconds.</p>
+<blockquote>
+<p>When you press the “take photo” button, the phone has already taken the photo long ago—the camera is simply using the last frame in the buffer.</p>
+</blockquote>
+<p>This is how phone cameras work today—at least high-end smartphones. Buffering enables zero <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Shutter_lag">shutter lag</a> (the delay between pressing the shutter and actually capturing the photo), a long-awaited feature for photographers. Some even wish shutter lag could be negative. By pressing the button, the phone can “browse the past”, fish out the last 5–10 frames from the buffer, and start analyzing and combining them aggressively. So we no longer even need explicit HDR or night mode—the camera software will process those frames from the buffer, and users may not even realize their photos are heavily processed.</p>
+<p>In fact, this is what iPhones and Pixels do today.</p>
+<p><img src="https://i.vas3k.ru/88j.jpg" alt=""></p>
+<h2 id="Exposure-Stacking-HDR-and-Light-Control"><a class="header-anchor" href="#Exposure-Stacking-HDR-and-Light-Control">¶ </a>Exposure Stacking: HDR and Light Control</h2>
+<p><img src="https://i.vas3k.ru/85x.jpg" alt=""></p>
+<p>An old debate is whether camera sensors can <a target="_blank" rel="noopener" href="https://www.cambridgeincolour.com/tutorials/cameras-vs-human-eye.htm">capture the full brightness range that the human eye can see</a>. Some say no, because the eye can see up to 25 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/F-number">f-stops</a>, while even top full-frame sensors reach only about 14. Others argue that this is not the right comparison, because the eye is assisted by the brain: the brain adjusts your pupils and “completes” the image with neural processing. So the instantaneous dynamic range of the eye is actually no more than 10–14 f-stops. It’s hard! Let’s leave these debates to scientists.</p>
+<p>But the problem remains: when you take a photo of a friend against a blue sky with any phone, if you don’t use HDR, you either get a clear sky but your friend is dark, or your friend is clear but the sky is overexposed.</p>
+<p>Long ago, people found a solution: HDR (High Dynamic Range) to expand the brightness range. When the scene’s brightness range is too wide, we can capture it in three (or more) steps: take multiple photos with different exposure settings—a “normal” one, a brighter one, and a darker one. Then we use the brighter photo to fill shadows, and use the darker photo to recover overexposed regions.</p>
+<p>The last thing we need to solve is auto bracketing: we need to know how to distribute and adjust exposure across frames so the merged photo does not become overexposed. But today, any engineering student can do this with a bit of Python code.</p>
+<p><img src="https://i.vas3k.ru/86t.jpg" alt=""></p>
+<p>When the simple algorithms in the latest iPhone, Pixel, and Galaxy cameras detect that you are shooting on a sunny day, they automatically enable HDR mode. You can even see how the phone switches into buffer mode to store more images—FPS drops and the preview becomes more vivid. On my iPhone X, the moment it switches is clearly visible. Next time, take a closer look at your smartphone!</p>
+<p>The main drawback of bracketed HDR is that it becomes unbelievably useless in low light. Even under household lamps, photos are still dark, and even phones cannot align and stack them well. To solve this, Google announced a different HDR method as early as 2013 on Nexus smartphones: it uses time stacking.</p>
+<p>📝 <a target="_blank" rel="noopener" href="https://www.videoproc.com/resource/high-dynamic-range.htm">What Is HDR: Concepts, Standards, and Related Aspects</a></p>
+<h2 id="Time-Stacking-Long-Exposure-and-Time-Lapse"><a class="header-anchor" href="#Time-Stacking-Long-Exposure-and-Time-Lapse">¶ </a>Time Stacking: Long Exposure and Time Lapse</h2>
+<p><img src="https://i.vas3k.ru/85v.jpg" alt=""></p>
+<p>Time stacking lets you get a long-exposure effect from a series of short-exposure photos. This approach was invented by astronomy enthusiasts who love capturing star trails at night. Even with a tripod, you can’t realistically keep the shutter open for two hours, because you must compute all the settings in advance, and any tiny shake ruins the entire result. So they decided to split the process into many few-minute photos and then stack them in Photoshop.</p>
+<p><img src="https://i.vas3k.ru/86u.jpg" alt="These star patterns are always glued together from a series of photos. That make it easier to control exposure"><br>
+(Star trails are composed by stacking a series of photos, which makes exposure easier to control.)</p>
+<p>So the camera never truly performed a long exposure. We simulate the effect by combining multiple consecutive shots. For a long time, many smartphone apps used this trick, but now almost every manufacturer includes it as a standard camera feature.</p>
+<p><img src="https://i.vas3k.ru/86f.jpg" alt="A long exposure made of iPhone's Live Photo in 3 clicks"><br>
+(A long exposure made from iPhone Live Photos in three clicks)</p>
+<p>Now, back to Google and its “night HDR”. It turns out that time bracketing can create a decent HDR in the dark. This technology first appeared in Nexus 5 and was called HDR+. It is still so popular that <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=iLtWyLVjDg0&amp;t=0">it is even praised</a> in the latest Pixel presentations.</p>
+<p>HDR+ is very simple: once the camera detects you are shooting in the dark, it takes the last 8–15 RAW frames from the buffer and stacks them together. This way, the algorithm collects more information about dark regions, minimizes noisy pixels, and avoids cases where the camera fails to capture photons in certain frames for some reason.</p>
+<p>Imagine this: you don’t know what a <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Capybara">Capybara</a> looks like, so you decide to ask five people. Their stories are mostly similar, but each person mentions unique details, so compared to asking only one person, you get more information. Pixels in a photo work the same way: more information, sharper, and less noise.</p>
+<p>📝 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2014/10/hdr-low-light-and-high-dynamic-range.html">HDR+: Low Light and High Dynamic Range photography in the Google Camera App</a></p>
+<p>Stacking photos taken from the same location produces the same “fake long exposure” effect as the star-trail example above. With dozens of frames combined, an error in one frame can be corrected by others. Just imagine how many times you’d have to hammer the shutter button on a DSLR to achieve this.</p>
+<p><img src="https://i.vas3k.ru/86g.jpg" alt="Pixel ad that glorifies HDR+ and Night Sight"></p>
+<p>There is only one thing left: automatic color space mapping. Photos shot in the dark often break color balance (yellowish or greenish), so we need to fix it manually. In early versions of HDR+, this was handled by simple automatic tone fixes, like an Instagram filter. Later, they used neural networks to restore colors.</p>
+<p><a target="_blank" rel="noopener" href="https://www.blog.google/products/pixel/see-light-night-sight/">Night Sight</a> was born from this—the “night photography” feature on Pixel 2, 3, and newer. The description says “HDR+ is built on machine learning”. In reality, it’s just a fancy name for neural networks plus all HDR+ post-processing steps. By training the model on “before” and “after” datasets, we can produce a beautiful image from a set of dark and messy photos.</p>
+<p><img src="https://i.vas3k.ru/88k.jpg" alt=""></p>
+<p>By the way, this training dataset is public. Maybe people at Apple will pick it up and finally teach the “best camera in the world” to shoot in the dark?</p>
+<p>In addition, Night Sight computes <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Optical_flow">motion vectors</a> of objects in the frames and uses stabilization to handle blur. Because long exposures easily produce blur, a smartphone can take sharp parts from other frames and stack them to remove blurry portions.</p>
+<p>📝 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2018/11/night-sight-seeing-in-dark-on-pixel.html" title=".block-link">Night Sight: Seeing in the Dark on Pixel Phones</a><br>
+📝 <a target="_blank" rel="noopener" href="https://ai.googleblog.com/2018/02/introducing-hdr-burst-photography.html" title=".block-link">Introducing the HDR+ Burst Photography Dataset</a></p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/computer-vision/">
+                computer vision
+            </a>,&nbsp;
+        
+            <a href="/en/tags/computational-photography/">
+                computational photography
+            </a>,&nbsp;
+        
+            <a href="/en/tags/camera/">
+                camera
+            </a>,&nbsp;
+        
+            <a href="/en/tags/digital-processing/">
+                digital processing
+            </a>,&nbsp;
+        
+            <a href="/en/tags/hdr/">
+                HDR
+            </a>,&nbsp;
+        
+            <a href="/en/tags/time-stacking/">
+                time stacking
+            </a>,&nbsp;
+        
+            <a href="/en/tags/image-processing/">
+                image processing
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-Is-Computational-Photography"><span class="toc-text">What Is Computational Photography?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Origins-Digital-Processing"><span class="toc-text">Origins: Digital Processing</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Math and Instagram</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Automated-Adjustments-and-the-Dream-of-%E2%80%9COne-Click%E2%80%9D"><span class="toc-text">Automated Adjustments and the Dream of “One Click”</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Stacking: The 90% Contributor in Smartphones</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Exposure-Stacking-HDR-and-Light-Control"><span class="toc-text">Exposure Stacking: HDR and Light Control</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Time-Stacking-Long-Exposure-and-Time-Lapse"><span class="toc-text">Time Stacking: Long Exposure and Time Lapse</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/09/system/intel-gpu-opencl/">
+        How to Run OpenCL on an Intel GPU
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

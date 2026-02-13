@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="python,computer vision,camera calibration,2D pattern," />
+    <meta name="description"
+        content="Camera calibration estimates camera parameters, including intrinsic parameters and extrinsic parameters. This post focuses on the 2D pattern-based calibration method proposed by Zhengyou Zhang in “A Flexible New Technique for Camera Calibration”, and provides clearer math explanations and code examples." />
+    <title>Neutrino&#39;s Blog: 2D Pattern Camera Calibration </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/04/cv/camera-calibration/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/04/cv/camera-calibration/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/04/cv/camera-calibration/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/04/cv/camera-calibration/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/04/cv/camera-calibration/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2020/04/cv/camera-calibration/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        2D Pattern Camera Calibration
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-04-06
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/04/cv/camera-calibration/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2020/04/cv/camera-calibration/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-Introduction"><a class="header-anchor" href="#1-Introduction">¶ </a>1. Introduction</h2>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Camera_resectioning">Camera Calibration</a> means estimating the parameters of a camera. In other words, when a camera takes a photo, we want to know all parameters that map a 2D point in the image to its corresponding 3D point in the real world, including intrinsic parameters (camera internal parameters) and extrinsic parameters (<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AE%9A%E5%90%91_(%E5%90%91%E9%87%8F%E7%A9%BA%E9%96%93)">orientation</a> parameters).</p>
+<p>The relationship between a 2D image point and a 3D real-world point is:</p>
+<p>$$\mathbf{\tilde m} = \mathbf A [\mathbf R \quad \mathbf t] \mathbf {\tilde M}$$</p>
+<p>Where $\mathbf{\tilde m}$ is the image coordinate vector $[u, v, 1]^T$, $\mathbf {\tilde M}$ is the world coordinate vector $[X, Y, Z, 1]^T$, $\mathbf A$ is the intrinsic matrix, and $[\mathbf R \quad \mathbf t]$ is the extrinsic matrix.</p>
+<p>For camera calibration, you can also refer to Chapter 6 “Feature-based alignment” in <em>Computer Vision: Algorithms and Applications</em> by Richard Szeliski.</p>
+<p>Recovering the 3D coordinates corresponding to image points is not easy. However, if we use a planar object with a known pattern (e.g., a chessboard), since the relative coordinates of each grid corner are known and we can assume all points have the same $Z$ coordinate, we can use multiple photos of the chessboard to recover the intrinsic matrix and extrinsic matrix. This post focuses on the 2D pattern-based calibration method proposed by Zhengyou Zhang in “<a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf">A Flexible New Technique for Camera Calibration</a>”, and provides clearer math explanations and code examples.</p>
+<h2 id="2-Solving-for-the-Homography"><a class="header-anchor" href="#2-Solving-for-the-Homography">¶ </a>2. Solving for the Homography</h2>
+<p>In the following, we use a chessboard as a representative planar pattern. If we set the chessboard plane in world coordinates to $Z=0$, then:</p>
+<p>$$<br>
+\begin{align}<br>
+{<br>
+\begin{bmatrix}<br>
+u \\<br>
+v \\<br>
+1<br>
+\end{bmatrix}<br>
+=<br>
+\mathbf A [\mathbf r1 \quad \mathbf r2 \quad \mathbf r3 \quad \mathbf t]<br>
+\begin{bmatrix}<br>
+X \\<br>
+Y \\<br>
+0 \\<br>
+1<br>
+\end{bmatrix}<br>
+} \\<br>
+{<br>
+=<br>
+\mathbf A [\mathbf r1 \quad \mathbf r2 \quad \mathbf t]<br>
+\begin{bmatrix}<br>
+X \\<br>
+Y \\<br>
+1<br>
+\end{bmatrix}<br>
+}<br>
+\end{align}<br>
+$$</p>
+<p>Here, $\mathbf A [\mathbf r1 \quad \mathbf r2 \quad \mathbf t] $ is the homography $ \mathbf H$.</p>
+<p>In practice, we have many chessboard photos:</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/78544179-53ea9c80-782c-11ea-8c40-c0a6da560027.png" alt="many chessboard pictures"></p>
+<p>From image processing, we can obtain the 2D coordinates of the corner points in each photo.</p>
+<p>At the same time, we know the chessboard coordinates are identical across these photos, so we can assume the chessboard 3D coordinates are $(0, 0, 0)$, $(0, 1, 0)$, $(1, 1, 0)$, $(1, 2, 0)$, $(2, 1, 0)$, … .</p>
+<p>Then we can solve for $\mathbf H$:</p>
+<p>$$\mathbf{\tilde m} = \mathbf H \mathbf {\tilde M}$$</p>
+<p>One method to solve $\mathbf H$ is described in Appendix A of Zhang’s paper. We solve:</p>
+<p>$$<br>
+\begin{bmatrix}<br>
+{\mathbf {\tilde M}}^T &amp; \mathbf 0^T &amp; -u {\mathbf {\tilde M}}^T\\<br>
+\mathbf 0^T   &amp; {\mathbf{\tilde M}}^T &amp;-v{\mathbf {\tilde M}}^T<br>
+\end{bmatrix} \mathbf x = \mathbf L \mathbf x = 0<br>
+$$</p>
+<p>Define the matrix on the left as $\mathbf L$. Expanded, it looks like:</p>
+<p>$$<br>
+\begin{bmatrix}<br>
+&amp;X_1 &amp;Y_1 &amp;1 &amp;0 &amp;0 &amp;0 &amp;-uX_1 &amp;-uY_1 &amp;-u \\<br>
+&amp;0 &amp;0 &amp;0 &amp;X_1 &amp;Y_1 &amp;1 &amp;-vX_1 &amp;-vY_1 &amp;-v<br>
+\end{bmatrix}<br>
+$$</p>
+<p>One image provides two rows. If we have $n$ images, then $\mathbf L$ is a $2n \times 9$ matrix.</p>
+<p>The solution $\mathbf x$ is the eigenvector of $\mathbf L^T \mathbf L$ associated with the smallest eigenvalue. In code, it may be more intuitive:</p>
+<pre><code class="language-py">L # 2n x 9 的 numpy 矩陣
+w, v, vh = np.linalg.svd(L)
+x = vh[-1]
+</code></pre>
+<p>The $\mathbf H$ computed from $\mathbf x$ needs to be scaled by a coefficient $\rho$:</p>
+<p>$$<br>
+\mathbf H = \rho x = \rho<br>
+\begin{bmatrix}<br>
+x_1 &amp;x_2 &amp;x_3 \\<br>
+x_4 &amp;x_4 &amp;x_5 \\<br>
+x_6 &amp;x_7 &amp;x_8<br>
+\end{bmatrix}<br>
+$$</p>
+<p>According to:</p>
+<p>$$\mathbf{\tilde m} = \rho \mathbf x \mathbf {\tilde M}$$</p>
+<p>My approach is to plug each corresponding coordinate pair into the equation to obtain $\rho$, then take the average.</p>
+<h2 id="3-Constraints-on-Intrisic-Parameters"><a class="header-anchor" href="#3-Constraints-on-Intrisic-Parameters">¶ </a>3. Constraints on Intrisic Parameters</h2>
+<p>Define $\mathbf H = [\mathbf h_1 \quad \mathbf h_2 \quad \mathbf h3]$:</p>
+<p>$$[\mathbf h_1 \quad \mathbf h_2 \quad \mathbf  h3] = \lambda \mathbf A [\mathbf r_1 \quad \mathbf r_2 \quad \mathbf t]$$</p>
+<p>$\lambda$ is an arbitrary coefficient. Since $r_1$ and $r_2$ are orthonormal, we have:</p>
+<p>$$<br>
+\begin{align}<br>
+{\mathbf  h_1}^T {\mathbf  A}^{-T} \mathbf  A^{-1} \mathbf h_2 &amp;= 0 \\<br>
+{\mathbf  h_1}^T {\mathbf  A}^{-T} \mathbf  A^{-1} \mathbf h_1 &amp;= \mathbf  {h_2}^T \mathbf  A^{-T} \mathbf  A^{-1} \mathbf h_2<br>
+\end{align}<br>
+$$</p>
+<h2 id="4-Solving-for-the-Intrisic-Parameters"><a class="header-anchor" href="#4-Solving-for-the-Intrisic-Parameters">¶ </a>4. Solving for the Intrisic Parameters</h2>
+<p>Because the intrinsic matrix is a camera’s internal parameter, it is the same for every photo. In what follows, I skip the proof and focus directly on how to solve for the intrinsic matrix.</p>
+<p>From Section 2, we can obtain $\mathbf H$ for each image. Then define:</p>
+<p>$$<br>
+\mathbf B = {\mathbf A}^{-T} {\mathbf A}^{-1} =<br>
+\begin{bmatrix}<br>
+B_{11} &amp;B_{12} &amp;B_{13} \\<br>
+B_{12} &amp;B_{22} &amp;B_{23} \\<br>
+B_{13} &amp;B_{23} &amp;B_{33}<br>
+\end{bmatrix}<br>
+$$</p>
+<p>$\mathbf B$ is a symmetric matrix. Define $\mathbf b = [B_{11}, B_{12} ,B_{22}, B_{23}, B_{33}, B_{11}]^T$</p>
+<p>$\mathbf H$ is known. Let $\mathbf h_i$ denote the i-th column of $\mathbf H$, so $\mathbf h_i = [h_{i1}, h_{i2} ,h_{i3}]^T$.</p>
+<p>Then define:</p>
+<p>$$<br>
+\mathbf v_{ij} = [h_{i1} h_{j1}, h_{i1} h_{j2} + h_{i2} h_{j1}, h_{i2} h_{j2},<br>
+h_{i3} h_{j1} + h_{i1} h_{j3}, h_{i3} h_{j2} + h_{i2} h_{j3}, h_{i3} h_{j3}]^T<br>
+$$</p>
+<p>Then we solve:</p>
+<p>$$<br>
+\begin{bmatrix}<br>
+\mathbf v_{12}^T \\<br>
+{( \mathbf v_{11} - \mathbf v_{22})}^T<br>
+\end{bmatrix} \mathbf b = \mathbf V \mathbf b = 0<br>
+$$</p>
+<p>Where $\mathbf V$ is a $2n \times 6$ matrix. One image yields two equations. With at least three planes ($n &gt;= 3$), we can solve for $\mathbf b$.</p>
+<p>The solution is again the eigenvector of $\mathbf L^T \mathbf L$ associated with the smallest eigenvalue:</p>
+<pre><code class="language-py">w, v, vh = np.linalg.svd(V)
+b = vh[-1]
+</code></pre>
+<p>Then we can recover the parameters from $\mathbf B$:</p>
+<p>$$<br>
+\begin{align}<br>
+v_0 &amp;= (B_{12} B_{13} − B_{11} B_{23})/(B_{11} B_{22} − B_{12}^2)\\<br>
+λ &amp;= B_{33} − [B_{13}^2 + v_0(B_{12}B_{13} − B_{11}B_{23})]/B_{11}\\<br>
+α &amp;=\sqrt{λ/B_{11}}\\<br>
+β &amp;=\sqrt{λB_{11}/(B_{11}B_{22} − B^2_{12})}\\<br>
+γ &amp;= −B_{12} α^2 β/λ\\<br>
+u_0 &amp;= γv_0/β − B_{13}α^2/λ\\<br>
+\end{align}<br>
+$$</p>
+<p>Then we obtain the intrinsic matrix $\mathbf A$. Substitute back according to the definition:</p>
+<p>$$<br>
+\mathbf A =<br>
+\begin{bmatrix}<br>
+α &amp;γ &amp;u_0 \\<br>
+0 &amp;β &amp;v_0 \\<br>
+0 &amp;0 &amp;1<br>
+\end{bmatrix}<br>
+$$</p>
+<h2 id="5-Solving-for-the-Extrinsic-Parameters"><a class="header-anchor" href="#5-Solving-for-the-Extrinsic-Parameters">¶ </a>5. Solving for the Extrinsic Parameters</h2>
+<p>Because $\mathbf A$ is fixed, and each image provides a homography $\mathbf H$, we can solve the extrinsic parameters.</p>
+<p>$$<br>
+\mathbf H = [\mathbf h_1 \quad \mathbf h_2 \quad \mathbf h_3]<br>
+= \mathbf A [\mathbf r_1 \quad \mathbf r_2 \quad \mathbf r_3 \quad \mathbf t]<br>
+$$</p>
+<p>The relationships are:</p>
+<p>$$<br>
+\begin{align}<br>
+\mathbf r_1 &amp;= \lambda \mathbf A^{-1} \mathbf h_1  \\<br>
+\mathbf r_2 &amp;= \lambda \mathbf A^{-1} \mathbf h_2  \\<br>
+\mathbf r_3 &amp;= \mathbf r_1 \times \mathbf r_2  \\<br>
+\mathbf t &amp;= \lambda \mathbf A^{-1} \mathbf h_3  \\<br>
+\end{align}<br>
+$$</p>
+<p>Where $\lambda$ is a scale factor (different from the previous $\lambda$), and $ λ = 1/ \Vert \mathbf A^{−1} \mathbf h_1 \Vert = 1/ \Vert \mathbf A^{−1} \mathbf h_2 \Vert$.</p>
+<p>At this point, we have obtained both intrinsic parameters and extrinsic parameters.</p>
+<h2 id="OpenCV-calibrateCamera"><a class="header-anchor" href="#OpenCV-calibrateCamera">¶ </a>OpenCV <code>calibrateCamera</code></h2>
+<p>With the algorithm above, we can implement a function equivalent to <code>cv2.calibrateCamera</code>. For comparison, here is the OpenCV <code>cv2.calibrateCamera</code> signature:</p>
+<pre><code class="language-py">ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img_size,None,None)
+</code></pre>
+<p>You can see that <code>cv2.calibrateCamera</code> represents extrinsics using a rotation vector and a translation vector, while we derived matrices above, so we need a conversion.</p>
+<p>Here, <code>rvecs</code> contains the rotation vectors for all images, and <code>tvecs</code> contains the translation vectors for all images. For each image, the rotation and translation are computed as follows:</p>
+<pre><code class="language-py">from scipy.spatial.transform import Rotation as R
+
+# A, h1, h2, h3 為已求得 numpy 矩陣
+
+lambda_ = 1/np.linalg.norm(np.dot(np.linalg.inv(A), h1))
+
+r1 = lambda_*np.dot(np.linalg.inv(A), h1)
+r2 = lambda_*np.dot(np.linalg.inv(A), h2)
+r3 = np.cross(r1, r2
+r_matrix = np.array([r1, r2, r3)]).T
+
+t = lambda_*np.dot(np.linalg.inv(A), h3)
+r = R.from_matrix(r_matrix).as_rotvec()
+
+rvecs.append(r)
+tvecs.append(t)
+</code></pre>
+<h2 id="Visualizing-Extrinsics"><a class="header-anchor" href="#Visualizing-Extrinsics">¶ </a>Visualizing Extrinsics</h2>
+<p>After computing the extrinsics matrices, we can visualize them and recover the camera position and orientation for each photo. The small pyramid represents the camera, and the red box represents the chessboard.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/78570951-3a5f4a00-7858-11ea-889c-8db0a6ae7b74.jpg" alt="extrinsic visualization"></p>
+<h2 id="A-Few-Practical-Tips"><a class="header-anchor" href="#A-Few-Practical-Tips">¶ </a>A Few Practical Tips</h2>
+<p>If the photos contain a chessboard, you can call <code>cv2.findChessboardCorners</code> directly.</p>
+<p>You can downscale the chessboard images first: finding the pattern corners takes time, and with smaller image coordinates, the expanded matrices also become smaller.</p>
+<p>When solving with SVD, pay attention to whether the matrix rank is sufficient to solve the system.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/python/">
+                python
+            </a>,&nbsp;
+        
+            <a href="/en/tags/computer-vision/">
+                computer vision
+            </a>,&nbsp;
+        
+            <a href="/en/tags/camera-calibration/">
+                camera calibration
+            </a>,&nbsp;
+        
+            <a href="/en/tags/2d-pattern/">
+                2D pattern
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Introduction"><span class="toc-text">1. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Solving-for-the-Homography"><span class="toc-text">2. Solving for the Homography</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Constraints-on-Intrisic-Parameters"><span class="toc-text">3. Constraints on Intrisic Parameters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Solving-for-the-Intrisic-Parameters"><span class="toc-text">4. Solving for the Intrisic Parameters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Solving-for-the-Extrinsic-Parameters"><span class="toc-text">5. Solving for the Extrinsic Parameters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OpenCV-calibrateCamera"><span class="toc-text">OpenCV calibrateCamera</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Visualizing-Extrinsics"><span class="toc-text">Visualizing Extrinsics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Few-Practical-Tips"><span class="toc-text">A Few Practical Tips</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/09/system/intel-gpu-opencl/">
+        How to Run OpenCL on an Intel GPU
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
