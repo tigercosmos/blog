@@ -3,6 +3,8 @@ title: 在 PyCon APAC 2023 貢獻了第一支 CPython Pull Request
 date: 2023-11-27 00:03:00
 tags: [python, CPython, pycon]
 des: "本文記錄在 PyCon APAC 2023 的 Sprint 活動中貢獻了第一支 CPython PR 的過程"
+lang: zh
+translation_key: 2023pycon-apac-sprint
 ---
 
 不久前參加了 PyCon APAC 2023，今年剛好辦在東京，而且會場就在我家不遠處，我甚至第一天是騎腳踏車去參加。

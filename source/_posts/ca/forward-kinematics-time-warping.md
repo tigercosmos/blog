@@ -3,6 +3,8 @@ title: 電腦動畫中的正向動力法 (Forward Kinematics) 和時間扭曲法
 date: 2020-05-23 00:00:00
 tags: [computer animation, 電腦動畫, 正向動力法, 時間扭曲法, forward kinematics, time warping]
 des: "本文介紹電腦動畫中正向動力學 (forward kinematics) 和時間扭曲法 (time warping) 的原理與實作。正向動力學被廣泛應用於機器人學、電腦遊戲、電腦動畫等領域，原理是在一骨架中給予每個關節 (joint) 相對位移和旋轉，用反覆遞迴遍歷所有關節的方式計算整體運動量。時間扭曲法被應用於電腦動畫中，為關鍵影格 (keyframe) 的原理技術，當我們想要某個影格必須在特地時間才被畫出，那就必須根據關鍵影格去調整前後的撥放速度，這時就必須做加速或減速。"
+lang: zh
+translation_key: forward-kinematics-time-warping
 ---
 
 ## 簡介

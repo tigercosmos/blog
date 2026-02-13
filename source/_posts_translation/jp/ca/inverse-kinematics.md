@@ -1,39 +1,39 @@
 ---
-title: 電腦動畫中的反向動力法 (Inverse Kinematics)
+title: "コンピュータアニメーションにおける逆運動学（Inverse Kinematics）"
 date: 2020-06-09 00:00:00
 tags: [電腦動畫, 反向動力法, computer animation, inverse kinematics, jacobian, pseudo inverse]
-des: "在電腦動畫或機器人學中，我們可能會希望一個人物或機器人做到特定的動作，例如伸手能碰到手把或伸手接到球。如果以正向動力學的方式去推敲怎樣達到我們想要的姿勢幾乎不可能。這時候就會採用反向動力學，當我們給物件目標位置後，用反推的方式算出物件如何運動可以達到該位置。"
-lang: zh
+des: "コンピュータアニメーションやロボティクスでは、取っ手に手を伸ばす／ボールをキャッチするといった、特定の姿勢や動作を人物・ロボットにさせたいことがあります。正運動学（Forward Kinematics）でその姿勢に至る動きを前向きに推論するのは、次元が高くなるとほぼ不可能です。逆運動学（Inverse Kinematics）は、目標位置を与え、そこへ到達するためにどのように動くべきかを逆向きに解くことで、この問題に取り組みます。"
+lang: jp
 translation_key: inverse-kinematics
 ---
 
-## 1. 介紹
+## 1. はじめに
 
-在電腦動畫或機器人學中，我們可能會希望一個人物或機器人做到特定的動作，例如伸手能碰到手把或伸手接到球。
+コンピュータアニメーションやロボティクスでは、人物やロボットに特定の動作をさせたいことがあります。たとえば、手を伸ばして取っ手に触れる、ボールをキャッチする、といったケースです。
 
-一個物件可能會有很多關節，假設每個關節都是 5 個維度 (DoF)，一個手臂假設是三段關節，那就會是 15 個維度，如果以正向動力學 (Forward Kinematics, FK) 的方式去推敲怎樣達到我們想要的姿勢幾乎不可能。
+対象は多くの関節を持ち得ます。仮に各関節が 5 自由度（DoF）で、腕が 3 つの関節から構成されるとすると、すでに 15 次元になります。このような高次元空間で、正運動学（Forward Kinematics, FK）だけを用いて「どう動けば狙った姿勢になるか」を前向きに推論するのは、ほぼ不可能です。
 
-這時候就會採用反向動力學 (Inverse Kinematics, IK)，當我們給物件目標位置後，用反推的方式算出物件如何運動可以達到該位置。
+そこで逆運動学（Inverse Kinematics, IK）を用います。対象に目標位置を与え、そこへ到達するためにどのように動くべきかを逆向きに計算します。
 
 ![ik example](https://user-images.githubusercontent.com/18013815/84060735-4cdc3800-a9ef-11ea-878b-dafc5233ff5e.gif)
-(用 IK 算出怎樣讓手臂動到目標位置)
+（IK によって、腕を目標位置へ動かす方法を求める例）
 
-反向動力學通常要解一個高維的問題，造成它十分難算，需要花費大量運算且可以有很多種解。常見的方法包含 Cyclic Coordinate Descent 方法、Jacobian Pseudoinverse 方法、Jacobian Transpose 方法、Levenberg-Marquardt Damped Least Squares 方法、Quasi-Newton and Conjugate Gradient 方法、神經網路方法。
+逆運動学は一般に高次元の問題を解く必要があり、計算コストが高く、解が複数存在することも多いです。代表的な手法として、Cyclic Coordinate Descent、Jacobian Pseudoinverse、Jacobian Transpose、Levenberg–Marquardt Damped Least Squares、Quasi-Newton / Conjugate Gradient 法、ニューラルネットワークによる手法などがあります。
 
-根據所需的計算時間、精準度、反推的動作姿勢等需求，在做 IK 時也會選不同的方法，例如 Cyclic Coordinate Descent 都會是指尖先動才去動手臂，Jacobian Pseudoinverse 則會一次動所有關節，神經網路則可以快速預判和做出比較擬真的結果。而本文將介紹反向動力法的 Jacobian Pseudoinverse 方法。
+どの IK 手法を選ぶかは、計算時間、精度、逆算して得たい動作姿勢の性質などの要件によって変わります。たとえば Cyclic Coordinate Descent は指先を先に動かしてから腕を調整することが多く、Jacobian Pseudoinverse は全関節をまとめて更新します。ニューラルネットワークは、より現実的な結果を高速に予測できる場合があります。本記事では、IK の Jacobian Pseudoinverse 法を紹介します。
 
-## 2. Jacobian Pseudoinverse 原理與實作
+## 2. Jacobian Pseudoinverse の原理と実装
 
-### 2.1 參數定義
+### 2.1 パラメータ定義
 
-假設有一個機械手臂，我們希望他的手指可以動到特定位置，並設定從手指到手臂中間的每個關節的初始位置 $\mathbf s_i$ 都會轉動，透過中間這些關節運動，使得手指可以達到目標位置 $\mathbf t$。
+機械アームを考え、指先が特定の位置に到達してほしいとします。指先から腕の途中にある各関節は回転できると仮定し、第 $i$ 関節の初期位置を $\mathbf s_i$ とします。これらの中間関節の回転によって、指先が目標位置 $\mathbf t$ に到達するようにします。
 
 <img src="https://i.imgur.com/coqDQA1.jpg" width="80%">
 
 
-定義有 $n$ 維度的世界座標，$n$ 通常是 3，代表 $x, y, z$ 三個維度，但也可以轉成其他維度空間。
+世界座標を $n$ 次元とします。通常は $n = 3$（$x, y, z$ の 3 次元）ですが、別の次元空間へ写像することもできます。
 
-第 $i$ 個關節的初始位置向量表示為：
+第 $i$ 関節の初期位置ベクトルは次のように表します：
 
 $$ 
 \mathbf s_i = 
@@ -42,7 +42,7 @@ s_x & s_y &s_z & \dots & s_n
     \end{bmatrix}
 $$
 
-目標位置向量為：
+目標位置ベクトルは次の通りです：
 
 $$ 
 \mathbf t = 
@@ -51,11 +51,11 @@ t_x & t_y &t_z & \dots & t_n
     \end{bmatrix}
 $$
 
-定義第 $i$ 個關節的 End Effector $\mathbf e$：
+第 $i$ 関節の End Effector ベクトル $\mathbf e$ を次のように定義します：
 
 $$\mathbf e_i = \mathbf t - \mathbf s_i$$
 
-所以每個關節的 End Effector 向量表示為：
+したがって、各関節の End Effector ベクトルは次のように表せます：
 
 
 $$ 
@@ -67,7 +67,7 @@ $$
 
 
 
-對於所有關節包含的所有 $M$ 個可動維度 (DoF) 的旋轉角度向量為：
+全関節に含まれる可動次元（DoF）の総数を $M$ とし、それらの回転角ベクトルを次のように表します：
 
 $$ 
 \mathbf \theta = 
@@ -76,20 +76,20 @@ $$
     \end{bmatrix}
 $$
 
-### 2.2 動力學
+### 2.2 運動学
 
-在正向動力法 (Forward Kinematics) 中，可以由已知的轉動角度，透過 $f$ 函數算出下一步的 End Effector $e$，我們有以下算式：
+正運動学（FK）では、回転角が与えられたときに、関数 $f$ を用いて次の End Effector $\mathbf e$ を計算できます：
 
 $$\mathbf e = f(\mathbf \theta)$$
 
 
-在反向動力學中 (Inverse Kinematics) 中，我們將關係反過來，我們給定 End Effector，希望得到旋轉的角度：
+逆運動学（IK）ではこの関係を反転させ、End Effector が与えられたときに回転角を求めます：
 
 $$\mathbf \theta = f^{-1}(\mathbf e)$$
 
-### 2.3 Jacobian
+### 2.3 ヤコビアン（Jacobian）
 
-向量微積分的 [Jacobian](https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant) 代表一個函數 $f$ 的線性近似值，我們可以用 Jacobian $J$ 從 End Effector $\mathbf e$ 去回推 d$\mathbf \theta$。
+ベクトル微積分における [Jacobian](https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant) は、関数 $f$ の線形近似を表します。ヤコビアン $J$ を使うことで、End Effector $\mathbf e$ から $d\mathbf \theta$ を逆算できます。
 
 <img src="https://i.imgur.com/z22VM1L.jpg" width="80%">
 
@@ -98,25 +98,25 @@ $$\mathbf \theta = f^{-1}(\mathbf e)$$
 
 $$d\mathbf e  = \mathbf J d \mathbf \theta$$
 
-$\mathbf J$ 表示成：
+$\mathbf J$ は次のように表せます：
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <mo>=</mo> <mrow> <mo>(</mo> <mtable rowspacing="4pt" columnspacing="1em"> <mtr> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>1</mn> </msub> </mrow> <mrow> <mi>d</mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mn>1</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>1</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mn>2</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mo>&#x22EF;<!-- ⋯ --></mo> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>1</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mi>n</mi> </msub> </mrow> </mfrac> </mtd> </mtr> <mtr> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>2</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mn>1</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>2</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mn>2</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mo>&#x22EF;<!-- ⋯ --></mo> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>2</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mi>n</mi> </msub> </mrow> </mfrac> </mtd> </mtr> <mtr> <mtd> <mo>&#x22EE;<!-- ⋮ --></mo> </mtd> <mtd> <mo>&#x22EE;<!-- ⋮ --></mo> </mtd> <mtd> <mo>&#x22EF;<!-- ⋯ --></mo> </mtd> <mtd> <mo>&#x22EE;<!-- ⋮ --></mo> </mtd> </mtr> <mtr> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mi>k</mi> </msub> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mn>1</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mi>k</mi> </msub> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mn>2</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mo>&#x22EF;<!-- ⋯ --></mo> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>f</mi> <mi>k</mi> </msub> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msub> <mi>&#x03B8;<!-- θ --></mi> <mi>n</mi> </msub> </mrow> </mfrac> </mtd> </mtr> </mtable> <mo>)</mo> </mrow></math>
 
-回顧我們剛剛得到 $d\mathbf e  = \mathbf J d \mathbf \theta$，我們移項得到：
+$d\mathbf e  = \mathbf J d \mathbf \theta$ が得られているので、移項すると：
 
 $$ d\mathbf \theta  = \mathbf J^{-1} d \mathbf e$$
 
-這個旋轉角度變化量 $d\mathbf \theta$ 就是我們想得到的，因為我們可以用 $d\mathbf \theta$ 去回推上一步的位置。
+この回転角の変化量 $d\mathbf \theta$ が求めたい値です。$d\mathbf \theta$ を使って、姿勢を目標位置へ向けて一歩ずつ更新できるためです。
 
 <img src="https://i.imgur.com/ZP2mRyp.jpg" width="80%">
 
 
-### 2.4 求 Jacobian 近似解
+### 2.4 ヤコビアンの近似解を求める
 
 
-定義世界座標是三維度 (3 DoF)，為解 $d\mathbf \theta  = \mathbf J^{-1} d \mathbf e$ 我們需要先求 Jacobain。以下算式都是建立在世界座標之下。
+世界座標を 3 次元（3 DoF）とします。$d\mathbf \theta  = \mathbf J^{-1} d \mathbf e$ を解くためには、まずヤコビアンが必要です。以下の式はすべて世界座標上で定義されています。
 
-先看 Jacobian 的其中一欄：
+まずヤコビアンの 1 列を見てみます：
 
 $$
 \mathbf J_i =
@@ -128,7 +128,7 @@ $$
 \end{bmatrix}
 $$
 
-取 $\mathbf \theta$ 和 $\mathbf e$ 的線性微小變化量來近似偏微分：
+$\mathbf \theta$ と $\mathbf e$ の線形な微小変化量を用いて、偏微分を近似します：
 
 $$
 \mathbf J_i =
@@ -141,7 +141,7 @@ $$
 \end{bmatrix}
 $$
 
-對於某關節 $A$ 的**其中一維度**的旋轉，該維度下，關節 $A$ 的 End Effector $\mathbf e$ 的線性的變化 $d\mathbf e$，等於關節 $A$ 在此維度下旋轉的變化量 ($\mathbf \omega \mathbf rdt$)。
+関節 $A$ の **1 つの軸**（1 DoF）まわりの回転を考えると、その軸における End Effector $\mathbf e$ の線形変化 $d\mathbf e$ は、関節 $A$ がその軸で回転することによって生じる変化（$\mathbf \omega \mathbf rdt$）に等しくなります。
 
 $$
 \frac{d\mathbf e}{dt} = 
@@ -149,14 +149,14 @@ $$
 \frac{d \mathbf \theta}{dt} \mathbf a \times \mathbf r
 $$
 
-其中 $\mathbf a= \frac{\mathbf \omega}{\vert \omega \vert}$，代表單位長度的旋轉向量。
+ここで $\mathbf a= \frac{\mathbf \omega}{\vert \omega \vert}$ は単位回転ベクトルを表します。
 
-移項得到：
+移項すると：
 
 $${d\mathbf e \over d\mathbf \theta} = \mathbf a \times \mathbf r$$
 
 
-於是我們得到：
+したがって次を得ます：
 
 $$
 \mathbf J_1 =
@@ -169,17 +169,17 @@ $$
 \mathbf a_i \times (\mathbf e - \mathbf r_i)
 $$
 
-其中 $\mathbf r_i$ 為第 $i$ 個關節的座標向量。
+ここで $\mathbf r_i$ は第 $i$ 関節の位置ベクトルです。
 
-注意到這個算法都是 $\mathbf J_i$ 都是關節的其中 1 維度，所以所有關節加起來如果有 M 個維度，那 $\mathbf J$ 就會是 $3 \times M$ 的矩陣。
+ここでの $\mathbf J_i$ は関節の **1** つの DoF に対応していることに注意してください。したがって、全関節の DoF を合計して $M$ 個あるなら、$\mathbf J$ は $3 \times M$ の行列になります。
 
-實作時，因為 $J_i$ 只有包含 1 維度，所以假設關節 $A$ 可以動的維度有 $(x, z)$，那其角加速度為 $\mathbf \omega_A = (\mathbf\omega_{Ax}, 0, \mathbf\omega_{Az})$。假設 $\mathbf \theta_i$ 代表 $A$ 的 $z$ 軸，那麼 $\mathbf \omega_i$ 為 $\mathbf \omega_{A} \times (0, 0 ,1) = \mathbf\omega_{Az}$。
+実装では、各 $J_i$ は 1 つの DoF だけを含むので、たとえば関節 $A$ が $(x, z)$ の 2 軸で回転できるとすると、角速度は $\mathbf \omega_A = (\mathbf\omega_{Ax}, 0, \mathbf\omega_{Az})$ になります。$\mathbf \theta_i$ が $A$ の $z$ 軸を表すとすると、$\mathbf \omega_i$ は $\mathbf \omega_{A} \times (0, 0 ,1) = \mathbf\omega_{Az}$ です。
 
-### 2.5 Inverse of Jacobian
+### 2.5 ヤコビアンの逆（擬似逆行列）
 
-我們為了解 $d\mathbf \theta  = \mathbf J^{-1} d \mathbf e$，已經得到 $\mathbf J$ 之後，我們要算 $\mathbf J^{-1}$，但因為反矩陣必須是方陣，但我們的 $\mathbf J$ 是 $3 \times M$ 的矩陣，所以無法直接取 Inverse，反之我們採用 Pseudo Inverse $\mathbf J^+$。
+$d\mathbf \theta  = \mathbf J^{-1} d \mathbf e$ を解くために、$\mathbf J$ を得た後は $\mathbf J^{-1}$ を計算したくなります。しかし、逆行列は正方行列でなければ定義できないのに対し、ここでの $\mathbf J$ は $3 \times M$ の行列です。したがって直接 Inverse を取ることはできず、代わりに擬似逆行列 $\mathbf J^+$ を用います。
 
-考慮以下步驟：
+以下の手順を考えます：
 
 $$ d\mathbf e = \mathbf J d\mathbf  \theta$$
 $$ \mathbf J^T d\mathbf e = \mathbf J^T J d \mathbf \theta$$
@@ -189,22 +189,22 @@ $$ \mathbf J^+ d\mathbf e =d \mathbf \theta$$
 $$ \mathbf J^+ = (\mathbf J^T \mathbf J)^{-1} \mathbf J^T $$
 
 
-運用 SVD 的性質：
+SVD の性質を用いると：
 
 $$SVD(J)=UΣV^∗$$
 
 
-將剛剛的 $\mathbf J^+$ 代入拆解：
+$\mathbf J^+$ を代入して展開すると：
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0em 2em 0em 2em 0em 2em 0em 2em 0em 2em 0em" displaystyle="true"> <mtr> <mtd> <msup> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <mo>+</mo> </msup> </mtd> <mtd> <mi></mi> <mo>=</mo> <mo stretchy="false">(</mo> <msup> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <mo>&#x2217;<!-- ∗ --></mo> </msup> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <msup> <mo stretchy="false">)</mo> <mrow class="MJX-TeXAtom-ORD"> <mo>&#x2212;<!-- − --></mo> <mn>1</mn> </mrow> </msup> <msup> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <mo>&#x2217;<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mo stretchy="false">(</mo> <mi>V</mi> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <msup> <mi>U</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> <mi>U</mi> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <msup> <mi>V</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> <msup> <mo stretchy="false">)</mo> <mrow class="MJX-TeXAtom-ORD"> <mo>&#x2212;<!-- − --></mo> <mn>1</mn> </mrow> </msup> <mi>V</mi> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <msup> <mi>U</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mo stretchy="false">(</mo> <mi>V</mi> <msup> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <mn>2</mn> </msup> <msup> <mi>V</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> <msup> <mo stretchy="false">)</mo> <mrow class="MJX-TeXAtom-ORD"> <mo>&#x2212;<!-- − --></mo> <mn>1</mn> </mrow> </msup> <mi>V</mi> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <msup> <mi>U</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mo stretchy="false">(</mo> <msup> <mi>V</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> <msup> <mo stretchy="false">)</mo> <mrow class="MJX-TeXAtom-ORD"> <mo>&#x2212;<!-- − --></mo> <mn>1</mn> </mrow> </msup> <msup> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo>&#x2212;<!-- − --></mo> <mn>2</mn> </mrow> </msup> <msup> <mi>V</mi> <mrow class="MJX-TeXAtom-ORD"> <mo>&#x2212;<!-- − --></mo> <mn>1</mn> </mrow> </msup> <mi>V</mi> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <msup> <mi>U</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mi>V</mi> <msup> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo>&#x2212;<!-- − --></mo> <mn>2</mn> </mrow> </msup> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <msup> <mi>U</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mi>V</mi> <msup> <mi mathvariant="normal">&#x03A3;<!-- Σ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo>&#x2212;<!-- − --></mo> <mn>1</mn> </mrow> </msup> <msup> <mi>U</mi> <mo>&#x2217;<!-- ∗ --></mo> </msup> </mtd> </mtr> </mtable></math>
 
-### 2.6 IK 演算法
+### 2.6 IK アルゴリズム
 
-得到 $\mathbf  J+$ 後我們就可以推算上一步的位置：
+$\mathbf J^+$ が得られたら、1 ステップ前（更新後）の状態を推定できます：
 
 $$\mathbf \theta_{k} = \mathbf \theta_{k+1} - dt * \mathbf J^+(\mathbf \theta_{k+1}) * d\mathbf e$$
 
-虛擬碼：
+擬似コード：
 
 ```python
 while(ABS(current_position - target_position) > epsilon and
@@ -217,44 +217,44 @@ while(ABS(current_position - target_position) > epsilon and
     5. update current_position to close target_position
 ```
 
-## 3. 探討
+## 3. 考察
 
-### 3.1 參數影響
+### 3.1 パラメータの影響
 
-根據公式：
+次の式：
 $$\mathbf \theta_{k} = \mathbf \theta_{k+1} - dt * \mathbf J^+(\mathbf \theta_{k+1}) * d\mathbf e$$
-每次移動的步數 $dt$ 會影響計算速度，如果每次移動距離太小會導致計算太多次，但如果每次移動距離很大可能會不小心超過目標位置造成難以收斂。
+より、ステップ幅 $dt$ は収束速度に影響します。各ステップが小さすぎると反復回数が増えますが、大きすぎると目標を行き過ぎて収束しにくくなる可能性があります。
 
-為了避免因為無法收斂，導致迭代太多次，會設定一個誤差值 epsilon，在誤差容忍範圍內停止迭代，同時也會設定一個迭代的上限次數。
+収束しないことで反復が増えすぎるのを避けるため、誤差の閾値 $\epsilon$ を設定し、誤差が許容範囲に入ったら停止します。また、反復回数の上限も設定します。
 
-IK 事實上不一定有解，目標位置 $t$ 如果超過關節伸展最大長度，或是受限於可轉動的維度，是有機會達不到 $t$。想像一下你的手不管怎樣伸都碰不到天花板，你的手也不可能往外旋轉一直凹，這些情況都屬於無解。實作上也要考慮調整 $t$ 避免成是無解陷入崩潰。
+実際、IK は常に解があるとは限りません。目標位置 $t$ が関節の最大到達距離を超えていたり、利用できる DoF の制約によって到達不可能だったりすることがあります。たとえば、どれだけ腕を伸ばしても天井には届かないですし、腕を外側へ無限に回転させ続けることもできません。これらはすべて無解のケースです。実装では、無解による破綻を避けるために $t$ を調整する、といった対策も考慮すべきです。
 
-### 3.2 可動關節數量對 IK 的影響
+### 3.2 可動関節数が IK に与える影響
 
-給定一人物，初始狀態如下圖，目標位置為紫色圓點。
+次の図のような初期姿勢の人物を与え、目標位置を紫色の点とします。
 
 ![](https://i.imgur.com/Q5zjvcD.png)
 
-Case 1: 設定可以動手臂，以 IK 計算出反推位置：
+Case 1: 腕だけを動かせるようにして、IK で姿勢を解く：
 
 ![](https://i.imgur.com/HTNfgHB.png)
 ![](https://i.imgur.com/j21wFj9.png)
 
-Case 2: 設定可以動手臂和上半身，以 IK 計算出反推位置：
+Case 2: 腕と上半身を動かせるようにして、IK で姿勢を解く：
 
 ![](https://i.imgur.com/Lo8DWA3.png)
 
-Case 3: 設定可以動屁股以上，以 IK 計算出反推位置：
+Case 3: 腰より上を動かせるようにして、IK で姿勢を解く：
 
 ![](https://i.imgur.com/KLKFwme.png)
 
-## 4. 結論
+## 4. まとめ
 
-透過反向動力法 (IK)，我們得以從人物的原本狀態反推出如何動作達到我們想要的姿勢。對於電腦動畫而言，IK 可以讓動畫人物讓我們設定關鍵影格讓人物做到想要的動作；而對機器人學來說，IK 讓機器手臂可以順利抵達目標作業位置。
+逆運動学（IK）により、人物の現在の状態から「どのように動けば狙った姿勢に到達できるか」を逆算できます。コンピュータアニメーションでは、キーポーズ（キーフレーム）を与えて人物に狙った動作をさせることができます。ロボティクスでは、ロボットアームが目標作業位置へ到達するために IK が用いられます。
 
-IK 有許多種方法，本文只介紹了 Jacobian Pseudoinverse 方法，其特性是會一次更動所有關節，看似會比較真實，但實際上人物動作通常會有比較自然的姿勢，那就要改用會參考真實動作的演算法。根據使用需求可以採用不同演算法，這部分就留給讀者自行研究。
+IK には多くの手法があります。本記事では Jacobian Pseudoinverse 法のみを紹介しました。この手法は全関節を一度に更新する性質があり、見た目としてはよりリアルに感じられることがあります。ただし、実際の人体動作にはより自然な「らしさ」があり、それを反映したアルゴリズムを選ぶべき場合もあります。用途に応じて適切な手法を選んでください（この部分は読者の調査に委ねます）。
 
-## 5. 參考
+## 5. 参考文献
 - Samuel R. Buss. 2009. Introduction to Inverse Kinematics with Jacobian Transpose, Pseudoinverse and Damped Least Squares methods. [http://graphics.cs.cmu.edu/nsp/course/15-464/Spring11/handouts/iksurvey.pdf](http://graphics.cs.cmu.edu/nsp/course/15-464/Spring11/handouts/iksurvey.pdf)
 
 - [@shi-yan](https://epiphany.pub/@shi-yan). 2019. Inverse Kinematics Explained Interactively. [https://epiphany.pub/@shi-yan/inverse-kinematics-explained-interactively](https://epiphany.pub/@shi-yan/inverse-kinematics-explained-interactively)

@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 61
-- Missing EN translation files: 123
-- Missing JP translation files: 123
-- Source posts missing `translation_key`: 123
+- Posts with both EN+JP translations: 65
+- Missing EN translation files: 119
+- Missing JP translation files: 119
+- Source posts missing `translation_key`: 119
 
 ## Posts
 
@@ -88,9 +88,9 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [x] `c++/std-string-beginner.md` — 入門看完這一篇就夠了，讓你融會貫通使用 C++ 的 std::string 初級篇！ (Wed Jun 21 2023 00:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `c++/stringview.md` — 還在用 const std::string &? 試試 std::string_view 吧！ (Wed Jun 07 2023 00:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `c++/template-for-std-containter-conversion.md` — 如何用 C++ 模版函數將容器輸出成不同容器型別（std::list<int> 轉成 std::vector<double>） (Sun Jul 02 2023 00:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
-- [ ] `ca/forward-kinematics-time-warping.md` — 電腦動畫中的正向動力法 (Forward Kinematics) 和時間扭曲法 (Time Warping) (Sat May 23 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `ca/inverse-kinematics.md` — 電腦動畫中的反向動力法 (Inverse Kinematics) (Tue Jun 09 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `ca/rigid-body-simulation.md` — 剛體物理模擬—碰撞偵測、動量衝量、連結限制、數值方法 (Sat Apr 25 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `ca/forward-kinematics-time-warping.md` — 電腦動畫中的正向動力法 (Forward Kinematics) 和時間扭曲法 (Time Warping) (Sat May 23 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `ca/inverse-kinematics.md` — 電腦動畫中的反向動力法 (Inverse Kinematics) (Tue Jun 09 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `ca/rigid-body-simulation.md` — 剛體物理模擬—碰撞偵測、動量衝量、連結限制、數值方法 (Sat Apr 25 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `Cepave-interview.md` — 紀錄面試經驗──Cepave (Sun Jun 04 2017 02:37:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `Chang-Dai-Chien.md` — 巨匠的剪影——張大千特展之心得 (Wed May 29 2019 12:11:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `chaos.md` — Chaos (Thu Jan 24 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
@@ -150,7 +150,7 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `probot.md` — 第一次 Probot 開發 Github App 就上手 (Sat Jun 02 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `puffin-os-phone.md` — 深度分析 Puffin OS Phone—搶攻第三世界的智慧手機 (Wed Jan 29 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `puffin.md` — How the Puffin Browser Works (Sat Sep 08 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `python/2023pycon-apac-sprint.md` — 在 PyCon APAC 2023 貢獻了第一支 CPython Pull Request (Mon Nov 27 2023 00:03:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `python/2023pycon-apac-sprint.md` — 在 PyCon APAC 2023 貢獻了第一支 CPython Pull Request (Mon Nov 27 2023 00:03:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `revision-control.md` — Revision Control (Fri Jan 18 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `rust2019.md` — Review of “Everything in Rust” of COSCUP 2019 (Mon Aug 26 2019 01:23:39 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `security/facebook-hack.md` — Facebook 帳號被駭一週後取回的心得感想 (Sat Mar 02 2024 00:03:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
