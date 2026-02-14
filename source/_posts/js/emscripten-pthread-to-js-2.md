@@ -3,6 +3,8 @@ title: 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (2) — M
 date: 2020-08-10 08:00:00
 tags: [JavaScript, web worker, nodejs, c, pthread, parallel programming, browser, browsers, 效能分析, 平行化, algorithm, 演算法]
 des: "本文實驗 Pthread、Pthread 轉 JS + WASM 和純 JS，執行 Merge Sort 的效能。結果 Merge Sort 以 Pthread 版本跑最快，Emscripten 轉換的 WASM 其次，其中又以一般模式在陣列長度小時比較快，而 Proxy 模式在陣列長度大時有優勢，最後純 JS 的版本執行速度最慢。"
+lang: zh
+translation_key: emscripten-pthread-to-js-2
 ---
 
 ## 1. 簡介

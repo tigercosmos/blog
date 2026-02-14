@@ -3,6 +3,8 @@ title: 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析
 date: 2020-07-07 18:00:00
 tags: [JavaScript, web worker, nodejs, c, pthread, parallel programming, browser, browsers, 效能分析, 平行化]
 des: "本文介紹如何使用 Emscripten 去將 C/C++ Pthread 轉換成 Web Worker 和 WebAssembly，並對 (1)原生 C Code (2)Emscripten 轉換的 JS (3)直接用 JS 寫的 Web Worker，三種情境作效能分析。發現在開 O3 優化的情況下，Native C 比 Pthread 轉換的 WASM 快 30% 左右，並且用 Pthread 轉換的 WASM 和直接用 Web Worker 的 JS 差不多。"
+lang: zh
+translation_key: emscripten-pthread-to-js
 ---
 
 ## 簡介

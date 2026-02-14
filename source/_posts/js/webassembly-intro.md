@@ -3,6 +3,8 @@ title: 完整介紹 WebAssembly 使用方式
 date: 2020-08-17 00:05:30
 tags: [JavaScript, WebAssembly, browsers,]
 des: "本文完整介紹 WebAssembly 所有的 JavaScript API 的操作方式，並實際示範如何從 C Code 生成 WASM，並在網頁上讓 JavaScript 去使用 WASM。"
+lang: zh
+translation_key: webassembly-intro
 ---
 
 ## 1. 簡介

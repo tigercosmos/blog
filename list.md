@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 65
-- Missing EN translation files: 119
-- Missing JP translation files: 119
-- Source posts missing `translation_key`: 119
+- Posts with both EN+JP translations: 70
+- Missing EN translation files: 114
+- Missing JP translation files: 114
+- Source posts missing `translation_key`: 114
 
 ## Posts
 
@@ -122,11 +122,11 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [x] `japan/find-swe-job-in-japan-2025.md` — 2025 秋季日本與台灣中階軟體工程師求職經驗分享 (Tue Oct 21 2025 01:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `japan/learn-japanese-n4.md` — 三個月日語 N4 自學經驗分享 (Wed Dec 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `japan/new-grad-find-swe-job-in-japan.md` — 2022 海外新卒找日本東京軟體工程師工作經驗分享 (Fri Jun 03 2022 01:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
-- [ ] `js/emscripten-pthread-to-js-2.md` — 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (2) — Merge Sort (Mon Aug 10 2020 08:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `js/emscripten-pthread-to-js.md` — 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (Tue Jul 07 2020 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `js/js-array-for-methods.md` — JavaScript 遍歷 Array 的四種方法：for、for-in、for-of、forEach() (Sat Jun 12 2021 07:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `js/web-worker-evaluation.md` — Evaluation of Web Worker for Parallel Programming with Browsers, NodeJS and Deno (Fri Jun 26 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `js/webassembly-intro.md` — 完整介紹 WebAssembly 使用方式 (Mon Aug 17 2020 00:05:30 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `js/emscripten-pthread-to-js-2.md` — 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (2) — Merge Sort (Mon Aug 10 2020 08:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `js/emscripten-pthread-to-js.md` — 使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (Tue Jul 07 2020 18:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `js/js-array-for-methods.md` — JavaScript 遍歷 Array 的四種方法：for、for-in、for-of、forEach() (Sat Jun 12 2021 07:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `js/web-worker-evaluation.md` — Evaluation of Web Worker for Parallel Programming with Browsers, NodeJS and Deno (Fri Jun 26 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `js/webassembly-intro.md` — 完整介紹 WebAssembly 使用方式 (Mon Aug 17 2020 00:05:30 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `localize_rust.md` — Localize the Rust Website to Traditional Chinese (Wed Jun 19 2019 01:23:39 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `make_pr.md` — 我都怎麼發 PR？ (Sat Nov 11 2017 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `markov-chain-simulation.md` — 個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation (Sat Mar 19 2016 12:16:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

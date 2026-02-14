@@ -3,6 +3,8 @@ title: JavaScript 遍歷 Array 的四種方法：for、for-in、for-of、forEach
 date: 2021-06-12 07:00:00
 tags: [JavaScript, array, 效能分析, 陣列]
 des: "本文介紹遍歷 Array 元素的四種方法，分別為 `for`、`for-in`、`forEach` 和 `for-of`，並在最後做簡單的效能實驗。"
+lang: zh
+translation_key: js-array-for-methods
 ---
 
 ## 1. 簡介
