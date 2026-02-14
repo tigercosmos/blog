@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="browser,browsers,c,pthread,parallel programming,效能分析,平行化,algorithm,演算法,JavaScript,web worker,nodejs," />
+    <meta name="description"
+        content="This post benchmarks Merge Sort across (1) native Pthreads, (2) Pthreads compiled to JS + WASM via Emscripten, and (3) a pure JavaScript implementation. The results show that the Pthread version is fastest, Emscripten-generated WASM comes next; among the Emscripten modes, the normal mode is faster for small arrays while Proxy mode has an advantage for large arrays; and the pure JS version is the slowest." />
+    <title>Neutrino&#39;s Blog: Converting Pthreads to JavaScript with Emscripten and Performance Analysis (2) — Merge Sort </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/08/js/emscripten-pthread-to-js-2/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/08/js/emscripten-pthread-to-js-2/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/08/js/emscripten-pthread-to-js-2/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/08/js/emscripten-pthread-to-js-2/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/08/js/emscripten-pthread-to-js-2/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2020/08/js/emscripten-pthread-to-js-2/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Converting Pthreads to JavaScript with Emscripten and Performance Analysis (2) — Merge Sort
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-08-10
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/08/js/emscripten-pthread-to-js-2/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2020/08/js/emscripten-pthread-to-js-2/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-Introduction"><a class="header-anchor" href="#1-Introduction">¶ </a>1. Introduction</h2>
+<p>This post continues the previous one: “<a href="/post/2020/07/js/emscripten-pthread-to-js/">Converting Pthreads to JavaScript with Emscripten and Performance Analysis</a>”. Here, I run another case study for “Pthread → JS” using Emscripten, and this time I evaluate Merge Sort performance.</p>
+<h2 id="2-Merge-Sort"><a class="header-anchor" href="#2-Merge-Sort">¶ </a>2. Merge Sort</h2>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Merge_sort">Merge Sort</a> has time complexity $\Theta(nlogn)$. If you parallelize the recursion part, it can be reduced to $\Theta(n)$. If you also parallelize the merge step, it can be further optimized to $\Theta({n \over (log n)^2})$.</p>
+<img alt="merge sort image" src="https://user-images.githubusercontent.com/18013815/89739372-a37af680-dab2-11ea-9f27-2718fd2535c4.png" width=50%>
+<p>(source: <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Merge_sort">Wikipedia</a> )</p>
+<h3 id="2-1-Pthread-version-of-Merge-Sort"><a class="header-anchor" href="#2-1-Pthread-version-of-Merge-Sort">¶ </a>2.1 Pthread version of Merge Sort</h3>
+<p>The following Pthread-based Merge Sort C++ example code is from <a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/merge-sort/">Geeksforgeeks</a>. This example only parallelizes the recursion part; the merge step runs single-threaded. I have translated all the comments into Chinese.</p>
+<p><code>merge_sort.cc</code>:</p>
+<pre><code class="language-c++">#include &lt;iostream&gt; 
+#include &lt;pthread.h&gt; 
+#include &lt;time.h&gt; 
+
+// 陣列元素數量
+#define MAX 10000
+
+// 幾個 threads 
+#define THREAD_MAX 4 
+
+using namespace std; 
+
+// 用來算 merge sort 的陣列 
+int arr[MAX]; 
+int part = 0; 
+
+// 用來合併兩個已經排好的部份的函數
+void merge(int low, int mid, int high) 
+&#123; 
+    // 暫時儲存左邊部分和右邊部分的陣列
+	int* left = new int[mid - low + 1]; 
+	int* right = new int[high - mid]; 
+
+	// n1 是左邊部分的長度，n2 是右邊部分的長度
+	int n1 = mid - low + 1, n2 = high - mid, i, j; 
+
+	// 將左邊部分從 arr 複製到 left 
+	for (i = 0; i &lt; n1; i++) 
+		left[i] = arr[i + low]; 
+
+	// 將右邊部分從 arr 複製到 right
+	for (i = 0; i &lt; n2; i++) 
+		right[i] = arr[i + mid + 1]; 
+
+	int k = low; 
+	i = j = 0; 
+
+	// 從左到右遞升合併進 arr
+	while (i &lt; n1 &amp;&amp; j &lt; n2) &#123; 
+		if (left[i] &lt;= right[j]) 
+			arr[k++] = left[i++]; 
+		else
+			arr[k++] = right[j++]; 
+	&#125; 
+
+	// 插入左邊剩下的部分
+	while (i &lt; n1) &#123; 
+		arr[k++] = left[i++]; 
+	&#125; 
+
+	// 插入右邊剩下的部分
+	while (j &lt; n2) &#123; 
+		arr[k++] = right[j++]; 
+	&#125; 
+&#125; 
+
+// merge sort 函數
+void merge_sort(int low, int high) 
+&#123; 
+	// 取得陣列中位數
+	int mid = low + (high - low) / 2; 
+	if (low &lt; high) &#123; 
+
+		// 遞迴左半邊
+		merge_sort(low, mid); 
+
+		// 遞迴右半邊
+		merge_sort(mid + 1, high); 
+
+		// 合併
+		merge(low, mid, high); 
+	&#125; 
+&#125; 
+
+// thread 用的函數
+void* merge_sort(void* arg) 
+&#123; 
+	// 4 個 thread 的哪一個
+	int thread_part = part++; 
+
+	// 每個 thread 的範圍
+	int low = thread_part * (MAX / 4); 
+	int high = (thread_part + 1) * (MAX / 4) - 1; 
+
+	int mid = low + (high - low) / 2; 
+	if (low &lt; high) &#123; 
+		merge_sort(low, mid); 
+		merge_sort(mid + 1, high); 
+		merge(low, mid, high); 
+	&#125; 
+&#125; 
+
+// 起始點
+int main() 
+&#123; 
+	// 隨便填入數值
+	for (int i = 0; i &lt; MAX; i++) 
+		arr[i] = rand() % 100; 
+
+	// t1 and t2 用來計算時間，分別是開始和結束
+	clock_t t1, t2; 
+
+	t1 = clock(); 
+	pthread_t threads[THREAD_MAX]; 
+
+	// 建立 4 個 threads 
+	for (int i = 0; i &lt; THREAD_MAX; i++) 
+		pthread_create(&amp;threads[i], NULL, merge_sort, (void*)NULL); 
+
+	// Join 4 個 Thread 
+	for (int i = 0; i &lt; 4; i++) 
+		pthread_join(threads[i], NULL); 
+
+	// 將 4 個部分的結果合併
+	merge(0, (MAX / 2 - 1) / 2, MAX / 2 - 1); 
+	merge(MAX / 2, MAX/2 + (MAX-1-MAX/2)/2, MAX - 1); 
+	merge(0, (MAX - 1)/2, MAX - 1); 
+
+	t2 = clock(); 
+
+	// 列印結果，註解掉防止 I/O 造成負擔
+	/* 
+        cout &lt;&lt; &quot;Sorted array: &quot;; 
+        for (int i = 0; i &lt; MAX; i++) 
+            cout &lt;&lt; arr[i] &lt;&lt; &quot; &quot;; 
+    */
+
+	// 列印執行時間
+	cout &lt;&lt; &quot;Time taken: &quot; &lt;&lt; (t2 - t1) / 
+			(double)CLOCKS_PER_SEC &lt;&lt; endl; 
+
+	return 0; 
+&#125;
+</code></pre>
+<p>Run this code:</p>
+<pre><code class="language-shell">$ g++ merge_sort.cc -lpthread
+$ ./a.out
+</code></pre>
+<h3 id="2-2-Merge-Sort-compiled-from-Pthreads-to-JavaScript"><a class="header-anchor" href="#2-2-Merge-Sort-compiled-from-Pthreads-to-JavaScript">¶ </a>2.2 Merge Sort compiled from Pthreads to JavaScript</h3>
+<p>For Emscripten introduction and usage, see the <a href="/post/2020/07/js/emscripten-pthread-to-js/#Emscripten-%E4%B8%8B%E8%BC%89">previous post</a>. In this post, I run two experiments: one where the original <code>main()</code> runs on the JS main thread, and another where <code>main()</code> is driven by a worker.</p>
+<p>The latter is called Proxy mode in Emscripten. The reason is that the JS main thread typically also handles web UI and events. Without Proxy mode, under normal Pthread logic, whenever the main thread hits <code>pthread_join</code> or any locked region, it will block. Not only does the UI freeze, the browser may also show “page unresponsive” warnings. This is fatal for web applications.</p>
+<p>To enable Proxy mode, set <code>PROXY_TO_PTHREAD=1</code>. In addition, because the Merge Sort array can be large, set <code>ALLOW_MEMORY_GROWTH=1</code> to break through the default memory limit.</p>
+<p>Proxy mode:</p>
+<pre><code class="language-shell">$ em++ merge_sort.cc \
+    -s USE_PTHREADS=1 \
+    -s PROXY_TO_PTHREAD=1 \
+    -s PTHREAD_POOL_SIZE=4 \
+    -s ALLOW_MEMORY_GROWTH=1 \
+    -O3 \
+    -o merge_sort_proxy.html
+</code></pre>
+<p>Normal mode:</p>
+<pre><code class="language-shell">$ em++ merge_sort.cc \
+    -s USE_PTHREADS=1 \
+    -s PTHREAD_POOL_SIZE=4 \
+    -s ALLOW_MEMORY_GROWTH=1 \
+    -O3 \
+    -o merge_sort_no_proxy.html
+</code></pre>
+<h3 id="2-3-JavaScript-version-of-Merge-Sort"><a class="header-anchor" href="#2-3-JavaScript-version-of-Merge-Sort">¶ </a>2.3 JavaScript version of Merge Sort</h3>
+<p>Following the C++ logic, I reimplemented a JavaScript version.</p>
+<p>The key difference is that <code>arr</code> was a global variable in the C++ version; now it must use SharedArrayBuffer.</p>
+<p>Also, for the “join” behavior, I changed it so that workers notify completion via messages, and then I use SharedArrayBuffer + Atomics to implement a join barrier (it can only be incremented by 1; when it reaches 4, it means all workers have finished).</p>
+<p>There is also a small trick here: in C++, integer division truncates automatically. But in JS, all numbers are Float64. The fastest way to truncate is using <code>|0</code>; for example, <code> 5/2 | 0</code> yields <code>2</code>.</p>
+<p>Save the following as an HTML file. You can open it directly in the browser and it will run:</p>
+<pre><code class="language-html">&lt;!-- merge-sort.html --&gt;
+&lt;div id=&quot;content&quot;&gt;&lt;/div&gt;
+
+&lt;script id=&quot;worker&quot; type=&quot;app/worker&quot;&gt;
+    let arr;
+
+    // merge function for merging two parts 
+    function merge(low, mid, high) &#123;
+        const left = new Array(mid - low + 1);
+        const right = new Array(high - mid);
+
+        const n1 = mid - low + 1;
+        const n2 = high - mid;
+        let i, j;
+
+        for (i = 0; i &lt; n1; i++)
+            left[i] = arr[i + low];
+
+        for (i = 0; i &lt; n2; i++)
+            right[i] = arr[i + mid + 1];
+
+        let k = low;
+        i = j = 0;
+
+        while (i &lt; n1 &amp;&amp; j &lt; n2) &#123;
+            if (left[i] &lt;= right[j])
+                arr[k++] = left[i++];
+            else
+                arr[k++] = right[j++];
+        &#125;
+
+        while (i &lt; n1) &#123;
+            arr[k++] = left[i++];
+        &#125;
+
+        while (j &lt; n2) &#123;
+            arr[k++] = right[j++];
+        &#125;
+    &#125;
+
+    function merge_sort(low, high) &#123;
+        const mid = (low + (high - low) / 2 | 0 );
+        if (low &lt; high) &#123;
+
+            merge_sort(low, mid);
+
+            merge_sort(mid + 1, high);
+
+            merge(low, mid, high);
+        &#125;
+    &#125;
+
+    addEventListener('message', function (e) &#123;
+        const low = e.data.low;
+        const high = e.data.high;
+        arr = new Int32Array(e.data.buf);
+
+        const mid = (low + (high - low) / 2) | 0;
+
+        if (low &lt; high) &#123;
+            merge_sort(low, mid);
+            merge_sort(mid + 1, high);
+            merge(low, mid, high);
+        &#125;
+
+        postMessage(&quot;done&quot;);
+    &#125;, false);
+&lt;/script&gt;
+&lt;script&gt;
+    function merge(low, mid, high) &#123;
+        console.log(arr)
+        const left = new Array(mid - low + 1);
+        const right = new Array(high - mid);
+
+        const n1 = mid - low + 1;
+        const n2 = high - mid;
+        let i, j;
+
+        for (i = 0; i &lt; n1; i++)
+            left[i] = arr[i + low];
+
+        for (i = 0; i &lt; n2; i++)
+            right[i] = arr[i + mid + 1];
+
+        let k = low;
+        i = j = 0;
+
+        while (i &lt; n1 &amp;&amp; j &lt; n2) &#123;
+            if (left[i] &lt;= right[j])
+                arr[k++] = left[i++];
+            else
+                arr[k++] = right[j++];
+        &#125;
+
+        while (i &lt; n1) &#123;
+            arr[k++] = left[i++];
+        &#125;
+
+        while (j &lt; n2) &#123;
+            arr[k++] = right[j++];
+        &#125;
+    &#125;
+
+    const first_time = (new Date()).getTime();
+    const thread = 4;
+    const arrMax = 1e5;
+
+    const buf = new SharedArrayBuffer(arrMax * Int32Array.BYTES_PER_ELEMENT);
+    const arr = new Int32Array(buf);
+
+    for (const i in arr) &#123;
+        arr[i] = Math.random() * 10000 | 0;
+    &#125;
+    document.getElementById(&quot;content&quot;).innerHTML = &quot;origin: &quot; + arr + &quot;&lt;br/&gt;&quot;;
+
+    const barrierBuf = new SharedArrayBuffer(1 * Int32Array.BYTES_PER_ELEMENT);
+    const barrier = new Int32Array(barrierBuf);
+
+    for (let i = 0; i &lt; thread; i++) &#123;
+        const blob = new Blob([document.querySelector('#worker').textContent]);
+        const url = window.URL.createObjectURL(blob);
+        const worker = new Worker(url);
+
+        const low = i * (arrMax / thread);
+        const high = (i + 1) * (arrMax / thread) - 1;
+
+        worker.postMessage(&#123;
+            low: low,
+            high: high,
+            buf: buf,
+        &#125;);
+
+        worker.onmessage = e =&gt; &#123;
+            if (e.data == &quot;done&quot;) &#123;
+                Atomics.add(barrier, 0, 1);
+
+                if (Atomics.load(barrier, 0) === thread) &#123;
+
+                    merge(0, ((arrMax / 2 | 0) - 1) / 2 | 0, (arrMax / 2 | 0) - 1);
+                    merge(arrMax / 2, arrMax / 2 | 0 + 
+                        (arrMax - 1 - (arrMax / 2 | 0) | 0 / 2) | 0, arrMax - 1);
+                    merge(0, (arrMax - 1) / 2 | 0, arrMax - 1);
+
+                    const last_time = (new Date()).getTime();
+                    const content = &quot;new: &quot; + arr + &quot;&lt;br/&gt;&quot; +
+                        &quot;time: &quot; + (last_time - first_time) / 1000 + &quot;s&quot;
+                    document.getElementById(&quot;content&quot;).innerHTML += content;
+                &#125;
+            &#125;
+        &#125;;
+    &#125;
+&lt;/script&gt;
+</code></pre>
+<h2 id="3-Performance-analysis"><a class="header-anchor" href="#3-Performance-analysis">¶ </a>3. Performance analysis</h2>
+<p>The benchmark compares (1) Pthreads compiled with Emscripten in Proxy mode with -O3 to JS + WASM, (2) Pthreads compiled with Emscripten in normal mode with -O3 to JS + WASM, (3) Pthreads compiled with g++ -O3, (4) Pthreads compiled with g++ -O2, and (5) the pure JavaScript version running in Chrome. The experiment environment is an AMD Ryzen 7 2700X 3.7 GHz 8-core CPU (using only 4 threads), emcc v1.39, g++ v7.5, and Chrome 84.</p>
+<p>| Array Length  | Em Proxy | Em No Proxy | C++ O3 | C++ O2 | JS |<br>
+|—|—|—|—|—|—|—|<br>
+|  100000 | 0.056s  | 0.062s | 0.027s | 0.032s | 0.214s |<br>
+|  10000 | 0.031s  | 0.009s | 0.002s | 0.003s | 0.052s |<br>
+|  1000 |  0.029s | 0.002s | 0.001s | 0.001s | 0.023s |</p>
+<p>If we take the log of the times and invert them, we get the following figure. For the same length, a higher value means faster across different methods. Across different lengths for the same method, a higher value also means faster.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/89744481-eacbac00-dadf-11ea-9513-825905cba9d4.png" alt="result graph"></p>
+<p>As expected, the Pthread implementation is the fastest. The difference between -O3 and -O2 is not that large here, which is very different from the π results in the previous post.</p>
+<p>One interesting phenomenon is that regardless of length, the gap between 1e3 and 1e4 is small across methods, unlike the more dramatic change from 1e4 to 1e5. My guess is that when the length is below 1e4, overhead is dominated by other factors.</p>
+<p>It seems Proxy mode has higher overhead for small arrays: at 1e3 and 1e4 it loses by a noticeable margin to Emscripten normal mode. However, when the size reaches 1e5, Proxy mode becomes faster than normal mode.</p>
+<p>Finally, the pure JS version loses to other methods at all lengths. This is reasonable: C++ and WASM are generally faster than JS. However, at 1e3 and 1e4 the gap is smaller, while at 1e5 JS becomes much slower—about 8x slower than C++ and 6x slower than WASM.</p>
+<h2 id="4-Conclusion"><a class="header-anchor" href="#4-Conclusion">¶ </a>4. Conclusion</h2>
+<p>This post benchmarks Merge Sort across (1) native Pthreads, (2) Pthreads compiled to JS + WASM via Emscripten, and (3) a pure JavaScript implementation. The results show that the Pthread version is fastest, Emscripten-generated WASM comes next; among the Emscripten modes, the normal mode is faster for small arrays while Proxy mode has an advantage for large arrays; and the pure JS version is the slowest.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/browser/">
+                browser
+            </a>,&nbsp;
+        
+            <a href="/en/tags/browsers/">
+                browsers
+            </a>,&nbsp;
+        
+            <a href="/en/tags/c/">
+                c
+            </a>,&nbsp;
+        
+            <a href="/en/tags/pthread/">
+                pthread
+            </a>,&nbsp;
+        
+            <a href="/en/tags/parallel-programming/">
+                parallel programming
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/">
+                效能分析
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/">
+                平行化
+            </a>,&nbsp;
+        
+            <a href="/en/tags/algorithm/">
+                algorithm
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E6%BC%94%E7%AE%97%E6%B3%95/">
+                演算法
+            </a>,&nbsp;
+        
+            <a href="/en/tags/javascript/">
+                JavaScript
+            </a>,&nbsp;
+        
+            <a href="/en/tags/web-worker/">
+                web worker
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nodejs/">
+                nodejs
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Introduction"><span class="toc-text">1. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Merge-Sort"><span class="toc-text">2. Merge Sort</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Pthread-version-of-Merge-Sort"><span class="toc-text">2.1 Pthread version of Merge Sort</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Merge-Sort-compiled-from-Pthreads-to-JavaScript"><span class="toc-text">2.2 Merge Sort compiled from Pthreads to JavaScript</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-JavaScript-version-of-Merge-Sort"><span class="toc-text">2.3 JavaScript version of Merge Sort</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Performance-analysis"><span class="toc-text">3. Performance analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Conclusion"><span class="toc-text">4. Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/python/2023pycon-apac-sprint/">
+        My First CPython Pull Request at the PyCon APAC 2023 Sprint
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="browser,browsers,parallel programming,效能分析,平行化,JavaScript,web worker,nodejs,deno," />
+    <meta name="description"
+        content="This post briefly evaluates how major browsers, NodeJS, and Deno support Web Workers for parallel programming, and compares differences in usage. The results show that Chromium-based browsers provide good support, it is unfortunate that Firefox does not, and among JavaScript runtimes NodeJS works as expected while Deno still needs time to catch up." />
+    <title>Neutrino&#39;s Blog: Evaluation of Web Worker for Parallel Programming with Browsers, NodeJS and Deno </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/06/js/web-worker-evaluation/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/06/js/web-worker-evaluation/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/06/js/web-worker-evaluation/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/06/js/web-worker-evaluation/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/06/js/web-worker-evaluation/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2020/06/js/web-worker-evaluation/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Evaluation of Web Worker for Parallel Programming with Browsers, NodeJS and Deno
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-06-26
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/06/js/web-worker-evaluation/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2020/06/js/web-worker-evaluation/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Introduction"><a class="header-anchor" href="#Introduction">¶ </a>Introduction</h2>
+<p>This post briefly evaluates how major browsers, NodeJS, and Deno support Web Workers for writing parallel programs, and compares differences in usage.</p>
+<p>For a deeper introduction to Web Workers, see my earlier post: “<a href="https://tigercosmos.xyz/post/2020/02/web/js-parallel-worker-sharedarraybuffer/">JavaScript parallelism with Web Worker, SharedArrayBuffer, and Atomics</a>”. I will skip the basics here.</p>
+<p>All experiments in this post are run on Windows 10, using an AMD Ryzen 7 2700X 3.7 GHz 8-core CPU (but only enabling 4 threads). I test the same parallel program in Chrome, Edge, Firefox, NodeJS, and Deno, and compare the results.</p>
+<h2 id="Browsers"><a class="header-anchor" href="#Browsers">¶ </a>Browsers</h2>
+<p>The web test code is as follows:</p>
+<pre><code class="language-html">&lt;!-- pi.html --&gt;
+&lt;script id=&quot;worker&quot; type=&quot;app/worker&quot;&gt;
+    addEventListener('message', function (e) &#123;
+        const data = e.data;
+        const thread = data.thread;
+        const start = data.start;
+        const end = data.end;
+        const u32Arr = new Uint32Array(data.buf);
+        const step = data.step;
+        const magnification = 1e9;
+    
+        let x;
+        let sum = 0.0;
+    
+        for (let i = start; i &lt; end; i++) &#123;
+            x = (i + 0.5) * step;
+            sum = sum + 4.0 / (1.0 + x * x);
+        &#125;
+    
+        sum = sum * step;
+    
+        Atomics.add(u32Arr, 0, sum * magnification | 0); // (C)
+        Atomics.add(u32Arr, 1, 1); // (D)
+    
+        if (Atomics.load(u32Arr, 1) === thread) &#123; // (E)
+            const pi = u32Arr[0] / magnification;
+            console.log(&quot;PI is&quot;, pi);
+        &#125;
+
+        close();
+
+    &#125;, false);
+&lt;/script&gt;
+&lt;script&gt;
+    const thread = 4;
+
+    const num_steps = 1e9;
+    const step = 1.0/num_steps;
+    const part = num_steps / thread;
+
+    // [0] = pi, [1] = barrier
+    const u32Buf = 
+      new SharedArrayBuffer(2 * Uint32Array.BYTES_PER_ELEMENT); // (A)
+    const u32Arr = new Uint32Array(u32Buf);
+    u32Arr[0] = 0;
+    u32Arr[1] = 0;
+
+    for (let i = 0; i &lt; thread; i++) &#123; // (B)
+        const blob = new Blob([document.querySelector('#worker').textContent]);
+        const url = window.URL.createObjectURL(blob);
+        const worker = new Worker(url);
+
+        worker.postMessage(&#123;
+            thread: thread,
+            start: part * i,
+            end: part * (i + 1),
+            step: step,
+            buf: u32Buf,
+        &#125;);
+    &#125;
+&lt;/script&gt;
+</code></pre>
+<h3 id="Chrome-Edge"><a class="header-anchor" href="#Chrome-Edge">¶ </a>Chrome &amp; Edge</h3>
+<p>Chrome results:</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/85740272-12cf9d80-b734-11ea-9da9-4f95adc32700.png" alt="Chrome Result"></p>
+<p>Edge results:</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/85740443-3692e380-b734-11ea-94df-cc88978d2df8.png" alt="Edge Result"></p>
+<p>Since both are Chromium-based, the results are similar. (Even the developer tools are the same 😂)</p>
+<p>Both start at around 40ms and finish at around 580ms.</p>
+<h3 id="Firefox"><a class="header-anchor" href="#Firefox">¶ </a>Firefox</h3>
+<p>In Firefox, SharedArrayBuffer is disabled by default. The setting <code>javascript.options.shared_memory</code> is <code>false</code> by default, and even after setting it to <code>true</code> it still cannot be used. Firefox reports:</p>
+<p>“<code>TypeError: The WebAssembly.Memory object cannot be serialized. The Cross-Origin-Opener-Policy and Cross-Origin-Embedder-Policy HTTP headers will enable this in the future.</code>”</p>
+<p>For details, see this issue in Emscripten: <a target="_blank" rel="noopener" href="https://github.com/emscripten-core/emscripten/issues/10014">issue</a>.</p>
+<p>As a result, you cannot run this parallel program on Firefox. At best, you can use Web Workers for independent tasks. After some investigation, I concluded that using SharedArrayBuffer is too difficult, so I gave up.</p>
+<h2 id="NodeJS"><a class="header-anchor" href="#NodeJS">¶ </a>NodeJS</h2>
+<p>Web Workers are an API. They are not part of the JavaScript engine; they are something the runtime needs to implement. Therefore, NodeJS implements the API differently from browsers.</p>
+<p>In practice, the main differences are that the main program needs to import <code>Worker</code> from <code>worker_threads</code>, and inside a worker you need to use <code>parentPort</code>.</p>
+<p>Test code:</p>
+<p>main.js</p>
+<pre><code class="language-js">const &#123;
+    Worker
+  &#125; = require('worker_threads');
+
+const thread = 4;
+
+const num_steps = 1e9;
+const step = 1.0/num_steps;
+const part = num_steps / thread;
+
+// [0] = pi, [1] = barrier
+const u32Buf = 
+  new SharedArrayBuffer(2 * Uint32Array.BYTES_PER_ELEMENT); // (A)
+const u32Arr = new Uint32Array(u32Buf);
+u32Arr[0] = 0;
+u32Arr[1] = 0;
+
+for (let i = 0; i &lt; thread; i++) &#123; // (B)
+    const worker = new Worker('./worker.js');
+
+    worker.postMessage(&#123;
+        thread: thread,
+        start: part * i,
+        end: part * (i + 1),
+        step: step,
+        buf: u32Buf,
+    &#125;);
+&#125;
+</code></pre>
+<p>worker.js</p>
+<pre><code class="language-js">const &#123; parentPort &#125; = require('worker_threads')
+
+parentPort.onmessage = function (e) &#123;
+    const data = e.data;
+    const thread = data.thread;
+    const start = data.start;
+    const end = data.end;
+    const u32Arr = new Uint32Array(data.buf);
+    const step = data.step;
+    const magnification = 1e9;
+
+    let x;
+    let sum = 0.0;
+
+    for (let i = start; i &lt; end; i++) &#123;
+        x = (i + 0.5) * step;
+        sum = sum + 4.0 / (1.0 + x * x);
+    &#125;
+
+    sum = sum * step;
+
+    Atomics.add(u32Arr, 0, sum * magnification | 0); // (C)
+    Atomics.add(u32Arr, 1, 1); // (D)
+
+    if (Atomics.load(u32Arr, 1) === thread) &#123; // (E)
+        const pi = u32Arr[0] / magnification;
+        console.log(&quot;PI is&quot;, pi);
+    &#125;
+
+    parentPort.close();
+&#125;;
+</code></pre>
+<p>Running with Node v12.14.1 yields:</p>
+<pre><code class="language-shell">$ Measure-Command &#123;node main.js&#125;  
+
+Milliseconds      : 465
+Ticks             : 4659527
+TotalMilliseconds : 465.9527
+</code></pre>
+<p>This is quite surprising, because it is about 100 ms faster than in browsers. Note that the engine is V8 in both cases, and in the browser test I can confirm via performance profiling that nothing else is consuming CPU resources. Even if we subtract worker startup time in the browser, it still looks significantly slower than Node.</p>
+<p>My guess is that the difference comes from the runtime-level implementation of Web Workers. As mentioned earlier, Web Workers are implemented by the runtime, not by V8 itself.</p>
+<h2 id="Deno"><a class="header-anchor" href="#Deno">¶ </a>Deno</h2>
+<p>Unfortunately, as of the time this post was published, Deno v1.1.1 does not fully support Web Workers. For example, it does not support SharedArrayBuffer, and Workers only support the module type.</p>
+<p>For more details, see the issue I filed: “<a target="_blank" rel="noopener" href="https://github.com/denoland/deno/issues/6433">SharedArrayBuffer not works #6433</a>”.</p>
+<p>Test code:</p>
+<p>main.js</p>
+<pre><code class="language-js">const u32Buf = new SharedArrayBuffer(2 * Uint32Array.BYTES_PER_ELEMENT);
+const u32Arr = new Uint32Array(u32Buf);
+
+const worker = new Worker(new URL(&quot;./worker.js&quot;, import.meta.url).href, &#123; type: &quot;module&quot; &#125;);
+
+u32Arr[0] = 1
+
+worker.postMessage(&#123;
+    buf: u32Buf,
+&#125;);
+</code></pre>
+<p>worker.js</p>
+<pre><code class="language-js">self.onmessage = function (e) &#123;
+    const data = e.data;
+    const u32Arr = new Uint32Array(data.buf);
+
+    console.log(u32Arr[0])
+&#125;;
+</code></pre>
+<p>We would expect <code>u32Arr[0]</code> to become <code>1</code>, but because it is not supported, we get <code>undefined</code>:</p>
+<pre><code class="language-shell">$ deno run --allow-read main.js
+undefined
+</code></pre>
+<p>For the implementation status of Web Workers in Deno, you can also refer to the project’s <a target="_blank" rel="noopener" href="https://github.com/denoland/deno/search?p=2&amp;q=Worker&amp;unscoped_q=Worker">source code</a>.</p>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>I am very optimistic about Web Workers. In an era where everyone is chasing performance, web experiences should be fast and efficient—so parallel processing with multiple threads should be the natural direction. At the same time, Web Workers are not only for browsers. In the “everything is JavaScript” era, cross-platform is commonplace, so runtimes like NodeJS and Deno should also keep up.</p>
+<p>From these experiments, it is clear that Chromium-based browsers support Web Workers for parallel programming quite well. It is unfortunate that Firefox does not. As for JavaScript runtimes, NodeJS—as the veteran—naturally supports it, while Deno—as a rising newcomer—still needs more time.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/browser/">
+                browser
+            </a>,&nbsp;
+        
+            <a href="/en/tags/browsers/">
+                browsers
+            </a>,&nbsp;
+        
+            <a href="/en/tags/parallel-programming/">
+                parallel programming
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/">
+                效能分析
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/">
+                平行化
+            </a>,&nbsp;
+        
+            <a href="/en/tags/javascript/">
+                JavaScript
+            </a>,&nbsp;
+        
+            <a href="/en/tags/web-worker/">
+                web worker
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nodejs/">
+                nodejs
+            </a>,&nbsp;
+        
+            <a href="/en/tags/deno/">
+                deno
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Browsers"><span class="toc-text">Browsers</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Chrome-Edge"><span class="toc-text">Chrome &amp; Edge</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Firefox"><span class="toc-text">Firefox</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS"><span class="toc-text">NodeJS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Deno"><span class="toc-text">Deno</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/python/2023pycon-apac-sprint/">
+        My First CPython Pull Request at the PyCon APAC 2023 Sprint
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

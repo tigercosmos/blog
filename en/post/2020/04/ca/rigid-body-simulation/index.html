@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="physics,模擬,電腦動畫,computer animation,simulation,物理,collision detection,impulse,joint constraint,rigid body," />
+    <meta name="description"
+        content="Physics simulation is common in computer animation and games. Typical simulations include particle systems, fluid simulation, and rigid body dynamics. This post focuses on rigid body simulation: collision detection, impulses and momentum transfer (with friction), joint constraints, and numerical methods." />
+    <title>Neutrino&#39;s Blog: Rigid Body Simulation: Collision Detection, Impulses, Joint Constraints, and Numerical Methods </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/04/ca/rigid-body-simulation/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/04/ca/rigid-body-simulation/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/04/ca/rigid-body-simulation/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/04/ca/rigid-body-simulation/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/04/ca/rigid-body-simulation/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2020/04/ca/rigid-body-simulation/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Rigid Body Simulation: Collision Detection, Impulses, Joint Constraints, and Numerical Methods
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-04-25
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/04/ca/rigid-body-simulation/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2020/04/ca/rigid-body-simulation/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-Introduction"><a class="header-anchor" href="#1-Introduction">¶ </a>1. Introduction</h2>
+<p>Physics simulation is common in computer animation and games. Typical simulations include particle systems, fluid simulation, and rigid body dynamics. This post introduces collision detection, impulses and momentum transfer, joint constraints, and numerical methods in rigid body simulation.</p>
+<p>We will cover three collision types: AABB (axis-aligned bounding boxes) vs. AABB, AABB vs. circles, and circles vs. circles. We will also describe momentum transfer and impulse resolution for rigid body collisions with friction. For constraints, we will discuss spring forces, damping forces, and fixed-length distance joints. Finally, for numerical methods we will cover Euler’s method and the Runge–Kutta method for ODEs.</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/80283089-d8537f80-8747-11ea-9a81-09a995909d10.gif" alt="demo"></p>
+<h2 id="2-Principles-and-Implementation"><a class="header-anchor" href="#2-Principles-and-Implementation">¶ </a>2. Principles and Implementation</h2>
+<h3 id="2-1-Collision-Detection"><a class="header-anchor" href="#2-1-Collision-Detection">¶ </a>2.1 Collision Detection</h3>
+<p>Collision detection determines whether two objects overlap and, if they do, computes the <strong>unit normal vector</strong> (Unit Normal Vector), <strong>penetration depth</strong> (Penetration), and a boolean <strong>is-colliding</strong> flag. During simulation, each iteration checks whether a collision occurs to decide whether to resolve impulses. If a collision occurs, we use the unit normal to compute the bounce direction, and we use the unit normal and penetration depth to perform positional correction (because in theory objects should not overlap).</p>
+<h4 id="2-1-1-AABB-vs-AABB"><a class="header-anchor" href="#2-1-1-AABB-vs-AABB">¶ </a>2.1.1 AABB vs. AABB</h4>
+<p>An AABB is axis-aligned, meaning we do not consider rotation (tilt).</p>
+<p>The figure below shows what it looks like when one AABB penetrates another. Based on basic physics intuition, if a square object (the “Other object” in the figure) collides horizontally or vertically, the reaction force will also be horizontal or vertical.</p>
+<p>We define the penetration depth as the smaller overlap between the x-overlap and y-overlap. The reaction force direction is aligned with the axis of the smaller overlap.</p>
+<p>In the example below, the normal force points along the y-overlap direction; dividing by the magnitude gives the unit normal vector.</p>
+<img src="https://user-images.githubusercontent.com/18013815/79778754-d6667680-836b-11ea-94d1-c026616c257b.png" width=50%>
+<p>Let the two AABBs be $A$ and $B$, and define $B$’s rebound direction as positive:</p>
+<p>$$ penestration = min(\text {x overlap}, \text{y overlap})$$<br>
+$$ \mathbf {Normal}_{BA} =<br>
+\begin{cases}<br>
+(1, 0) &amp;\text{if min is x overlap} \\<br>
+(0, 1) &amp;\text{if min is x overlap}<br>
+\end{cases}<br>
+$$</p>
+<p>To determine whether they overlap, check that all of the following are true:</p>
+<p>$$<br>
+\begin{cases}<br>
+A.{xmax} &gt; B.{xmin} \\<br>
+B.{xmax} &gt; A.{xmin}\\<br>
+A.{ymax} &gt; B.{ymin} \\<br>
+B.{ymax} &gt;  A.{ymin}<br>
+\end{cases}<br>
+$$</p>
+<p>Pseudocode:</p>
+<blockquote>
+<p><em>Note: in the pseudocode below, <code>float2</code> refers to <code>vec&lt;float,2&gt;</code>.</em></p>
+</blockquote>
+<pre><code class="language-cpp">typedef linalg::aliases::float2 float2;
+
+float2 normal(0.0f, 0.0f);
+float penetration = 0.0f;
+bool is_hit = false;
+
+if (A_x_max &gt; B_x_min &amp;&amp; B_x_max &gt; A_x_min &amp;&amp;
+    B_y_max &gt; B_y_min &amp;&amp; B_y_max &gt; B_y_min)
+&#123;
+    is_hit = true;
+&#125;
+
+if (is_hit)
+&#123;
+    auto overlap_x = min(A_x_max - B_x_min, B_x_max - A_x_min);
+    auto overlap_y = min(B_y_max - B_y_min, B_y_max - B_y_min);
+
+    penetration = min(overlap_x, overlap_y);
+
+    if (penetration == overlap_x)
+    &#123;
+        normal.x = B-&gt;pos.x - A-&gt;pos.x &gt; 0 ? 1.0 : -1.0;
+    &#125;
+    else
+    &#123;
+        normal.y = B-&gt;pos.y - A-&gt;pos.y &gt; 0 ? 1.0 : -1.0;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="2-1-2-Circle-vs-Circle"><a class="header-anchor" href="#2-1-2-Circle-vs-Circle">¶ </a>2.1.2 Circle vs. Circle</h3>
+<p>The diagram below illustrates circle–circle collision. After collision, the normal direction is along the line between the two circle centers. The penetration depth is easy to compute: the sum of the radii minus the distance between centers.</p>
+<img src="https://user-images.githubusercontent.com/18013815/79779989-d49db280-836d-11ea-87a8-b1797c907c49.png" width=50%>
+<p>Let the radii be $R_A$ and $R_B$, the centers be $C_A$ and $C_B$, and define $\mathbf {Normal}_{BA}$ (the rebound direction of circle $B$) as positive:</p>
+<p>$$ penestration = R_A + R_B - Distance(C_A, C_B)$$<br>
+$$ \mathbf {Normal}<em>{BA} = \mathbf C</em>{BA}/ Distance(C_A, C_B) $$</p>
+<p>Pseudocode:</p>
+<pre><code class="language-cpp">float2 normal(0.0f, 0.0f);
+float penetration = 0.0f;
+bool is_hit = false;
+
+auto pos1 = A-&gt;pos;
+auto r1 = A-&gt;radius;
+auto pos2 = B-&gt;pos;
+auto r2 = B-&gt;radius;
+
+float dis = sqrt(
+    (pos2.x - pos1.x) * (pos2.x - pos1.x) +
+    (pos2.y - pos1.y) * (pos2.y - pos1.y));
+penetration = r1 + r2 - dis;
+
+if(penetration &gt; 0) &#123;
+    is_hit = true;
+&#125;
+
+normal = float2((pos2.x - pos1.x) / dis, (pos2.y - pos1.y) / dis);
+</code></pre>
+<h3 id="2-1-3-AABB-vs-Circle"><a class="header-anchor" href="#2-1-3-AABB-vs-Circle">¶ </a>2.1.3 AABB vs. Circle</h3>
+<p>AABB–circle collision is a bit more complex. When computing the penetration depth and unit normal vector, there are two cases: (1) after collision, the circle center is outside the AABB, and (2) the circle center is inside the AABB. The computation differs slightly between the two.</p>
+<h4 id="2-1-3-1-Circle-center-outside-the-AABB"><a class="header-anchor" href="#2-1-3-1-Circle-center-outside-the-AABB">¶ </a>2.1.3.1 Circle center outside the AABB</h4>
+<p>First, we find the closest point on the AABB to the circle center (Closest Point). Then we compute the vector from that closest point to the AABB center (blue) and the vector from the circle center to the AABB center (green). The normal vector is the green vector minus the blue vector.</p>
+<img src="https://user-images.githubusercontent.com/18013815/79782464-bb970080-8371-11ea-92e5-9d23643d94e1.png" width=50%>
+<p>Let the AABB be $A$, the circle be $B$, and the closest point be $P$:</p>
+<p>$$ \mathbf N_{BA} = \mathbf V_{B_{center}A_{center}} - \mathbf V_{PA_{center}}$$<br>
+$$ penestration = B_{radius} - Distance(B_{center}, P)$$</p>
+<p>Pseudocode:</p>
+<pre><code class="language-cpp">float2 normal(0.0f, 0.0f);
+float penetration = 0.0f;
+bool is_hit = false;
+
+auto ab_pos = A-&gt;pos; // AABB center
+auto ab_ext = A-&gt;extent / 2;
+auto x_max = ab_pos.x + ab_ext.x;
+auto x_min = ab_pos.x - ab_ext.x;
+auto y_max = ab_pos.y + ab_ext.y;
+auto y_min = ab_pos.y - ab_ext.y;
+
+auto c_pos = B-&gt;pos; // circle center
+
+float2 closest_p(0, 0);
+
+// outside
+if (c_pos.x &gt; x_max &amp;&amp; c_pos.x &lt; x_min &amp;&amp;
+      c_pos.y &gt; y_max &amp;&amp; c_pos.y &lt; y_min)
+&#123;
+    closest_p.x = clamp(c_pos.x, x_min, x_max);
+    closest_p.y = clamp(c_pos.y, y_min, y_max);
+
+    float dis = sqrt(
+        (c_pos.x - closest_p.x) * (c_pos.x - closest_p.x) +
+        (closest_p.y - c_pos.y) * (closest_p.y - c_pos.y));
+
+    penetration = B-&gt;radius - dis;
+    
+    if (penetration &gt; 0)
+    &#123;
+        is_hit = true;
+        normal.x = (c_pos.x - closest_p.x) / dis;
+        normal.y = (c_pos.y - closest_p.y) / dis;
+    &#125;
+&#125;
+</code></pre>
+<h4 id="2-1-3-2-圓心在-AABB-之內"><a class="header-anchor" href="#2-1-3-2-圓心在-AABB-之內">¶ </a>2.1.3.2 圓心在 AABB 之內</h4>
+<p>The vector definitions are the same as in the “circle center outside the AABB” case, except that the normal vector becomes the blue vector minus the green vector.</p>
+<p>However, with an AABB we know the normal must be horizontal or vertical. So we can directly determine which side of the AABB is closest to the circle center. In the figure below, the circle center is closest to the right side of the AABB, so the closest point’s x coordinate is the AABB’s right boundary, and its y coordinate matches the circle center’s y.</p>
+<img src="https://user-images.githubusercontent.com/18013815/79782416-a15d2280-8371-11ea-86d6-8ad47ab515c0.png" width=50%>
+<p>$$ \mathbf N_{BA} = \mathbf V_{PA_{center}} - \mathbf V_{B_{center}A_{center}} $$<br>
+$$ penestration = B_{radius} + Distance(B_{center}, P)$$</p>
+<p>Pseudocode (continuing from <a href="#2-1-3-2-%E5%9C%93%E5%BF%83%E5%9C%A8-AABB-%E4%B9%8B%E5%85%A7">2.1.3.2</a>):</p>
+<pre><code class="language-cpp">// inside
+else
+&#123;
+    auto x_right = x_max - c_pos.x;
+    auto x_left = c_pos.x - x_min;
+    auto y_up = y_max - c_pos.y;
+    auto y_down = c_pos.y - y_min;
+
+    auto smallest = MIN(x_right, x_left, y_up, y_down)
+
+    if (smallest == x_right)
+    &#123;
+        closest_p.x = x_max;
+        closest_p.y = c_pos.y;
+    &#125;
+    else if (smallest == x_left)
+    &#123;
+        closest_p.x = x_min;
+        closest_p.y = c_pos.y;
+    &#125;
+    else if (smallest == y_down)
+    &#123;
+        closest_p.x = c_pos.x;
+        closest_p.y = y_min;
+    &#125;
+    else
+    &#123;
+
+        closest_p.x = c_pos.x;
+        closest_p.y = y_max;
+    &#125;
+
+    float dis = sqrt(
+        (c_pos.x - closest_p.x) * (c_pos.x - closest_p.x) +
+        (closest_p.y - c_pos.y) * (closest_p.y - c_pos.y));
+        
+    penetration = circle-&gt;radius + smallest;
+
+    is_hit = true;
+    normal.x = (closest_p.x - c_pos.x) / dis;
+    normal.y = (closest_p.y - c_pos.y) / dis;
+&#125;
+</code></pre>
+<h4 id="2-1-4-Positional-Correction"><a class="header-anchor" href="#2-1-4-Positional-Correction">¶ </a>2.1.4 Positional Correction</h4>
+<p>Sometimes two objects can get “stuck” together, and we need to intervene. This situation is fairly common; here is an example.</p>
+<p>When a small object $B$ slowly collides with object $A$, because we simulate in discrete time steps, $B$ may “sink into” $A$ before we detect the collision. Although $B$ should bounce, due to energy loss and friction, the portion of $B$ embedded in $A$ may not fully separate before $B$ comes to rest—so the two objects appear stuck together.</p>
+<p>Another case is when an object is spawned at a position that is already occupied; they start overlapped and get stuck immediately. In these cases, we need to force them apart.</p>
+<p>The fix is straightforward. During collision detection, we already computed the penetration depth and normal vector. So we apply a corrective displacement along the normal direction, weighted by the objects’ masses. This correction may not fully resolve overlap in one step, but because it is applied repeatedly, the objects will gradually separate until they are no longer stuck.</p>
+<pre><code class="language-cpp">void correct_position(A, B)
+&#123;
+  const float percent = 0.2 // typically 20% to 80% at 60 fps
+  const float slop = 0.01 // only correct if penetration exceeds this, to avoid jitter; usually 0.01 to 0.1
+  float2 correction = max(penetration - slop, 0.0f) / (A.inv_mass + B.inv_mass)) * percent * normal
+  A.position -= A.inv_mass * correction
+  B.position += B.inv_mass * correction
+&#125;
+</code></pre>
+<h3 id="2-2-Momentum-Impulse-and-Friction"><a class="header-anchor" href="#2-2-Momentum-Impulse-and-Friction">¶ </a>2.2 Momentum, Impulse, and Friction</h3>
+<p>In rigid body collisions, momentum is transferred between bodies, and friction also affects the outcome. During simulation, we first run collision detection. Once we confirm a collision, we resolve its effects on the bodies by applying impulses and accounting for friction.</p>
+<h4 id="2-2-1-Impulse-Resolution"><a class="header-anchor" href="#2-2-1-Impulse-Resolution">¶ </a>2.2.1 Impulse Resolution</h4>
+<p>Following the “Impulse-based reaction model” section on Wikipedia’s <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Collision_response">Collision response</a>, we can derive the impulse term for a two-body collision. I won’t repeat the full derivation here; the final result is the impulse magnitude $J_r$:</p>
+<p>$$<br>
+\mathbf J_r = \frac{-(1 + e)((\mathbf V^B - \mathbf V^A) \cdot\mathbf n)}{\frac{1}{mass^A} + \frac{1}{mass^B}}<br>
+$$</p>
+<p>We then apply the impulse to update the bodies’ velocities.</p>
+<p>Pseudocode:</p>
+<pre><code class="language-cpp">void Resolve(body0, body1) &#123;
+    if (isHit)
+    &#123;
+        auto rel = body1-&gt;velocity - body0-&gt;velocity;
+        auto vel_n = dot(rel, normal);
+        
+        // seperate
+        if (vel_n &gt; 0)
+        &#123;
+            return;
+        &#125;
+
+        // restitution
+        float e = min(body0-&gt;restitution, body1-&gt;restitution);
+
+        // impluse
+        float jr = -(1 + e) * vel_n;
+        jr /= body0-&gt;inv_mass + body1-&gt;inv_mass;
+        auto impulse = jr * normal;
+
+        // Apply impulse
+        body0-&gt;SetVelocity(body0-&gt;velocity - body0-&gt;inv_mass * impulse);
+        body1-&gt;SetVelocity(body1-&gt;velocity + body1-&gt;inv_mass * impulse);
+        
+	        /* 
+	            Handle friction here
+	        */
+    &#125;
+&#125;
+</code></pre>
+<p>One small detail: in physics simulation we frequently use the reciprocal of mass, so it’s common to store <code>inv_mass</code> in the body to reduce division overhead.</p>
+<h4 id="2-2-2-Friction"><a class="header-anchor" href="#2-2-2-Friction">¶ </a>2.2.2 Friction</h4>
+<p>The $J_r$ we computed can be decomposed into a normal impulse $J_n$ and a tangential impulse $J_t$. Only the tangential component produces a friction impulse.</p>
+<p>First compute the tangential component of the relative velocity:</p>
+<p>$$<br>
+\mathbf V^R = \mathbf V^{B}-\mathbf V^{A} \<br>
+\mathbf V^R_{tangent} =\mathbf  V^R - (\mathbf V^R \cdot \mathbf n) *\mathbf n<br>
+$$</p>
+<p>Then the tangential impulse magnitude is:</p>
+<p>$$<br>
+\mathbf Jt = \mathbf V^R \cdot {\mathbf V^R_{tangent}\over \Vert\mathbf V^R_{tangent}\Vert}<br>
+$$</p>
+<p>Pseudocode (continuing from the impulse resolution above):</p>
+<pre><code class="language-cpp">// friction impulse
+
+rel = body1-&gt;velocity - body0-&gt;velocity;
+auto rel_normal = dot(rel, normal) * normal;
+float2 rel_tan = rel - rel_normal;
+float len = sqrt(rel_tan.x * rel_tan.x + rel_tan.y * rel_tan.y);
+
+float2 tan(0, 0);
+// avoid division by zero
+if (len &gt; 0.00001) &#123;
+    tan /= len;
+&#125;
+
+auto jt = -dot(rel, tan);
+jt /= body0-&gt;inv_mass + body1-&gt;inv_mass;
+
+float2 friction_impulse(0.0f, 0.0f);
+float mu = sqrt(
+    pow(body0-&gt;StaticFriction, 2) + pow(body1-&gt;StaticFriction, 2));
+    
+// static friction
+if (abs(jt) &lt; jr * mu)
+&#123;
+    friction_impulse = jt * tan;
+&#125;
+// dynamic friction
+else
+&#123;
+    mu = sqrt(
+        pow(body0-&gt;DynamicFriction, 2) + pow(body1-&gt;DynamicFriction, 2));
+    friction_impulse = -jr * tan * mu;
+&#125;
+
+// apply the velocity change caused by friction impulse
+body0-&gt;SetVelocity(body0-&gt;velocity - body0-&gt;inv_mass * friction_impulse);
+body1-&gt;SetVelocity(body1-&gt;velocity + body1-&gt;inv_mass * friction_impulse);
+</code></pre>
+<h3 id="2-3-Joint-Constraints"><a class="header-anchor" href="#2-3-Joint-Constraints">¶ </a>2.3 Joint Constraints</h3>
+<p>To simulate objects like springs or ropes, we can treat a continuous object as a chain of discrete units. During simulation, we connect many units and impose constraints on each connection. By computing the forces on each unit and combining them, we obtain the final motion of the continuous object.</p>
+<h4 id="2-3-1-Spring-Force"><a class="header-anchor" href="#2-3-1-Spring-Force">¶ </a>2.3.1 Spring Force</h4>
+<p>When a spring is stretched or compressed, it produces a spring force. The force magnitude is proportional to the extension multiplied by the spring constant $K_S$.</p>
+<p>The spring force between two particles $A$ and $B$ is defined as:<br>
+$$<br>
+\begin{align}<br>
+\mathbf F_a &amp;= -K_s(\vert \mathbf x_a - \mathbf x_b \vert - length)\mathbf L&amp;, K_s &gt; 0 \\<br>
+&amp;=  -K_s(\vert \mathbf x_a - \mathbf x_b \vert - length){\mathbf x_a - \mathbf x_b \over{\vert \mathbf x_a - \mathbf x_b \vert}}&amp;, K_s &gt; 0<br>
+\end{align}<br>
+$$</p>
+<p>Pseudocode:</p>
+<pre><code class="language-cpp">auto pos_vec = body0-&gt;pos - body1-&gt;pos;
+auto dis = sqrt(pow(pos_vec.x, 2) + pow(pos_vec.y, 2));
+
+float2 f0(0.0f, 0.0f);
+float2 f1(0.0f, 0.0f);
+
+// avoid division by zero
+if (dis &gt; 0.00001)
+&#123;
+    f0 = -ks * (dis - length) * pos_vec / dis;
+    f1 = ks * (dis - length) * pos_vec / dis;
+&#125;
+
+body0-&gt;force += f0
+boddy1-&gt;force += f1
+</code></pre>
+<h4 id="2-3-2-Damper-Force"><a class="header-anchor" href="#2-3-2-Damper-Force">¶ </a>2.3.2 Damper Force</h4>
+<p>Similar to spring force, a damper force is a resistive force that depends on the relative velocity. The larger the velocity difference between two particles, the larger the damping force that prevents them from continuing to separate.</p>
+<p>The damper force between two particles $A$ and $B$ is defined as follows, where $K_d$ is the damping coefficient:</p>
+<p>$$<br>
+\begin{align}<br>
+\mathbf F_a &amp;= -K_s((\mathbf v_a - \mathbf v_b ) \cdot \mathbf L)\mathbf L&amp;, K_d &gt; 0 \\<br>
+&amp;=  -K_s{(\mathbf v_a - \mathbf v_b)\cdot(\mathbf x_a - \mathbf x_b) \over{\vert \mathbf x_a - \mathbf x_b \vert}}{\mathbf x_a - \mathbf x_b \over{\vert \mathbf x_a - \mathbf x_b \vert}}&amp;, K_s &gt; 0<br>
+\end{align}<br>
+$$</p>
+<p>Pseudocode:</p>
+<pre><code class="language-cpp">auto pos_vec = body0-&gt;pos - body1-&gt;pos;
+auto dis = sqrt(pow(pos_vec.x, 2) + pow(pos_vec.y, 2));
+auto v_vec = body0-&gt;velocity - body1-&gt;velocity;
+
+float2 f0(0.0f, 0.0f);
+float2 f1(0.0f, 0.0f);
+if (dis &gt; 0.00001)
+&#123;
+    f0 = -kd * (dis - lenght) * pos_vec / dis;
+    f1 = kd * (dis - length) * pos_vec / dis;
+&#125;
+
+body0-&gt;force += f0
+boddy1-&gt;force += f1
+</code></pre>
+<h4 id="2-3-3-Distance-Joint-Fixed-Length"><a class="header-anchor" href="#2-3-3-Distance-Joint-Fixed-Length">¶ </a>2.3.3 Distance Joint (Fixed Length)</h4>
+<p>When simulating a chain, each segment has a length constraint. Two connected units cannot exceed the maximum length. When they are about to exceed it, a reaction force must counteract the tendency to stretch further.</p>
+<p>Pseudocode:</p>
+<pre><code class="language-cpp">auto pos_vec = body0-&gt;pos - body1-&gt;pos;
+auto dis = sqrt(pow(pos_vec.x, 2) + pow(pos_vec.y, 2));
+auto rel_dis = dis - length;
+
+// if it exceeds the length limit
+if (rel_dis &gt; 0)
+&#123;
+    // positional correction
+    float2 unit_axis = pos_vec / dis;
+    body1-&gt;pos = body0-&gt;pos + unit_axis * length;
+
+    auto rel_vel = dot((body1-&gt;velocity - body0-&gt;velocity, unit_axis);
+    auto remove = rel_vel + rel_dis / deltaTime;
+    auto impulse = remove / (body0-&gt;inv_mass + body1-&gt;inv_mass);
+    auto impulse_vec = unit_axis * impulse;
+    auto force = impulse_vec / deltaTime;
+
+    body0-&gt;force -= force;
+    boddy1-&gt;force += force;
+&#125;
+</code></pre>
+<h3 id="2-4-Numerical-Methods"><a class="header-anchor" href="#2-4-Numerical-Methods">¶ </a>2.4 Numerical Methods</h3>
+<p>In physical motion, many processes can be expressed as differential equations. In simulation, we compute numerical solutions to these equations by accumulating small steps—i.e., numerically integrating. For example, displacement is the time integral of velocity.</p>
+<p>There are many numerical methods. The physics used in this post can be modeled as first-order ordinary differential equations (ODEs), so we will introduce Euler’s method and the 4th-order Runge–Kutta method (RK4) for solving ODEs.</p>
+<h4 id="2-4-1-Euler-Method"><a class="header-anchor" href="#2-4-1-Euler-Method">¶ </a>2.4.1 Euler Method</h4>
+<p>I won’t cover the math derivation of Euler’s method here; see Wikipedia’s <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Euler_method">Euler Method</a>.</p>
+<p>Below is example pseudocode for using Euler’s method to simulate motion under <strong>forces</strong>:</p>
+<pre><code class="language-cpp">void timeStep(body) &#123;
+    body-&gt;velocity += body-&gt;force * delta_time / body-&gt;mass; // Ft = mv
+    body-&gt;pos += delta_time * vel;
+&#125;
+</code></pre>
+<p>In this example, we integrate over time. From $F \Delta t=m \Delta v$, at each time step we obtain the change in velocity, and then use the updated velocity to compute the change in position.</p>
+<h4 id="2-4-2-Runge–Kutta-Method"><a class="header-anchor" href="#2-4-2-Runge–Kutta-Method">¶ </a>2.4.2 Runge–Kutta Method</h4>
+<p>For the mathematical derivation of Runge–Kutta, see Wikipedia’s <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods">Runge–Kutta methods</a>.</p>
+<p>Below is example pseudocode for using Runge–Kutta to simulate motion under <strong>gravitational acceleration</strong>:</p>
+<pre><code class="language-cpp">void timeStep(body) &#123;
+    auto f = [=](StateStep &amp;step, float2 vel, float t) &#123;
+        vel += gravity * t;
+        step.velocity = vel;
+    &#125;;
+
+    StateStep F0, F1, F2, F3, F4;
+    F0.velocity = float2(0,0);
+    f(F1, F0.velocity, 0);
+    f(F2, F1.velocity / 2, deltaTime / 2);
+    f(F3, F2.velocity / 2, deltaTime / 2);
+    f(F4, F3.velocity, deltaTime);
+
+    auto v0 = body-&gt;vel + body-&gt;force * deltaTime / body-&gt;mass;
+    body-&gt;vel =  v0 + (F1.velocity + 2 * F2.velocity + 2 * F3.velocity + F4.velocity) / 6;
+    body-&gt;pos += body-&gt;vel * deltaTime;
+&#125;
+</code></pre>
+<h2 id="3-Results-and-Discussion"><a class="header-anchor" href="#3-Results-and-Discussion">¶ </a>3. Results and Discussion</h2>
+<h3 id="3-1-Extending-Collision-Detection"><a class="header-anchor" href="#3-1-Extending-Collision-Detection">¶ </a>3.1 Extending Collision Detection</h3>
+<p>In this post, we only discussed collisions involving AABBs and circles. Obviously, real-world shapes are not limited to AABBs and circles. Even for “boxes”, once rotation is involved, the computation changes significantly. For collision detection of rotated polygons, you can refer to the <a target="_blank" rel="noopener" href="http://www.dyn4j.org/2010/01/sat/">Separating Axis Theorem</a> (SAT).</p>
+<p>Also, the real world is 3D. Handling collision detection for 3D objects goes beyond SAT in 2D and is a more complex topic.</p>
+<h3 id="3-2-Torque-and-Moment-of-Inertia"><a class="header-anchor" href="#3-2-Torque-and-Moment-of-Inertia">¶ </a>3.2 Torque and Moment of Inertia</h3>
+<p>In this post, we ignored torque and moment of inertia. In reality, objects also experience angular impulses during impacts. Why didn’t we cover rotation here? Because once rotation is involved, a square is no longer an AABB, and you need SAT to determine collisions. Due to space constraints, readers who are interested can refer to “<a target="_blank" rel="noopener" href="https://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-oriented-rigid-bodies--gamedev-8032">How to Create a Custom 2D Physics Engine: Oriented Rigid Bodies</a>”, first understand SAT, and then implement rotation and moment of inertia based on physics principles.</p>
+<h3 id="3-3-Euler-vs-Runge–Kutta"><a class="header-anchor" href="#3-3-Euler-vs-Runge–Kutta">¶ </a>3.3 Euler vs. Runge–Kutta</h3>
+<p>Euler’s method is a first-order method: it uses the current rate of change to compute the next step. It is simple and easy to implement, but because each step adds only the rate at that step, the simulation can become inaccurate if the step size (Delta) is too large. To get accurate results, the step size must be small, which makes the computation expensive.</p>
+<p>Runge–Kutta can be generalized to an $n$-th order RK method, but in practice we often use 4th order (RK4) to balance accuracy and speed. RK4 takes four intermediate estimates and forms a weighted average. It performs well for differential equations up to order four. Because it is less sensitive to step size (Delta), you can often use a larger step size to compute faster while still obtaining a more accurate numerical solution.</p>
+<h2 id="4-Conclusion"><a class="header-anchor" href="#4-Conclusion">¶ </a>4. Conclusion</h2>
+<p>With numerical simulation, we can bring real-world physics into computer animation and games. This post explored collision detection, impulses and momentum transfer, joint constraints, and numerical methods in rigid body motion. Rigid body dynamics is one of the most common applications—mobile games like Angry Birds are a classic example, where you need to compute trajectories and handle collisions and impulse transfer when birds hit wood or stone. Using the methods described here, you can implement a simple collision simulation. For deeper study, you can look into the differences between 2D and 3D simulation, as well as more sophisticated physical models and numerical techniques.</p>
+<h2 id="5-References"><a class="header-anchor" href="#5-References">¶ </a>5. References</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://davidhsu666.com/archives/gamecollisiondetection/">Collision Detection in Games</a></li>
+<li><a target="_blank" rel="noopener" href="https://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-the-basics-and-impulse-resolution--gamedev-6331">How to Create a Custom 2D Physics Engine: The Basics and Impulse Resolution</a></li>
+<li><a target="_blank" rel="noopener" href="https://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-friction-scene-and-jump-table--gamedev-7756">How to Create a Custom 2D Physics Engine: Friction, Scene and Jump Table</a></li>
+<li><a target="_blank" rel="noopener" href="https://wildbunny.co.uk/blog/2011/04/06/physics-engines-for-dummies">Physics engines for dummies</a></li>
+</ul>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/physics/">
+                physics
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E6%A8%A1%E6%93%AC/">
+                模擬
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/">
+                電腦動畫
+            </a>,&nbsp;
+        
+            <a href="/en/tags/computer-animation/">
+                computer animation
+            </a>,&nbsp;
+        
+            <a href="/en/tags/simulation/">
+                simulation
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E7%89%A9%E7%90%86/">
+                物理
+            </a>,&nbsp;
+        
+            <a href="/en/tags/collision-detection/">
+                collision detection
+            </a>,&nbsp;
+        
+            <a href="/en/tags/impulse/">
+                impulse
+            </a>,&nbsp;
+        
+            <a href="/en/tags/joint-constraint/">
+                joint constraint
+            </a>,&nbsp;
+        
+            <a href="/en/tags/rigid-body/">
+                rigid body
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Introduction"><span class="toc-text">1. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Principles-and-Implementation"><span class="toc-text">2. Principles and Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Collision-Detection"><span class="toc-text">2.1 Collision Detection</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-1-AABB-vs-AABB"><span class="toc-text">2.1.1 AABB vs. AABB</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-2-Circle-vs-Circle"><span class="toc-text">2.1.2 Circle vs. Circle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-3-AABB-vs-Circle"><span class="toc-text">2.1.3 AABB vs. Circle</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-3-1-Circle-center-outside-the-AABB"><span class="toc-text">2.1.3.1 Circle center outside the AABB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-3-2-%E5%9C%93%E5%BF%83%E5%9C%A8-AABB-%E4%B9%8B%E5%85%A7"><span class="toc-text">2.1.3.2 圓心在 AABB 之內</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-4-Positional-Correction"><span class="toc-text">2.1.4 Positional Correction</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Momentum-Impulse-and-Friction"><span class="toc-text">2.2 Momentum, Impulse, and Friction</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-Impulse-Resolution"><span class="toc-text">2.2.1 Impulse Resolution</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-Friction"><span class="toc-text">2.2.2 Friction</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Joint-Constraints"><span class="toc-text">2.3 Joint Constraints</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-1-Spring-Force"><span class="toc-text">2.3.1 Spring Force</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-2-Damper-Force"><span class="toc-text">2.3.2 Damper Force</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-3-Distance-Joint-Fixed-Length"><span class="toc-text">2.3.3 Distance Joint (Fixed Length)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Numerical-Methods"><span class="toc-text">2.4 Numerical Methods</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-1-Euler-Method"><span class="toc-text">2.4.1 Euler Method</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-2-Runge%E2%80%93Kutta-Method"><span class="toc-text">2.4.2 Runge–Kutta Method</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Results-and-Discussion"><span class="toc-text">3. Results and Discussion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Extending-Collision-Detection"><span class="toc-text">3.1 Extending Collision Detection</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Torque-and-Moment-of-Inertia"><span class="toc-text">3.2 Torque and Moment of Inertia</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Euler-vs-Runge%E2%80%93Kutta"><span class="toc-text">3.3 Euler vs. Runge–Kutta</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Conclusion"><span class="toc-text">4. Conclusion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-References"><span class="toc-text">5. References</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/python/2023pycon-apac-sprint/">
+        My First CPython Pull Request at the PyCon APAC 2023 Sprint
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

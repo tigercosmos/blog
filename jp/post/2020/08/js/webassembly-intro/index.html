@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="browsers,JavaScript,WebAssembly," />
+    <meta name="description"
+        content="本記事では WebAssembly の JavaScript API を網羅的に紹介し、C コードから WASM を生成して、Web ページ上で JavaScript から WASM を利用する方法を実例で示します。" />
+    <title>Neutrino&#39;s Blog: WebAssembly の使い方を徹底解説 </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/08/js/webassembly-intro/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/08/js/webassembly-intro/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/08/js/webassembly-intro/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/08/js/webassembly-intro/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/08/js/webassembly-intro/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2020/08/js/webassembly-intro/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        WebAssembly の使い方を徹底解説
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-08-17
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/08/js/webassembly-intro/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2020/08/js/webassembly-intro/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-概要"><a class="header-anchor" href="#1-概要">¶ </a>1. 概要</h2>
+<p>まずは WebAssembly とは何か、そしてなぜ必要なのかから整理しましょう。</p>
+<p>いまや Web 技術はあらゆる場面に浸透しています。人々は 1 日のうち何時間もインターネットを利用し、さまざまなサービスを享受しています。多くのアプリケーションが Web に移行し、デスクトップアプリやモバイルアプリでも Web アプリ（Web App）やハイブリッドアプリ（Hybrid App）を採用するケースが増えています。言い換えるなら、Web 技術が世界を支配していると言っても過言ではありません。</p>
+<p>Web の中心にある言語は JavaScript（JS）です。ブラウザや JS エンジンの進化によって性能は向上してきましたが、最適化には限界があります。JS はインタプリタ型言語であり、実行時にコードを 1 行ずつ読み込みながらコンパイルして実行します。このモデルは、C++ のようなコンパイル型言語より遅くなりがちです。</p>
+<p>では、なぜ Web で C++ のようなコンパイル型言語をそのまま使わないのでしょうか。事前にコンパイルして配布する場合、生成物（実行ファイル）が大きくなりやすく、ブラウザへ配信するネットワーク転送に時間がかかります。逆に、ブラウザが受け取ってからコンパイルする場合は、コンパイル完了まで待つ必要があり、それも時間がかかります。JS はソースが比較的小さく、転送時間を抑えやすい上に、ブラウザが逐次的にコンパイルして「先にコンパイルできた部分から実行する」こともできるため、体感の遅さを抑えやすいという事情があります。</p>
+<p>それでも、JS の性能には上限があります。そこで「ブラウザ上でより高速に動作させたい」という要求から誕生したのが WebAssembly（WASM）です。WASM は低レベルでアセンブリに近い形式であり、C++ や Rust のようなネイティブ（Native）コードに近い性能を狙えます。Web 開発では JS と WASM を組み合わせて使います。イメージとしては、一般的なアプリのロジックは JS で動かしつつ、計算負荷が高い部分を事前にコンパイルされた WASM に置き換えることで性能を向上させます。つまり、JS の「起動が速い」という利点と、WASM の「重い計算を高速に実行できる」という利点を両取りするアプローチです。</p>
+<p>以降では、JS と WASM を組み合わせた開発方法を紹介します。</p>
+<span id="more"></span>
+<h2 id="2-WebAssembly-API-紹介"><a class="header-anchor" href="#2-WebAssembly-API-紹介">¶ </a>2. WebAssembly API 紹介</h2>
+<p>WebAssembly の主要なオブジェクトは次の通りです：</p>
+<ol>
+<li><strong>WebAssembly のロード／初期化：</strong> <code>WebAssembly.compile()</code> / <code>WebAssembly.instantiate()</code> 関数。</li>
+<li><strong>WebAssembly のメモリバッファ（Memory Buffer）／テーブル（Table）の作成：</strong> <code>WebAssembly.Memory()</code> / <code>WebAssembly.Table()</code> コンストラクタ。</li>
+<li><strong>WebAssembly のエラー処理：</strong> <code>WebAssembly.CompileError()</code> / <code>WebAssembly.LinkError()</code> / <code>WebAssembly.RuntimeError()</code> コンストラクタ。</li>
+</ol>
+<h3 id="2-1-JS-で-WASM-をコンパイルする"><a class="header-anchor" href="#2-1-JS-で-WASM-をコンパイルする">¶ </a>2.1 JS で WASM をコンパイルする</h3>
+<p>WASM はコンパイル済みのバイナリで、通常は C++ や Rust から生成されます。WASM の生成方法は後ほど説明します。ここでは、すでに <code>*.wasm</code> が用意されていると仮定します。</p>
+<p>まずブラウザで <code>*.wasm</code> をダウンロードし、ブラウザ上でその WASM を「再度」コンパイルします。WASM はすでにコンパイル済みのバイナリですが、実際には IR（平たく言えばコンパイル途中の生成物）に近い側面があり、取得したバイト列はブラウザ内部で最終形へ変換されます。</p>
+<p>WASM のコンパイル方法は次の選択肢があります：</p>
+<ul>
+<li><code>WebAssembly.compile()</code> を使う</li>
+<li><code>WebAssembly.compileStreaming()</code> を使う</li>
+<li><code>WebAssembly.Module</code> のコンストラクタを使う</li>
+</ul>
+<p><code>compile()</code> と <code>compileStreaming()</code> は非同期（async）で、<code>compileStreaming()</code> はストリームをコンパイル（ダウンロードしながらコンパイル）します。<code>Module</code> コンストラクタは同期（sync）です。いずれもコンパイル後は <code>WebAssembly.Module</code> オブジェクトになります。</p>
+<p><code>WebAssembly.Module</code> は「ブラウザ側でコンパイルが完了した状態」を表し、この後 Web Worker に渡したり、繰り返しインスタンス化したりできます。</p>
+<h4 id="2-1-1-WebAssembly-compile"><a class="header-anchor" href="#2-1-1-WebAssembly-compile">¶ </a>2.1.1 WebAssembly.compile()</h4>
+<pre><code class="language-js">Promise&lt;WebAssembly.Module&gt; WebAssembly.compile(bufferSource);
+</code></pre>
+<p><code>WebAssembly.compile()</code> の例：</p>
+<pre><code class="language-js">const worker = new Worker(&quot;wasm_worker.js&quot;);
+
+// 先抓 WASM 檔案
+fetch('simple.wasm')
+    .then(response =&gt;
+        response.arrayBuffer()
+    // 編譯 bytes
+    ).then(bytes =&gt;
+        // 同步編譯
+        WebAssembly.compile(bytes)
+    // 將 Module 傳給 worker
+    ).then(mod =&gt;
+        worker.postMessage(mod)
+    );
+</code></pre>
+<h4 id="2-1-2-WebAssembly-compileStreaming"><a class="header-anchor" href="#2-1-2-WebAssembly-compileStreaming">¶ </a>2.1.2 WebAssembly.compileStreaming()</h4>
+<pre><code class="language-js">Promise&lt;WebAssembly.Module&gt; WebAssembly.compileStreaming(source);
+</code></pre>
+<p><code>WebAssembly.compileStreaming()</code> の例：</p>
+<pre><code class="language-js">// 異步邊下載邊編譯 WASM 檔案
+WebAssembly.compileStreaming(fetch('simple.wasm'))
+    .then(module =&gt; &#123;
+        // 得到 WebAssembly.Module
+    &#125;)
+</code></pre>
+<p><code>compileStreaming</code> を使う場合、サーバの HTTP レスポンスヘッダで WASM ファイルを <code>Application/wasm</code> として返す必要があります。</p>
+<h4 id="2-2-3-WebAssembly-Module-建構子"><a class="header-anchor" href="#2-2-3-WebAssembly-Module-建構子">¶ </a>2.2.3 WebAssembly.Module 建構子</h4>
+<pre><code class="language-js">new WebAssembly.Module(bufferSource);
+</code></pre>
+<p><code>WebAssembly.Module</code> コンストラクタの例：</p>
+<pre><code class="language-js">fetch('simple.wasm').then(response =&gt;
+  response.arrayBuffer()
+).then(bytes =&gt; &#123;
+  let mod = new WebAssembly.Module(bytes);
+&#125;)
+</code></pre>
+<p>WASM ファイルを <code>WebAssembly.Module</code> にコンパイルした後は、後でインスタンス化することもできますし、<code>Module</code> を Worker に渡して利用することもできます。</p>
+<h3 id="2-2-WebAssembly-をインスタンス化する"><a class="header-anchor" href="#2-2-WebAssembly-をインスタンス化する">¶ </a>2.2 WebAssembly をインスタンス化する</h3>
+<p><code>WebAssembly.Module</code> を <code>WebAssembly.Instance</code> に初期化してはじめて、実際に利用できます。</p>
+<p><code>Instance</code> を生成する方法は次の通りです：</p>
+<ul>
+<li><code>WebAssembly.instantiate()</code></li>
+<li><code>WebAssembly.instantiateStreaming()</code></li>
+<li><code>WebAssembly.Instance</code> コンストラクタ</li>
+</ul>
+<p>最初の 2 つは非同期で、コンストラクタは同期です。</p>
+<h4 id="2-2-1-WebAssembly-instantiate"><a class="header-anchor" href="#2-2-1-WebAssembly-instantiate">¶ </a>2.2.1 WebAssembly.instantiate()</h4>
+<pre><code class="language-js">Promise&lt;WebAssembly.Instance&gt; WebAssembly.instantiate(module, importObject);
+Promise&lt;ResultObject&gt; WebAssembly.instantiate(bufferSource, importObject);
+</code></pre>
+<p><code>instantiate()</code> は WASM バイナリ（bytes）でも、コンパイル済み <code>Module</code> でも受け取れます。つまり、必ずしも事前に <code>compile()</code> を呼ぶ必要はなく、コードの組み立てに柔軟性があります。<code>importObject</code> は WASM に関数・変数・オブジェクトなどを取り込むためのものです。</p>
+<p><strong><code>importObject</code> の使い方は「2.3」で説明します。</strong></p>
+<p>引数が <code>Module</code> の場合は <code>Instance</code> を返し、WASM bytes の場合は <code>ResultObject &#123;instance: Instance, module: Module&#125;</code> を返します。</p>
+<p><code>WebAssembly.instantiate()</code> の例：</p>
+<pre><code class="language-js">fetch('simple.wasm').then(response =&gt;
+  response.arrayBuffer()
+).then(bytes =&gt; &#123;
+  let mod = new WebAssembly.Module(bytes);
+  let instance = new WebAssembly.Instance(mod, importObject);
+  instance.exports.exported_func(); // 呼叫 WASM 的 exported_func
+&#125;)
+</code></pre>
+<p>WASM の export は <code>instance.exports</code> から取得できます。</p>
+<h4 id="2-2-2-WebAssembly-instantiateStreaming"><a class="header-anchor" href="#2-2-2-WebAssembly-instantiateStreaming">¶ </a>2.2.2 WebAssembly.instantiateStreaming()</h4>
+<pre><code class="language-js">Promise&lt;ResultObject&gt; WebAssembly.instantiateStreaming(bytes, importObject);
+</code></pre>
+<p><code>WebAssembly.instantiateStreaming()</code> は WASM のストリームのみを受け取り、<code>importObject</code> を取り込んだ上で <code>ResultObject &#123;instance: Instance, module: Module&#125;</code> を生成します。</p>
+<p>例：</p>
+<pre><code class="language-js">WebAssembly.instantiateStreaming(fetch('simple.wasm'), importObject)
+    .then(obj =&gt; obj.instance.exports.exported_func());
+</code></pre>
+<p>ここでも <code>instantiateStreaming</code> を使う場合、サーバの HTTP レスポンスヘッダで WASM を <code>Application/wasm</code> として返す必要があります。</p>
+<h4 id="2-2-3-WebAssembly-Instance-建構子"><a class="header-anchor" href="#2-2-3-WebAssembly-Instance-建構子">¶ </a>2.2.3 WebAssembly.Instance 建構子</h4>
+<pre><code class="language-js">new WebAssembly.Instance(module, importObject);
+</code></pre>
+<p>コンストラクタを使う場合、引数にできるのはコンパイル済みの <code>Module</code> のみです。<code>importObject</code> は同様です。コンストラクタは同期であり、スレッドをブロックします。また初期化は通常コストが高いので、必要がなければ前述の非同期方式の方が望ましいです。</p>
+<pre><code class="language-js">fetch('simple.wasm').then(response =&gt;
+  response.arrayBuffer()
+).then(bytes =&gt; &#123;
+  // 先取得 Module
+  let mod = new WebAssembly.Module(bytes);
+  // 用 Module 初始化得到 Instance
+  let instance = new WebAssembly.Instance(mod, importObject);
+  instance.exports.exported_func();
+&#125;)
+</code></pre>
+<h3 id="2-3-WebAssembly-Memory"><a class="header-anchor" href="#2-3-WebAssembly-Memory">¶ </a>2.3 WebAssembly Memory</h3>
+<p>現時点では WASM は JS で起動する必要があり、WASM の実行結果も JS を通じて取得することが一般的です。そのため <code>WebAssembly.Memory</code> を用いて、JS と WASM が同じメモリ領域を共有し、双方から読み書きできるようにします。</p>
+<pre><code class="language-js">const memory = new WebAssembly.Memory(&#123;initial:10, maximum:100, shared: true&#125;);
+</code></pre>
+<p><code>WebAssembly.Memory</code> は実体としては <code>ArrayBuffer</code> もしくは <code>SharedArrayBuffer</code> であり、<code>memory.buffer</code> を通して raw memory を直接操作できます。</p>
+<p><code>WebAssembly.Memory</code> のパラメータは <code>initial</code>、<code>maximum</code>、<code>shared</code> の 3 つです。<code>initial</code> と <code>maximum</code> はそれぞれ初期メモリサイズと上限メモリサイズを表し、どちらも 64 kB（1 ページ）単位です。<code>shared</code> は Shared Memory かどうかです。</p>
+<p>初期サイズと上限が分かれているのは、<code>WebAssembly.Memory</code> が動的な拡張（Resize）を許可しているためです。次で拡張できます：</p>
+<pre><code class="language-js">memory.grow(number);
+</code></pre>
+<p><code>grow()</code> も 64 kB 単位で増やします。WASM メモリはページ単位で管理され、<code>manifest</code> のような情報で管理されるため、原理的には大きなオーバーヘッドにはなりにくいです。<a target="_blank" rel="noopener" href="https://webassembly.github.io/spec/core/exec/runtime.html#syntax-meminst">定義</a>は次の通りです：</p>
+<p>$$<br>
+\begin{split}\begin{array}{llll}<br>
+{\mathit{meminst}} &amp;::=&amp;<br>
+\{ {\mathsf{data}}\ {\mathit{vec(bytes)}},\ {\mathsf{max}}\ {\mathit{u32}}^? \} \\<br>
+\end{array}\end{split}<br>
+$$</p>
+<p>ただし注意点として、内部はページ操作であっても、Resize のたびに <code>ArrayBuffer</code>／<code>SharedArrayBuffer</code> は新しいオブジェクトが生成され、古いオブジェクトは detached になります。</p>
+<p><a target="_blank" rel="noopener" href="https://mdn.github.io/webassembly-examples/js-api-examples/memory.html">例</a>：</p>
+<pre><code class="language-js">WebAssembly.instantiateStreaming(
+  fetch('memory.wasm'), 
+  &#123; js: &#123; mem: memory &#125; &#125; // 代表 WASM 宣告引入 js.mem
+).then(obj =&gt; &#123;
+    let i32 = new Uint32Array(memory.buffer);
+    for (let i = 0; i &lt; 10; i++) &#123;
+        i32[i] = i;
+    &#125;
+    let sum = obj.instance.exports.accumulate(0, 10);
+    console.log(sum);
+&#125;);
+</code></pre>
+<p>このコードを説明する前に、<code>memory.wasm</code> が何かを見てみます。</p>
+<p><code>memory.wasm</code> を WAT（可読形式）に変換すると次の通りです：</p>
+<pre><code>(module
+  (memory (import &quot;js&quot; &quot;mem&quot;) 1)
+  (func (export &quot;accumulate&quot;) (param $ptr i32) (param $len i32) (result i32)
+    (local $end i32)
+    (local $sum i32)
+    (local.set $end (i32.add (local.get $ptr) (i32.mul (local.get $len) (i32.const 4))))
+    (block $break (loop $top
+      (br_if $break (i32.eq (local.get $ptr) (local.get $end)))
+      (local.set $sum (i32.add (local.get $sum)
+                               (i32.load (local.get $ptr))))
+        (local.set $ptr (i32.add (local.get $ptr) (i32.const 4)))
+        (br $top)
+    ))
+    (local.get $sum)
+  )
+)
+</code></pre>
+<p>この行は、WASM が <code>js.mem</code> を import して使うことを意味します。したがって <code>importOject</code> に <code>js.mem</code> を定義し、<code>WebAssembly.Memory</code> オブジェクトを渡す必要があります。</p>
+<pre><code>(memory (import &quot;js&quot; &quot;mem&quot;) 1)
+</code></pre>
+<p>次に、WASM 側で <code>accumulate</code> 関数を定義しており、渡された配列を加算して返します。</p>
+<pre><code>(func (export &quot;accumulate&quot;) (param $ptr i32) (param $len i32) (result i32)
+</code></pre>
+<p>したがって JS の例では、まず <code>i32</code> を通じて <code>memory.buffer</code> に値を書き込みます。この時点で WASM 内部の <code>js.mem</code> には値が入っています。</p>
+<pre><code class="language-js">let i32 = new Uint32Array(memory.buffer);
+</code></pre>
+<p>その後 <code>instance.exports.accumulate()</code> を呼び出して WASM 側の <code>accumulate()</code> を実行すれば、答えが得られます。</p>
+<pre><code class="language-js">let sum = obj.instance.exports.accumulate(0, 10);
+</code></pre>
+<h3 id="2-4-WebAssembly-Table"><a class="header-anchor" href="#2-4-WebAssembly-Table">¶ </a>2.4 WebAssembly Table</h3>
+<p>WebAssembly Memory が JS と WASM の間で「データ」を共有するのに対して、<code>WebAssembly.Table</code> は WASM 内部の関数を参照（Function Reference）として保持する WASM table を提供します。JS または WASM が table に格納された関数参照にアクセスしたり、変更したりできます。（平たく言えば「WASM にどんな関数があるかを取り出せる表」）</p>
+<pre><code class="language-js">const table = new WebAssembly.Table(&#123;
+                element: &quot;anyfunc&quot;, // 表格物件型別，目前只能是「任意函數」
+                initial: Number, // 多少個元素
+                maximum: Number? // Optional，表可以擴展的最大值
+              &#125;);
+</code></pre>
+<p><code>table.get(index)</code> で要素を取得し、<code>table.set(index)</code> で要素を設定し、<code>table.grow(number)</code> で table を拡張できます。</p>
+<p>例：</p>
+<pre><code class="language-js">const tbl = new WebAssembly.Table(&#123;initial: 2, element: &quot;anyfunc&quot;&#125;);
+console.log(tbl.length);  // &quot;2&quot;
+// 此時此刻，table 還是空的
+console.log(tbl.get(0));  // &quot;null&quot; 
+console.log(tbl.get(1));  // &quot;null&quot;
+
+
+const importObj = &#123;js: &#123;tbl: tbl&#125;&#125;;
+WebAssembly.instantiateStreaming(fetch('table2.wasm'), importObject)
+  .then(function(obj) &#123;
+    // 表格已經和 WASM 同步
+    console.log(tbl.get(0)()); // 呼叫 table 第 0 個元素代表的函數
+    console.log(tbl.get(1)());  // 呼叫 table 第 1 個元素代表的函數
+  &#125;);
+</code></pre>
+<p><code>tbl.get(0)()</code> は「関数 <code>tbl.get(0)</code> を取得してから <code>()</code> で呼び出す」ことを意味します。</p>
+<p><code>table.wasm</code> は次のようになっています：</p>
+<pre><code>(module
+    (import &quot;js&quot; &quot;tbl&quot; (table 2 anyfunc))
+    (func $f42 (result i32) i32.const 42)
+    (func $f83 (result i32) i32.const 83)
+    (elem (i32.const 0) $f42 $f83)
+)
+</code></pre>
+<p>要するに <code>js.tbl</code> を <code>table</code> として import し、2 つの関数参照を要素として埋め込んでいます。</p>
+<h3 id="2-5-WebAssembly-Global"><a class="header-anchor" href="#2-5-WebAssembly-Global">¶ </a>2.5 WebAssembly Global</h3>
+<p><code>WebAssembly.Global</code> は <code>Global</code> オブジェクトで、JS と複数の <code>Module</code> から同時にアクセスできます。最大の利点は、異なる <code>Module</code> 間の動的リンク（Dynamic Linking）を実現できることです。</p>
+<p>WASM は C++ などからコンパイルできます。C++ をコンパイルする際には複数の <code>cpp</code> ファイルをリンクできますが、WASM でも同様のことができ、その仕組みとして <code>Global</code> を利用します。Emscripten のような WASM コンパイラが生成する WASM も、この方法を利用しています。</p>
+<pre><code class="language-js">new WebAssembly.Global(descriptor &#123;value, mutable&#125;, value);
+</code></pre>
+<p>第 1 引数 <code>descriptor</code> の <code>value</code> は型、<code>mutable</code> は変更可能かどうかを表します。第 2 引数 <code>value</code> は初期値で、<code>0</code> のみを渡すとデフォルト値が使われます。</p>
+<p><a target="_blank" rel="noopener" href="https://mdn.github.io/webassembly-examples/js-api-examples/global.html">例</a>：</p>
+<pre><code class="language-js">const global = new WebAssembly.Global(
+  &#123;value:'i32', mutable:true&#125;, // 可變的 i32
+   0 // 填入預設值
+);
+
+WebAssembly.instantiateStreaming(fetch('global.wasm'), &#123; js: &#123; global &#125; &#125;)
+  .then((&#123;instance&#125;) =&gt; &#123;
+      global.value = 42; // 用 JS 設為 42
+      instance.exports.incGlobal(); // incGlobal 是 WASM 的函數，可以加一，所以現在是 43
+      assertEq(global.value, 43); // 確認是 43 無誤
+  &#125;);
+</code></pre>
+<h3 id="2-6-WebAssembly-Error"><a class="header-anchor" href="#2-6-WebAssembly-Error">¶ </a>2.6 WebAssembly Error</h3>
+<p>WASM には 3 種類のエラーが定義されています：<code>WebAssembly.CompileError</code>、<code>WebAssembly.LinkError</code>、<code>WebAssembly.RuntimeError</code> です。</p>
+<pre><code class="language-js">new WebAssembly.CompileError(message, fileName, lineNumber)
+new WebAssembly.LinkError(message, fileName, lineNumber)
+new WebAssembly.RuntimeError(message, fileName, lineNumber)
+</code></pre>
+<p>使い方は 3 つとも同じです。例：</p>
+<pre><code class="language-js">try &#123;
+  throw new WebAssembly.CompileError('Hello', 'someFile', 10);
+&#125; catch (e) &#123;
+  console.log(e instanceof CompileError); // true
+  console.log(e.message);                 // &quot;Hello&quot;
+  console.log(e.name);                    // &quot;CompileError&quot;
+  console.log(e.fileName);                // &quot;someFile&quot;
+  console.log(e.lineNumber);              // 10
+  console.log(e.columnNumber);            // 0
+  console.log(e.stack);                   // returns the location where the code was run
+&#125;
+</code></pre>
+<h2 id="3-応用"><a class="header-anchor" href="#3-応用">¶ </a>3. 応用</h2>
+<h3 id="3-1-簡単な-C-関数"><a class="header-anchor" href="#3-1-簡単な-C-関数">¶ </a>3.1 簡単な C 関数</h3>
+<pre><code class="language-c">// square.c
+int square(int n) &#123; 
+   return n*n; 
+&#125;
+</code></pre>
+<p>Emscripten でコンパイル：</p>
+<pre><code class="language-shell">$ emcc square.c -s SIDE_MODULE -o square.wasm
+</code></pre>
+<p>Emscripten の使い方は、以前の<a href="/post/2020/07/js/emscripten-pthread-to-js/#Emscripten-%E4%B8%8B%E8%BC%89">紹介記事</a>を参照してください。ここでは必ず <code>-s SIDE_MODULE</code> を付けて「この WASM は Runtime ではない」ことを示し、<code>-o *.wasm</code> で WASM のみを出力します。そうしないと、Emscripten はデフォルトで JS + WASM を出力します。</p>
+<p>コンパイルした WASM を WAT に変換すると次の通りです：</p>
+<pre><code>$ ./wasm2wat square.wasm
+(module
+  (type (;0;) (func))
+  (type (;1;) (func (param i32) (result i32)))
+  (func (;0;) (type 0)
+    nop)
+  (func (;1;) (type 1) (param i32) (result i32)
+    local.get 0
+    local.get 0
+    i32.mul)
+  (global (;0;) i32 (i32.const 0))
+  (export &quot;__wasm_apply_relocs&quot; (func 0))
+  (export &quot;square&quot; (func 1))
+  (export &quot;__dso_handle&quot; (global 0))
+  (export &quot;__post_instantiate&quot; (func 0)))
+</code></pre>
+<p>重要なのは <code>(export &quot;square&quot; (func 1))</code> であり、それ以外の関係ない部分は無視して構いません。</p>
+<p>次に Web ページ <code>square.html</code> を書きます：</p>
+<pre><code class="language-html">&lt;!-- square.html --&gt;
+&lt;script&gt;
+    (async () =&gt; &#123;
+        const res = await fetch(&quot;square.wasm&quot;);
+        const wasmFile = await res.arrayBuffer();
+        const module = await WebAssembly.compile(wasmFile);
+        const instance = await WebAssembly.instantiate(module);
+
+        const square = instance.exports.square(13);
+        console.log(&quot;The square of 13 = &quot; + square);
+    &#125;)();
+&lt;/script&gt;
+</code></pre>
+<p><code>square.html</code> と <code>square.wasm</code> を同じディレクトリに置き、HTTP サーバで配信して（WASM をダウンロードできる必要があるため）ページを開きます。Console を開けば結果を確認できます。</p>
+<h3 id="3-2-C-関数：WebAssembly-Memory-を使う"><a class="header-anchor" href="#3-2-C-関数：WebAssembly-Memory-を使う">¶ </a>3.2 C 関数：WebAssembly.Memory を使う</h3>
+<p>この例は「2.3」で行ったことと本質的には同じですが、C から始める手順を示します。</p>
+<pre><code class="language-c">// accumulate.c
+int arr[];
+
+int accumulate(int start, int end) &#123; 
+   int sum = 0;
+   for(int i = start; i &lt; end; i++) &#123;
+      sum += arr[i];
+   &#125;
+   return sum;
+&#125;
+</code></pre>
+<pre><code class="language-shell">$  emcc accumulate.c  -O3  -s SIDE_MODULE  -o accumulate.wasm
+</code></pre>
+<p>WAT に変換：</p>
+<pre><code>(module
+  (type (;0;) (func))
+  (type (;1;) (func (result i32)))
+  (type (;2;) (func (param i32 i32) (result i32)))
+  (import &quot;env&quot; &quot;g$arr&quot; (func (;0;) (type 1)))
+  (import &quot;env&quot; &quot;__memory_base&quot; (global (;0;) i32))
+  (import &quot;env&quot; &quot;memory&quot; (memory (;0;) 0))
+  // 省略
+</code></pre>
+<p>上記から、<code>accumulate.wasm</code> は <code>env.__memory_base</code>、<code>env.memory</code>、<code>env.g$arr</code> を import しているので、JS 側で先に定義する必要があります。</p>
+<p><code>accumulate.html</code> の Web コードは次の通りです：</p>
+<pre><code class="language-html">&lt;!-- accumulate.html --&gt;
+&lt;script&gt;
+    const memory = new WebAssembly.Memory(&#123;
+        initial: 1,
+    &#125;);
+
+    const importObj = &#123;
+        // 根據 WASM 來宣告
+        env: &#123;
+            memory: memory,
+            __memory_base: 0,
+            g$arr: () =&gt; &#123;&#125;
+        &#125;
+    &#125;;
+
+    (async () =&gt; &#123;
+        const res = await fetch(&quot;accumulate.wasm&quot;);
+        const wasmFile = await res.arrayBuffer();
+        const module = await WebAssembly.compile(wasmFile);
+        const instance = await WebAssembly.instantiate(module, importObj);
+
+        const arr = new Uint32Array(memory.buffer);
+        for (let i = 0; i &lt; 10; i++) &#123;
+            arr[i] = i;
+        &#125;
+
+        const sum = instance.exports.accumulate(0, 10);
+        console.log(&quot;accumulate from 0 to 10: &quot; + sum);
+    &#125;)();
+&lt;/script&gt;
+</code></pre>
+<p>WASM 側が <code>env.memory</code> を要求するため、先に <code>WebAssembly.Memory</code> を用意して渡します。<code>env.__memory_base</code> はどの位置から読み出すかを表します。</p>
+<p>元の C コードではグローバル <code>arr[]</code> しかないため、<code>env.memory</code> は実質的に <code>arr[]</code> のためのメモリです。最後に、なぜか Emscripten が <code>env.g$arr</code> を生成します。用途不明ですが、不要そうなので空関数を渡しています。</p>
+<h3 id="3-3-Pthread-を-JS-WASM-に変換する"><a class="header-anchor" href="#3-3-Pthread-を-JS-WASM-に変換する">¶ </a>3.3 Pthread を JS + WASM に変換する</h3>
+<p>Emscripten を使えば、Pthread プログラムを Web Worker + SharedArrayBuffer + WebAssembly に比較的簡単に変換でき、ブラウザ上で平行プログラムを実行できます。</p>
+<p>詳細は以前の記事「<a href="/post/2020/07/js/emscripten-pthread-to-js">使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析</a>」および、その続編「<a href="/post/2020/08/js/emscripten-pthread-to-js-2/">Pthread 轉 WASM: Merge Sort</a>」を参照してください。</p>
+<h2 id="4-結論"><a class="header-anchor" href="#4-結論">¶ </a>4. 結論</h2>
+<p>本記事では WebAssembly の JavaScript API を網羅的に紹介し、C コードから WASM を生成して、Web ページ上で JavaScript から WASM を利用する方法を実例で示しました。</p>
+<p>WebAssembly は Web の将来の大きなトレンドになるはずです。デバイス性能が上がるにつれて、私たちの性能要求も高くなります。また WASM 自体も進化を続けており、将来的には WASM から直接スレッドを起動したり、SIMD 命令を実行したりできるようになるでしょう。さらに WASM は Web 以外の領域にも広がっており、組み込みデバイスやクラウドサービスでも試行が始まっています。WASM の今後の発展は非常に楽しみです。</p>
+<p>私は、ネット上の記事は思考の流れがどこか欠けていることが多いと感じています。そこで、オンラインリソースを整理し、私が最も論理的だと思う順序で WASM の概念をまとめ直しました。少しでも役に立てば幸いです。</p>
+<h2 id="5-参考資料"><a class="header-anchor" href="#5-参考資料">¶ </a>5. 参考資料</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly">MDN: WebAssembly</a></li>
+<li><a target="_blank" rel="noopener" href="https://webassembly.github.io/spec/js-api/#webassembly-namespace">WebAssembly JS API SPEC</a></li>
+<li><a target="_blank" rel="noopener" href="https://webassembly.github.io/spec/core/exec/index.html">WebAssembly Execution SPEC</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/emscripten-core/emscripten/wiki/WebAssembly-Standalone">WebAssembly Standalone</a></li>
+</ul>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/browsers/">
+                browsers
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/javascript/">
+                JavaScript
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/webassembly/">
+                WebAssembly
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A6%82%E8%A6%81"><span class="toc-text">1. 概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-WebAssembly-API-%E7%B4%B9%E4%BB%8B"><span class="toc-text">2. WebAssembly API 紹介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-JS-%E3%81%A7-WASM-%E3%82%92%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%AB%E3%81%99%E3%82%8B"><span class="toc-text">2.1 JS で WASM をコンパイルする</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-1-WebAssembly-compile"><span class="toc-text">2.1.1 WebAssembly.compile()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-2-WebAssembly-compileStreaming"><span class="toc-text">2.1.2 WebAssembly.compileStreaming()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-3-WebAssembly-Module-%E5%BB%BA%E6%A7%8B%E5%AD%90"><span class="toc-text">2.2.3 WebAssembly.Module 建構子</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-WebAssembly-%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E5%8C%96%E3%81%99%E3%82%8B"><span class="toc-text">2.2 WebAssembly をインスタンス化する</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-WebAssembly-instantiate"><span class="toc-text">2.2.1 WebAssembly.instantiate()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-WebAssembly-instantiateStreaming"><span class="toc-text">2.2.2 WebAssembly.instantiateStreaming()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-3-WebAssembly-Instance-%E5%BB%BA%E6%A7%8B%E5%AD%90"><span class="toc-text">2.2.3 WebAssembly.Instance 建構子</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-WebAssembly-Memory"><span class="toc-text">2.3 WebAssembly Memory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-WebAssembly-Table"><span class="toc-text">2.4 WebAssembly Table</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-WebAssembly-Global"><span class="toc-text">2.5 WebAssembly Global</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-WebAssembly-Error"><span class="toc-text">2.6 WebAssembly Error</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%BF%9C%E7%94%A8"><span class="toc-text">3. 応用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E7%B0%A1%E5%8D%98%E3%81%AA-C-%E9%96%A2%E6%95%B0"><span class="toc-text">3.1 簡単な C 関数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-C-%E9%96%A2%E6%95%B0%EF%BC%9AWebAssembly-Memory-%E3%82%92%E4%BD%BF%E3%81%86"><span class="toc-text">3.2 C 関数：WebAssembly.Memory を使う</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Pthread-%E3%82%92-JS-WASM-%E3%81%AB%E5%A4%89%E6%8F%9B%E3%81%99%E3%82%8B"><span class="toc-text">3.3 Pthread を JS + WASM に変換する</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%B5%90%E8%AB%96"><span class="toc-text">4. 結論</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%8F%82%E8%80%83%E8%B3%87%E6%96%99"><span class="toc-text">5. 参考資料</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        C++で3D点群を2D画像へ投影する
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/11/python/2023pycon-apac-sprint/">
+        PyCon APAC 2023 の Sprint で初めて CPython に Pull Request を出した話
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">28</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

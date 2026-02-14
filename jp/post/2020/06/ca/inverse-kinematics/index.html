@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+<html lang="jp">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="電腦動畫,computer animation,反向動力法,inverse kinematics,jacobian,pseudo inverse," />
+    <meta name="description"
+        content="コンピュータアニメーションやロボティクスでは、取っ手に手を伸ばす／ボールをキャッチするといった、特定の姿勢や動作を人物・ロボットにさせたいことがあります。正運動学（Forward Kinematics）でその姿勢に至る動きを前向きに推論するのは、次元が高くなるとほぼ不可能です。逆運動学（Inverse Kinematics）は、目標位置を与え、そこへ到達するためにどのように動くべきかを逆向きに解くことで、この問題に取り組みます。" />
+    <title>Neutrino&#39;s Blog: コンピュータアニメーションにおける逆運動学（Inverse Kinematics） </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/06/ca/inverse-kinematics/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/06/ca/inverse-kinematics/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/06/ca/inverse-kinematics/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/06/ca/inverse-kinematics/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/jp/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/jp/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">jp</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/06/ca/inverse-kinematics/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2020/06/ca/inverse-kinematics/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="jp">jp</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        コンピュータアニメーションにおける逆運動学（Inverse Kinematics）
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-06-09
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/06/ca/inverse-kinematics/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2020/06/ca/inverse-kinematics/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="jp">jp</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="1-はじめに"><a class="header-anchor" href="#1-はじめに">¶ </a>1. はじめに</h2>
+<p>コンピュータアニメーションやロボティクスでは、人物やロボットに特定の動作をさせたいことがあります。たとえば、手を伸ばして取っ手に触れる、ボールをキャッチする、といったケースです。</p>
+<p>対象は多くの関節を持ち得ます。仮に各関節が 5 自由度（DoF）で、腕が 3 つの関節から構成されるとすると、すでに 15 次元になります。このような高次元空間で、正運動学（Forward Kinematics, FK）だけを用いて「どう動けば狙った姿勢になるか」を前向きに推論するのは、ほぼ不可能です。</p>
+<p>そこで逆運動学（Inverse Kinematics, IK）を用います。対象に目標位置を与え、そこへ到達するためにどのように動くべきかを逆向きに計算します。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/84060735-4cdc3800-a9ef-11ea-878b-dafc5233ff5e.gif" alt="ik example"><br>
+（IK によって、腕を目標位置へ動かす方法を求める例）</p>
+<p>逆運動学は一般に高次元の問題を解く必要があり、計算コストが高く、解が複数存在することも多いです。代表的な手法として、Cyclic Coordinate Descent、Jacobian Pseudoinverse、Jacobian Transpose、Levenberg–Marquardt Damped Least Squares、Quasi-Newton / Conjugate Gradient 法、ニューラルネットワークによる手法などがあります。</p>
+<p>どの IK 手法を選ぶかは、計算時間、精度、逆算して得たい動作姿勢の性質などの要件によって変わります。たとえば Cyclic Coordinate Descent は指先を先に動かしてから腕を調整することが多く、Jacobian Pseudoinverse は全関節をまとめて更新します。ニューラルネットワークは、より現実的な結果を高速に予測できる場合があります。本記事では、IK の Jacobian Pseudoinverse 法を紹介します。</p>
+<h2 id="2-Jacobian-Pseudoinverse-の原理と実装"><a class="header-anchor" href="#2-Jacobian-Pseudoinverse-の原理と実装">¶ </a>2. Jacobian Pseudoinverse の原理と実装</h2>
+<h3 id="2-1-パラメータ定義"><a class="header-anchor" href="#2-1-パラメータ定義">¶ </a>2.1 パラメータ定義</h3>
+<p>機械アームを考え、指先が特定の位置に到達してほしいとします。指先から腕の途中にある各関節は回転できると仮定し、第 $i$ 関節の初期位置を $\mathbf s_i$ とします。これらの中間関節の回転によって、指先が目標位置 $\mathbf t$ に到達するようにします。</p>
+<img src="https://i.imgur.com/coqDQA1.jpg" width="80%">
+<p>世界座標を $n$ 次元とします。通常は $n = 3$（$x, y, z$ の 3 次元）ですが、別の次元空間へ写像することもできます。</p>
+<p>第 $i$ 関節の初期位置ベクトルは次のように表します：</p>
+<p>$$<br>
+\mathbf s_i =<br>
+\begin{bmatrix}<br>
+s_x &amp; s_y &amp;s_z &amp; \dots &amp; s_n<br>
+\end{bmatrix}<br>
+$$</p>
+<p>目標位置ベクトルは次の通りです：</p>
+<p>$$<br>
+\mathbf t =<br>
+\begin{bmatrix}<br>
+t_x &amp; t_y &amp;t_z &amp; \dots &amp; t_n<br>
+\end{bmatrix}<br>
+$$</p>
+<p>第 $i$ 関節の End Effector ベクトル $\mathbf e$ を次のように定義します：</p>
+<p>$$\mathbf e_i = \mathbf t - \mathbf s_i$$</p>
+<p>したがって、各関節の End Effector ベクトルは次のように表せます：</p>
+<p>$$<br>
+\mathbf e =<br>
+\begin{bmatrix}<br>
+e_1 &amp; e_2 &amp;e_3 &amp; \dots &amp; e_N<br>
+\end{bmatrix}<br>
+$$</p>
+<p>全関節に含まれる可動次元（DoF）の総数を $M$ とし、それらの回転角ベクトルを次のように表します：</p>
+<p>$$<br>
+\mathbf \theta =<br>
+\begin{bmatrix}<br>
+\theta_1 &amp; \theta_2 &amp; \theta_3 &amp; \dots &amp; \theta_M<br>
+\end{bmatrix}<br>
+$$</p>
+<h3 id="2-2-運動学"><a class="header-anchor" href="#2-2-運動学">¶ </a>2.2 運動学</h3>
+<p>正運動学（FK）では、回転角が与えられたときに、関数 $f$ を用いて次の End Effector $\mathbf e$ を計算できます：</p>
+<p>$$\mathbf e = f(\mathbf \theta)$$</p>
+<p>逆運動学（IK）ではこの関係を反転させ、End Effector が与えられたときに回転角を求めます：</p>
+<p>$$\mathbf \theta = f^{-1}(\mathbf e)$$</p>
+<h3 id="2-3-ヤコビアン（Jacobian）"><a class="header-anchor" href="#2-3-ヤコビアン（Jacobian）">¶ </a>2.3 ヤコビアン（Jacobian）</h3>
+<p>ベクトル微積分における <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant">Jacobian</a> は、関数 $f$ の線形近似を表します。ヤコビアン $J$ を使うことで、End Effector $\mathbf e$ から $d\mathbf \theta$ を逆算できます。</p>
+<img src="https://i.imgur.com/z22VM1L.jpg" width="80%">
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow class="MJX-TeXAtom-ORD"><mi mathvariant="bold">J</mi></mrow><mo>=</mo><mrow class="MJX-TeXAtom-ORD"><mfrac><mrow class="MJX-TeXAtom-ORD"><mi>d</mi><mrow class="MJX-TeXAtom-ORD"><mi mathvariant="bold">e</mi></mrow></mrow><mrow class="MJX-TeXAtom-ORD"><mi>d</mi><mrow class="MJX-TeXAtom-ORD"><mi>θ<!-- θ --></mi></mrow></mrow></mfrac></mrow></math></p>
+<p>$$d\mathbf e  = \mathbf J d \mathbf \theta$$</p>
+<p>$\mathbf J$ は次のように表せます：</p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <mo>=</mo> <mrow> <mo>(</mo> <mtable rowspacing="4pt" columnspacing="1em"> <mtr> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>1</mn> </msub> </mrow> <mrow> <mi>d</mi> <msub> <mi>θ<!-- θ --></mi> <mn>1</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>1</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>θ<!-- θ --></mi> <mn>2</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mo>⋯<!-- ⋯ --></mo> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>1</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>θ<!-- θ --></mi> <mi>n</mi> </msub> </mrow> </mfrac> </mtd> </mtr> <mtr> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>2</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>θ<!-- θ --></mi> <mn>1</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>2</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>θ<!-- θ --></mi> <mn>2</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mo>⋯<!-- ⋯ --></mo> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mn>2</mn> </msub> </mrow> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>θ<!-- θ --></mi> <mi>n</mi> </msub> </mrow> </mfrac> </mtd> </mtr> <mtr> <mtd> <mo>⋮<!-- ⋮ --></mo> </mtd> <mtd> <mo>⋮<!-- ⋮ --></mo> </mtd> <mtd> <mo>⋯<!-- ⋯ --></mo> </mtd> <mtd> <mo>⋮<!-- ⋮ --></mo> </mtd> </mtr> <mtr> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mi>k</mi> </msub> </mrow> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>θ<!-- θ --></mi> <mn>1</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mi>k</mi> </msub> </mrow> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>θ<!-- θ --></mi> <mn>2</mn> </msub> </mrow> </mfrac> </mtd> <mtd> <mo>⋯<!-- ⋯ --></mo> </mtd> <mtd> <mfrac> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>f</mi> <mi>k</mi> </msub> </mrow> <mrow> <mi mathvariant="normal">∂<!-- ∂ --></mi> <msub> <mi>θ<!-- θ --></mi> <mi>n</mi> </msub> </mrow> </mfrac> </mtd> </mtr> </mtable> <mo>)</mo> </mrow></math></p>
+<p>$d\mathbf e  = \mathbf J d \mathbf \theta$ が得られているので、移項すると：</p>
+<p>$$ d\mathbf \theta  = \mathbf J^{-1} d \mathbf e$$</p>
+<p>この回転角の変化量 $d\mathbf \theta$ が求めたい値です。$d\mathbf \theta$ を使って、姿勢を目標位置へ向けて一歩ずつ更新できるためです。</p>
+<img src="https://i.imgur.com/ZP2mRyp.jpg" width="80%">
+<h3 id="2-4-ヤコビアンの近似解を求める"><a class="header-anchor" href="#2-4-ヤコビアンの近似解を求める">¶ </a>2.4 ヤコビアンの近似解を求める</h3>
+<p>世界座標を 3 次元（3 DoF）とします。$d\mathbf \theta  = \mathbf J^{-1} d \mathbf e$ を解くためには、まずヤコビアンが必要です。以下の式はすべて世界座標上で定義されています。</p>
+<p>まずヤコビアンの 1 列を見てみます：</p>
+<p>$$<br>
+\mathbf J_i =<br>
+\frac{\partial \mathbf e}{d\theta_1}=<br>
+\begin{bmatrix}<br>
+\frac{\partial e_{x}}{\partial\theta_i} \\<br>
+\frac{\partial e_{y}}{\partial\theta_i} \\<br>
+\frac{\partial e_{z}}{\partial\theta_i}<br>
+\end{bmatrix}<br>
+$$</p>
+<p>$\mathbf \theta$ と $\mathbf e$ の線形な微小変化量を用いて、偏微分を近似します：</p>
+<p>$$<br>
+\mathbf J_i =<br>
+\frac{\partial \mathbf e}{d\theta_i}=<br>
+\frac{\Delta \mathbf e}{\Delta\theta_i}=<br>
+\begin{bmatrix}<br>
+\frac{\Delta e_{x}}{\Delta\theta_i} \\<br>
+\frac{\Delta e_{y}}{\Delta\theta_i} \\<br>
+\frac{\Delta e_{z}}{\Delta\theta_i}<br>
+\end{bmatrix}<br>
+$$</p>
+<p>関節 $A$ の <strong>1 つの軸</strong>（1 DoF）まわりの回転を考えると、その軸における End Effector $\mathbf e$ の線形変化 $d\mathbf e$ は、関節 $A$ がその軸で回転することによって生じる変化（$\mathbf \omega \mathbf rdt$）に等しくなります。</p>
+<p>$$<br>
+\frac{d\mathbf e}{dt} =<br>
+\vert \mathbf \omega \vert {\frac{\mathbf \omega}{\vert \mathbf \omega \vert }} \times \mathbf r =<br>
+\frac{d \mathbf \theta}{dt} \mathbf a \times \mathbf r<br>
+$$</p>
+<p>ここで $\mathbf a= \frac{\mathbf \omega}{\vert \omega \vert}$ は単位回転ベクトルを表します。</p>
+<p>移項すると：</p>
+<p>$${d\mathbf e \over d\mathbf \theta} = \mathbf a \times \mathbf r$$</p>
+<p>したがって次を得ます：</p>
+<p>$$<br>
+\mathbf J_1 =<br>
+\frac{\Delta \mathbf e}{\Delta\theta_1}=<br>
+\begin{bmatrix}<br>
+\frac{\Delta e_{x}}{\Delta\theta_1} \\<br>
+\frac{\Delta e_{y}}{\Delta\theta_1} \\<br>
+\frac{\Delta e_{z}}{\Delta\theta_1}<br>
+\end{bmatrix}=<br>
+\mathbf a_i \times (\mathbf e - \mathbf r_i)<br>
+$$</p>
+<p>ここで $\mathbf r_i$ は第 $i$ 関節の位置ベクトルです。</p>
+<p>ここでの $\mathbf J_i$ は関節の <strong>1</strong> つの DoF に対応していることに注意してください。したがって、全関節の DoF を合計して $M$ 個あるなら、$\mathbf J$ は $3 \times M$ の行列になります。</p>
+<p>実装では、各 $J_i$ は 1 つの DoF だけを含むので、たとえば関節 $A$ が $(x, z)$ の 2 軸で回転できるとすると、角速度は $\mathbf \omega_A = (\mathbf\omega_{Ax}, 0, \mathbf\omega_{Az})$ になります。$\mathbf \theta_i$ が $A$ の $z$ 軸を表すとすると、$\mathbf \omega_i$ は $\mathbf \omega_{A} \times (0, 0 ,1) = \mathbf\omega_{Az}$ です。</p>
+<h3 id="2-5-ヤコビアンの逆（擬似逆行列）"><a class="header-anchor" href="#2-5-ヤコビアンの逆（擬似逆行列）">¶ </a>2.5 ヤコビアンの逆（擬似逆行列）</h3>
+<p>$d\mathbf \theta  = \mathbf J^{-1} d \mathbf e$ を解くために、$\mathbf J$ を得た後は $\mathbf J^{-1}$ を計算したくなります。しかし、逆行列は正方行列でなければ定義できないのに対し、ここでの $\mathbf J$ は $3 \times M$ の行列です。したがって直接 Inverse を取ることはできず、代わりに擬似逆行列 $\mathbf J^+$ を用います。</p>
+<p>以下の手順を考えます：</p>
+<p>$$ d\mathbf e = \mathbf J d\mathbf  \theta$$<br>
+$$ \mathbf J^T d\mathbf e = \mathbf J^T J d \mathbf \theta$$<br>
+$$ (\mathbf J^T \mathbf J)^{-1} \mathbf J^T d\mathbf e =(\mathbf J^T \mathbf J)^{-1}(\mathbf J^T \mathbf J)d \mathbf \theta$$<br>
+$$ (\mathbf J^T \mathbf J)^{-1} \mathbf J^T d\mathbf e =d \mathbf  \theta$$<br>
+$$ \mathbf J^+ d\mathbf e =d \mathbf \theta$$<br>
+$$ \mathbf J^+ = (\mathbf J^T \mathbf J)^{-1} \mathbf J^T $$</p>
+<p>SVD の性質を用いると：</p>
+<p>$$SVD(J)=UΣV^∗$$</p>
+<p>$\mathbf J^+$ を代入して展開すると：</p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0em 2em 0em 2em 0em 2em 0em 2em 0em 2em 0em" displaystyle="true"> <mtr> <mtd> <msup> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <mo>+</mo> </msup> </mtd> <mtd> <mi></mi> <mo>=</mo> <mo stretchy="false">(</mo> <msup> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <mo>∗<!-- ∗ --></mo> </msup> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <msup> <mo stretchy="false">)</mo> <mrow class="MJX-TeXAtom-ORD"> <mo>−<!-- − --></mo> <mn>1</mn> </mrow> </msup> <msup> <mrow class="MJX-TeXAtom-ORD"> <mi mathvariant="bold">J</mi> </mrow> <mo>∗<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mo stretchy="false">(</mo> <mi>V</mi> <mi mathvariant="normal">Σ<!-- Σ --></mi> <msup> <mi>U</mi> <mo>∗<!-- ∗ --></mo> </msup> <mi>U</mi> <mi mathvariant="normal">Σ<!-- Σ --></mi> <msup> <mi>V</mi> <mo>∗<!-- ∗ --></mo> </msup> <msup> <mo stretchy="false">)</mo> <mrow class="MJX-TeXAtom-ORD"> <mo>−<!-- − --></mo> <mn>1</mn> </mrow> </msup> <mi>V</mi> <mi mathvariant="normal">Σ<!-- Σ --></mi> <msup> <mi>U</mi> <mo>∗<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mo stretchy="false">(</mo> <mi>V</mi> <msup> <mi mathvariant="normal">Σ<!-- Σ --></mi> <mn>2</mn> </msup> <msup> <mi>V</mi> <mo>∗<!-- ∗ --></mo> </msup> <msup> <mo stretchy="false">)</mo> <mrow class="MJX-TeXAtom-ORD"> <mo>−<!-- − --></mo> <mn>1</mn> </mrow> </msup> <mi>V</mi> <mi mathvariant="normal">Σ<!-- Σ --></mi> <msup> <mi>U</mi> <mo>∗<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mo stretchy="false">(</mo> <msup> <mi>V</mi> <mo>∗<!-- ∗ --></mo> </msup> <msup> <mo stretchy="false">)</mo> <mrow class="MJX-TeXAtom-ORD"> <mo>−<!-- − --></mo> <mn>1</mn> </mrow> </msup> <msup> <mi mathvariant="normal">Σ<!-- Σ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo>−<!-- − --></mo> <mn>2</mn> </mrow> </msup> <msup> <mi>V</mi> <mrow class="MJX-TeXAtom-ORD"> <mo>−<!-- − --></mo> <mn>1</mn> </mrow> </msup> <mi>V</mi> <mi mathvariant="normal">Σ<!-- Σ --></mi> <msup> <mi>U</mi> <mo>∗<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mi>V</mi> <msup> <mi mathvariant="normal">Σ<!-- Σ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo>−<!-- − --></mo> <mn>2</mn> </mrow> </msup> <mi mathvariant="normal">Σ<!-- Σ --></mi> <msup> <mi>U</mi> <mo>∗<!-- ∗ --></mo> </msup> </mtd> </mtr> <mtr> <mtd /> <mtd> <mi></mi> <mo>=</mo> <mi>V</mi> <msup> <mi mathvariant="normal">Σ<!-- Σ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo>−<!-- − --></mo> <mn>1</mn> </mrow> </msup> <msup> <mi>U</mi> <mo>∗<!-- ∗ --></mo> </msup> </mtd> </mtr> </mtable></math></p>
+<h3 id="2-6-IK-アルゴリズム"><a class="header-anchor" href="#2-6-IK-アルゴリズム">¶ </a>2.6 IK アルゴリズム</h3>
+<p>$\mathbf J^+$ が得られたら、1 ステップ前（更新後）の状態を推定できます：</p>
+<p>$$\mathbf \theta_{k} = \mathbf \theta_{k+1} - dt * \mathbf J^+(\mathbf \theta_{k+1}) * d\mathbf e$$</p>
+<p>擬似コード：</p>
+<pre><code class="language-python">while(ABS(current_position - target_position) &gt; epsilon and
+      iterator &lt; max_iterator):
+    
+    1. compute Jacobian J
+    2. compute Pseoduinverse Jacobain J^+
+    3. compute change in joint DoFs: dθ = (J^+)de
+    4. apply the changes to joints. move a small step α: θ += αdθ
+    5. update current_position to close target_position
+</code></pre>
+<h2 id="3-考察"><a class="header-anchor" href="#3-考察">¶ </a>3. 考察</h2>
+<h3 id="3-1-パラメータの影響"><a class="header-anchor" href="#3-1-パラメータの影響">¶ </a>3.1 パラメータの影響</h3>
+<p>次の式：<br>
+$$\mathbf \theta_{k} = \mathbf \theta_{k+1} - dt * \mathbf J^+(\mathbf \theta_{k+1}) * d\mathbf e$$<br>
+より、ステップ幅 $dt$ は収束速度に影響します。各ステップが小さすぎると反復回数が増えますが、大きすぎると目標を行き過ぎて収束しにくくなる可能性があります。</p>
+<p>収束しないことで反復が増えすぎるのを避けるため、誤差の閾値 $\epsilon$ を設定し、誤差が許容範囲に入ったら停止します。また、反復回数の上限も設定します。</p>
+<p>実際、IK は常に解があるとは限りません。目標位置 $t$ が関節の最大到達距離を超えていたり、利用できる DoF の制約によって到達不可能だったりすることがあります。たとえば、どれだけ腕を伸ばしても天井には届かないですし、腕を外側へ無限に回転させ続けることもできません。これらはすべて無解のケースです。実装では、無解による破綻を避けるために $t$ を調整する、といった対策も考慮すべきです。</p>
+<h3 id="3-2-可動関節数が-IK-に与える影響"><a class="header-anchor" href="#3-2-可動関節数が-IK-に与える影響">¶ </a>3.2 可動関節数が IK に与える影響</h3>
+<p>次の図のような初期姿勢の人物を与え、目標位置を紫色の点とします。</p>
+<p><img src="https://i.imgur.com/Q5zjvcD.png" alt=""></p>
+<p>Case 1: 腕だけを動かせるようにして、IK で姿勢を解く：</p>
+<p><img src="https://i.imgur.com/HTNfgHB.png" alt=""><br>
+<img src="https://i.imgur.com/j21wFj9.png" alt=""></p>
+<p>Case 2: 腕と上半身を動かせるようにして、IK で姿勢を解く：</p>
+<p><img src="https://i.imgur.com/Lo8DWA3.png" alt=""></p>
+<p>Case 3: 腰より上を動かせるようにして、IK で姿勢を解く：</p>
+<p><img src="https://i.imgur.com/KLKFwme.png" alt=""></p>
+<h2 id="4-まとめ"><a class="header-anchor" href="#4-まとめ">¶ </a>4. まとめ</h2>
+<p>逆運動学（IK）により、人物の現在の状態から「どのように動けば狙った姿勢に到達できるか」を逆算できます。コンピュータアニメーションでは、キーポーズ（キーフレーム）を与えて人物に狙った動作をさせることができます。ロボティクスでは、ロボットアームが目標作業位置へ到達するために IK が用いられます。</p>
+<p>IK には多くの手法があります。本記事では Jacobian Pseudoinverse 法のみを紹介しました。この手法は全関節を一度に更新する性質があり、見た目としてはよりリアルに感じられることがあります。ただし、実際の人体動作にはより自然な「らしさ」があり、それを反映したアルゴリズムを選ぶべき場合もあります。用途に応じて適切な手法を選んでください（この部分は読者の調査に委ねます）。</p>
+<h2 id="5-参考文献"><a class="header-anchor" href="#5-参考文献">¶ </a>5. 参考文献</h2>
+<ul>
+<li>
+<p>Samuel R. Buss. 2009. Introduction to Inverse Kinematics with Jacobian Transpose, Pseudoinverse and Damped Least Squares methods. <a target="_blank" rel="noopener" href="http://graphics.cs.cmu.edu/nsp/course/15-464/Spring11/handouts/iksurvey.pdf">http://graphics.cs.cmu.edu/nsp/course/15-464/Spring11/handouts/iksurvey.pdf</a></p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="https://epiphany.pub/@shi-yan">@shi-yan</a>. 2019. Inverse Kinematics Explained Interactively. <a target="_blank" rel="noopener" href="https://epiphany.pub/@shi-yan/inverse-kinematics-explained-interactively">https://epiphany.pub/@shi-yan/inverse-kinematics-explained-interactively</a></p>
+</li>
+<li>
+<p>Rickard Nilsson. Inverse Kinematics Explained Interactively. 2009. <a target="_blank" rel="noopener" href="https://www.diva-portal.org/smash/get/diva2:1018821/FULLTEXT01.pdf">https://www.diva-portal.org/smash/get/diva2:1018821/FULLTEXT01.pdf</a></p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="http://www.cs.cmu.edu/~nsp">Nancy Pollard</a>. 2003. CMU: Technical Animation. <a target="_blank" rel="noopener" href="http://www.cs.cmu.edu/~15464-s13/">http://www.cs.cmu.edu/~15464-s13/assignments/</a></p>
+</li>
+</ul>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/jp/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/">
+                電腦動畫
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/computer-animation/">
+                computer animation
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/">
+                反向動力法
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/inverse-kinematics/">
+                inverse kinematics
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/jacobian/">
+                jacobian
+            </a>,&nbsp;
+        
+            <a href="/jp/tags/pseudo-inverse/">
+                pseudo inverse
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB"><span class="toc-text">1. はじめに</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Jacobian-Pseudoinverse-%E3%81%AE%E5%8E%9F%E7%90%86%E3%81%A8%E5%AE%9F%E8%A3%85"><span class="toc-text">2. Jacobian Pseudoinverse の原理と実装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E5%AE%9A%E7%BE%A9"><span class="toc-text">2.1 パラメータ定義</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E9%81%8B%E5%8B%95%E5%AD%A6"><span class="toc-text">2.2 運動学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E3%83%A4%E3%82%B3%E3%83%93%E3%82%A2%E3%83%B3%EF%BC%88Jacobian%EF%BC%89"><span class="toc-text">2.3 ヤコビアン（Jacobian）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E3%83%A4%E3%82%B3%E3%83%93%E3%82%A2%E3%83%B3%E3%81%AE%E8%BF%91%E4%BC%BC%E8%A7%A3%E3%82%92%E6%B1%82%E3%82%81%E3%82%8B"><span class="toc-text">2.4 ヤコビアンの近似解を求める</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E3%83%A4%E3%82%B3%E3%83%93%E3%82%A2%E3%83%B3%E3%81%AE%E9%80%86%EF%BC%88%E6%93%AC%E4%BC%BC%E9%80%86%E8%A1%8C%E5%88%97%EF%BC%89"><span class="toc-text">2.5 ヤコビアンの逆（擬似逆行列）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-IK-%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0"><span class="toc-text">2.6 IK アルゴリズム</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%80%83%E5%AF%9F"><span class="toc-text">3. 考察</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E3%81%AE%E5%BD%B1%E9%9F%BF"><span class="toc-text">3.1 パラメータの影響</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%8F%AF%E5%8B%95%E9%96%A2%E7%AF%80%E6%95%B0%E3%81%8C-IK-%E3%81%AB%E4%B8%8E%E3%81%88%E3%82%8B%E5%BD%B1%E9%9F%BF"><span class="toc-text">3.2 可動関節数が IK に与える影響</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-text">4. まとめ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-text">5. 参考文献</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/jp/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        C++で3D点群を2D画像へ投影する
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/11/python/2023pycon-apac-sprint/">
+        PyCon APAC 2023 の Sprint で初めて CPython に Pull Request を出した話
+      </a>
+    </li>
+    
+    <li>
+      <a href="/jp/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2020/">2020</a><span class="archive-list-count">28</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/jp/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/jp/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="browser,browsers,c,pthread,parallel programming,效能分析,平行化,JavaScript,web worker,nodejs," />
+    <meta name="description"
+        content="This post explains how to use Emscripten to convert C/C++ Pthreads into Web Workers and WebAssembly, and compares performance across (1) native C code, (2) Emscripten-generated JS/WASM, and (3) a Web Worker implementation written directly in JavaScript. With -O3, native C is about 30% faster than the Pthread-to-WASM version, and the Pthread-to-WASM version is roughly comparable to pure JavaScript Web Workers." />
+    <title>Neutrino&#39;s Blog: Converting Pthreads to JavaScript with Emscripten and Performance Analysis </title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/07/js/emscripten-pthread-to-js/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/07/js/emscripten-pthread-to-js/">
+        
+            <link rel="alternate" hreflang="jp" href="https://tigercosmos.xyz/jp/post/2020/07/js/emscripten-pthread-to-js/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/07/js/emscripten-pthread-to-js/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/07/js/emscripten-pthread-to-js/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/jp/post/2020/07/js/emscripten-pthread-to-js/" hreflang="jp" lang="jp">jp</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Converting Pthreads to JavaScript with Emscripten and Performance Analysis
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-07-07
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/07/js/emscripten-pthread-to-js/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/jp/post/2020/07/js/emscripten-pthread-to-js/" hreflang="jp" lang="jp">jp</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Introduction"><a class="header-anchor" href="#Introduction">¶ </a>Introduction</h2>
+<p>Emscripten is a tool that compiles C/C++ to WebAssembly. Under the hood it goes through LLVM. It supports compiling Pthreads: it turns them into JavaScript Web Workers plus WebAssembly. It can even translate OpenGL to WebGL, allowing programs to run in a browser with performance close to native.</p>
+<p>The focus of this post is exactly that: converting Pthreads into Web Workers + WebAssembly. I will take an example program and try the conversion in practice. Finding a good benchmark program is not easy, so I wrote a small parallel Pthread program to compute π as the test case.</p>
+<p>I will first walk through how to use Emscripten to convert Pthreads to JS. While following the official documentation, I ran into several pitfalls; I also record them here so you don’t fall into the same holes. Then I will compare performance for (1) native C code, (2) Emscripten-generated JS/WASM, and (3) a Web Worker implementation written directly in JavaScript.</p>
+<span id="more"></span>
+<h2 id="Pthread-example-program"><a class="header-anchor" href="#Pthread-example-program">¶ </a>Pthread example program</h2>
+<p>The example is a small program that uses Pthreads to compute π in parallel. I chose it for a few reasons: when writing a parallel program, the most important things to verify are whether it can create threads, whether it can use shared memory, whether it can lock, and whether it can wait for other threads. That is basically the core of a parallel program, and this π example is sufficient for what I need.</p>
+<p>To save space, for more details on Pthreads you can refer to my earlier post: “<a href="/post/2020/07/simple-pthread-usage/">A simple Pthreads parallelization example and performance analysis</a>”.</p>
+<p>pi.c:</p>
+<pre><code class="language-c">// pi.c
+#include &lt;pthread.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define NUMTHRDS 4
+#define MAGNIFICATION 1e9
+
+typedef struct
+&#123;
+   int thread_id;
+   int start;
+   int end;
+   double *pi;
+&#125; Arg;
+
+pthread_t callThd[NUMTHRDS];
+pthread_mutex_t mutexsum;
+
+void *count_pi(void *arg)
+&#123;
+
+   Arg *data = (Arg *)arg;
+   int thread_id = data-&gt;thread_id;
+   int start = data-&gt;start;
+   int end = data-&gt;end;
+   double *pi = data-&gt;pi;
+
+   double x;
+   double local_pi = 0;
+   double step = 1 / MAGNIFICATION;
+   for (int i = start; i &lt; end; i++)
+   &#123;
+      x = (i + 0.5) * step;
+      local_pi += 4 / (1 + x * x);
+   &#125;
+
+   local_pi *= step;
+
+   pthread_mutex_lock(&amp;mutexsum);
+   *pi += local_pi;
+   pthread_mutex_unlock(&amp;mutexsum);
+
+   printf(&quot;Thread %d did %d to %d:  local Pi=%lf global Pi=%.10lf\n&quot;, thread_id, start,
+          end, local_pi, *pi);
+
+   pthread_exit((void *)0);
+&#125;
+
+int main(int argc, char *argv[])
+&#123;
+   pthread_mutex_init(&amp;mutexsum, NULL);
+
+   pthread_attr_t attr;
+   pthread_attr_init(&amp;attr);
+   pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);
+
+   double *pi = malloc(sizeof(*pi));
+   *pi = 0;
+
+   int part = MAGNIFICATION / NUMTHRDS;
+
+   Arg arg[NUMTHRDS];
+   for (int i = 0; i &lt; NUMTHRDS; i++)
+   &#123;
+      arg[i].thread_id = i;
+      arg[i].start = part * i;
+      arg[i].end = part * (i + 1);
+      arg[i].pi = pi;
+      pthread_create(&amp;callThd[i], &amp;attr, count_pi, (void *)&amp;arg[i]);
+   &#125;
+
+   pthread_attr_destroy(&amp;attr);
+
+   void *status;
+   for (int i = 0; i &lt; NUMTHRDS; i++)
+   &#123;
+      pthread_join(callThd[i], &amp;status);
+   &#125;
+
+   printf(&quot;Pi =  %.10lf \n&quot;, *pi);
+
+   free(pi);
+
+   pthread_mutex_destroy(&amp;mutexsum);
+   pthread_exit(NULL);
+&#125;
+</code></pre>
+<h2 id="Download-Emscripten"><a class="header-anchor" href="#Download-Emscripten">¶ </a>Download Emscripten</h2>
+<p>To use Emscripten, you first need to download its GitHub repo. Make sure you have Git installed on your machine.</p>
+<pre><code class="language-shell"># fetch the emsdk repo
+git clone https://github.com/emscripten-core/emsdk.git
+
+# enter the directory
+cd emsdk
+</code></pre>
+<p>Then follow these steps:</p>
+<pre><code class="language-shell"># install the latest SDK
+./emsdk install latest
+
+# activate the latest SDK
+./emsdk activate latest
+
+# set up environment variables
+source ./emsdk_env.sh
+</code></pre>
+<p>Once installed and activated, every time you want to use Emscripten later, you just need to enter <code>emsdk</code> and run <code>source ./emsdk_env.sh</code>.</p>
+<p>If you do not want to set up the environment every time, you can consider adding <code>source ./emsdk_env.sh</code> to <code>.bashrc</code>. However, this can override the NodeJS path, so I do not really recommend it.</p>
+<h2 id="Emscripten-basics"><a class="header-anchor" href="#Emscripten-basics">¶ </a>Emscripten basics</h2>
+<p><code>emcc</code> or <code>em++</code> is the Emscripten frontend (roughly like how Clang is to LLVM). That explanation is a bit abstract; in practice, running this command compiles C/C++ into WebAssembly (WASM).</p>
+<p>A simple demo:</p>
+<pre><code class="language-c">// hello.c
+#include &lt;stdio.h&gt;
+
+int main() &#123;
+  printf(&quot;hello, world!\n&quot;);
+  return 0;
+&#125;
+</code></pre>
+<p>Compile:</p>
+<pre><code class="language-shell">$ emcc hello.c
+</code></pre>
+<p>This produces <code>a.out.js</code> and <code>a.out.wasm</code>. This is because today, both browsers and NodeJS still require JavaScript to bootstrap WASM.</p>
+<pre><code class="language-shell">$ emcc hello.c -o hello.html
+</code></pre>
+<p>You can also output an HTML file, which you can open in a browser as an example. The page contains a virtual terminal, and you can see the original program output in the terminal inside the web page.</p>
+<p>Note that if you output HTML, you must serve it via a local server. This is because browsers do not allow <code>file://</code> XHR requests. Also, Emscripten has additional requirements on HTTP headers and file types, which can be fairly annoying. For details, check the Emscripten docs.</p>
+<p>For more usage instructions, see the <a target="_blank" rel="noopener" href="https://emscripten.org/docs/getting_started/Tutorial.html#emscripten-tutorial">Emscripten Tutorial</a>.</p>
+<h2 id="Compiling-Pthreads-with-Emscripten"><a class="header-anchor" href="#Compiling-Pthreads-with-Emscripten">¶ </a>Compiling Pthreads with Emscripten</h2>
+<p>Now let’s compile <code>pi.c</code>. According to the official documentation, to compile Pthreads you need to add <code>-s USE_PTHREADS=1</code>.</p>
+<pre><code class="language-shell">$ emcc pi.c -s USE_PTHREADS=1
+</code></pre>
+<p>Let’s see what happens with this output (NodeJS needs <code>--experimental-wasm-threads --experimental-wasm-bulk-memory</code>):</p>
+<pre><code>$ node  --experimental-wasm-threads --experimental-wasm-bulk-memory a.out.js
+
+// nothing happens at all
+</code></pre>
+<p>Yes—it’s stuck.</p>
+<p>After asking on GitHub, I learned that this is due to how Emscripten works (I don’t fully understand the details either). See the <a target="_blank" rel="noopener" href="https://github.com/emscripten-core/emscripten/issues/11543#issuecomment-654317178">issue</a> I filed. In short, there are three ways to fix it:</p>
+<ol>
+<li>Compile with <code>-s PROXY_TO_PTHREAD</code></li>
+<li>Compile with <code>-s PTHREAD_POOL_SIZE=N</code> where N &gt; 0</li>
+<li>Replace <code>main()</code> with <code>emscripten_set_main_loop()</code></li>
+</ol>
+<p>We will compile with:</p>
+<pre><code class="language-shell">$ emcc pi.c  -s USE_PTHREADS=1  -s PTHREAD_POOL_SIZE=4
+</code></pre>
+<p>Now it runs correctly!</p>
+<pre><code>$ node  --experimental-wasm-threads --experimental-wasm-bulk-memory a.out.js
+Thread 1 did 250000000 to 500000000:  local Pi=0.874676 global Pi=0.8746757835
+Thread 2 did 500000000 to 750000000:  local Pi=0.719414 global Pi=1.5940897827
+Thread 0 did 0 to 250000000:  local Pi=0.979915 global Pi=2.5740044352
+Thread 3 did 750000000 to 1000000000:  local Pi=0.567588 global Pi=3.1415926536
+Pi =  3.1415926536」」
+</code></pre>
+<p>When I first tried this, almost none of the basic Pthread constructs worked, and it really shocked me. Honestly, I think the documentation has serious problems. Even the developers opened an <a target="_blank" rel="noopener" href="https://github.com/emscripten-core/emscripten/issues/11554">issue</a> saying it needs improvement.</p>
+<h2 id="Performance-analysis"><a class="header-anchor" href="#Performance-analysis">¶ </a>Performance analysis</h2>
+<p>Next, I want to measure the same parallel π-computation logic under three scenarios: (1) native pthread, (2) pthread compiled to WASM, and (3) Web Workers written in JavaScript.</p>
+<p>For (1) and (2), I use <code>pi.c</code> from this post and the WASM generated by Emscripten. For (3), I use the JavaScript Web Worker code from my earlier post “<a href="/post/2020/06/js/web-worker-evaluation/#NodeJS"><br>
+Evaluation of Web Worker for Parallel Programming with Browsers, NodeJS and Deno</a>”. To save space, I will not repost the code for (3) here. Interested readers can click into that post.</p>
+<p>The three implementations are logically the same: the total number of loop iterations is the same, and they spawn the same number of threads. The experiments are run on Windows 10 WSL 1 (Ubuntu 20.04) with an AMD Ryzen 7 2700X 3.7 GHz 8-core CPU (using only 4 threads), NodeJS v12.18, and emcc v1.39. Both gcc and emcc use the default -O2 optimization. This set of experiments can also be compared with the earlier <a href="/post/2020/06/js/web-worker-evaluation/">Evaluation of Web Worker</a> post (you can treat the NodeJS result as a baseline).</p>
+<p>The only difference is that implementation (3) uses integers to represent π. This is because if you want to combine SharedArrayBuffer with Atomics (locking), the buffer must be an integer typed array. If you need floating-point, you would have to encode it manually. In this experiment, I do not do floating-point encoding.</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Time(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pthread</td>
+<td>0.751</td>
+</tr>
+<tr>
+<td>em2wasm</td>
+<td>1.174</td>
+</tr>
+<tr>
+<td>js</td>
+<td>0.486</td>
+</tr>
+</tbody>
+</table>
+<p>And then I found that the JS version was dramatically faster. That felt unbelievable.</p>
+<p>Thinking about it, maybe integer arithmetic is much faster than floating-point arithmetic, and the precision is also different. So to be fair, I changed <code>double* pi</code> in <code>pi.c</code> to <code>unsigned* pi</code>, so the C logic also computes π in a scaled integer form and divides it back at the end. I call that version <code>pi2.c</code>. JavaScript uses <code>double</code> for floating-point calculations, so this matches the precision of the original C <code>double</code> version. Surprisingly, <code>pi2.c</code> was about the same speed, and even slightly slower at 0.77s.</p>
+<p>Then I thought: maybe mutex locking is slower. In JS I used Atomics, so I changed <code>pi2.c</code> to use <code>atomic_fetch_add_explicit</code> for locking, and called that <code>pi3.c</code>. The result was 0.755s—basically no difference. But that also makes sense: mutex locking is indeed slower, but the difference becomes obvious only when magnified a lot more.</p>
+<p>Then I used <code>perf</code> to look at the C code:</p>
+<pre><code class="language-shell">       │     local_pi += 4 / (1 + x * x);
+       │       movsd     -0x8(%rbp),%xmm0
+  0.02 │       mulsd     -0x8(%rbp),%xmm0
+  0.02 │       movsd     _IO_stdin_used+0x60,%xmm1
+  0.02 │       addsd     %xmm1,%xmm0
+  0.13 │       movsd     _IO_stdin_used+0x68,%xmm1
+       │       divsd     %xmm0,%xmm1
+ 13.20 │       movapd    %xmm1,%xmm0
+  0.07 │       movsd     -0x28(%rbp),%xmm1
+ 34.67 │       addsd     %xmm1,%xmm0
+ 42.64 │       movsd     %xmm0,-0x28(%rbp) 
+</code></pre>
+<p>Aha! I forgot that in my post “<a href="/post/2020/07/simple-pthread-usage/">A simple Pthreads parallelization example and performance analysis</a>” I already pointed out this issue: for some reason, -O2 spends a lot of time on memory operations, but -O3 does not.</p>
+<p>So I quickly compiled <code>pi3.c</code> with -O3 and reran it:</p>
+<pre><code class="language-shell">$ time gcc pi3.c -lpthread -g -O3
+real    0m0.177s
+$ time ./a.out
+real    0m0.350s
+</code></pre>
+<p>The runtime alone is 0.350s, which is finally faster than JS. But JS is JIT. So if you also count the C compile time (0.177s), the total becomes 0.527s—still slower than JS at 0.486s. I have to admit it: V8, you win. How on earth do you compile this?!</p>
+<p>So I reran the benchmark using <code>pi2.c</code> (intentionally using pthread mutex), and using -O3 for both gcc and emcc:</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Time(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pthread</td>
+<td>0.346</td>
+</tr>
+<tr>
+<td>em2wasm</td>
+<td>0.525</td>
+</tr>
+<tr>
+<td>js</td>
+<td>0.504</td>
+</tr>
+</tbody>
+</table>
+<p>This result finally matches expectations. Much better!</p>
+<p>You can see that the performance of “Pthread → Web Worker + WASM” is only slightly slower than writing Web Workers directly in JS. Still, V8 is truly impressive. When gcc and emcc use -O3, their compile time is long, but V8’s compile+run time is still faster than gcc’s compile+run time. My guess is that this is because the program is very small. For larger programs, the performance gap between C and JS should become more significant.</p>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>This post explained how to use Emscripten to convert C/C++ Pthreads into Web Workers and WebAssembly, and compared performance across (1) native C code, (2) Emscripten-generated JS/WASM, and (3) Web Workers written directly in JavaScript. With -O3, native C is about 30% faster than the Pthread-to-WASM version, and the Pthread-to-WASM version is roughly comparable to pure JavaScript Web Workers.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/browser/">
+                browser
+            </a>,&nbsp;
+        
+            <a href="/en/tags/browsers/">
+                browsers
+            </a>,&nbsp;
+        
+            <a href="/en/tags/c/">
+                c
+            </a>,&nbsp;
+        
+            <a href="/en/tags/pthread/">
+                pthread
+            </a>,&nbsp;
+        
+            <a href="/en/tags/parallel-programming/">
+                parallel programming
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/">
+                效能分析
+            </a>,&nbsp;
+        
+            <a href="/en/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/">
+                平行化
+            </a>,&nbsp;
+        
+            <a href="/en/tags/javascript/">
+                JavaScript
+            </a>,&nbsp;
+        
+            <a href="/en/tags/web-worker/">
+                web worker
+            </a>,&nbsp;
+        
+            <a href="/en/tags/nodejs/">
+                nodejs
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pthread-example-program"><span class="toc-text">Pthread example program</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Download-Emscripten"><span class="toc-text">Download Emscripten</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Emscripten-basics"><span class="toc-text">Emscripten basics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Compiling-Pthreads-with-Emscripten"><span class="toc-text">Compiling Pthreads with Emscripten</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Performance-analysis"><span class="toc-text">Performance analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/12/japan/learn-japanese-n4/">
+        My Three-Month JLPT N4 Self-Study Experience
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/python/2023pycon-apac-sprint/">
+        My First CPython Pull Request at the PyCon APAC 2023 Sprint
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        New Software Engineer in Training (2): Workplace Socialization and Survival
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/art/" rel="tag">art</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atmospheric-sciences/" rel="tag">atmospheric sciences</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/company/" rel="tag">company</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/courses/" rel="tag">courses</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fine-arts-club/" rel="tag">fine arts club</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/graduate-school/" rel="tag">graduate school</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japan/" rel="tag">japan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/japanese/" rel="tag">japanese</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/job/" rel="tag">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/language-learning/" rel="tag">language learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/master-s/" rel="tag">master's</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nchc/" rel="tag">nchc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nctu-observations-and-reflections/" rel="tag">nctu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/new-software-engineer-in-training/" rel="tag">new software engineer in training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nlp/" rel="tag">nlp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu/" rel="tag">ntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ntu-observations-and-reflections/" rel="tag">ntu observations and reflections</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source/" rel="tag">open source</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/open-source-projects/" rel="tag">open source projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/projects/" rel="tag">projects</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/software-engineer/" rel="tag">software engineer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/startup/" rel="tag">startup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/taiwan/" rel="tag">taiwan</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/teaching-assistant/" rel="tag">teaching assistant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/tokyo/" rel="tag">tokyo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/university/" rel="tag">university</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/work/" rel="tag">work</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/xr-project/" rel="tag">xr project</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/en/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
