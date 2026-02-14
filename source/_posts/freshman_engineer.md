@@ -2,6 +2,8 @@
 title: 菜鳥程式設計師的精進之路
 date: 2019-04-09 01:23:39
 tags: [software engineering,the clean coder,programming,growing up,軟體工程,軟體工程師]
+lang: zh
+translation_key: freshman_engineer
 ---
 
 ### The Clean Coder 心得、摘要與補充

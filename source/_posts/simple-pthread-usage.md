@@ -3,6 +3,8 @@ title: 簡易 Pthreads 平行化範例與效能分析
 date: 2020-07-02 23:00:00
 tags: [c, pthread, parallel programming, 效能分析, 平行化]
 des: "POSIX 執行緒 (Pthreads) 讓我們能用 C/C++ 寫出平行程式。本文提供一個簡單的 Pthread 平行化計算 PI 的範例，了解怎樣用 Pthread 建立執行緒，給予設定，並加上互斥鎖。最後簡單做了效能分析。"
+lang: zh
+translation_key: simple-pthread-usage
 ---
 
 ## 簡介

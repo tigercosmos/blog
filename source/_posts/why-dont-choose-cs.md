@@ -3,6 +3,8 @@ title: 為甚麼大學志願不該填資工系？
 date: 2020-07-23 07:00:00
 tags: [資工, computer science, 想法, 校系選擇]
 des: "本文介紹資工系必修內容和資工各個領域在學甚麼，此外也說明大學過程的生活，以及未來就業情況。"
+lang: zh
+translation_key: why-dont-choose-cs
 ---
 ## 簡介
 

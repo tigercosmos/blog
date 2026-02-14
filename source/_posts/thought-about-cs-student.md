@@ -2,6 +2,8 @@
 title: 資工系所學生的基本素養
 date: 2020-04-24 00:00:00
 tags: [大學,研究所,資工,資訊工程,想法,基本素養, computer science]
+lang: zh
+translation_key: thought-about-cs-student
 ---
 
 一個資工系/所學生畢業該具備甚麼技能？一個資工所畢業的研究生該具備甚麼技能？

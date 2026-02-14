@@ -3,10 +3,10 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 184
-- Posts with both EN+JP translations: 70
-- Missing EN translation files: 114
-- Missing JP translation files: 114
-- Source posts missing `translation_key`: 114
+- Posts with both EN+JP translations: 76
+- Missing EN translation files: 108
+- Missing JP translation files: 108
+- Source posts missing `translation_key`: 108
 
 ## Posts
 
@@ -94,8 +94,8 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `Cepave-interview.md` — 紀錄面試經驗──Cepave (Sun Jun 04 2017 02:37:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `Chang-Dai-Chien.md` — 巨匠的剪影——張大千特展之心得 (Wed May 29 2019 12:11:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `chaos.md` — Chaos (Thu Jan 24 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `code-beginner.md` — 程式設計入門—用對方法的學習指南 (Tue May 26 2020 20:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `cs-to-me.md` — 我對資工的興趣產生 (Mon Dec 02 2019 12:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `code-beginner.md` — 程式設計入門—用對方法的學習指南 (Tue May 26 2020 20:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
+- [x] `cs-to-me.md` — 我對資工的興趣產生 (Mon Dec 02 2019 12:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `cv/3d-pointcloud-project-to-2d-image.md` — 3D Pointcloud Projection on 2D Image in C++ (Wed Oct 01 2025 20:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `cv/bag-of-visual-words.md` — 使用 Bag of Visual Words 做圖片分類 (Sat Jun 20 2020 14:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `cv/camera-calibration.md` — 二維模式相機校正 (2D Pattern Camera Calibration) (Mon Apr 06 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
@@ -110,7 +110,7 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `experience-of-science-class-entrance-exam.md` — 考科學班的心得和方針 (Mon Jul 13 2015 23:40:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `exposure-notification.md` — 「台灣社交距離」App 背後技術原理：接觸通知系統與保護隱私的接觸追蹤技術 (Thu May 13 2021 23:25:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `first_servo.md` — 你的第一份大型開源專案--Servo 瀏覽器 (Mon Jan 29 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `freshman_engineer.md` — 菜鳥程式設計師的精進之路 (Tue Apr 09 2019 01:23:39 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `freshman_engineer.md` — 菜鳥程式設計師的精進之路 (Tue Apr 09 2019 01:23:39 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `happy-code-reading/preface.md` — 悅讀源碼 (#0)：序 (Thu Apr 30 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `infectious-disease.md` — 高中科展(二)：傳染病之數學模型與個體導向模擬 (Sun Jul 26 2015 08:24:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `italy/2021-exchange-polimi-arrive-milan-survive.md` — 2021 米蘭理工交換教戰手冊—抵達米蘭與生存篇 (Sat Oct 16 2021 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
@@ -157,7 +157,7 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `shopify/pricing-method.md` — Shopify Pricing 踩雷紀錄：Managed Pricing & Manual Pricing 那邊設定？ (Wed Sep 17 2025 18:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `should-i-give-up-science.md` — 我成績不好，該放棄科學嗎？ (Wed Mar 23 2016 11:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `side-project.md` — Side Project—做自己想用的東西 (Sat Jun 06 2020 08:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `simple-pthread-usage.md` — 簡易 Pthreads 平行化範例與效能分析 (Thu Jul 02 2020 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `simple-pthread-usage.md` — 簡易 Pthreads 平行化範例與效能分析 (Thu Jul 02 2020 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `sir.md` — 傳染病 SIR 模型與機率模型介紹與簡易模擬 (Tue Mar 31 2020 11:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [x] `software-engineer/software-engineer-grow-up-1.md` — 新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗 (Wed Feb 15 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `software-engineer/software-engineer-grow-up-2.md` — 新米工程師進修中（二）： 職場的社會化與生存 (Mon Nov 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
@@ -182,7 +182,7 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [x] `system/spec-accel-opencl-amd-mi50.md` — Run SPEC ACCEL OpenCL benchmarks on AMD MI50 (Fri Aug 14 2020 00:08:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `system/spec-cpu-note.md` — SPEC CPU 2006 安裝執行 (Tue Jun 16 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `the-wind-rises.md` — 動畫＜風起＞心得隨筆 (Sun May 12 2019 01:17:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `thought-about-cs-student.md` — 資工系所學生的基本素養 (Fri Apr 24 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `thought-about-cs-student.md` — 資工系所學生的基本素養 (Fri Apr 24 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `tymphany-interview.md` — 紀錄面試經驗──Tymphany (Fri Jun 02 2017 10:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [x] `unix/dns-setting.md` — Linux/Unix 用指令設定 DNS (Tue Apr 14 2020 11:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [x] `unix/mmap.md` — Use `mmap` to create shared objects (Wed Nov 20 2019 11:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
@@ -192,5 +192,5 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `weather_bot.md` — 來寫個氣象機器人吧！ (Mon May 21 2018 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `web/cgi.md` — 簡明 CGI 原理與實作 (Fri Jan 24 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
 - [ ] `web/js-parallel-worker-sharedarraybuffer.md` — JavaScript 平行化使用 Web Worker、SharedArrayBuffer、Atomics (Fri Feb 07 2020 15:01:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
-- [ ] `why-dont-choose-cs.md` — 為甚麼大學志願不該填資工系？ (Thu Jul 23 2020 07:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜
+- [x] `why-dont-choose-cs.md` — 為甚麼大學志願不該填資工系？ (Thu Jul 23 2020 07:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JP ✅, key ✅, src:zh
 - [ ] `windows-working-env.md` — Windows 平台打造極致の程式開發工作環境 (Sun Jun 14 2020 00:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JP ⬜, key ⬜

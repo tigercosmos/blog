@@ -2,6 +2,8 @@
 title: 程式設計入門—用對方法的學習指南
 date: 2020-05-26 20:01:00
 tags: [資工, computer science, 程式, beginner, 程式設計入門, 學習指南]
+lang: zh
+translation_key: code-beginner
 ---
 
 ## 前言
