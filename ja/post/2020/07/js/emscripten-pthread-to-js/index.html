@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+<html lang="ja">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="browser,browsers,c,pthread,parallel programming,效能分析,平行化,JavaScript,web worker,nodejs," />
+    <meta name="description"
+        content="本記事では、Emscripten を使って C/C++ の Pthread を Web Worker と WebAssembly に変換する方法を紹介し、(1) ネイティブ C (2) Emscripten 生成の JS/WASM (3) JavaScript で直接書いた Web Worker の 3 つのケースで性能を比較します。-O3 最適化を有効にすると、Native C は Pthread→WASM より約 30% 速く、Pthread→WASM は純粋な Web Worker（JS）と概ね同程度です。" />
+    <title>Neutrino&#39;s Blog: Emscripten で Pthread を JavaScript に変換し、性能を分析する </title>
+    
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2020/07/js/emscripten-pthread-to-js/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2020/07/js/emscripten-pthread-to-js/">
+        
+            <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/post/2020/07/js/emscripten-pthread-to-js/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/07/js/emscripten-pthread-to-js/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/ja/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/ja/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">ja</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2020/07/js/emscripten-pthread-to-js/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2020/07/js/emscripten-pthread-to-js/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="ja">ja</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        Emscripten で Pthread を JavaScript に変換し、性能を分析する
+    </h2>
+    
+    <ul class="post-date">
+        <li>
+            2020-07-07
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2020/07/js/emscripten-pthread-to-js/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2020/07/js/emscripten-pthread-to-js/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="ja">ja</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="概要"><a class="header-anchor" href="#概要">¶ </a>概要</h2>
+<p>Emscripten は C/C++ を WebAssembly に変換できるツールです。裏側では LLVM を経由して変換し、Pthread の変換もサポートしています。Pthread は JavaScript の Web Worker と WebAssembly に変換されます。さらに OpenGL を WebGL に変換することもでき、ブラウザ上でネイティブに近い性能でプログラムを動かせます。</p>
+<p>本記事の焦点は、Pthread を Web Worker + WebAssembly に変換する部分です。実際に例題プログラムを用意して変換してみます。ただ、良いテストプログラムを見つけるのは簡単ではないので、変換テスト用に π を計算する Pthread の平行プログラムを書きました。</p>
+<p>まずは Emscripten で Pthread を JS に変換する方法を紹介します。公式ドキュメント通りに進める過程でいくつか落とし穴に遭遇したので、同じ罠に落ちないように記録しておきます。その後、(1) ネイティブ C (2) Emscripten が生成した JS/WASM (3) JavaScript で直接書いた Web Worker の 3 ケースで性能差を分析します。</p>
+<span id="more"></span>
+<h2 id="Pthread-の例題プログラム"><a class="header-anchor" href="#Pthread-の例題プログラム">¶ </a>Pthread の例題プログラム</h2>
+<p>例題は、Pthread を使って π を平行に計算する小さなプログラムです。これを選んだ理由はいくつかありますが、平行プログラムで重要なのは「スレッドを作れるか」「共有メモリを使えるか」「ロックできるか」「他スレッドを待てるか」といった基本を確認することです。この π 計算の Pthread プログラムは、ちょうどそれらの要件を満たしています。</p>
+<p>紙幅の都合上、Pthread の詳細は以前の記事「<a href="/post/2020/07/simple-pthread-usage/">簡易 Pthreads 平行化範例與效能分析</a>」を参照してください。</p>
+<p>pi.c:</p>
+<pre><code class="language-c">// pi.c
+#include &lt;pthread.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define NUMTHRDS 4
+#define MAGNIFICATION 1e9
+
+typedef struct
+&#123;
+   int thread_id;
+   int start;
+   int end;
+   double *pi;
+&#125; Arg;
+
+pthread_t callThd[NUMTHRDS];
+pthread_mutex_t mutexsum;
+
+void *count_pi(void *arg)
+&#123;
+
+   Arg *data = (Arg *)arg;
+   int thread_id = data-&gt;thread_id;
+   int start = data-&gt;start;
+   int end = data-&gt;end;
+   double *pi = data-&gt;pi;
+
+   double x;
+   double local_pi = 0;
+   double step = 1 / MAGNIFICATION;
+   for (int i = start; i &lt; end; i++)
+   &#123;
+      x = (i + 0.5) * step;
+      local_pi += 4 / (1 + x * x);
+   &#125;
+
+   local_pi *= step;
+
+   pthread_mutex_lock(&amp;mutexsum);
+   *pi += local_pi;
+   pthread_mutex_unlock(&amp;mutexsum);
+
+   printf(&quot;Thread %d did %d to %d:  local Pi=%lf global Pi=%.10lf\n&quot;, thread_id, start,
+          end, local_pi, *pi);
+
+   pthread_exit((void *)0);
+&#125;
+
+int main(int argc, char *argv[])
+&#123;
+   pthread_mutex_init(&amp;mutexsum, NULL);
+
+   pthread_attr_t attr;
+   pthread_attr_init(&amp;attr);
+   pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);
+
+   double *pi = malloc(sizeof(*pi));
+   *pi = 0;
+
+   int part = MAGNIFICATION / NUMTHRDS;
+
+   Arg arg[NUMTHRDS];
+   for (int i = 0; i &lt; NUMTHRDS; i++)
+   &#123;
+      arg[i].thread_id = i;
+      arg[i].start = part * i;
+      arg[i].end = part * (i + 1);
+      arg[i].pi = pi;
+      pthread_create(&amp;callThd[i], &amp;attr, count_pi, (void *)&amp;arg[i]);
+   &#125;
+
+   pthread_attr_destroy(&amp;attr);
+
+   void *status;
+   for (int i = 0; i &lt; NUMTHRDS; i++)
+   &#123;
+      pthread_join(callThd[i], &amp;status);
+   &#125;
+
+   printf(&quot;Pi =  %.10lf \n&quot;, *pi);
+
+   free(pi);
+
+   pthread_mutex_destroy(&amp;mutexsum);
+   pthread_exit(NULL);
+&#125;
+</code></pre>
+<h2 id="Emscripten-のダウンロード"><a class="header-anchor" href="#Emscripten-のダウンロード">¶ </a>Emscripten のダウンロード</h2>
+<p>Emscripten を使うには、まず GitHub のリポジトリを取得します。事前に Git をインストールしておいてください。</p>
+<pre><code class="language-shell"># emsdk repo を取得
+git clone https://github.com/emscripten-core/emsdk.git
+
+# ディレクトリに入る
+cd emsdk
+</code></pre>
+<p>次に、手順に従って実行します：</p>
+<pre><code class="language-shell"># 最新 SDK をインストール
+./emsdk install latest
+
+# 最新 SDK を有効化
+./emsdk activate latest
+
+# 環境変数を設定
+source ./emsdk_env.sh
+</code></pre>
+<p>一度インストール・有効化すれば、以降 Emscripten を使うたびに <code>emsdk</code> ディレクトリで <code>source ./emsdk_env.sh</code> を実行するだけで済みます。</p>
+<p>毎回環境変数を設定したくない場合は <code>.bashrc</code> に <code>source ./emsdk_env.sh</code> を追加する方法もあります。ただし、この設定は NodeJS のパスを上書きすることがあるため、あまりおすすめしません。</p>
+<h2 id="Emscripten-の入門"><a class="header-anchor" href="#Emscripten-の入門">¶ </a>Emscripten の入門</h2>
+<p><code>emcc</code> / <code>em++</code> は Emscripten のフロントエンドです（Clang と LLVM の関係のようなものです）。やや抽象的ですが、要するにこのコマンドで C/C++ を WebAssembly（WASM）へコンパイルできます。</p>
+<p>簡単な例：</p>
+<pre><code class="language-c">// hello.c
+#include &lt;stdio.h&gt;
+
+int main() &#123;
+  printf(&quot;hello, world!\n&quot;);
+  return 0;
+&#125;
+</code></pre>
+<p>コンパイル：</p>
+<pre><code class="language-shell">$ emcc hello.c
+</code></pre>
+<p>これにより <code>a.out.js</code> と <code>a.out.wasm</code> が生成されます。現在、WASM はブラウザでも NodeJS でも JavaScript による起動が必要なためです。</p>
+<pre><code class="language-shell">$ emcc hello.c -o hello.html
+</code></pre>
+<p>HTML を出力することもできます。この場合、ブラウザで開けるサンプルになり、ページ内の仮想ターミナルでプログラムの実行結果を確認できます。</p>
+<p>注意点として、HTML を出力した場合はローカルサーバを立ててページを開く必要があります。これはブラウザが <code>file://</code> の XHR リクエストを許可しないためです。また Emscripten は HTTP ヘッダのファイルタイプにも要求があり、そこそこ面倒です。詳細は Emscripten 公式ドキュメントを参照してください。</p>
+<p>より詳しい使い方は <a target="_blank" rel="noopener" href="https://emscripten.org/docs/getting_started/Tutorial.html#emscripten-tutorial">Emscripten の Tutorial</a> を参照してください。</p>
+<h2 id="Emscripten-で-Pthread-をコンパイルする"><a class="header-anchor" href="#Emscripten-で-Pthread-をコンパイルする">¶ </a>Emscripten で Pthread をコンパイルする</h2>
+<p>次に <code>pi.c</code> をコンパイルします。公式ドキュメントによると、Pthread をコンパイルするには <code>-s USE_PTHREADS=1</code> を付けます。</p>
+<pre><code class="language-shell">$ emcc pi.c -s USE_PTHREADS=1
+</code></pre>
+<p>この出力を実行してみましょう（NodeJS では <code>--experimental-wasm-threads --experimental-wasm-bulk-memory</code> が必要です）：</p>
+<pre><code>$ node  --experimental-wasm-threads --experimental-wasm-bulk-memory a.out.js
+
+// 完全に無反応
+</code></pre>
+<p>はい、固まりました。</p>
+<p>GitHub で質問して分かったのですが、これは Emscripten の仕組みに起因する問題です（詳細は私も完全には理解していません）。私が提出した <a target="_blank" rel="noopener" href="https://github.com/emscripten-core/emscripten/issues/11543#issuecomment-654317178">issue</a> を参照してください。要するに、解決策は 3 つあります：</p>
+<ol>
+<li><code>-s PROXY_TO_PTHREAD</code> を付けてコンパイルする</li>
+<li><code>-s PTHREAD_POOL_SIZE=N</code>（N &gt; 0）を付けてコンパイルする</li>
+<li><code>main()</code> を <code>emscripten_set_main_loop()</code> に置き換える</li>
+</ol>
+<p>ここでは次のようにコンパイルします：</p>
+<pre><code class="language-shell">$ emcc pi.c  -s USE_PTHREADS=1  -s PTHREAD_POOL_SIZE=4
+</code></pre>
+<p>これで正常に動きます！</p>
+<pre><code>$ node  --experimental-wasm-threads --experimental-wasm-bulk-memory a.out.js
+Thread 1 did 250000000 to 500000000:  local Pi=0.874676 global Pi=0.8746757835
+Thread 2 did 500000000 to 750000000:  local Pi=0.719414 global Pi=1.5940897827
+Thread 0 did 0 to 250000000:  local Pi=0.979915 global Pi=2.5740044352
+Thread 3 did 750000000 to 1000000000:  local Pi=0.567588 global Pi=3.1415926536
+Pi =  3.1415926536」」
+</code></pre>
+<p>当初は Pthread の基本構文の多くが動かず、本当に焦りました。正直、ドキュメントに問題があると思いますし、開発者側からも改善が必要だとする <a target="_blank" rel="noopener" href="https://github.com/emscripten-core/emscripten/issues/11554">issue</a> が出ています。</p>
+<h2 id="性能分析"><a class="header-anchor" href="#性能分析">¶ </a>性能分析</h2>
+<p>次は、同じ π 計算の平行ロジックについて、(1) ネイティブ pthread (2) pthread→WASM (3) JS の Web Worker の 3 ケースで性能差を測ります。</p>
+<p>(1)、(2) は本記事の <code>pi.c</code> と Emscripten が生成した WASM を使い、(3) は以前の記事「<a href="/post/2020/06/js/web-worker-evaluation/#NodeJS"><br>
+Evaluation of Web Worker for Parallel Programming with Browsers, NodeJS and Deno</a>」にある JS Web Worker のコードを使います。紙幅の都合で (3) のコードはここでは再掲しません。興味のある方は記事を参照してください。</p>
+<p>3 つの実装は基本的に同じロジックで、総ループ回数も同一、スレッド数も同一です。実験環境は Windows 10 の WSL 1（Ubuntu 20.04）、CPU は AMD Ryzen 7 2700X 3.7 GHz（8 コアだが 4 スレッドのみ使用）です。NodeJS は v12.18、emcc は v1.39 を使用しました。gcc と emcc はどちらもデフォルトの -O2 最適化です。本記事の結果は、以前の <a href="/post/2020/06/js/web-worker-evaluation/">Evaluation of Web Worker</a> とも比較できます（NodeJS の実行結果を基準にできます）。</p>
+<p>唯一の違いは、(3) のコードが整数型で π を扱っている点です。SharedArrayBuffer を Atomics（ロック）と組み合わせる場合、整数型のバッファしか使えません。浮動小数点を扱うにはエンコードが必要ですが、本実験では型変換（エンコード）は行いません。</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Time(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pthread</td>
+<td>0.751</td>
+</tr>
+<tr>
+<td>em2wasm</td>
+<td>1.174</td>
+</tr>
+<tr>
+<td>js</td>
+<td>0.486</td>
+</tr>
+</tbody>
+</table>
+<p>そして、JS 版がとんでもなく速いという結果になりました。信じがたいです！</p>
+<p>後から考えると、整数演算は浮動小数点演算よりずっと速い可能性がありますし、精度も違います。そこで公平性のために、<code>pi.c</code> の <code>double* pi</code> を <code>unsigned* pi</code> に変更し、C 側もいったん拡大して π を計算し最後に割り戻すようにしました。このバージョンを <code>pi2.c</code> とします。JavaScript で浮動小数点を計算するときは <code>double</code> なので、元の C の <code>double</code> と精度は一致します。ところが、変更後の <code>pi2.c</code> の速度はほぼ変わらず、むしろ少し遅くなって 0.77s でした。</p>
+<p>次に「mutex ロックが遅いのでは」と考えました。JS 側は Atomics を使っているので、<code>pi2.c</code> を <code>atomic_fetch_add_explicit</code> によるロックへ変更し、<code>pi3.c</code> としました。結果は 0.755s で、ほとんど差がありません。ただ、考えてみれば当然で、mutex は確かに遅いですが、差が顕著になるにはもっと倍率が必要です。</p>
+<p>その後 <code>perf</code> で C コードを見たところ、次のようになっていました：</p>
+<pre><code class="language-shell">       │     local_pi += 4 / (1 + x * x);
+       │       movsd     -0x8(%rbp),%xmm0
+  0.02 │       mulsd     -0x8(%rbp),%xmm0
+  0.02 │       movsd     _IO_stdin_used+0x60,%xmm1
+  0.02 │       addsd     %xmm1,%xmm0
+  0.13 │       movsd     _IO_stdin_used+0x68,%xmm1
+       │       divsd     %xmm0,%xmm1
+ 13.20 │       movapd    %xmm1,%xmm0
+  0.07 │       movsd     -0x28(%rbp),%xmm1
+ 34.67 │       addsd     %xmm1,%xmm0
+ 42.64 │       movsd     %xmm0,-0x28(%rbp) 
+</code></pre>
+<p>なるほど！以前の記事「<a href="/post/2020/07/simple-pthread-usage/">簡易 Pthreads 平行化範例與效能分析</a>」でこの問題を指摘していたのを忘れていました。-O2 はなぜかメモリ処理に時間を使い過ぎる一方、-O3 ではその問題がありません。</p>
+<p>そこで <code>pi3.c</code> を -O3 でコンパイルして試しました：</p>
+<pre><code class="language-shell">$ time gcc pi3.c -lpthread -g -O3
+real    0m0.177s
+$ time ./a.out
+real    0m0.350s
+</code></pre>
+<p>実行時間だけ見ると 0.350s で、ようやく JS より速くなりました。しかし JS は JIT です。C のコンパイル時間 0.177s も含めると合計 0.527s になり、JS の 0.486s より遅いです。もう降参です。V8、強すぎる。いったいどうやってコンパイルしているんだ！</p>
+<p>そこで、<code>pi2.c</code>（あえて pthread の mutex を測る）を使い、gcc と emcc の両方で -O3 を有効にしてもう一度計測しました：</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Time(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pthread</td>
+<td>0.346</td>
+</tr>
+<tr>
+<td>em2wasm</td>
+<td>0.525</td>
+</tr>
+<tr>
+<td>js</td>
+<td>0.504</td>
+</tr>
+</tbody>
+</table>
+<p>ようやく期待通りの結果になりました。気持ちいい！</p>
+<p>Pthread を Web Worker + WASM に変換した場合の性能は、JS で直接 Web Worker を書く場合よりほんの少し遅い程度です。それでも V8 は本当にすごいです。gcc と emcc を -O3 にするとコンパイル時間が長くなりますが、V8 の「コンパイル＋実行」時間は gcc の「コンパイル＋実行」より速いです。プログラムが小さいためだと推測しています。より大きなプログラムであれば、C と JS の性能差はより顕著になるはずです。</p>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
+<p>本記事では、Emscripten を使って C/C++ の Pthread を Web Worker と WebAssembly に変換する方法を紹介し、(1) ネイティブ C (2) Emscripten 生成の JS/WASM (3) JavaScript で直接書いた Web Worker の 3 つのケースで性能を比較しました。-O3 最適化を有効にすると、Native C は Pthread→WASM より約 30% 速く、Pthread→WASM は純粋な Web Worker（JS）と概ね同程度です。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/ja/tags/browser/">
+                browser
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/browsers/">
+                browsers
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/c/">
+                c
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/pthread/">
+                pthread
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/parallel-programming/">
+                parallel programming
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/">
+                效能分析
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/">
+                平行化
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/javascript/">
+                JavaScript
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/web-worker/">
+                web worker
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/nodejs/">
+                nodejs
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%A6%81"><span class="toc-text">概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pthread-%E3%81%AE%E4%BE%8B%E9%A1%8C%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0"><span class="toc-text">Pthread の例題プログラム</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Emscripten-%E3%81%AE%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89"><span class="toc-text">Emscripten のダウンロード</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Emscripten-%E3%81%AE%E5%85%A5%E9%96%80"><span class="toc-text">Emscripten の入門</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Emscripten-%E3%81%A7-Pthread-%E3%82%92%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%AB%E3%81%99%E3%82%8B"><span class="toc-text">Emscripten で Pthread をコンパイルする</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="toc-text">性能分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/ja/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        C++で3D点群を2D画像へ投影する
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2023/11/python/2023pycon-apac-sprint/">
+        PyCon APAC 2023 の Sprint で初めて CPython に Pull Request を出した話
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2020/">2020</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2019/">2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/beginner/" rel="tag">beginner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/growing-up/" rel="tag">growing up</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/software-engineering/" rel="tag">software engineering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/the-clean-coder/" rel="tag">the clean coder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%9F%BA%E6%9C%AC%E7%B4%A0%E9%A4%8A/" rel="tag">基本素養</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%B8/" rel="tag">大學</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%AD%B8%E7%BF%92%E6%8C%87%E5%8D%97/" rel="tag">學習指南</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%83%B3%E6%B3%95/" rel="tag">想法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%A0%A1%E7%B3%BB%E9%81%B8%E6%93%87/" rel="tag">校系選擇</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A0%94%E7%A9%B6%E6%89%80/" rel="tag">研究所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A8%8B%E5%BC%8F/" rel="tag">程式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88%E5%85%A5%E9%96%80/" rel="tag">程式設計入門</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B3%87%E8%A8%8A%E5%B7%A5%E7%A8%8B/" rel="tag">資訊工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B/" rel="tag">軟體工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB/" rel="tag">軟體工程師</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

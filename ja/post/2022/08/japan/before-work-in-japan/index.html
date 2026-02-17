@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+
+
+<html lang="ja">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="日本,東京,仕事," />
+    <meta name="description"
+        content="日本で内定をもらってから渡航前後に必要だった各種手続き（CoE、ERFS、ビザ、住民票、My Number、免許、銀行口座など）を、東京での実体験ベースでまとめます。" />
+    <title>Neutrino&#39;s Blog: 2022年 東京で働くための手続き完全ガイド </title>
+    
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2022/08/japan/before-work-in-japan/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2022/08/japan/before-work-in-japan/">
+        
+            <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/post/2022/08/japan/before-work-in-japan/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2022/08/japan/before-work-in-japan/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/ja/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/ja/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">ja</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2022/08/japan/before-work-in-japan/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2022/08/japan/before-work-in-japan/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="ja">ja</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        2022年 東京で働くための手続き完全ガイド
+    </h2>
+    
+    <ul class="post-date">
+        <li>
+            2022-08-19
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2022/08/japan/before-work-in-japan/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2022/08/japan/before-work-in-japan/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="ja">ja</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p>本記事では、日本で内定をもらってから、渡航前と到着後に必要だった各種手続きをまとめます。在留資格認定証明書（CoE）、受付済証（ERFS）、入国ビザ、在留カードの住所登録、住民票、個人番号（My Number）、運転免許、銀行口座などが対象です。内容は主に東京での体験に基づいているため、地域によって多少差がある可能性があります。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/185803054-3f6f80d2-846c-4716-8e2c-3bc9abe28b88.png" alt="浅草寺 雷門"></p>
+<p>（浅草寺 雷門, from <a target="_blank" rel="noopener" href="https://commons.wikimedia.org/wiki/File:Senso-ji_Kaminarimon_201503a.jpg">Wikipedia</a>, CC BY-SA 3.0）</p>
+<h2 id="渡航前"><a class="header-anchor" href="#渡航前">¶ </a>渡航前</h2>
+<p>仕事が決まったら、まず雇用契約を結びます。次にバックグラウンドチェックがあり、その後に在留資格認定証明書（Certificate of Eligibility, CoE）の手続きが始まります。CoE が取れたら、会社が受付済証（ERFS Certificate）の手続きをしてくれます。CoE と ERFS が揃って初めて、日台交流協会でビザ申請ができます。</p>
+<h3 id="オファー（内定）獲得"><a class="header-anchor" href="#オファー（内定）獲得">¶ </a>オファー（内定）獲得</h3>
+<p>仕事の探し方については、以前の記事「<a href="/post/2022/06/japan/new-grad-find-swe-job-in-japan/">2022 海外新卒找日本東京軟體工程師工作經驗分享</a>」も参考になります。工学系の職種全般に応用できる内容だと思います。日本は理工系人材を好み、かつ不足しています。日本で働きたいという意志がある人は、必ず仕事が見つかると思います。</p>
+<h3 id="バックグラウンドチェック"><a class="header-anchor" href="#バックグラウンドチェック">¶ </a>バックグラウンドチェック</h3>
+<p>バックグラウンドチェックが必ずあるかどうかは分かりませんが、一般的には多くの会社が実施するのではないかと思います。私の会社では第三者ベンダーに委託しており、相手のサイトで経歴情報を入力し、学士・修士の卒業証明書を提出しました。職歴がある場合は、前職に電話して確認されることもあるようです。</p>
+<h3 id="CoE-と-ERFS"><a class="header-anchor" href="#CoE-と-ERFS">¶ </a>CoE と ERFS</h3>
+<p>日本のビザ手続きはざっくり言うと、「まず日本側が居住資格の審査をして CoE を出し、その後に自国で入国ビザを申請する」という順序です。これは私がイタリアに行ったときと真逆で、イタリアではビザ申請時に渡航可否を確認され、現地到着後に滞在許可証を作る流れでした。</p>
+<p>CoE は会社が手続きをしてくれます。必要書類は 3 つだけでした。</p>
+<ul>
+<li>申請書（会社が用意）</li>
+<li>学歴証明（写真またはスキャン）</li>
+<li>証明写真データ（後の在留カードの写真になります）</li>
+</ul>
+<p>なお、私の在留資格は「高度専門職１号ロ」だったので、種類によって必要書類が違う可能性はあります。</p>
+<p>流れはだいたい以下のとおりです。</p>
+<ol>
+<li>CoE 申請を東京入管に提出（1〜2 カ月）</li>
+<li>入管が CoE を会社に返送</li>
+<li>会社が DHL で台湾へ送付</li>
+<li>会社が ERFS を登録</li>
+</ol>
+<p>「高度専門職１号ロ」は優先審査のはずで、通常なら 2 週間程度で出るはずですが、2022 年は日本が再開した直後で大渋滞でした。私はほぼ 1 カ月後に CoE を受け取りました（発行自体は 2 週間程度らしいが、会社からの連絡が 1 カ月近く後）。紙 1 枚をひたすら郵送するだけで、正直かなり無駄だと思います。審査に通ったら電子ファイルで良いのでは、と思いました。とはいえ、会社が発送したという連絡から 2 日くらいで家に届きました。荷物には 2 枚の紙が入っていて、1 枚は CoE 原本、もう 1 枚は高度人材の仮スコア結果でした（私の場合、Mujin が 20 点加点してくれたので一発で 80 点😆）。</p>
+<img src="https://user-images.githubusercontent.com/18013815/185729222-805d6a0f-66f9-4234-a905-0ff1a3e4278f.jpg" alt="在留許可" width=50%>
+<p>（CoE の例）</p>
+<p>同時に会社が ERFS（当時は保険的な扱いの要件のようなもの）も登録してくれ、ERFS の PDF が届きました。</p>
+<img src="https://user-images.githubusercontent.com/18013815/185729360-01e1379d-fa2f-4108-981f-8f66d939f314.jpg" alt="受付濟證" width=60%>
+<p>（受付済証の例）</p>
+<h3 id="入国ビザ申請"><a class="header-anchor" href="#入国ビザ申請">¶ </a>入国ビザ申請</h3>
+<p>2022 年当時は、CoE を取っても油断できませんでした。日台交流協会はビザ申請者が多すぎてパンクしており、まずメールで予約を取る必要がありました。就労ビザの場合は CoE と ERFS の両方を提示しないと予約自体が取れません。早く渡航したい人は、会社に早めに書類を出してもらい、届いた瞬間にすぐ予約メールを送るのが重要です。私は 2 営業日で返信が来ましたが、ネットの体験談では 1〜3 日と幅がありました。</p>
+<p>私は 6 月末に CoE を受け取り、7 月初旬に予約メールを送った時点で、すでに 8 月初旬まで埋まっていました。状況はさらに悪化しているはずです。幸い 7 月はドイツ旅行に行っていたので、台湾でただ待つだけにならずに済みました。</p>
+<p><a target="_blank" rel="noopener" href="https://www.koryu.or.jp/tw/news/?itemid=2901&amp;dispmid=4266">規定</a> によると、コピーはすべて片面印刷の A4 です。</p>
+<ul>
+<li>ビザ申請書（6 カ月以内に撮影した 2 インチの白背景証明写真を貼付）<br>
+申請者が署名（パスポート署名と一致）</li>
+<li>パスポート原本と顔写真ページのコピー</li>
+<li>身分証原本（第三国籍の場合は居留証）と両面コピー</li>
+<li>在留資格認定証明書（CoE）原本と両面コピー</li>
+<li>受付済証（ERFS）</li>
+</ul>
+<p>中国語の申請書は訳が微妙な箇所があります。「勤務先名称及地址」は「今働いている勤務先」を指すのに、私は最初「これから行く会社」だと誤解しました。「在日保証人」は会社名で OK（性別や誕生日などは会社なので N/A でよい）です。「住所」は宿泊予定ホテルでも良いし、会社に確認しても良いです。私は会社が宿を用意してくれていましたが、住所は ERFS に書かれている住所（別のホテル）に合わせました。フォームにない項目は N/A を書き、別名がない場合でも N/A を埋めます。申請書が中国語なので中国語で書いてもよいはずですが、ビザ申請では英語で統一することをおすすめします（特に住所、会社名など）。</p>
+<p>予約日に協会へ行き、書類を揃えて並ぶと、待ち時間は 30 分程度でした。窓口は 5 分ほどで終わり、3 営業日後に受け取りに来るよう言われました。受け取りの日も 30 分ほど並び、ようやく待ち望んだビザを手に入れました。</p>
+<h3 id="PCR-と-MySOS"><a class="header-anchor" href="#PCR-と-MySOS">¶ </a>PCR と MySOS</h3>
+<blockquote>
+<p>Covid-19 後の時代に読んでいる場合は、このセクションは飛ばして大丈夫です。</p>
+</blockquote>
+<p>当時は渡航 72 時間前の PCR が必要でした。日台交流協会が認める医療機関のリストがあり、近くの対応機関を確認する必要があります。また、日本側は指定の PCR フォーマットも要求していました。指定外でも要件情報が揃っていればよいとは書かれていましたが、安全のため指定フォーマットを使うのが無難です。</p>
+<p>台北榮總での経験としては、フライト 2 日前に PCR を予約し、翌日に結果を受け取れました。日本の指定フォームを自分で印刷しておき、結果を受け取った後にそのフォームを持って「適航証明」の手続きをしました。台北榮總の PCR 手続きは非常に複雑で、ユーザー体験は最悪でした。ついでに愚痴を言うと、世界で PCR が NT$2,000 を超える国は見たことがないのに、台湾は NT$3,500 🙃。とはいえ、日本側が PCR を要求し続けていたのも時代遅れだと思います。</p>
+<p>PCR 結果が出たら「<a target="_blank" rel="noopener" href="https://www.hco.mhlw.go.jp/manual/jp.html">MySOS</a>」アプリを入れます。これは入国時に日本政府が使用を求めていたアプリです。MySOS で登録を行い（中国語 UI があるので詳細説明は省略します）、基本情報とフライト情報を入力し、ワクチン接種記録（私は 3 回ともイタリアで接種したのでイタリアの証明）をアップロードし、PCR 原本と日本形式のフォームもアップロードします。問題がなければ MySOS が「青」になり、到着後の手続きが早くなります。</p>
+<h3 id="外貨決済カードと円の両替"><a class="header-anchor" href="#外貨決済カードと円の両替">¶ </a>外貨決済カードと円の両替</h3>
+<p>日本に来ると最初は何かとお金がかかります。日本の口座もなく、給料もまだ入らないので、台湾で外貨決済ができるカード（いわゆる「双幣卡」）を作り、ある程度の円現金も持ってくると安心です。私は玉山の双幣卡を使っていますが、ヨーロッパではユーロ、日本では円で使ってきて、特に困ったことはありません。基本的にカード決済できるところはカードで払っています（商業施設、公的機関、通信など）。現金は 15 万円を持ってきました。台湾から出国する際、外貨で USD 10,000 相当を超える場合は事前申告が必要なので注意してください。給料が入るまでの 1 カ月強で、生活費・各種手数料・生活用品などで 20 万円程度は使う見込みでした（これは家賃を含みません）。</p>
+<h3 id="住まい"><a class="header-anchor" href="#住まい">¶ </a>住まい</h3>
+<p>住まいは会社が短期賃貸を手配してくれたので、台湾にいる間は特に心配しなくて済みました。日本到着後に長期物件を探します。会社は不動産業者と提携しており、希望条件と予算を伝えると候補をいくつか出してくれます。短期は家具付き物件が必要なので高くなりがちで、長期（家具なし）の方が家賃は安いことが多いです。私は会社から徒歩 15 分ほどの 1K を選び、家賃は月 16 万円でした。正直高いですが、築 2 年でとても新しく、家具も揃っていてホテルのようでした。2 カ月だけの仮住まいとしては許容範囲だと思いましたが、その間に本気で長期物件を探しました。長期賃貸は家具なしで、契約は最低 2 年が一般的です。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/185729824-bdda9712-4b54-4ff5-b061-226a3f9e8999.jpg" alt="短租物件範例"><br>
+（短期物件の例）</p>
+<p>会社が手配してくれるとかなり楽です。海外からの賃貸にはリスクがあり、長期物件は実地確認できる方が安全です。また、家賃を自分で立て替えず、後で給与から天引きにできるのも大きいです（実質的に課税所得が減るので節税にもなります）。会社が手配しない場合は、オンラインで物件を選ぶ（例: Suumo）か、到着後しばらくホテルに住んで、できるだけ早く部屋を探すのが良いと思います。</p>
+<h2 id="日本到着後"><a class="header-anchor" href="#日本到着後">¶ </a>日本到着後</h2>
+<p>ようやく日本に到着しましたが、やることはまだ山ほどあります。ざっくり列挙すると、到着後に在留カードを受け取り、市役所で住所登録をし、住民票と個人番号（My Number）を用意し、日本の免許に切り替え、携帯回線を契約し、銀行口座を開設し、家具を揃え、生活環境に慣れる…といった流れです。</p>
+<h3 id="到着と在留カード"><a class="header-anchor" href="#到着と在留カード">¶ </a>到着と在留カード</h3>
+<p>飛行機を降りたら、まず空港の Wi-Fi に接続し、MySOS アプリを開きます。スクリーンショットでは駄目なので注意。空港内はスタッフが多く、動線は 1 本に整理されていて、基本的に前へ進むだけです。体験としては悪くありませんでした。最後に入国審査で CoE を確認されると、その場で在留カードが発行されます。私は 8/14（日）昼に成田で、行列もほとんどなく、書類確認からカード印刷まで 10〜15 分ほどでした。</p>
+<img src="https://user-images.githubusercontent.com/18013815/185730322-b5ffdfa8-495f-426a-a12d-c350a3cb828a.jpg" alt="日本在留卡" width=60%>
+<p>（在留カードの例）</p>
+<p>在留カードをもらっても、最初はまだ「正式に有効」ではありません。住所欄は必ず「未定」になっています。市役所で住所登録をして初めて、合法的に居住している状態になります。</p>
+<p>そして到着当日の一番嬉しかったことは、彼女に会えたことです！ 😊</p>
+<h3 id="住所登録・住民票・個人番号（My-Number）"><a class="header-anchor" href="#住所登録・住民票・個人番号（My-Number）">¶ </a>住所登録・住民票・個人番号（My Number）</h3>
+<p>住所登録は非常に重要です。住所登録をしないと在留カードが有効にならないだけでなく、日本のあらゆる手続きは住所が前提になります。会社は 1 週間後に市役所へ連れて行く予定でしたが、私は携帯回線を早く契約したくて、外出時にネットがないのは困るので、到着翌日に彼女と市役所に行きました。最初の各種手続きは日本語が必要な場面が多く、欧州のように英語でなんとかなるわけではありません。日本語ができない場合は、日本語ができる友人と一緒に行くのが無難です。私は日本語ができないので、基本的に彼女の通訳で進め、スピードはかなり上がりました。</p>
+<p>市役所は居住地の自治体に行きます。例えば私は江東区の短期物件だったので「江東区役所」へ行きました。住所登録に必要だったものは以下だけです。</p>
+<ul>
+<li>パスポート</li>
+<li>在留カード</li>
+<li>300 円 x 2（カード不可の可能性もあるが江東区役所は可。2 は住民票 2 枚分の手数料）</li>
+</ul>
+<p>驚いたのは、住所登録に証明書類が不要だったことです。賃貸契約書などが必要だと思っていましたが不要でした。「ここに住んでいる」と言えば信じてくれる？この仕組みは正直よく分かりません。</p>
+<p>市役所でやることは以下です。</p>
+<ul>
+<li>在留カードの住所登録</li>
+<li>個人番号（My Number）の申請</li>
+<li>住民票を 2 枚発行（戸籍謄本に近いもの。My Number 記載のものは会社提出用、記載なしは免許手続き用）</li>
+</ul>
+<p>会社が保険手続きをしてくれていない場合は国民健康保険の加入が必要になりますが、就労の場合は会社が手配していることが多いと思います。窓口で聞かれたら「国民健康保険は不要」と伝えれば OK です。</p>
+<p>My Number の申請はその場で番号自体は分かりますが、物理カードが欲しい場合は後日通知が郵送され、案内に従って受け取る流れです。当日にカードはもらえません。</p>
+<p>江東区役所で上記を終えるのに、合計 2 時間ほどかかりました。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/185749475-d85666fc-34fa-4ac3-80b9-a74187be9e7c.jpg" alt="江東区役所"></p>
+<p>（江東区役所の待ち状況）</p>
+<p>手続きは意外と面白く、合計 3 つの窓口を回りました。</p>
+<p><img src="https://user-images.githubusercontent.com/18013815/185749619-fa726e65-c4dc-4445-a1d9-1d40492a93b9.jpg" alt="市役所流程圖"></p>
+<p>（市役所のフロー）</p>
+<p>最初に 3 番窓口で申請と書類提出（在留カードも提出）、次に星マークの窓口で在留カードを受け取り、住民票番号を取得、最後に 5 番窓口で住民票を受け取り支払い、という流れでした。自治体によって差はありますが、こうやって複数窓口を回る方式は日本ではよくあり、免許手続きも同じような感覚でした。</p>
+<img width="312" alt="住民票" src="https://user-images.githubusercontent.com/18013815/185775983-2b819885-6b8f-4c51-8b2b-e92a72ea8fed.png">
+<p>（住民票の例）</p>
+<h3 id="日本の運転免許"><a class="header-anchor" href="#日本の運転免許">¶ </a>日本の運転免許</h3>
+<p>日本に 1 年以上滞在して運転するなら、日本の免許が必要です。便利なのは台湾の免許を直接切り替えられる点です。さらに、免許は日本で非常に使い勝手の良い身分証明書で、在留カードと同等レベルで使えます。日本人は基本的に免許を身分証として出します。在留カードを出すと、慣れていないスタッフだと「これで良いのか？」と迷うこともあります。</p>
+<p>先ほどの江東区役所の手続きが終わった直後、「江東運転免許試験場」まで徒歩 10 分もかからなかったので、そのまま免許の切り替えに行きました。次回わざわざ来る手間が省けます。</p>
+<blockquote>
+<p>江東運転免許試験場での切り替えについては、Dcard にも参考になる記事があります：<a target="_blank" rel="noopener" href="https://www.dcard.tw/f/japan_life/p/238426449">#分享 台灣駕照換日本駕照</a></p>
+</blockquote>
+<p>切り替えに必要なものは以下です。</p>
+<ul>
+<li>4,600 円（カード可）</li>
+<li>パスポート（台湾免許取得後の旧パスポートも含む）</li>
+<li>（任意）入出国記録証明</li>
+<li>証明写真（小さいサイズ）</li>
+<li>台湾の運転免許</li>
+<li>免許の日本語翻訳（台湾の監理站で事前取得が一番楽）</li>
+<li>在留カード（住所登録済み）</li>
+<li>住民票（My Number なし）</li>
+</ul>
+<p><img src="https://user-images.githubusercontent.com/18013815/185776257-94de5475-0aae-4c89-8e9e-5985e938a8b6.png" alt="江東運転免許試験場"></p>
+<p>（江東運転免許試験場の様子）</p>
+<p>台湾免許の切り替えには、「台湾で免許を取った後、台湾に 3 カ月以上滞在していること」が要件なので、パスポートの出入国履歴を確認されます。入出国記録証明を用意していれば、旧パスポートを 1 ページずつめくってタイムラインを作る作業を省けます。入出国記録証明があれば旧パスポート不要かは分からないので、安全のため全部持っていくのが良いと思います。私は旧パスポートだけ持って行きましたが、出入国履歴が多くなかったので助かりました。理屈上、自動化ゲートだと出入国の証明が難しいはずですが、私は特に突っ込まれませんでした。なお、台湾の免許は最新のものが必要で、監理站で日本語翻訳を申請するときに一緒にチェックされます。</p>
+<p>試験場ごとに運用が違うこともあるようです。予約が必要なところもありますが、江東は直接行けばよい方式でした。事前にオンラインで確認してから行くのがおすすめです。流れは「窓口に書類提出→審査→支払い→視力検査→免許用写真撮影→呼び出し待ち→受け取り」です。</p>
+<p>窓口での提出は申請書の記入は不要で、「切り替えたい」と言って書類を渡せば OK でした。審査は少し時間がかかり、入出国記録証明があると 2〜3 倍速くなる印象です。視力検査は眼鏡の有無を確認する程度で、私は英語で対応しました。写真は試験場でその場撮影です。撮影前に少し身だしなみを整えられます。免許の印刷待ちが長いので、午前中に行くのが良く、その間に食堂で昼ごはんを食べ、食べ終わる頃に受け取るのがちょうど良いです。</p>
+<p>私は全体で 2 時間ほどで免許を受け取れました。とても嬉しく、来日 2 日目で取れたのでかなり効率的です。数日後に家具を買うときも、レンタカーが使えました。</p>
+<img src="https://user-images.githubusercontent.com/18013815/185800455-85c46906-0450-4bac-a9da-04e224f9ef90.jpg" alt="日本駕照範例" width=60%>
+<p>（日本の免許の例）</p>
+<p>車があるとやはり便利です。例えば無印良品で収納ボックスを配送してもらうと、1 箱で 1,000 円かかりますが、レンタカーは 2 時間で 2,000 円くらいです。ボックスを 3〜4 個買って大型家具も一緒に運ぶなら、レンタカーの方が圧倒的に得です。旅行も当然、車があると楽です。</p>
+<h3 id="携帯回線"><a class="header-anchor" href="#携帯回線">¶ </a>携帯回線</h3>
+<p>日本の大手キャリアは SoftBank、Docomo、AU の 3 社です。ただし料金は驚くほど高く、台湾の中華電信並みです。街中に店舗があるので、外国人がそのまま大手を選びがちですが、個人的には高すぎると思います。</p>
+<p>私は HIS Mobile を使っていて、20GB/月で 2,000 円程度でした。たぶん最安クラスです。Mineo も同程度で、候補になります。MVNO は大手回線を借りているので安い反面、店舗が少なくオンライン契約が中心で、郵送だと SIM の到着に時間がかかります。私は早く SIM が欲しかったので、MVNO の店舗まで電車で行き、その場で契約して即日使えるようにしました。来日 3 日目に上野で 1 時間ほどで終わりました。</p>
+<p>HIS の経験ではパスポートは不要で、身分証は免許を使いました（在留カードでも良いはず）。面白いことに、携帯契約時に「今の電話番号」を書けと言われます。電話がないから契約したいのに謎です。ここは彼女の番号を書きました。注意点として、日本の携帯回線はプロファイルのインストールが必要なことが多く、台湾や欧州のように SIM を挿すだけで使えるわけではありません。SIM の説明書に従えば問題ありません。</p>
+<h3 id="銀行"><a class="header-anchor" href="#銀行">¶ </a>銀行</h3>
+<p>会社が口座開設を手伝ってくれましたが、全ての会社がそうかは分かりません。ただ、外国人が会社の支援なしに口座を作るのはかなり難しいと思います。日本の口座開設は基準が厳しいからです。私が作った三井住友銀行（SMBC）の場合、必要だったのは以下だけです。</p>
+<ul>
+<li>在留カード</li>
+<li>印鑑</li>
+<li>日本の電話番号</li>
+</ul>
+<p>印鑑は台湾の角印でも良いし、日本で買っても良いです。加えて会社は在職証明も用意してくれました。</p>
+<p>会社が SMBC と予約してくれて、営業時間前に手続きしました。台湾でインターンのために口座を作ったときは、自分で営業時間に行っていたので、こういうやり方ができるのは初めて知りました。</p>
+<p>手続きは 1 時間ほどで完了しました。私は日本語ができないので、会社の HR が通訳してくれました。当日に口座は開設されます。通帳は有料で、現代はアプリ運用が多いので私は作りませんでした。キャッシュカードやクレジットカードは数週間後に郵送され、台湾のように当日その場で受け取れるわけではありません。</p>
+<h3 id="交通"><a class="header-anchor" href="#交通">¶ </a>交通</h3>
+<p>東京で電車・地下鉄に乗るなら Suica が便利です。物理カードもありますが、今はスマホでタッチする人が多いです（改札の「IC」マークのところにスマホを近づければ通れます）。iPhone の場合、Wallet を開き、+ を押して交通系カード（Transit Card）を選び、「Suica」を検索すれば作れます。さらにカードの設定で「エクスプレスカード（Express Transit）」を有効にすると、ロック解除なしでタッチできます。定期券を設定する場合は Suica アプリが必要です。</p>
+<p>東京の交通で一番ひどいと思うのは、エリア月額パスがないことです。台北なら月票で地下鉄が乗り放題で、欧州もゾーン内乗り放題が一般的です。しかし東京は基本的に「区間定期」しかなく、別の場所に行くたびに追加料金がかかります。かなり損した気分になります。</p>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
+<p>初めての海外就職でワクワクしていました。本記事では、日本で働き始める際に必要な大小さまざまな手続きを列挙しました。日本生活への適応を少しでも早める助けになれば幸いです。食・衣・遊びについては台湾と近いので、わざわざ説明しなくても良いでしょう。ここで触れていないものとして、税金、年金、病院のかかり方などがありますが、これらは日本でしばらく暮らして初めて直面する問題です。機会があればまた共有します。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/ja/tags/%E6%97%A5%E6%9C%AC/">
+                日本
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/%E6%9D%B1%E4%BA%AC/">
+                東京
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/%E4%BB%95%E4%BA%8B/">
+                仕事
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%A1%E8%88%AA%E5%89%8D"><span class="toc-text">渡航前</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%82%AA%E3%83%95%E3%82%A1%E3%83%BC%EF%BC%88%E5%86%85%E5%AE%9A%EF%BC%89%E7%8D%B2%E5%BE%97"><span class="toc-text">オファー（内定）獲得</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%90%E3%83%83%E3%82%AF%E3%82%B0%E3%83%A9%E3%82%A6%E3%83%B3%E3%83%89%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF"><span class="toc-text">バックグラウンドチェック</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CoE-%E3%81%A8-ERFS"><span class="toc-text">CoE と ERFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A5%E5%9B%BD%E3%83%93%E3%82%B6%E7%94%B3%E8%AB%8B"><span class="toc-text">入国ビザ申請</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PCR-%E3%81%A8-MySOS"><span class="toc-text">PCR と MySOS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%96%E8%B2%A8%E6%B1%BA%E6%B8%88%E3%82%AB%E3%83%BC%E3%83%89%E3%81%A8%E5%86%86%E3%81%AE%E4%B8%A1%E6%9B%BF"><span class="toc-text">外貨決済カードと円の両替</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%8F%E3%81%BE%E3%81%84"><span class="toc-text">住まい</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E6%9C%AC%E5%88%B0%E7%9D%80%E5%BE%8C"><span class="toc-text">日本到着後</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B0%E7%9D%80%E3%81%A8%E5%9C%A8%E7%95%99%E3%82%AB%E3%83%BC%E3%83%89"><span class="toc-text">到着と在留カード</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%8F%E6%89%80%E7%99%BB%E9%8C%B2%E3%83%BB%E4%BD%8F%E6%B0%91%E7%A5%A8%E3%83%BB%E5%80%8B%E4%BA%BA%E7%95%AA%E5%8F%B7%EF%BC%88My-Number%EF%BC%89"><span class="toc-text">住所登録・住民票・個人番号（My Number）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E6%9C%AC%E3%81%AE%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1"><span class="toc-text">日本の運転免許</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%BA%E5%B8%AF%E5%9B%9E%E7%B7%9A"><span class="toc-text">携帯回線</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%8A%80%E8%A1%8C"><span class="toc-text">銀行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E9%80%9A"><span class="toc-text">交通</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/ja/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        C++で3D点群を2D画像へ投影する
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2023/11/python/2023pycon-apac-sprint/">
+        PyCon APAC 2023 の Sprint で初めて CPython に Pull Request を出した話
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2023/11/software-engineer/software-engineer-grow-up-2/">
+        新米エンジニア修行中（2）：職場の社会化とサバイバル
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2020/">2020</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2019/">2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/beginner/" rel="tag">beginner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/growing-up/" rel="tag">growing up</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/software-engineering/" rel="tag">software engineering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/the-clean-coder/" rel="tag">the clean coder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%9F%BA%E6%9C%AC%E7%B4%A0%E9%A4%8A/" rel="tag">基本素養</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%B8/" rel="tag">大學</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%AD%B8%E7%BF%92%E6%8C%87%E5%8D%97/" rel="tag">學習指南</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%83%B3%E6%B3%95/" rel="tag">想法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%A0%A1%E7%B3%BB%E9%81%B8%E6%93%87/" rel="tag">校系選擇</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A0%94%E7%A9%B6%E6%89%80/" rel="tag">研究所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A8%8B%E5%BC%8F/" rel="tag">程式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88%E5%85%A5%E9%96%80/" rel="tag">程式設計入門</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B3%87%E8%A8%8A%E5%B7%A5%E7%A8%8B/" rel="tag">資訊工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B/" rel="tag">軟體工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB/" rel="tag">軟體工程師</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
