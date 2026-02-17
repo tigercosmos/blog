@@ -11,6 +11,7 @@
     <h2 class="post-title">
         <%= page.title %>
     </h2>
+    <% function toSeoLang(lang) { return lang === 'jp' ? 'ja' : lang; } %>
     <ul class="post-date">
         <li>
             <%- date(page.date, "YYYY-MM-DD") %>
@@ -24,9 +25,9 @@
             <span class="post-languages-label">Lang</span>
             <% translationEntries.forEach(function (entry, idx) { %>
                 <% if (entry.isCurrent) { %>
-                    <span class="translation-lang is-current" lang="<%= entry.lang %>"><%= entry.lang %></span>
+                    <span class="translation-lang is-current" lang="<%= toSeoLang(entry.lang) %>"><%= entry.lang %></span>
                 <% } else { %>
-                    <a class="translation-lang" href="<%- entry.path %>" hreflang="<%= entry.lang %>" lang="<%= entry.lang %>"><%= entry.lang %></a>
+                    <a class="translation-lang" href="<%- entry.path %>" hreflang="<%= toSeoLang(entry.lang) %>" lang="<%= toSeoLang(entry.lang) %>"><%= entry.lang %></a>
                 <% } %>
                 <% if (idx < translationEntries.length - 1) { %>,<% } %>
             <% }) %>

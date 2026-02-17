@@ -41,10 +41,16 @@ function getPostSlugPath(post, lang) {
   const source = post.source.replace(/\\/g, '/');
   const translationDir = hexo.config.translation_post_dir || '_posts_translation';
   const translationPrefix = `${translationDir.replace(/\/$/, '')}/${lang}/`;
+  const legacyTranslationPrefix = (lang === 'ja')
+    ? `${translationDir.replace(/\/$/, '')}/jp/`
+    : null;
   const legacyPrefix = `_posts/${lang}/`;
+  const legacyJpPrefix = lang === 'ja' ? '_posts/jp/' : null;
   let prefix = null;
   if (source.startsWith(translationPrefix)) prefix = translationPrefix;
+  if (!prefix && legacyTranslationPrefix && source.startsWith(legacyTranslationPrefix)) prefix = legacyTranslationPrefix;
   if (!prefix && source.startsWith(legacyPrefix)) prefix = legacyPrefix;
+  if (!prefix && legacyJpPrefix && source.startsWith(legacyJpPrefix)) prefix = legacyJpPrefix;
   if (!prefix) return post.slug;
   const stripped = source.slice(prefix.length).replace(/\.md$/i, '');
   return stripped;

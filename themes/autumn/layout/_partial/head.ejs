@@ -15,10 +15,11 @@
     <% const defaultLang = configuredLangs[0] || 'en'; %>
     <% const hreflangLangs = configuredLangs.filter(function (lang) { return lang && lang !== 'default'; }); %>
     <% const pageLang = page.lang || defaultLang; %>
+    <% function toSeoLang(lang) { return lang === 'jp' ? 'ja' : lang; } %>
     <% const translationEntries = translation_entries(page); %>
     <% if (translationEntries.length > 1) { %>
         <% translationEntries.forEach(function (entry) { %>
-            <link rel="alternate" hreflang="<%= entry.lang %>" href="<%= entry.abs %>">
+            <link rel="alternate" hreflang="<%= toSeoLang(entry.lang) %>" href="<%= entry.abs %>">
         <% }) %>
         <% const defaultEntry = translationEntries.find(function (entry) { return entry.isDefault; }) || translationEntries[0]; %>
         <link rel="alternate" hreflang="x-default" href="<%= defaultEntry.abs %>">
@@ -31,7 +32,7 @@
         <% hreflangLangs.forEach(function (lang) { %>
             <% if (!lang) return; %>
             <% const hrefPath = (lang === defaultLang ? '/' + rel : '/' + lang + '/' + rel).replace(/\/{2,}/g, '/'); %>
-            <link rel="alternate" hreflang="<%= lang %>" href="<%= base + hrefPath %>">
+            <link rel="alternate" hreflang="<%= toSeoLang(lang) %>" href="<%= base + hrefPath %>">
         <% }) %>
         <link rel="alternate" hreflang="x-default" href="<%= base + ('/' + rel).replace(/\/{2,}/g, '/') %>">
     <% } %>

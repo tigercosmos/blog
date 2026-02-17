@@ -65,8 +65,8 @@ function fmtCheck(x) {
   return x ? '✅' : '⬜';
 }
 
-function fmtDone(enOk, jpOk) {
-  return enOk && jpOk ? '[x]' : '[ ]';
+function fmtDone(enOk, jaOk) {
+  return enOk && jaOk ? '[x]' : '[ ]';
 }
 
 const SKIP_DIR = [
@@ -96,9 +96,10 @@ function main() {
     const rel = relFromPostsDir(absPath);
     const meta = readFrontMatter(absPath);
     const enFile = translationPath('en', rel);
-    const jpFile = translationPath('jp', rel);
+    const jaFile = translationPath('ja', rel);
+    const jpFile = translationPath('jp', rel); // Legacy location, kept for transition.
     const enOk = exists(enFile);
-    const jpOk = exists(jpFile);
+    const jaOk = exists(jaFile) || exists(jpFile);
     return {
       rel,
       title: meta.title,
@@ -106,14 +107,14 @@ function main() {
       sourceLang: meta.lang || '(default)',
       hasKey: Boolean(meta.translationKey),
       enOk,
-      jpOk,
+      jaOk,
     };
   });
 
   const total = rows.length;
-  const doneBoth = rows.filter((r) => r.enOk && r.jpOk).length;
+  const doneBoth = rows.filter((r) => r.enOk && r.jaOk).length;
   const missingEn = rows.filter((r) => !r.enOk).length;
-  const missingJp = rows.filter((r) => !r.jpOk).length;
+  const missingJa = rows.filter((r) => !r.jaOk).length;
   const missingKey = rows.filter((r) => !r.hasKey).length;
 
   const lines = [];
@@ -122,9 +123,9 @@ function main() {
   lines.push('This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.');
   lines.push('');
   lines.push(`- Total posts: ${total}`);
-  lines.push(`- Posts with both EN+JP translations: ${doneBoth}`);
+  lines.push(`- Posts with both EN+JA translations: ${doneBoth}`);
   lines.push(`- Missing EN translation files: ${missingEn}`);
-  lines.push(`- Missing JP translation files: ${missingJp}`);
+  lines.push(`- Missing JA translation files: ${missingJa}`);
   lines.push(`- Source posts missing \`translation_key\`: ${missingKey}`);
   lines.push('');
   lines.push('## Posts');
@@ -133,12 +134,12 @@ function main() {
   for (const r of rows) {
     const suffixParts = [];
     suffixParts.push(`EN ${fmtCheck(r.enOk)}`);
-    suffixParts.push(`JP ${fmtCheck(r.jpOk)}`);
+    suffixParts.push(`JA ${fmtCheck(r.jaOk)}`);
     suffixParts.push(`key ${r.hasKey ? '✅' : '⬜'}`);
     if (r.sourceLang && r.sourceLang !== '(default)') suffixParts.push(`src:${r.sourceLang}`);
     const title = r.title ? ` — ${r.title}` : '';
     const date = r.date ? ` (${r.date})` : '';
-    lines.push(`- ${fmtDone(r.enOk, r.jpOk)} \`${r.rel}\`${title}${date} — ${suffixParts.join(', ')}`);
+    lines.push(`- ${fmtDone(r.enOk, r.jaOk)} \`${r.rel}\`${title}${date} — ${suffixParts.join(', ')}`);
   }
 
   fs.writeFileSync(OUT_FILE, `${lines.join('\n')}\n`, 'utf8');

@@ -1,4 +1,5 @@
 <header class="header">
+    <% function toSeoLang(lang) { return lang === 'jp' ? 'ja' : lang; } %>
     <nav class="mobile-menu" style="background: <%- theme.background %>">
         <h3 class="invisibile">
             <a href="<%- url_for_lang('/', page.lang) %>" class="logo">
@@ -46,9 +47,9 @@
                 <div class="translation-menu" aria-label="Translation menu">
                     <% translationEntries.forEach(function (entry) { %>
                         <% if (entry.isCurrent) { %>
-                            <span class="translation-lang is-current" lang="<%= entry.lang %>"><%= entry.lang %></span>
+                            <span class="translation-lang is-current" lang="<%= toSeoLang(entry.lang) %>"><%= entry.lang %></span>
                         <% } else { %>
-                            <a class="translation-lang" href="<%- entry.path %>" hreflang="<%= entry.lang %>" lang="<%= entry.lang %>"><%= entry.lang %></a>
+                            <a class="translation-lang" href="<%- entry.path %>" hreflang="<%= toSeoLang(entry.lang) %>" lang="<%= toSeoLang(entry.lang) %>"><%= entry.lang %></a>
                         <% } %>
                     <% }) %>
                 </div>

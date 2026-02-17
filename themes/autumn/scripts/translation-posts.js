@@ -11,6 +11,10 @@ function getPostDir(config) {
   const dir = config.translation_post_dir || '_posts_translation';
   return dir.endsWith('/') ? dir : `${dir}/`;
 }
+
+function normalizeLang(lang) {
+  return lang === 'jp' ? 'ja' : lang;
+}
 let permalink;
 
 const preservedKeys = {
@@ -76,7 +80,7 @@ function processPost(file) {
       data.source = file.path;
       data.raw = content;
       data.slug = path.substring(0, path.length - extname(path).length);
-      data.lang = file.params.lang;
+      data.lang = normalizeLang(file.params.lang);
 
       if (file.params.published) {
         if (!Object.prototype.hasOwnProperty.call(data, 'published')) data.published = true;
@@ -173,7 +177,7 @@ hexo.extend.processor.register(new Pattern(path => {
     const slashIndex = rest.indexOf('/');
     if (slashIndex === -1) return;
 
-    const lang = rest.substring(0, slashIndex);
+    const lang = normalizeLang(rest.substring(0, slashIndex));
     const postPath = rest.substring(slashIndex + 1);
     if (!lang || !postPath || isHiddenFile(postPath)) return;
 

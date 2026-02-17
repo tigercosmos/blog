@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <% const pageLang = page.lang || (Array.isArray(config.language) ? config.language[0] : config.language); %>
-<html lang="<%= pageLang %>">
+<% function toSeoLang(lang) { return lang === 'jp' ? 'ja' : lang; } %>
+<html lang="<%= toSeoLang(pageLang) %>">
 <%- partial('_partial/head') %>
 
 <body style="background: <%- theme.background %>">
