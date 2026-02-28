@@ -15,7 +15,7 @@ And for grammar, I also want to practice from different angles: read the grammar
 
 Luckily, AI has been advancing rapidly. You've probably heard of ChatGPT and Gemini. In the world of "vibe coding," tools like Codex and Claude Code can help you prototype an app through conversation. Even if you can't write code, you can still explain your requirements clearly, have the AI generate a working version first, and then refine it through back-and-forth iterations until it looks and behaves the way you want.
 
-In this post, I'll share how I used AI tools to build a Japanese learning app that fits my habits exactly. I'll use my own flashcard app as an example: I use it to memorize vocabulary and practice grammar, and I kept tuning it until it felt just right.
+In this post, I'll share how I used AI tools to build a Japanese learning app that fits my habits exactly. Once I had a learning tool tailored to me, studying also became more efficient. I'll use my own flashcard app as an example: I use it to memorize vocabulary and practice grammar, and I kept tuning it until it felt just right.
 
 ![app demo](/img/ai/japanese-learner-demo.png)
 
