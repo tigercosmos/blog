@@ -9,7 +9,7 @@ translation_key: vibe-code-japanese-learning-app
 
 Have you ever had this problem: you want a language-learning tool that feels good to use and fits your workflow? There are plenty of apps online, but each one is missing something, and none of them fully match how you prefer to study.
 
-Take me as an example. When I want to memorize Japanese vocabulary, I've tried a bunch of flashcard apps. The usual flow is: you enter a question, flip the card, and see the answer. But when studying Japanese, I often need to remember three things at once: the kanji, the hiragana, and the corresponding Chinese meaning. Ideally, a single card should show all three fields together. With typical flashcard apps, you usually end up splitting it into two cards, which is actually more annoying.
+Take me as an example. When I want to memorize Japanese vocabulary, I've tried quite a few flashcard apps. The usual flow is: you enter a question, flip the card, and see the answer. But when studying Japanese, I often need to memorize both the kanji and the hiragana at the same time. With a typical flashcard app, I usually have to split this into two cards, but in theory it should be a single card that supports two quiz modes.
 
 And for grammar, I also want to practice from different angles: read the grammar pattern and recall the meaning in Chinese, turn example sentences into fill-in-the-blank drills by blanking out the grammar, or highlight the grammar and quiz myself on the meaning of the whole sentence. This kind of "customize it to match my learning style" requirement is surprisingly hard to satisfy with off-the-shelf software.
 
