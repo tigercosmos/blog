@@ -6,7 +6,7 @@
   <link href="https://tigercosmos.xyz/atom.xml" rel="self"/>
   
   <link href="https://tigercosmos.xyz/"/>
-  <updated>2026-02-17T10:42:47.967Z</updated>
+  <updated>2026-02-28T15:05:48.508Z</updated>
   <id>https://tigercosmos.xyz/</id>
   
   <author>
@@ -17,11 +17,105 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>如何使用 AI 打造一個完全客製化的日語學習 App</title>
+    <link href="https://tigercosmos.xyz/post/2026/02/ai/vibe-code-japanese-learning-app/"/>
+    <id>https://tigercosmos.xyz/post/2026/02/ai/vibe-code-japanese-learning-app/</id>
+    <published>2026-02-28T15:42:09.000Z</published>
+    <updated>2026-02-28T15:05:48.508Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;你是否也有過這種困擾：想找一個好用、順手的語言學習工具？網路上 App</summary>
+        
+      
+    
+    
+    
+    
+    <category term="ai" scheme="https://tigercosmos.xyz/tags/ai/"/>
+    
+    <category term="vibe coding" scheme="https://tigercosmos.xyz/tags/vibe-coding/"/>
+    
+    <category term="日文" scheme="https://tigercosmos.xyz/tags/%E6%97%A5%E6%96%87/"/>
+    
+    <category term="app" scheme="https://tigercosmos.xyz/tags/app/"/>
+    
+    <category term="日文學習" scheme="https://tigercosmos.xyz/tags/%E6%97%A5%E6%96%87%E5%AD%B8%E7%BF%92/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to Build a Fully Customized Japanese Learning App with AI</title>
+    <link href="https://tigercosmos.xyz/en/post/2026/02/ai/vibe-code-japanese-learning-app/"/>
+    <id>https://tigercosmos.xyz/en/post/2026/02/ai/vibe-code-japanese-learning-app/</id>
+    <published>2026-02-28T15:42:09.000Z</published>
+    <updated>2026-02-28T15:05:48.524Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;Have you ever had this problem: you want a language-learning tool that feels good to use and fits your workflow? There are plenty of</summary>
+        
+      
+    
+    
+    
+    
+    <category term="ai" scheme="https://tigercosmos.xyz/tags/ai/"/>
+    
+    <category term="vibe coding" scheme="https://tigercosmos.xyz/tags/vibe-coding/"/>
+    
+    <category term="日文" scheme="https://tigercosmos.xyz/tags/%E6%97%A5%E6%96%87/"/>
+    
+    <category term="app" scheme="https://tigercosmos.xyz/tags/app/"/>
+    
+    <category term="日文學習" scheme="https://tigercosmos.xyz/tags/%E6%97%A5%E6%96%87%E5%AD%B8%E7%BF%92/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>AIで完全に自分好みの日本語学習アプリを作る方法</title>
+    <link href="https://tigercosmos.xyz/ja/post/2026/02/ai/vibe-code-japanese-learning-app/"/>
+    <id>https://tigercosmos.xyz/ja/post/2026/02/ai/vibe-code-japanese-learning-app/</id>
+    <published>2026-02-28T15:42:09.000Z</published>
+    <updated>2026-02-28T15:05:48.530Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;こんな悩みはありませんか：使いやすくて手になじむ語学学習ツールが欲しい。ネット上にはアプリがたくさんありますが、どれも何かが足りず、自分の学習習慣に完全にはフィットしません。&lt;/p&gt;
+&lt;p&gt;私自身の例で言うと、日本語単語を覚えるために、これまでいろいろな単語カード（フラッシ</summary>
+        
+      
+    
+    
+    
+    
+    <category term="ai" scheme="https://tigercosmos.xyz/tags/ai/"/>
+    
+    <category term="vibe coding" scheme="https://tigercosmos.xyz/tags/vibe-coding/"/>
+    
+    <category term="日文" scheme="https://tigercosmos.xyz/tags/%E6%97%A5%E6%96%87/"/>
+    
+    <category term="app" scheme="https://tigercosmos.xyz/tags/app/"/>
+    
+    <category term="日文學習" scheme="https://tigercosmos.xyz/tags/%E6%97%A5%E6%96%87%E5%AD%B8%E7%BF%92/"/>
+    
+  </entry>
+  
+  <entry>
     <title>2025 秋季日本與台灣中階軟體工程師求職經驗分享</title>
     <link href="https://tigercosmos.xyz/post/2025/10/japan/find-swe-job-in-japan-2025/"/>
     <id>https://tigercosmos.xyz/post/2025/10/japan/find-swe-job-in-japan-2025/</id>
     <published>2025-10-20T17:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.967Z</updated>
+    <updated>2026-02-28T15:05:48.517Z</updated>
     
     
       
@@ -53,7 +147,7 @@
     <link href="https://tigercosmos.xyz/en/post/2025/10/japan/find-swe-job-in-japan-2025/"/>
     <id>https://tigercosmos.xyz/en/post/2025/10/japan/find-swe-job-in-japan-2025/</id>
     <published>2025-10-20T17:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.978Z</updated>
+    <updated>2026-02-28T15:05:48.527Z</updated>
     
     
       
@@ -85,7 +179,7 @@
     <link href="https://tigercosmos.xyz/ja/post/2025/10/japan/find-swe-job-in-japan-2025/"/>
     <id>https://tigercosmos.xyz/ja/post/2025/10/japan/find-swe-job-in-japan-2025/</id>
     <published>2025-10-20T17:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.985Z</updated>
+    <updated>2026-02-28T15:05:48.533Z</updated>
     
     
       
@@ -117,7 +211,7 @@
     <link href="https://tigercosmos.xyz/post/2025/10/cv/3d-pointcloud-project-to-2d-image/"/>
     <id>https://tigercosmos.xyz/post/2025/10/cv/3d-pointcloud-project-to-2d-image/</id>
     <published>2025-10-01T12:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.964Z</updated>
+    <updated>2026-02-28T15:05:48.515Z</updated>
     
     
       
@@ -152,7 +246,7 @@
     <link href="https://tigercosmos.xyz/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/"/>
     <id>https://tigercosmos.xyz/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/</id>
     <published>2025-10-01T12:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.977Z</updated>
+    <updated>2026-02-28T15:05:48.526Z</updated>
     
     
       
@@ -185,7 +279,7 @@
     <link href="https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/"/>
     <id>https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/</id>
     <published>2025-10-01T12:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.984Z</updated>
+    <updated>2026-02-28T15:05:48.532Z</updated>
     
     
       
@@ -218,7 +312,7 @@
     <link href="https://tigercosmos.xyz/post/2025/09/book-report/steve-jobs/"/>
     <id>https://tigercosmos.xyz/post/2025/09/book-report/steve-jobs/</id>
     <published>2025-09-18T10:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.961Z</updated>
+    <updated>2026-02-28T15:05:48.513Z</updated>
     
     
       
@@ -245,7 +339,7 @@
     <link href="https://tigercosmos.xyz/post/2025/09/shopify/pricing-method/"/>
     <id>https://tigercosmos.xyz/post/2025/09/shopify/pricing-method/</id>
     <published>2025-09-17T10:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.970Z</updated>
+    <updated>2026-02-28T15:05:48.520Z</updated>
     
     
       
@@ -276,7 +370,7 @@
     <link href="https://tigercosmos.xyz/post/2025/08/startup/datra-1/"/>
     <id>https://tigercosmos.xyz/post/2025/08/startup/datra-1/</id>
     <published>2025-08-30T16:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.971Z</updated>
+    <updated>2026-02-28T15:05:48.521Z</updated>
     
     
       
@@ -307,7 +401,7 @@
     <link href="https://tigercosmos.xyz/post/2025/06/software-engineer/software-engineer-grow-up-4/"/>
     <id>https://tigercosmos.xyz/post/2025/06/software-engineer/software-engineer-grow-up-4/</id>
     <published>2025-06-25T13:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.971Z</updated>
+    <updated>2026-02-28T15:05:48.521Z</updated>
     
     
       
@@ -343,7 +437,7 @@
     <link href="https://tigercosmos.xyz/en/post/2025/06/software-engineer/software-engineer-grow-up-4/"/>
     <id>https://tigercosmos.xyz/en/post/2025/06/software-engineer/software-engineer-grow-up-4/</id>
     <published>2025-06-25T13:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.980Z</updated>
+    <updated>2026-02-28T15:05:48.528Z</updated>
     
     
       
@@ -375,7 +469,7 @@
     <link href="https://tigercosmos.xyz/ja/post/2025/06/software-engineer/software-engineer-grow-up-4/"/>
     <id>https://tigercosmos.xyz/ja/post/2025/06/software-engineer/software-engineer-grow-up-4/</id>
     <published>2025-06-25T13:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.986Z</updated>
+    <updated>2026-02-28T15:05:48.534Z</updated>
     
     
       
@@ -407,7 +501,7 @@
     <link href="https://tigercosmos.xyz/post/2025/05/beyond-just-coding-book/writing-experience/"/>
     <id>https://tigercosmos.xyz/post/2025/05/beyond-just-coding-book/writing-experience/</id>
     <published>2025-05-02T04:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.960Z</updated>
+    <updated>2026-02-28T15:05:48.512Z</updated>
     
     
       
@@ -441,7 +535,7 @@
     <link href="https://tigercosmos.xyz/post/2025/02/algorithm/bts-tree-delete/"/>
     <id>https://tigercosmos.xyz/post/2025/02/algorithm/bts-tree-delete/</id>
     <published>2025-02-04T17:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.956Z</updated>
+    <updated>2026-02-28T15:05:48.508Z</updated>
     
     
       
@@ -473,7 +567,7 @@
     <link href="https://tigercosmos.xyz/en/post/2025/02/algorithm/bts-tree-delete/"/>
     <id>https://tigercosmos.xyz/en/post/2025/02/algorithm/bts-tree-delete/</id>
     <published>2025-02-04T17:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.974Z</updated>
+    <updated>2026-02-28T15:05:48.524Z</updated>
     
     
       
@@ -501,7 +595,7 @@
     <link href="https://tigercosmos.xyz/ja/post/2025/02/algorithm/bts-tree-delete/"/>
     <id>https://tigercosmos.xyz/ja/post/2025/02/algorithm/bts-tree-delete/</id>
     <published>2025-02-04T17:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.982Z</updated>
+    <updated>2026-02-28T15:05:48.530Z</updated>
     
     
       
@@ -529,7 +623,7 @@
     <link href="https://tigercosmos.xyz/post/2025/01/beyond-just-coding-book/tcpdump/"/>
     <id>https://tigercosmos.xyz/post/2025/01/beyond-just-coding-book/tcpdump/</id>
     <published>2025-01-02T16:30:00.000Z</published>
-    <updated>2026-02-17T10:42:47.960Z</updated>
+    <updated>2026-02-28T15:05:48.512Z</updated>
     
     
       
@@ -551,97 +645,6 @@
     <category term="軟體工程師自我成長" scheme="https://tigercosmos.xyz/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E8%87%AA%E6%88%91%E6%88%90%E9%95%B7/"/>
     
     <category term="tcpdump" scheme="https://tigercosmos.xyz/tags/tcpdump/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《張忠謀自傳：下冊 一九六四──二〇一八》讀後心得</title>
-    <link href="https://tigercosmos.xyz/post/2025/01/book-report/morris-chang-1964-2018/"/>
-    <id>https://tigercosmos.xyz/post/2025/01/book-report/morris-chang-1964-2018/</id>
-    <published>2025-01-01T10:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.960Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;張忠謀自傳下冊紙本書為 622 頁，絕對是一本厚書，但內容十分精彩，讀的過程很過癮。我自己是用電子書看，kobo 機器上看足足有兩千頁，花了我約兩個禮拜才看完。書的後面有附非常多彩圖，翻著一張一張陳年舊照，彷彿跟著張忠謀一起經歷了過往歲月。&lt;/p&gt;
-&lt;img</summary>
-        
-      
-    
-    
-    
-    
-    <category term="張忠謀" scheme="https://tigercosmos.xyz/tags/%E5%BC%B5%E5%BF%A0%E8%AC%80/"/>
-    
-    <category term="張忠謀自傳" scheme="https://tigercosmos.xyz/tags/%E5%BC%B5%E5%BF%A0%E8%AC%80%E8%87%AA%E5%82%B3/"/>
-    
-    <category term="張忠謀自傳下冊" scheme="https://tigercosmos.xyz/tags/%E5%BC%B5%E5%BF%A0%E8%AC%80%E8%87%AA%E5%82%B3%E4%B8%8B%E5%86%8A/"/>
-    
-    <category term="讀書心得" scheme="https://tigercosmos.xyz/tags/%E8%AE%80%E6%9B%B8%E5%BF%83%E5%BE%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>那一個夏天，女孩無法忘卻的軟體實習經歷</title>
-    <link href="https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/newcomer/"/>
-    <id>https://tigercosmos.xyz/post/2024/12/beyond-just-coding-book/newcomer/</id>
-    <published>2024-12-27T17:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.959Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;blockquote style=&quot;border: 5px solid #ee9c6b;border-radius:30px;&quot;&gt;
-&lt;p&gt;本文改編自&lt;a</summary>
-        
-      
-    
-    
-    
-    
-    <category term="書摘" scheme="https://tigercosmos.xyz/tags/%E6%9B%B8%E6%91%98/"/>
-    
-    <category term="程式設計原來不只有寫 CODE！" scheme="https://tigercosmos.xyz/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88%E5%8E%9F%E4%BE%86%E4%B8%8D%E5%8F%AA%E6%9C%89%E5%AF%AB-code%EF%BC%81/"/>
-    
-    <category term="資工基本素養" scheme="https://tigercosmos.xyz/tags/%E8%B3%87%E5%B7%A5%E5%9F%BA%E6%9C%AC%E7%B4%A0%E9%A4%8A/"/>
-    
-    <category term="軟體工程師自我成長" scheme="https://tigercosmos.xyz/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E8%87%AA%E6%88%91%E6%88%90%E9%95%B7/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>C++ 雜湊值函式庫 std::hash 介紹</title>
-    <link href="https://tigercosmos.xyz/post/2024/12/c++/hash/"/>
-    <id>https://tigercosmos.xyz/post/2024/12/c++/hash/</id>
-    <published>2024-12-26T17:00:00.000Z</published>
-    <updated>2026-02-17T10:42:47.963Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;大家在資料結構與演算法中應該學過雜湊（hash），其最大功用是查表時效率為 $&#92;mathbf{O}(1)$，換句話說就是常數時間的速度，也就是最快的意思。在 C++ 中如果我們想要使用雜湊的資料結構，通常會使用</summary>
-        
-      
-    
-    
-    
-    
-    <category term="c++" scheme="https://tigercosmos.xyz/tags/c/"/>
-    
-    <category term="hash" scheme="https://tigercosmos.xyz/tags/hash/"/>
-    
-    <category term="std::hash" scheme="https://tigercosmos.xyz/tags/std-hash/"/>
-    
-    <category term="std::unordered_map" scheme="https://tigercosmos.xyz/tags/std-unordered-map/"/>
-    
-    <category term="std::unordered_set" scheme="https://tigercosmos.xyz/tags/std-unordered-set/"/>
     
   </entry>
   

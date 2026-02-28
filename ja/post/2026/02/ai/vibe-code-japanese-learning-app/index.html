@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+
+
+<html lang="ja">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords"
+        content="ai,vibe coding,日文,app,日文學習," />
+    <meta name="description"
+        content="本記事では、AIを使って自分専用の日本語学習ツールを開発する方法を紹介します。開発計画書を作り、AIに実装させ、満足するまで反復改善します。同じAIの使い方はさまざまなシーンにも応用できます。" />
+    <title>Neutrino&#39;s Blog: AIで完全に自分好みの日本語学習アプリを作る方法 </title>
+    
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2026/02/ai/vibe-code-japanese-learning-app/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2026/02/ai/vibe-code-japanese-learning-app/">
+        
+            <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/post/2026/02/ai/vibe-code-japanese-learning-app/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2026/02/ai/vibe-code-japanese-learning-app/">
+    
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/ja/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/ja/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </h1>
+    <h2 class="desc">
+        Code makes the world a better place
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/donation">
+                    Donation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/message">
+                    Message
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">ja</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2026/02/ai/vibe-code-japanese-learning-app/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2026/02/ai/vibe-code-japanese-learning-app/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="ja">ja</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h2 class="post-title">
+        AIで完全に自分好みの日本語学習アプリを作る方法
+    </h2>
+    
+    <ul class="post-date">
+        <li>
+            2026-02-28
+        </li>
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2026/02/ai/vibe-code-japanese-learning-app/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2026/02/ai/vibe-code-japanese-learning-app/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="ja">ja</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <p>こんな悩みはありませんか：使いやすくて手になじむ語学学習ツールが欲しい。ネット上にはアプリがたくさんありますが、どれも何かが足りず、自分の学習習慣に完全にはフィットしません。</p>
+<p>私自身の例で言うと、日本語単語を覚えるために、これまでいろいろな単語カード（フラッシュカード）アプリを使ってきました。一般的な流れは、問題を入力して、裏返すと答えが表示されるというものです。ですが日本語を覚えるときは、漢字、ひらがな、そして対応する中国語の意味の 3 つを同時に覚えたいことが多いです。本来なら 1 枚のカードにこの 3 つの欄が一緒に載っていてほしい。しかし普通の単語カードアプリだと、2 枚に分けないといけないことが多く、かえって面倒です。</p>
+<p>文法でも同じです。文法だけを見て中国語の意味を思い出す、例文の中の文法を穴埋めにして練習する、文法をハイライトして文全体の意味を問う。こうした「自分の学習方法に合わせてカスタマイズしたい」という要望は、市販のソフトでは意外と満たしにくいです。</p>
+<p>幸い、今は AI の進化がとても速いです。ChatGPT や Gemini は聞いたことがあるかもしれません。さらに「vibe coding」の文脈では、Codex や Claude Code のようなツールを使うと、対話しながらアプリのプロトタイプを素早く作れます。たとえプログラミングができなくても、要件をきちんと説明すれば、まず動く版を AI に作らせ、対話を繰り返して望む形に近づけていけます。</p>
+<p>本記事では、AI ツールを使って「自分の習慣に完全に合う」日本語学習アプリを作る方法を紹介します。例として、私が作った単語カードアプリを取り上げます。普段はこれで単語を覚えたり文法を練習したりしながら、好みの形になるまでずっと調整してきました。</p>
+<p><img src="/img/ai/japanese-learner-demo.png" alt="app demo"></p>
+<h2 id="AI-ツール"><a class="header-anchor" href="#AI-ツール">¶ </a>AI ツール</h2>
+<p>まず、使える AI ツールを簡単に紹介します。多くの人は ChatGPT や Gemini のようなチャット型ツールを使ったことがあると思います。ここで紹介するのは、より「プログラミング」寄りの AI ツールで、Codex や Claude Code などです。これらは AI coding agent（AI コーディングエージェント）とも呼ばれます。</p>
+<p>一般的なチャットアシスタントと異なり、AI コーディングエージェントは実際に手を動かしてくれます。たとえばドキュメントの修正、コードの修正、各種コマンドの実行などです。開発者にとっては機能追加やバグ修正、新規システム構築に使えますし、プログラミングをしない人（デザイナー、建築家、語学学習者など）でも、要件を会話のように伝えるだけで AI に開発させられます。これを vibe coding（雰囲気プログラミング）と呼ぶこともあります。自然言語で「こういうプログラムがほしい」と伝え、対話を重ねて調整し、最終的に思い通りのものにしていきます。プロセス全体を通して、あなたが自分の手でコードを書く必要はほとんどなく、コードを読んだり理解したりする必要すらないこともあります。</p>
+<p>文章だけだと魔法のように聞こえてイメージしづらいので、これから実際にやってみましょう。</p>
+<h3 id="Claude-Code"><a class="header-anchor" href="#Claude-Code">¶ </a>Claude Code</h3>
+<p>Codex でも Claude Code でも vibe coding はできますが、ここでは Claude Code で説明します。Claude Code は現在 macOS と Windows 向けのデスクトップアプリを提供しており、非開発者にとって使いやすいからです。開発者なら、端末の CLI 版を使っても構いません。</p>
+<p>まずは <a target="_blank" rel="noopener" href="https://claude.ai/">Claude</a> のアカウントを作成し、Pro または Max プランを購読します。その後、Claude の<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/overview#desktop-app">デスクトップアプリのダウンロードページ</a>にアクセスし、OS に合ったものをダウンロードします。</p>
+<p>アプリをインストールしたら、「Code」画面に入ります（アプリのメイン画面上部で切り替えられます）。中央のテキスト入力欄の左下で、使用するプロジェクトフォルダを選択できます。ここで新しいフォルダを作り、以降の説明のために <code>japanese-app</code> と名付けましょう。次に、たとえば「簡単な日本語学習アプリを作って」のようなプロンプトを入れて、Claude の雰囲気をつかんでみてください。</p>
+<p>ただ、もしこれだけで全部うまくいくなら話がうますぎますよね。少し遊んでみて、「アプリを生成して」と頼むと何が起きるか見てみてください。おそらく結果はあまり良くないはずです。そこで次は、想像通りの日本語学習アプリに近づける方法を説明します。</p>
+<p><img src="/img/ai/claude-code-1.png" alt="Claude Code example"></p>
+<h2 id="日本語学習アプリを作る"><a class="header-anchor" href="#日本語学習アプリを作る">¶ </a>日本語学習アプリを作る</h2>
+<h3 id="計画を立てる"><a class="header-anchor" href="#計画を立てる">¶ </a>計画を立てる</h3>
+<p>vibe coding 用のツールを入れたら、AI で開発を始められます。このとき、あなたがコードを書けるかどうかが最重要とは限りません。それよりも、頭の中に明確なプロダクトの骨格があるかどうかが重要です。</p>
+<p>あなたはむしろプロダクトマネージャーのような立場になります。機能一覧を考え、各画面がだいたいどういう見た目か、ユーザーにどう操作してほしいか、どんな体験をしてほしいかを設計します。ここが明確であるほど、あとが楽になります。</p>
+<p>まずはプロダクト仕様書（計画書）を書くことをおすすめします。たとえば、私が作りたかった日本語学習アプリでは、最初に次のようなコア要件を書き出しました。</p>
+<ul>
+<li>単語アプリは単語を覚えられて、出題方式を 2 つサポートすること：日本語の漢字を見て中国語を答える、日本語のひらがなを見て中国語を答える。</li>
+<li>文法も練習でき、複数のテスト方式を提供すること：文法だけを見て意味を思い出す、例文の文法を穴埋めにする、例文中の文法をハイライトして意味を問う、など。</li>
+<li>操作体験は市販の学習アプリに近いこと。</li>
+<li>アプリ自身のデータベースを作成・管理できること。</li>
+</ul>
+<p>これが最低限の仕様です。さらに UI や操作感について具体的に書くこともできます。たとえば、ライトテーマかダークテーマか、カードの雰囲気は可愛い寄りかミニマル寄りか。こうした指示が具体的であるほど、AI はあなたの好みに近いものを出しやすくなります。</p>
+<p>最初の仕様書はとても重要です。これは建築でいう「地盤・基礎」を作るのに似ています。小さな家を建てる前提で基礎を作ると、高層ビルのための基礎にはなりません。一方、最初に基礎をしっかり作っておけば、あとで増築・拡張するときにスムーズになります。</p>
+<p>そのため、最初の機能と要件はできるだけ明確にしておき、大規模な作り直しを避けるのがおすすめです。もちろん途中で変えること自体は可能ですが、効率が落ちやすく、アーキテクチャも混乱してバグが増えやすくなります。</p>
+<p>例として、私がこのアプリを作ったときの仕様書は次のようなものでした。私は原文を英語で書きましたが、ここでは理解しやすいように日本語訳を載せます。AI を使うときは中国語でも英語でも構いませんが、一般的には英語の方が精度が出やすいです。AI の学習データは英語が多いからです。</p>
+<pre><code class="language-md">日本語学習用のフラッシュカード（Flashcard）アプリを作りたいです。Quizlet のようなアプリをイメージしています。
+まず開発計画を plan.md として書いてください。
+また、抜け漏れがないかを確認し、追加で明確化すべき質問も挙げてください。
+
+## 基本要件
+
+- React で開発する純 Web アプリ
+- すべての JSON データは data ディレクトリに置き、category や level でデータセットを絞り込めること
+- 基本的な記憶アルゴリズムとシャッフル機能が必要
+- 学習進捗はブラウザのストレージに保存すること
+
+## 日本語単語（Japanese Vocabulary）
+
+単語の学習とテストに使用します。
+
+データ形式は JSON で、例は以下です：
+
+&#123;
+    &quot;name&quot;: &quot;name of dataset&quot;,
+    &quot;category&quot;: &quot;vocabulary&quot;,
+    &quot;level&quot;: &quot;N3&quot;,
+    &quot;data&quot;: [
+        &#123;
+            &quot;id&quot;: &quot;xxx&quot;,
+            &quot;japanese&quot;: &quot;株式&quot;,
+            &quot;hiragana&quot;: &quot;かぶしき&quot;,
+            &quot;simple_chinese&quot;: &quot;股份&quot;,
+            &quot;full_explanation&quot;: &quot;....&quot;
+        &#125;
+    ]
+&#125;
+
+各データは以下のテスト方式をサポートします：
+
+- 日本語の漢字のみ表示 -&gt; 答えは中国語
+- 日本語のひらがなのみ表示 -&gt; 答えは中国語
+- 中国語を表示 -&gt; 答えは日本語（完全な解説は任意）
+テスト時に漢字/ひらがなを選べるようにしたいです。
+
+## 文法（Grammar）
+
+文法の学習とテストに使用します。
+
+データ形式は JSON で、例は以下です：
+
+&#123;
+    &quot;name&quot;: &quot;name of dataset&quot;,
+    &quot;category&quot;: &quot;grammar&quot;,
+    &quot;level&quot;: &quot;N3&quot;,
+    &quot;data&quot;: [
+        &#123;
+            &quot;id&quot;: &quot;xxx&quot;,
+            &quot;japanese&quot;: &quot;うちに&quot;,
+            &quot;simple_chinese&quot;: &quot;在～過程中／趁～&quot;,
+            &quot;full_explanation&quot;: &quot;some example sentences...&quot;
+        &#125;
+    ]
+&#125;
+
+テスト方式は以下を含みます：
+
+- 日本語の文法のみ表示 -&gt; 答えは簡体中国語
+- 文法をハイライトした例文を表示 -&gt; 答えは簡体中国語
+- 簡体中国語の翻訳を表示 -&gt; 答えは日本語（完全版は任意）
+- 例文を表示し、文法部分を穴埋め（テスト対象を削除）にし、かつ中国語翻訳を表示 -&gt; 答えは日本語（完全版は任意）
+</code></pre>
+<p>仕様書の中には、React を使うこと、純フロントエンド（pure front-end）の Web アプリにすること、といった比較的細かい技術要件もあえて入れています。こうした書き方は、多少なりとも開発経験がある人の方がしやすいと思います。もしプログラミングがまったく分からない場合は、最初は技術要件を省いても構いません。ただし、その場合は AI の出力方向がやや不安定になりやすいです。</p>
+<p>たとえば「単語を覚えるアプリが欲しい」だけだと、AI は iOS や Android を想定するかもしれません。Web アプリにしても、バックエンドやデータベースが必要な構成を提案してくる可能性があります。私の場合は、追加のサーバーを立てずにそのままネットに公開したかったので、純フロントエンドの Web アプリにすることを明確に書きました。</p>
+<p>また、React を指定したのは、あとで自分で微調整したり、AI に修正させたりするときに扱いやすいからです。</p>
+<p>完全にプログラミング未経験の方は、先に ChatGPT と会話して、アプリの輪郭を言語化し、要件の洗い出しや必要な技術概念の補完をしてもらうのがおすすめです。深く学ぶ必要はなく、いくつかの核心的な違いを理解するだけで、より明確な仕様書を書けるようになります。</p>
+<p>さらに、もう少し先のことも考えておきましょう。日本語学習アプリを作るということは、学習データを入れる必要があります。つまり、後で投入するデータ形式も事前に設計しておくべきです。プログラミングの概念がまったくない場合は、商用ソフトが一般ユーザーにどう操作させているかを参考にできます。たとえば Anki のように CSV や TXT 形式にするのも手です。ここではもう少し「geek」寄りに、開発者がよく使う JSON 形式を採用しました。</p>
+<p>ここまでできたら、好きなエディタ（Word、Google ドキュメント、メモ帳など何でも）を開いて、上の例をコピペし、自分の好みに合わせて書き換えてください。たとえば画面遷移、ビジュアル、テスト機構などを調整します。</p>
+<h3 id="AI-に計画通りに実行させる"><a class="header-anchor" href="#AI-に計画通りに実行させる">¶ </a>AI に計画通りに実行させる</h3>
+<p>次に、先ほど編集した計画書を Claude Code にそのまま貼り付けるだけです。モデルは Opus 4.6 をおすすめします。最も高いモデルですが、その分パフォーマンスも最良です。ゼロから AI にアプリを書かせるときは、賢いモデルを使った方がよく、そうしないとアプリが欠陥住宅みたいになりかねません。</p>
+<p>すると AI は、計画書に沿って開発の段取りを整理し始めます。必要なら軽く目を通して、修正が必要か確認してください。AI から細部の確認質問が来ることもあります。</p>
+<p>その後、AI が実際に動き始めます。開発中はさまざまな権限が求められますが、多くの場合は許可して問題ありません。ただし、ファイル削除、プライベートなファイルの読み取り、あるいは <code>rm</code>（ファイル削除）というキーワードが見えた場合は慎重に判断してください。不安な操作は、なぜ必要なのかを AI に聞いたり、実行されるコマンドが何をするのかを先に調べたりすると安全です。</p>
+<p>AI は計画書の内容を止まらずに実装していきます。数分で終わることもあれば、数十分かかることもあります。完了すると AI から終了の報告が来ます。その時点で「アプリを開いて確認させて」と指示すれば、自分で起動方法が分からなくても AI が立ち上げてくれます。Web アプリなら、ブラウザで開発用 URL を開き、出来上がったアプリを確認できます。</p>
+<p>たとえば次のような画面が表示されます。</p>
+<p><img src="/img/ai/japanese-learner-app-example.png" alt="web app example"></p>
+<blockquote>
+<p>あるいは、Claude Code 右上の「preview」機能を使うと、ブラウザのプレビュー画面を開いてくれます。</p>
+</blockquote>
+<h3 id="継続的に修正する"><a class="header-anchor" href="#継続的に修正する">¶ </a>継続的に修正する</h3>
+<p>次に、出来上がったアプリを実際に触ってみてください。すると、想像と違うところがたくさん見つかるはずです。仕様書を書いた時点で考えが及んでいなかった点、AI の実装が甘い点、使っているうちに思いつく新しいアイデア。いずれにせよ、直したいところが次々に出てきます。</p>
+<p>私の場合は、当初の計画に加えて、発音を聞くための「読み上げ」、スマホでも「カードをスワイプ」できる操作、目を守るための「ダークモード」などを後から追加しました。</p>
+<p>この段階では、Claude Code で AI と対話を続け、どう直したいかを具体的に伝えるだけで大丈夫です。AI が一つずつ実装してくれるので、終わったら正しくできているかを確認します。これを繰り返し、満足できるバージョンになるまで反復改善します。</p>
+<h3 id="さらに学ぶ"><a class="header-anchor" href="#さらに学ぶ">¶ </a>さらに学ぶ</h3>
+<p>AI は時々、直せば直すほど品質が落ちたり、収拾がつかなくなったりします。そこで重要になるのがバージョン管理です。バージョン管理はタイムマシンのようなもので、いつでも過去の状態に戻って「まだ壊れていなかった地点」からやり直せます。</p>
+<p>また、Web アプリを作れたとしても、どうやってネット上に公開するのかが分からないことも多いです。Web アプリは最終的に公開して使ってもらうのが目的なので、静的サイトをサーバーに配置する方法などを学ぶ必要があります。</p>
+<p>良い日本語学習データをどう集めるかも重要になります。Web からスクレイピングする、AI に生成させるなど方法はいろいろあります。データを入手したら、整形・最適化・自動化を行い、先ほど作ったアプリが扱える形に落とし込む必要があります。この過程でも多くを学べるはずです。</p>
+<p>最初はプログラミングができなくても、AI を使って開発を始めると、プログラミング自体が意外と楽しいと気づくと思います。さらに、場合によっては AI に頼むより自分で直接コードを触った方が速く、面白いこともあります。そうなったら、より深い「プログラミング」や、プログラミング以外のスキルも必要になってきます。<a href="https://tigercosmos.xyz/books/beyond-just-coding-book.html">『プログラミングは CODE を書くことだけじゃない！』</a>は良い入門書になります。</p>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
+<p>AI が発達した今、ソフトウェア開発はもはやエンジニアの専売特許ではありません。誰でも AI を使って実現できます。語学学習についても、昔なら「環境がない」「資源がない」「良いツールがない」と嘆けましたが、時代は変わりました。AI は最高の先生であり、最高の相棒です。翻訳、解説、例文の生成などに使えるだけでなく、自分専用の学習ソフトそのものを作らせることもできます。</p>
+<p>これは語学学習に限りません。AI はあらゆる業界のあらゆる場面に応用できます。株を分析してくれるソフト、家計簿ツール、ドキュメント処理スクリプト。全部 AI にやらせられます。本記事の方法は、思いつくあらゆるシーンに適用できます。</p>
+<h2 id="「日本語学習カード」完成版の共有"><a class="header-anchor" href="#「日本語学習カード」完成版の共有">¶ </a>「日本語学習カード」完成版の共有</h2>
+<p>完成版の「<a target="_blank" rel="noopener" href="https://tigercosmos.github.io/japanese-learner/">日本語学習カード</a>」をぜひ見てみてください。日本語学習者なら誰でも無料で使えます。ソースコードも完全公開で、<a target="_blank" rel="noopener" href="https://github.com/tigercosmos/japanese-learner/blob/main/plan.md">元の開発計画書</a>もリポジトリに置いてあります。コミット履歴を見れば、私がどうやって開発を進めたかも追えます。</p>
+<blockquote>
+<p>このソフトは継続的にアップデートします。データについては、現時点では N5-N3 の単語部分だけを整備しました。</p>
+</blockquote>
+<p>本記事には iframe で「日本語学習カード」を埋め込んでいるので、この場でそのまま触れます。ただし、スマホで読む方は、<a target="_blank" rel="noopener" href="https://tigercosmos.github.io/japanese-learner/">リンク</a>を新しいタブで開いた方が使いやすいと思います。</p>
+<p>日本語学習カード：</p>
+<iframe src="https://tigercosmos.github.io/japanese-learner/" width="100%" height="800"></iframe>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/ja/tags/ai/">
+                ai
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/vibe-coding/">
+                vibe coding
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/%E6%97%A5%E6%96%87/">
+                日文
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/app/">
+                app
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/%E6%97%A5%E6%96%87%E5%AD%B8%E7%BF%92/">
+                日文學習
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#AI-%E3%83%84%E3%83%BC%E3%83%AB"><span class="toc-text">AI ツール</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Claude-Code"><span class="toc-text">Claude Code</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E6%9C%AC%E8%AA%9E%E5%AD%A6%E7%BF%92%E3%82%A2%E3%83%97%E3%83%AA%E3%82%92%E4%BD%9C%E3%82%8B"><span class="toc-text">日本語学習アプリを作る</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A8%88%E7%94%BB%E3%82%92%E7%AB%8B%E3%81%A6%E3%82%8B"><span class="toc-text">計画を立てる</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AI-%E3%81%AB%E8%A8%88%E7%94%BB%E9%80%9A%E3%82%8A%E3%81%AB%E5%AE%9F%E8%A1%8C%E3%81%95%E3%81%9B%E3%82%8B"><span class="toc-text">AI に計画通りに実行させる</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B6%99%E7%B6%9A%E7%9A%84%E3%81%AB%E4%BF%AE%E6%AD%A3%E3%81%99%E3%82%8B"><span class="toc-text">継続的に修正する</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%81%95%E3%82%89%E3%81%AB%E5%AD%A6%E3%81%B6"><span class="toc-text">さらに学ぶ</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%80%8C%E6%97%A5%E6%9C%AC%E8%AA%9E%E5%AD%A6%E7%BF%92%E3%82%AB%E3%83%BC%E3%83%89%E3%80%8D%E5%AE%8C%E6%88%90%E7%89%88%E3%81%AE%E5%85%B1%E6%9C%89"><span class="toc-text">「日本語学習カード」完成版の共有</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/ja/post/2026/02/ai/vibe-code-japanese-learning-app/">
+        AIで完全に自分好みの日本語学習アプリを作る方法
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        C++で3D点群を2D画像へ投影する
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/11/c++/std-string-advanced/">
+        C++ std::string 進階：この一篇で応用まで融会貫通！
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        新米エンジニア修行中（3）：飛躍的成長、OSS メンテナになるまで
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2023/12/japan/learn-japanese-n4/">
+        3カ月でJLPT N4を独学した経験談
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2023/11/python/2023pycon-apac-sprint/">
+        PyCon APAC 2023 の Sprint で初めて CPython に Pull Request を出した話
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                <div>
+     <h2>贊助寫作</h2>
+     謝謝您的協助，請作者喝一杯咖啡，能讓作者用來更有動力為讀者提供品質更加優良的文章與閱讀環境
+     <div align="center">
+          <a href='/donation'><img
+                    src="https://user-images.githubusercontent.com/18013815/79032455-21002a00-7bd9-11ea-920f-354c6133cc2a.png"
+                    width="80%"></a>
+     </div>
+</div>
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2026/">2026</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2020/">2020</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2019/">2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h2>Tags</h2>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/2d-pattern/" rel="tag">2d pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/algorithm/" rel="tag">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/amd-mi50/" rel="tag">amd mi50</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/app/" rel="tag">app</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/array/" rel="tag">array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/atomic/" rel="tag">atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bag-of-visual-words/" rel="tag">bag of visual words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bag-of-words/" rel="tag">bag of words</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/beginner/" rel="tag">beginner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/benchmark/" rel="tag">benchmark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bias/" rel="tag">bias</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/bime/" rel="tag">bime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/binary-search-tree/" rel="tag">binary search tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/browser/" rel="tag">browser</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/browsers/" rel="tag">browsers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/c/" rel="tag">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/c/" rel="tag">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/camera/" rel="tag">camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/camera-calibration/" rel="tag">camera calibration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cmake/" rel="tag">cmake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/collision-detection/" rel="tag">collision detection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/compare-and-swap/" rel="tag">compare and swap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computational-photography/" rel="tag">computational photography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-animation/" rel="tag">computer animation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-science/" rel="tag">computer science</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/computer-vision/" rel="tag">computer vision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/condition-variable/" rel="tag">condition variable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cpu/" rel="tag">cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cpython/" rel="tag">cpython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cublas/" rel="tag">cublas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cuda/" rel="tag">cuda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/cudnn/" rel="tag">cudnn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/data-structures/" rel="tag">data structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/deep-learning/" rel="tag">deep learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/deno/" rel="tag">deno</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/digital-processing/" rel="tag">digital processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/dns/" rel="tag">dns</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/dup2/" rel="tag">dup2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/eigen/" rel="tag">eigen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/elixir/" rel="tag">elixir</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/feature-matching/" rel="tag">feature matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/floating-point-number/" rel="tag">floating-point number</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/fork/" rel="tag">fork</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/forward-kinematics/" rel="tag">forward kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/fourier-transform/" rel="tag">fourier transform</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/gdb/" rel="tag">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/googlenet/" rel="tag">googlenet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/googletest/" rel="tag">googletest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/gpu/" rel="tag">gpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/growing-up/" rel="tag">growing up</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hash/" rel="tag">hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hdr/" rel="tag">hdr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/header-only/" rel="tag">header-only</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/homography/" rel="tag">homography</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/http-server/" rel="tag">http server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/hybrid-image/" rel="tag">hybrid image</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E2%80%8Eieee-754/" rel="tag">‎ieee 754</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-classification/" rel="tag">image classification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-processing/" rel="tag">image processing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/image-stitching/" rel="tag">image stitching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/impulse/" rel="tag">impulse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/intel/" rel="tag">intel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/inverse-kinematics/" rel="tag">inverse kinematics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/jacobian/" rel="tag">jacobian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/jlpt/" rel="tag">jlpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/joint-constraint/" rel="tag">joint constraint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/keypoint/" rel="tag">keypoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/kmeans/" rel="tag">kmeans</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/knn/" rel="tag">knn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/leetcode-450/" rel="tag">leetcode 450</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/lock-free/" rel="tag">lock free</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/measurement/" rel="tag">measurement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/mmap/" rel="tag">mmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network/" rel="tag">network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network-analysis/" rel="tag">network analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/network-programming/" rel="tag">network programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/nodejs/" rel="tag">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/nycu-icse/" rel="tag">nycu icse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/opencl/" rel="tag">opencl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/opencv/" rel="tag">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/optimization/" rel="tag">optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/oss/" rel="tag">oss</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/parallel-programming/" rel="tag">parallel programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pcap/" rel="tag">pcap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pcapplusplus/" rel="tag">pcapplusplus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/perf/" rel="tag">perf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/physics/" rel="tag">physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pipe/" rel="tag">pipe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/point-cloud/" rel="tag">point cloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/programming/" rel="tag">programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/projection/" rel="tag">projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/promiscuous-mode/" rel="tag">promiscuous mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pseudo-inverse/" rel="tag">pseudo inverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pthread/" rel="tag">pthread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pycon/" rel="tag">pycon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/pytorch/" rel="tag">pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ransac/" rel="tag">ransac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/red-black-tree/" rel="tag">red black tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/reentrancy/" rel="tag">reentrancy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/rigid-body/" rel="tag">rigid body</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/rust/" rel="tag">rust</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/servo/" rel="tag">servo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shared-memory/" rel="tag">shared memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shared-object/" rel="tag">shared object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sift/" rel="tag">sift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sigaction/" rel="tag">sigaction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/signal/" rel="tag">signal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/simulation/" rel="tag">simulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/small-vector/" rel="tag">small vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/software-engineering/" rel="tag">software engineering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/spec-accel/" rel="tag">spec accel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/spec-cpu/" rel="tag">spec cpu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/squid/" rel="tag">squid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/sso/" rel="tag">sso</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-hash/" rel="tag">std::hash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-unordered-map/" rel="tag">std::unordered_map</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/std-unordered-set/" rel="tag">std::unordered_set</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/string-view/" rel="tag">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/svm/" rel="tag">svm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/system/" rel="tag">system</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/system-software/" rel="tag">system software</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/t2/" rel="tag">t2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/ta/" rel="tag">ta</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/template/" rel="tag">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/tensorflow/" rel="tag">tensorflow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/the-clean-coder/" rel="tag">the clean coder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/thread-safe/" rel="tag">thread-safe</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/time-stacking/" rel="tag">time stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/time-warping/" rel="tag">time warping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/top-command/" rel="tag">top command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/unit-test/" rel="tag">unit test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/unix/" rel="tag">unix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/vector/" rel="tag">vector</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/vgg16/" rel="tag">vgg16</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/vibe-coding/" rel="tag">vibe coding</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/web-worker/" rel="tag">web worker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/webassembly/" rel="tag">webassembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/xr/" rel="tag">xr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%A2%E3%83%BC%E3%83%88/" rel="tag">アート</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9/" rel="tag">オープンソース</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">コンピュータアニメーション</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/" rel="tag">コンピュータサイエンス</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3/" rel="tag">コンピュータビジョン</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2/" rel="tag">ソフトウェアエンジニア</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88/" rel="tag">プロジェクト</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%B8%A6%E5%88%97%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0/" rel="tag">並列プログラミング</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BA%A4%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">交大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BB%95%E4%BA%8B/" rel="tag">仕事</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BC%9A%E7%A4%BE/" rel="tag">会社</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E4%BF%AE%E5%A3%AB/" rel="tag">修士</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%8D%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">反向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E5%A4%A7/" rel="tag">台大</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E5%A4%A7%E8%A6%B3%E5%AF%9F%E3%81%A8%E6%89%80%E6%84%9F/" rel="tag">台大観察と所感</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%8F%B0%E6%B9%BE/" rel="tag">台湾</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%9B%BD%E7%B6%B2%E4%B8%AD%E5%BF%83/" rel="tag">国網中心</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%9F%BA%E6%9C%AC%E7%B4%A0%E9%A4%8A/" rel="tag">基本素養</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%A6%E9%99%A2/" rel="tag">大学院</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E5%AD%B8/" rel="tag">大學</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%A4%A7%E6%B0%97/" rel="tag">大気</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%AD%B8%E7%BF%92%E6%8C%87%E5%8D%97/" rel="tag">學習指南</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%B1%A5%E4%BF%AE/" rel="tag">履修</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E5%B9%B3%E8%A1%8C%E5%8C%96/" rel="tag">平行化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%83%B3%E6%B3%95/" rel="tag">想法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%95%88%E8%83%BD%E5%88%86%E6%9E%90/" rel="tag">效能分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%96%B0%E7%B1%B3%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%BF%AE%E8%A1%8C%E4%B8%AD/" rel="tag">新米エンジニア修行中</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%97%A5%E6%96%87/" rel="tag">日文</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%97%A5%E6%96%87%E5%AD%B8%E7%BF%92/" rel="tag">日文學習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%97%A5%E6%9C%AC/" rel="tag">日本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%97%A5%E6%9C%AC%E8%AA%9E/" rel="tag">日本語</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%99%82%E9%96%93%E6%89%AD%E6%9B%B2%E6%B3%95/" rel="tag">時間扭曲法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%9D%B1%E4%BA%AC/" rel="tag">東京</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%A0%A1%E7%B3%BB%E9%81%B8%E6%93%87/" rel="tag">校系選擇</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%A8%A1%E6%93%AC/" rel="tag">模擬</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%AD%A3%E5%90%91%E5%8B%95%E5%8A%9B%E6%B3%95/" rel="tag">正向動力法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E6%BC%94%E7%AE%97%E6%B3%95/" rel="tag">演算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%89%A9%E7%90%86/" rel="tag">物理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A0%94%E7%A9%B6%E6%89%80/" rel="tag">研究所</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A8%8B%E5%BC%8F/" rel="tag">程式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88%E5%85%A5%E9%96%80/" rel="tag">程式設計入門</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E7%BE%8E%E8%A1%93%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB/" rel="tag">美術サークル</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%80%83%E3%81%88/" rel="tag">考え</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag">自然言語処理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%AA%9E%E5%AD%A6%E5%AD%A6%E7%BF%92/" rel="tag">語学学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B3%87%E5%B7%A5/" rel="tag">資工</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B3%87%E8%A8%8A%E5%B7%A5%E7%A8%8B/" rel="tag">資訊工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%B5%B7%E6%A5%AD/" rel="tag">起業</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B/" rel="tag">軟體工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB/" rel="tag">軟體工程師</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E9%99%A3%E5%88%97/" rel="tag">陣列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/ja/tags/%E9%9B%BB%E8%85%A6%E5%8B%95%E7%95%AB/" rel="tag">電腦動畫</a></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
