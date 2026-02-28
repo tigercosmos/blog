@@ -4,8 +4,8 @@ directory: `source/_posts/c++`
 
 ## Steps
 1. list the posts in the directory. `scripts/generate-translation-list.js` will help you to get the latest status.
-2. translate the post into english (EN) and japanese (JP).
-3. once finish a translation, check the translation checkbox, such as EN or JP.
+2. translate the post into english (EN) and japanese (JA).
+3. once finish a translation, check the translation checkbox, such as EN or JA.
 4. once finish all translation of a post, ensure all checkboxes are checked, and check the item (post).
 
 ## Rules of translation
@@ -21,7 +21,7 @@ translation_key: <unique_key>
 - language is usually `ZH`
 - always use the file name as the unique key, for example "abc_123.md" has `abc_123` as the key.
 
-2. Add a translation for EN and JP
+2. Add a translation for EN and JA
 
 - Write in **professional and technical style** and meanwhile **keep the original tone**.
 - The title always needs to use quote, for example: `title: "some translation title"`. This is to prevent parsing error of title string.
