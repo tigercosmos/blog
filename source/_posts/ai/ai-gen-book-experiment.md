@@ -15,7 +15,7 @@ translation_key: ai-gen-book-experiment
 
 > 免責聲明：此專案並未讓 AI 參考任何《Binary Hacks Rebooted》原著作，若有部分內容恰巧與原著作雷同，純屬 AI 知識庫與原著相似的巧合。
 
-<img width="100%" alt="Cover" src="https://github.com/user-attachments/assets/eda101ba-4dad-4c7e-b061-a5b101bb4e71" />
+![cover](https://github.com/user-attachments/assets/99211e54-d89a-4ba5-a046-e1b540adc67a)
 （塞維亞西班牙廣場）
 
 ## AI 生書流程
