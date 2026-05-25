@@ -34,7 +34,6 @@ i18n_dir: :lang
 translation_post_dir: _posts_translation
 skip_render:
 about: /about
-donation: /donation
 navigation: /navigation
 books: /books
 
@@ -120,6 +119,8 @@ sitemap:
   rel: false
 
 markdown:
+  plugins:
+    - markdown-it-footnote
   anchors:
     # Minimum level for ID creation. (Ex. h2 to h6)
     level: 2
