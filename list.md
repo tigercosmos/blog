@@ -2,16 +2,17 @@
 
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
-- Total posts: 185
-- Posts with both EN+JA translations: 77
-- Missing EN translation files: 108
-- Missing JA translation files: 108
+- Total posts: 187
+- Posts with both EN+JA translations: 78
+- Missing EN translation files: 109
+- Missing JA translation files: 109
 - Source posts missing `translation_key`: 108
 
 ## Posts
 
 - [ ] `2021-new-year-resolution.md` — 2021 新年新希望—落實刻意練習演算法 (Tue Jan 05 2021 02:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
 - [ ] `3-min-introduction-of-science-class.md` — 3分鐘搞懂科學班在幹嘛 (Sat Jan 23 2016 13:56:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
+- [x] `ai/ai-gen-book-experiment.md` — 使用 AI 生成一本書 (Tue May 26 2026 04:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `ai/googlenet.md` — GoogLeNet 簡介與小實驗 (Fri Oct 23 2020 07:15:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `ai/tensorflow-flower.md` — 使用 Tensorflow 開發花朵種類辨識 App (Fri Jul 28 2017 00:42:09 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `ai/vgg16-from-scratch.md` — VGG16 net from scratch in two ways: C++ on CPU and CUDA on GPU (Wed Dec 02 2020 05:30:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:en
@@ -160,6 +161,7 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `side-project.md` — Side Project—做自己想用的東西 (Sat Jun 06 2020 08:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
 - [x] `simple-pthread-usage.md` — 簡易 Pthreads 平行化範例與效能分析 (Thu Jul 02 2020 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [ ] `sir.md` — 傳染病 SIR 模型與機率模型介紹與簡易模擬 (Tue Mar 31 2020 11:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
+- [ ] `software-engineer/mid-dev-fight-1.md` — 中堅工程師奮鬥中（一）：開始成為公司的中堅力量 (Wed Apr 15 2026 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ✅, src:zh
 - [x] `software-engineer/software-engineer-grow-up-1.md` — 新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗 (Wed Feb 15 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `software-engineer/software-engineer-grow-up-2.md` — 新米工程師進修中（二）： 職場的社會化與生存 (Mon Nov 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `software-engineer/software-engineer-grow-up-3.md` — 新米工程師進修中（三）：飛越性成長，成為開源專案維護者 (Sun Sep 29 2024 04:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
