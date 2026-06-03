@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="c,pthread,parallel programming,效能分析,平行化," />
-    <meta name="description"
-        content="POSIX スレッド（Pthreads）を使うと、C/C++ で並列プログラムを書けます。本記事では π を計算する簡単な例を使い、Pthreads でスレッドを作成して設定し、ミューテックスを追加する方法を説明します。最後に簡単な性能分析も行います。" />
-    <title>Neutrino&#39;s Blog: Pthreads による簡単な並列化例と性能分析 </title>
+    <meta name="description" content="POSIX スレッド（Pthreads）を使うと、C/C++ で並列プログラムを書けます。本記事では π を計算する簡単な例を使い、Pthreads でスレッドを作成して設定し、ミューテックスを追加する方法を説明します。最後に簡単な性能分析も行います。" />
+    <title>Pthreads による簡単な並列化例と性能分析 | Neutrino&#39;s Blog</title>
     
     
     
@@ -27,6 +31,49 @@
         
         <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/07/simple-pthread-usage/">
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="Pthreads による簡単な並列化例と性能分析">
+    <meta property="og:description" content="POSIX スレッド（Pthreads）を使うと、C/C++ で並列プログラムを書けます。本記事では π を計算する簡単な例を使い、Pthreads でスレッドを作成して設定し、ミューテックスを追加する方法を説明します。最後に簡単な性能分析も行います。">
+    <meta property="og:url" content="https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    
+    <meta property="og:image" content="https://user-images.githubusercontent.com/18013815/86372410-b11fae00-bcb4-11ea-9c25-5db81e9a9d55.png">
+    
+    <meta property="og:image:alt" content="Pthreads による簡単な並列化例と性能分析">
+    
+    <meta property="article:published_time" content="2020-07-02T15:00:00.000Z">
+    <meta property="article:modified_time" content="2020-07-02T15:00:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="c">
+    <meta property="article:tag" content="pthread">
+    <meta property="article:tag" content="parallel programming">
+    <meta property="article:tag" content="效能分析">
+    <meta property="article:tag" content="平行化">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pthreads による簡単な並列化例と性能分析">
+    <meta name="twitter:description" content="POSIX スレッド（Pthreads）を使うと、C/C++ で並列プログラムを書けます。本記事では π を計算する簡単な例を使い、Pthreads でスレッドを作成して設定し、ミューテックスを追加する方法を説明します。最後に簡単な性能分析も行います。">
+    <meta name="twitter:image" content="https://user-images.githubusercontent.com/18013815/86372410-b11fae00-bcb4-11ea-9c25-5db81e9a9d55.png">
+    <meta name="twitter:image:alt" content="Pthreads による簡単な並列化例と性能分析">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"ja","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#primaryimage","url":"https://user-images.githubusercontent.com/18013815/86372410-b11fae00-bcb4-11ea-9c25-5db81e9a9d55.png","contentUrl":"https://user-images.githubusercontent.com/18013815/86372410-b11fae00-bcb4-11ea-9c25-5db81e9a9d55.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#webpage","url":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/","name":"Pthreads による簡単な並列化例と性能分析","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#breadcrumb"},"inLanguage":"ja","datePublished":"2020-07-02T15:00:00.000Z","dateModified":"2020-07-02T15:00:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"Pthreads による簡単な並列化例と性能分析"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#article","isPartOf":{"@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#webpage"},"headline":"Pthreads による簡単な並列化例と性能分析","name":"Pthreads による簡単な並列化例と性能分析","description":"POSIX スレッド（Pthreads）を使うと、C/C++ で並列プログラムを書けます。本記事では π を計算する簡単な例を使い、Pthreads でスレッドを作成して設定し、ミューテックスを追加する方法を説明します。最後に簡単な性能分析も行います。","datePublished":"2020-07-02T15:00:00.000Z","dateModified":"2020-07-02T15:00:00.000Z","inLanguage":"ja","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/ja/post/2020/07/simple-pthread-usage/#primaryimage"},"keywords":"c, pthread, parallel programming, 效能分析, 平行化"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -167,8 +214,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -186,14 +232,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/ja/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -263,14 +313,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         Pthreads による簡単な並列化例と性能分析
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2020-07-02
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>

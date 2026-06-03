@@ -32,7 +32,8 @@ code {
   text-align: center;
 }
 .header h1,
-.header h2 {
+.header h2,
+.header .title {
   margin: 0;
   line-height: 1.2;
 }

@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="parallel programming,compare and swap,lock free,atomic," />
-    <meta name="description"
-        content="本文介紹 Compare and Swap 原理，並實驗證明 CAS 的 Overhead 比 Lock 還小。" />
-    <title>Neutrino&#39;s Blog: 使用 Compare and Swap 做到 Lock Free </title>
+    <meta name="description" content="本文介紹 Compare and Swap 原理，並實驗證明 CAS 的 Overhead 比 Lock 還小。" />
+    <title>使用 Compare and Swap 做到 Lock Free | Neutrino&#39;s Blog</title>
     
     
     
@@ -27,6 +31,50 @@
         
         <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/">
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="使用 Compare and Swap 做到 Lock Free">
+    <meta property="og:description" content="本文介紹 Compare and Swap 原理，並實驗證明 CAS 的 Overhead 比 Lock 還小。">
+    <meta property="og:url" content="https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:locale:alternate" content="ja_JP">
+    
+    <meta property="og:image" content="https://tigercosmos.xyz/img/cover.png">
+    <meta property="og:image:width" content="736">
+    <meta property="og:image:height" content="421">
+    
+    <meta property="og:image:alt" content="使用 Compare and Swap 做到 Lock Free">
+    
+    <meta property="article:published_time" content="2020-10-27T18:25:00.000Z">
+    <meta property="article:modified_time" content="2020-10-27T18:25:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="parallel programming">
+    <meta property="article:tag" content="compare and swap">
+    <meta property="article:tag" content="lock free">
+    <meta property="article:tag" content="atomic">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="使用 Compare and Swap 做到 Lock Free">
+    <meta name="twitter:description" content="本文介紹 Compare and Swap 原理，並實驗證明 CAS 的 Overhead 比 Lock 還小。">
+    <meta name="twitter:image" content="https://tigercosmos.xyz/img/cover.png">
+    <meta name="twitter:image:alt" content="使用 Compare and Swap 做到 Lock Free">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"zh-TW","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#primaryimage","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png","width":736,"height":421},{"@type":"WebPage","@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#webpage","url":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/","name":"使用 Compare and Swap 做到 Lock Free","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#breadcrumb"},"inLanguage":"zh-TW","datePublished":"2020-10-27T18:25:00.000Z","dateModified":"2020-10-27T18:25:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"使用 Compare and Swap 做到 Lock Free"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#article","isPartOf":{"@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#webpage"},"headline":"使用 Compare and Swap 做到 Lock Free","name":"使用 Compare and Swap 做到 Lock Free","description":"本文介紹 Compare and Swap 原理，並實驗證明 CAS 的 Overhead 比 Lock 還小。","datePublished":"2020-10-27T18:25:00.000Z","dateModified":"2020-10-27T18:25:00.000Z","inLanguage":"zh-TW","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/post/2020/10/system/cas-lock-free/#primaryimage"},"keywords":"parallel programming, compare and swap, lock free, atomic"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -167,8 +215,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -186,14 +233,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -263,14 +314,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         使用 Compare and Swap 做到 Lock Free
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2020-10-28
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>

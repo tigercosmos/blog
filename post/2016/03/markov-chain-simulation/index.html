@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="程式,模擬,機率," />
-    <meta name="description"
-        content="個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation" />
-    <title>Neutrino&#39;s Blog: 個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation </title>
+    <meta name="description" content="馬可夫鏈 (Markov chain) 或稱馬可夫過程 (Markov process)是一種隨機過程，在數學上只要這傳遞矩陣有一些好的性質，就可以證明經由這馬可夫鏈抽樣的分佈會收斂到想要的機率分佈。" />
+    <title>個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation | Neutrino&#39;s Blog</title>
     
     
     
@@ -17,6 +21,45 @@
     
     
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation">
+    <meta property="og:description" content="馬可夫鏈 (Markov chain) 或稱馬可夫過程 (Markov process)是一種隨機過程，在數學上只要這傳遞矩陣有一些好的性質，就可以證明經由這馬可夫鏈抽樣的分佈會收斂到想要的機率分佈。">
+    <meta property="og:url" content="https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/">
+    <meta property="og:locale" content="zh_TW">
+    
+    <meta property="og:image" content="https://user-images.githubusercontent.com/18013815/83796060-f9a67480-a6d2-11ea-8cfb-8377172099b6.png">
+    
+    <meta property="og:image:alt" content="個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation">
+    
+    <meta property="article:published_time" content="2016-03-19T04:16:00.000Z">
+    <meta property="article:modified_time" content="2016-03-19T04:16:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="程式">
+    <meta property="article:tag" content="模擬">
+    <meta property="article:tag" content="機率">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation">
+    <meta name="twitter:description" content="馬可夫鏈 (Markov chain) 或稱馬可夫過程 (Markov process)是一種隨機過程，在數學上只要這傳遞矩陣有一些好的性質，就可以證明經由這馬可夫鏈抽樣的分佈會收斂到想要的機率分佈。">
+    <meta name="twitter:image" content="https://user-images.githubusercontent.com/18013815/83796060-f9a67480-a6d2-11ea-8cfb-8377172099b6.png">
+    <meta name="twitter:image:alt" content="個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"zh-TW","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#primaryimage","url":"https://user-images.githubusercontent.com/18013815/83796060-f9a67480-a6d2-11ea-8cfb-8377172099b6.png","contentUrl":"https://user-images.githubusercontent.com/18013815/83796060-f9a67480-a6d2-11ea-8cfb-8377172099b6.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#webpage","url":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/","name":"個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#breadcrumb"},"inLanguage":"zh-TW","datePublished":"2016-03-19T04:16:00.000Z","dateModified":"2016-03-19T04:16:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#article","isPartOf":{"@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#webpage"},"headline":"個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation","name":"個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation","description":"馬可夫鏈 (Markov chain) 或稱馬可夫過程 (Markov process)是一種隨機過程，在數學上只要這傳遞矩陣有一些好的性質，就可以證明經由這馬可夫鏈抽樣的分佈會收斂到想要的機率分佈。","datePublished":"2016-03-19T04:16:00.000Z","dateModified":"2016-03-19T04:16:00.000Z","inLanguage":"zh-TW","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/post/2016/03/markov-chain-simulation/#primaryimage"},"keywords":"程式, 模擬, 機率"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -157,8 +200,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -176,14 +218,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -228,14 +274,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         個體導向馬可夫鍊模擬 Agent-Based Markov Chain Simulation
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2016-03-19
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>

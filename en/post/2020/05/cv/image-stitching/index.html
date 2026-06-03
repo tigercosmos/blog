@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="python,computer vision,image processing,image stitching,ransac,feature matching,keypoint,sift,homography," />
-    <meta name="description"
-        content="Image stitching combines two photos into a new one by aligning their overlapping regions. One common approach is to detect keypoints, match features, and then use RANSAC to estimate a homography for warping and stitching." />
-    <title>Neutrino&#39;s Blog: Image Stitching with Feature Matching and RANSAC </title>
+    <meta name="description" content="Image stitching combines two photos into a new one by aligning their overlapping regions. One common approach is to detect keypoints, match features, and then…" />
+    <title>Image Stitching with Feature Matching and RANSAC | Neutrino&#39;s Blog</title>
     
     
     
@@ -27,6 +31,53 @@
         
         <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/05/cv/image-stitching/">
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="Image Stitching with Feature Matching and RANSAC">
+    <meta property="og:description" content="Image stitching combines two photos into a new one by aligning their overlapping regions. One common approach is to detect keypoints, match features, and then…">
+    <meta property="og:url" content="https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta property="og:locale:alternate" content="ja_JP">
+    
+    <meta property="og:image" content="https://user-images.githubusercontent.com/18013815/82470679-3a5d9580-9af8-11ea-8fa3-0f59ac88f9fb.png">
+    
+    <meta property="og:image:alt" content="Image Stitching with Feature Matching and RANSAC">
+    
+    <meta property="article:published_time" content="2020-05-22T12:00:00.000Z">
+    <meta property="article:modified_time" content="2020-05-22T12:00:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="python">
+    <meta property="article:tag" content="computer vision">
+    <meta property="article:tag" content="image processing">
+    <meta property="article:tag" content="image stitching">
+    <meta property="article:tag" content="ransac">
+    <meta property="article:tag" content="feature matching">
+    <meta property="article:tag" content="keypoint">
+    <meta property="article:tag" content="sift">
+    <meta property="article:tag" content="homography">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Image Stitching with Feature Matching and RANSAC">
+    <meta name="twitter:description" content="Image stitching combines two photos into a new one by aligning their overlapping regions. One common approach is to detect keypoints, match features, and then…">
+    <meta name="twitter:image" content="https://user-images.githubusercontent.com/18013815/82470679-3a5d9580-9af8-11ea-8fa3-0f59ac88f9fb.png">
+    <meta name="twitter:image:alt" content="Image Stitching with Feature Matching and RANSAC">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"en","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#primaryimage","url":"https://user-images.githubusercontent.com/18013815/82470679-3a5d9580-9af8-11ea-8fa3-0f59ac88f9fb.png","contentUrl":"https://user-images.githubusercontent.com/18013815/82470679-3a5d9580-9af8-11ea-8fa3-0f59ac88f9fb.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#webpage","url":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/","name":"Image Stitching with Feature Matching and RANSAC","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#breadcrumb"},"inLanguage":"en","datePublished":"2020-05-22T12:00:00.000Z","dateModified":"2020-05-22T12:00:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"Image Stitching with Feature Matching and RANSAC"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#article","isPartOf":{"@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#webpage"},"headline":"Image Stitching with Feature Matching and RANSAC","name":"Image Stitching with Feature Matching and RANSAC","description":"Image stitching combines two photos into a new one by aligning their overlapping regions. One common approach is to detect keypoints, match features, and then…","datePublished":"2020-05-22T12:00:00.000Z","dateModified":"2020-05-22T12:00:00.000Z","inLanguage":"en","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/en/post/2020/05/cv/image-stitching/#primaryimage"},"keywords":"python, computer vision, image processing, image stitching, ransac, feature matching, keypoint, sift, homography"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -167,8 +218,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -186,14 +236,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/en/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -263,14 +317,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         Image Stitching with Feature Matching and RANSAC
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2020-05-22
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>

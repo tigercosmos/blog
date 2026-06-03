@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="linux,unix,shell,top command," />
-    <meta name="description"
-        content="本文介紹 Unix/Linux TOP 指令使用方式。top 指令 (top command) 可以說是使用 Unix/Linux 最基本的工具了，他就像 Windows 系統中的工作管理員，可以監看目前所有程式的執行狀況。top 也是最簡單監控程式的方法，用它來觀察程式運行所花的記憶體、CPU 還有各種其他資訊。" />
-    <title>Neutrino&#39;s Blog: Unix/Linux TOP 指令使用詳解 </title>
+    <meta name="description" content="本文介紹 Unix/Linux TOP 指令使用方式。top 指令 (top command) 可以說是使用 Unix/Linux 最基本的工具了，他就像 Windows 系統中的工作管理員，可以監看目前所有程式的執行狀況。top 也是最簡單監控程式的方法，用它來觀察程式運行所花的記憶體、CPU 還有各種其他資訊。" />
+    <title>Unix/Linux TOP 指令使用詳解 | Neutrino&#39;s Blog</title>
     
     
     
@@ -27,6 +31,48 @@
         
         <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2020/04/unix/top-usage/">
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/post/2020/04/unix/top-usage/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="Unix/Linux TOP 指令使用詳解">
+    <meta property="og:description" content="本文介紹 Unix/Linux TOP 指令使用方式。top 指令 (top command) 可以說是使用 Unix/Linux 最基本的工具了，他就像 Windows 系統中的工作管理員，可以監看目前所有程式的執行狀況。top 也是最簡單監控程式的方法，用它來觀察程式運行所花的記憶體、CPU 還有各種其他資訊。">
+    <meta property="og:url" content="https://tigercosmos.xyz/post/2020/04/unix/top-usage/">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:locale:alternate" content="ja_JP">
+    
+    <meta property="og:image" content="https://user-images.githubusercontent.com/18013815/79328399-90af4580-7f48-11ea-9926-880e9f44f84b.png">
+    
+    <meta property="og:image:alt" content="Unix/Linux TOP 指令使用詳解">
+    
+    <meta property="article:published_time" content="2020-04-16T07:01:00.000Z">
+    <meta property="article:modified_time" content="2020-04-16T07:01:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="linux">
+    <meta property="article:tag" content="unix">
+    <meta property="article:tag" content="shell">
+    <meta property="article:tag" content="top command">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Unix/Linux TOP 指令使用詳解">
+    <meta name="twitter:description" content="本文介紹 Unix/Linux TOP 指令使用方式。top 指令 (top command) 可以說是使用 Unix/Linux 最基本的工具了，他就像 Windows 系統中的工作管理員，可以監看目前所有程式的執行狀況。top 也是最簡單監控程式的方法，用它來觀察程式運行所花的記憶體、CPU 還有各種其他資訊。">
+    <meta name="twitter:image" content="https://user-images.githubusercontent.com/18013815/79328399-90af4580-7f48-11ea-9926-880e9f44f84b.png">
+    <meta name="twitter:image:alt" content="Unix/Linux TOP 指令使用詳解">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"zh-TW","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#primaryimage","url":"https://user-images.githubusercontent.com/18013815/79328399-90af4580-7f48-11ea-9926-880e9f44f84b.png","contentUrl":"https://user-images.githubusercontent.com/18013815/79328399-90af4580-7f48-11ea-9926-880e9f44f84b.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#webpage","url":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/","name":"Unix/Linux TOP 指令使用詳解","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#breadcrumb"},"inLanguage":"zh-TW","datePublished":"2020-04-16T07:01:00.000Z","dateModified":"2020-04-16T07:01:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"Unix/Linux TOP 指令使用詳解"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#article","isPartOf":{"@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#webpage"},"headline":"Unix/Linux TOP 指令使用詳解","name":"Unix/Linux TOP 指令使用詳解","description":"本文介紹 Unix/Linux TOP 指令使用方式。top 指令 (top command) 可以說是使用 Unix/Linux 最基本的工具了，他就像 Windows 系統中的工作管理員，可以監看目前所有程式的執行狀況。top 也是最簡單監控程式的方法，用它來觀察程式運行所花的記憶體、CPU 還有各種其他資訊。","datePublished":"2020-04-16T07:01:00.000Z","dateModified":"2020-04-16T07:01:00.000Z","inLanguage":"zh-TW","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/post/2020/04/unix/top-usage/#primaryimage"},"keywords":"linux, unix, shell, top command"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -167,8 +213,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -186,14 +231,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -263,14 +312,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         Unix/Linux TOP 指令使用詳解
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2020-04-16
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>

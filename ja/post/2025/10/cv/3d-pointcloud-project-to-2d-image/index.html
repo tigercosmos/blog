@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="c++,computer vision,opencv,eigen,projection,point cloud," />
-    <meta name="description"
-        content="本記事では、3D点群を2D画像平面へ投影する方法を、背景となる数式とC++のサンプルコード付きで解説します。" />
-    <title>Neutrino&#39;s Blog: C++で3D点群を2D画像へ投影する </title>
+    <meta name="description" content="本記事では、3D点群を2D画像平面へ投影する方法を、背景となる数式とC++のサンプルコード付きで解説します。" />
+    <title>C++で3D点群を2D画像へ投影する | Neutrino&#39;s Blog</title>
     
     
     
@@ -27,6 +31,50 @@
         
         <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="C++で3D点群を2D画像へ投影する">
+    <meta property="og:description" content="本記事では、3D点群を2D画像平面へ投影する方法を、背景となる数式とC++のサンプルコード付きで解説します。">
+    <meta property="og:url" content="https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    
+    <meta property="og:image" content="https://tigercosmos.xyz/img/cv/cube-3d-pointcloud.gif">
+    
+    <meta property="og:image:alt" content="C++で3D点群を2D画像へ投影する">
+    
+    <meta property="article:published_time" content="2025-10-01T12:00:00.000Z">
+    <meta property="article:modified_time" content="2025-10-01T12:00:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="c++">
+    <meta property="article:tag" content="computer vision">
+    <meta property="article:tag" content="opencv">
+    <meta property="article:tag" content="eigen">
+    <meta property="article:tag" content="projection">
+    <meta property="article:tag" content="point cloud">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="C++で3D点群を2D画像へ投影する">
+    <meta name="twitter:description" content="本記事では、3D点群を2D画像平面へ投影する方法を、背景となる数式とC++のサンプルコード付きで解説します。">
+    <meta name="twitter:image" content="https://tigercosmos.xyz/img/cv/cube-3d-pointcloud.gif">
+    <meta name="twitter:image:alt" content="C++で3D点群を2D画像へ投影する">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"ja","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#primaryimage","url":"https://tigercosmos.xyz/img/cv/cube-3d-pointcloud.gif","contentUrl":"https://tigercosmos.xyz/img/cv/cube-3d-pointcloud.gif"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#webpage","url":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/","name":"C++で3D点群を2D画像へ投影する","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#breadcrumb"},"inLanguage":"ja","datePublished":"2025-10-01T12:00:00.000Z","dateModified":"2025-10-01T12:00:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"C++で3D点群を2D画像へ投影する"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#article","isPartOf":{"@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#webpage"},"headline":"C++で3D点群を2D画像へ投影する","name":"C++で3D点群を2D画像へ投影する","description":"本記事では、3D点群を2D画像平面へ投影する方法を、背景となる数式とC++のサンプルコード付きで解説します。","datePublished":"2025-10-01T12:00:00.000Z","dateModified":"2025-10-01T12:00:00.000Z","inLanguage":"ja","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/#primaryimage"},"keywords":"c++, computer vision, opencv, eigen, projection, point cloud"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -167,8 +215,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -186,14 +233,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/ja/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -263,14 +314,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         C++で3D点群を2D画像へ投影する
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2025-10-01
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>

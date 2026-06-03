@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="browser,瀏覽器,鐵人賽,來做個網路瀏覽器吧！," />
-    <meta name="description"
-        content="瀏覽器快速與平行化佈局（ㄧ）" />
-    <title>Neutrino&#39;s Blog: 瀏覽器快速與平行化佈局（ㄧ） </title>
+    <meta name="description" content="本系列目錄 《來做個網路瀏覽器吧！》文章列表 今天研究論文： Fast and Parallel Webpage Layout 論文作者為 Leo A. Meyerovich 和 Rastislav Bodík，於 2010 年發表。 本篇文章圖片來自原始論文…" />
+    <title>瀏覽器快速與平行化佈局（ㄧ） | Neutrino&#39;s Blog</title>
     
     
     
@@ -17,6 +21,46 @@
     
     
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="瀏覽器快速與平行化佈局（ㄧ）">
+    <meta property="og:description" content="本系列目錄 《來做個網路瀏覽器吧！》文章列表 今天研究論文： Fast and Parallel Webpage Layout 論文作者為 Leo A. Meyerovich 和 Rastislav Bodík，於 2010 年發表。 本篇文章圖片來自原始論文…">
+    <meta property="og:url" content="https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/">
+    <meta property="og:locale" content="zh_TW">
+    
+    <meta property="og:image" content="https://user-images.githubusercontent.com/18013815/34651274-176a264e-f409-11e7-94b5-5f881711e364.png">
+    
+    <meta property="og:image:alt" content="瀏覽器快速與平行化佈局（ㄧ）">
+    
+    <meta property="article:published_time" content="2018-01-07T15:50:14.000Z">
+    <meta property="article:modified_time" content="2018-01-07T15:50:14.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="browser">
+    <meta property="article:tag" content="瀏覽器">
+    <meta property="article:tag" content="鐵人賽">
+    <meta property="article:tag" content="來做個網路瀏覽器吧！">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="瀏覽器快速與平行化佈局（ㄧ）">
+    <meta name="twitter:description" content="本系列目錄 《來做個網路瀏覽器吧！》文章列表 今天研究論文： Fast and Parallel Webpage Layout 論文作者為 Leo A. Meyerovich 和 Rastislav Bodík，於 2010 年發表。 本篇文章圖片來自原始論文…">
+    <meta name="twitter:image" content="https://user-images.githubusercontent.com/18013815/34651274-176a264e-f409-11e7-94b5-5f881711e364.png">
+    <meta name="twitter:image:alt" content="瀏覽器快速與平行化佈局（ㄧ）">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"zh-TW","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#primaryimage","url":"https://user-images.githubusercontent.com/18013815/34651274-176a264e-f409-11e7-94b5-5f881711e364.png","contentUrl":"https://user-images.githubusercontent.com/18013815/34651274-176a264e-f409-11e7-94b5-5f881711e364.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#webpage","url":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/","name":"瀏覽器快速與平行化佈局（ㄧ）","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#breadcrumb"},"inLanguage":"zh-TW","datePublished":"2018-01-07T15:50:14.000Z","dateModified":"2018-01-07T15:50:14.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"瀏覽器快速與平行化佈局（ㄧ）"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#article","isPartOf":{"@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#webpage"},"headline":"瀏覽器快速與平行化佈局（ㄧ）","name":"瀏覽器快速與平行化佈局（ㄧ）","description":"本系列目錄 《來做個網路瀏覽器吧！》文章列表 今天研究論文： Fast and Parallel Webpage Layout 論文作者為 Leo A. Meyerovich 和 Rastislav Bodík，於 2010 年發表。 本篇文章圖片來自原始論文…","datePublished":"2018-01-07T15:50:14.000Z","dateModified":"2018-01-07T15:50:14.000Z","inLanguage":"zh-TW","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/post/2018/01/browser/browser_series_27/#primaryimage"},"keywords":"browser, 瀏覽器, 鐵人賽, 來做個網路瀏覽器吧！"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -157,8 +201,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -176,14 +219,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -228,14 +275,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         瀏覽器快速與平行化佈局（ㄧ）
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2018-01-07
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>

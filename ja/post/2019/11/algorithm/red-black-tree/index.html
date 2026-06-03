@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="algorithm,red black tree,data structures," />
-    <meta name="description"
-        content="赤黒木（Red-Black Tree, RBT）の紹介" />
-    <title>Neutrino&#39;s Blog: 赤黒木（Red-Black Tree, RBT）の紹介 </title>
+    <meta name="description" content="赤黒木の概要 赤黒木（Red-Black Tree）は特殊なデータ構造で、AVL 木と同様に自動で平衡を保つ機能を持ちます。 赤黒木には以下の性質があります： 各ノードは黒または赤のどちらか 根（root）は黒 すべての葉（leaf）は NIL であり黒 あるノードが赤なら、その子はすべて黒 root から…" />
+    <title>赤黒木（Red-Black Tree, RBT）の紹介 | Neutrino&#39;s Blog</title>
     
     
     
@@ -27,6 +31,47 @@
         
         <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2019/11/algorithm/red-black-tree/">
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="赤黒木（Red-Black Tree, RBT）の紹介">
+    <meta property="og:description" content="赤黒木の概要 赤黒木（Red-Black Tree）は特殊なデータ構造で、AVL 木と同様に自動で平衡を保つ機能を持ちます。 赤黒木には以下の性質があります： 各ノードは黒または赤のどちらか 根（root）は黒 すべての葉（leaf）は NIL であり黒 あるノードが赤なら、その子はすべて黒 root から…">
+    <meta property="og:url" content="https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    
+    <meta property="og:image" content="https://user-images.githubusercontent.com/18013815/69704764-131ca180-112f-11ea-9897-ea561e87fc35.png">
+    
+    <meta property="og:image:alt" content="赤黒木（Red-Black Tree, RBT）の紹介">
+    
+    <meta property="article:published_time" content="2019-11-26T16:00:00.000Z">
+    <meta property="article:modified_time" content="2019-11-26T16:00:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="algorithm">
+    <meta property="article:tag" content="red black tree">
+    <meta property="article:tag" content="data structures">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="赤黒木（Red-Black Tree, RBT）の紹介">
+    <meta name="twitter:description" content="赤黒木の概要 赤黒木（Red-Black Tree）は特殊なデータ構造で、AVL 木と同様に自動で平衡を保つ機能を持ちます。 赤黒木には以下の性質があります： 各ノードは黒または赤のどちらか 根（root）は黒 すべての葉（leaf）は NIL であり黒 あるノードが赤なら、その子はすべて黒 root から…">
+    <meta name="twitter:image" content="https://user-images.githubusercontent.com/18013815/69704764-131ca180-112f-11ea-9897-ea561e87fc35.png">
+    <meta name="twitter:image:alt" content="赤黒木（Red-Black Tree, RBT）の紹介">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"ja","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#primaryimage","url":"https://user-images.githubusercontent.com/18013815/69704764-131ca180-112f-11ea-9897-ea561e87fc35.png","contentUrl":"https://user-images.githubusercontent.com/18013815/69704764-131ca180-112f-11ea-9897-ea561e87fc35.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#webpage","url":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/","name":"赤黒木（Red-Black Tree, RBT）の紹介","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#breadcrumb"},"inLanguage":"ja","datePublished":"2019-11-26T16:00:00.000Z","dateModified":"2019-11-26T16:00:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"赤黒木（Red-Black Tree, RBT）の紹介"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#article","isPartOf":{"@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#webpage"},"headline":"赤黒木（Red-Black Tree, RBT）の紹介","name":"赤黒木（Red-Black Tree, RBT）の紹介","description":"赤黒木の概要 赤黒木（Red-Black Tree）は特殊なデータ構造で、AVL 木と同様に自動で平衡を保つ機能を持ちます。 赤黒木には以下の性質があります： 各ノードは黒または赤のどちらか 根（root）は黒 すべての葉（leaf）は NIL であり黒 あるノードが赤なら、その子はすべて黒 root から…","datePublished":"2019-11-26T16:00:00.000Z","dateModified":"2019-11-26T16:00:00.000Z","inLanguage":"ja","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/ja/post/2019/11/algorithm/red-black-tree/#primaryimage"},"keywords":"algorithm, red black tree, data structures"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -167,8 +212,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -186,14 +230,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/ja/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -263,14 +311,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         赤黒木（Red-Black Tree, RBT）の紹介
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2019-11-27
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>

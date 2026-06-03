@@ -5,11 +5,15 @@
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
     <meta name="keywords"
         content="ai,tensorflow," />
-    <meta name="description"
-        content="TensorFlow で花の種類判別アプリを作る" />
-    <title>Neutrino&#39;s Blog: TensorFlow で花の種類判別アプリを作る </title>
+    <meta name="description" content="前書き 最近は機械学習・人工知能・深層学習などのキーワードがとても盛り上がっています。本記事では深層学習を使って、花の種類を判別できるシンプルな Android アプリを実装します。第 1 部では画像分類モデルを学習し、まずは PC 上で判別できる状態にします。第 2 部では、第 1 部で学習したモデルを…" />
+    <title>TensorFlow で花の種類判別アプリを作る | Neutrino&#39;s Blog</title>
     
     
     
@@ -27,6 +31,48 @@
         
         <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2017/07/ai/tensorflow-flower/">
     
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="TensorFlow で花の種類判別アプリを作る">
+    <meta property="og:description" content="前書き 最近は機械学習・人工知能・深層学習などのキーワードがとても盛り上がっています。本記事では深層学習を使って、花の種類を判別できるシンプルな Android アプリを実装します。第 1 部では画像分類モデルを学習し、まずは PC 上で判別できる状態にします。第 2 部では、第 1 部で学習したモデルを…">
+    <meta property="og:url" content="https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    
+    <meta property="og:image" content="https://tigercosmos.xyz/img/cover.png">
+    <meta property="og:image:width" content="736">
+    <meta property="og:image:height" content="421">
+    
+    <meta property="og:image:alt" content="TensorFlow で花の種類判別アプリを作る">
+    
+    <meta property="article:published_time" content="2017-07-27T16:42:09.000Z">
+    <meta property="article:modified_time" content="2017-07-27T16:42:09.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="ai">
+    <meta property="article:tag" content="tensorflow">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TensorFlow で花の種類判別アプリを作る">
+    <meta name="twitter:description" content="前書き 最近は機械学習・人工知能・深層学習などのキーワードがとても盛り上がっています。本記事では深層学習を使って、花の種類を判別できるシンプルな Android アプリを実装します。第 1 部では画像分類モデルを学習し、まずは PC 上で判別できる状態にします。第 2 部では、第 1 部で学習したモデルを…">
+    <meta name="twitter:image" content="https://tigercosmos.xyz/img/cover.png">
+    <meta name="twitter:image:alt" content="TensorFlow で花の種類判別アプリを作る">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"ja","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#primaryimage","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png","width":736,"height":421},{"@type":"WebPage","@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#webpage","url":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/","name":"TensorFlow で花の種類判別アプリを作る","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#breadcrumb"},"inLanguage":"ja","datePublished":"2017-07-27T16:42:09.000Z","dateModified":"2017-07-27T16:42:09.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"TensorFlow で花の種類判別アプリを作る"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#article","isPartOf":{"@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#webpage"},"headline":"TensorFlow で花の種類判別アプリを作る","name":"TensorFlow で花の種類判別アプリを作る","description":"前書き 最近は機械学習・人工知能・深層学習などのキーワードがとても盛り上がっています。本記事では深層学習を使って、花の種類を判別できるシンプルな Android アプリを実装します。第 1 部では画像分類モデルを学習し、まずは PC 上で判別できる状態にします。第 2 部では、第 1 部で学習したモデルを…","datePublished":"2017-07-27T16:42:09.000Z","dateModified":"2017-07-27T16:42:09.000Z","inLanguage":"ja","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/ja/post/2017/07/ai/tensorflow-flower/#primaryimage"},"keywords":"ai, tensorflow"}]}</script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
@@ -167,8 +213,7 @@
         });
     </script>
 
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Neutrino's Blog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-</head>
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 
 <body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
@@ -186,14 +231,18 @@
 
     <button class="ipad-menu menu">menu</button>
 
-    <h1 class="title" id="main-title">
+    
+    
+    
+    <p class="title" id="main-title">
         <a href="/ja/" class="logo">
             Neutrino&#39;s Blog
         </a>
-    </h1>
-    <h2 class="desc">
+    </p>
+    
+    <p class="desc">
         Code makes the world a better place
-    </h2>
+    </p>
 
     <div class="links">
         <ul>
@@ -263,14 +312,15 @@
     
     
     
-    <h2 class="post-title">
+    <h1 class="post-title">
         TensorFlow で花の種類判別アプリを作る
-    </h2>
+    </h1>
     
     <ul class="post-date">
         <li>
             2017-07-28
         </li>
+        
         <li>
             Liu, An-Chi 劉安齊
         </li>
