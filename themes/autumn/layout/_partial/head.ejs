@@ -1,11 +1,15 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <% const seoDesc = seo_description(page); %>
+    <% const seoCanonical = seo_canonical(page); %>
+    <% const seoImage = seo_og_image(page); %>
+    <% const seoImageDims = seo_og_image_dims(page); %>
+    <% const isPostPage = page.layout === 'post'; %>
     <meta name="keywords"
         content="<% if (page.tags) { %><% page.tags.forEach(function (tag) { %><% if (tag.name && tag.name.trim()) { %><%= tag.name %>,<% } else if (tag) { %><%= tag %>,<% } %><% }) %><% } else { %><%- theme.keywords %><% } %>" />
-    <meta name="description"
-        content="<% if (page.des) {%><%= page.des %><% } else if (page.title) {%><%= page.title %><% }else { %><%= config.description %><% } %>" />
-    <title><%= config.title %><% if (page.title){%>: <%= page.title %> <%}%></title>
+    <meta name="description" content="<%= seoDesc %>" />
+    <title><% if (page.title) { %><%= page.title %> | <%= config.title %><% } else { %><%= config.title %><% } %></title>
     <% const configuredLangs = (function () {
         if (Array.isArray(config.language)) return config.language;
         if (typeof config.language === 'string') return config.language.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
@@ -36,6 +40,46 @@
         <% }) %>
         <link rel="alternate" hreflang="x-default" href="<%= base + ('/' + rel).replace(/\/{2,}/g, '/') %>">
     <% } %>
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="<%= seoCanonical %>">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="<%= isPostPage ? 'article' : 'website' %>">
+    <meta property="og:site_name" content="<%= config.title %>">
+    <meta property="og:title" content="<%= page.title || config.title %>">
+    <meta property="og:description" content="<%= seoDesc %>">
+    <meta property="og:url" content="<%= seoCanonical %>">
+    <meta property="og:locale" content="<%= seo_og_locale(pageLang) %>">
+    <% if (translationEntries.length > 1) { translationEntries.forEach(function (entry) { if (!entry.isCurrent) { %><meta property="og:locale:alternate" content="<%= seo_og_locale(entry.lang) %>">
+    <% } }) } %>
+    <meta property="og:image" content="<%= seoImage %>">
+    <% if (seoImageDims) { %><meta property="og:image:width" content="<%= seoImageDims.width %>">
+    <meta property="og:image:height" content="<%= seoImageDims.height %>">
+    <% } %>
+    <meta property="og:image:alt" content="<%= page.title || config.title %>">
+    <% if (isPostPage) { %>
+    <meta property="article:published_time" content="<%= page.date.toISOString() %>">
+    <meta property="article:modified_time" content="<%= (page.updated || page.date).toISOString() %>">
+    <meta property="article:author" content="<%= config.author %>">
+    <% if (page.tags) { page.tags.forEach(function (tag) { var tn = (tag && tag.name) ? tag.name : tag; if (tn) { %><meta property="article:tag" content="<%= tn %>">
+    <% } }) } %>
+    <% } %>
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= page.title || config.title %>">
+    <meta name="twitter:description" content="<%= seoDesc %>">
+    <meta name="twitter:image" content="<%= seoImage %>">
+    <meta name="twitter:image:alt" content="<%= page.title || config.title %>">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="<%= config.title %>" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json"><%- seo_jsonld(page) %></script>
+
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <%- css('css/style.css') %>

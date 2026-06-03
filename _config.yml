@@ -77,8 +77,11 @@ meta_generator: true
 ## https://momentjs.com/docs/#/displaying/format/
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
-## Use post's date for updated date unless set in front-matter
-updated_option: 'drop'
+## Use post's date for updated date unless set in front-matter.
+## 'date' keeps lastmod stable (== publish date) until a post sets an explicit
+## `updated:` field, so sitemap lastmod only changes on genuine edits — never on
+## rebuilds (Google ignores lastmod that churns every build).
+updated_option: 'date'
 
 # Pagination
 ## Set per_page to 0 to disable pagination
@@ -106,12 +109,16 @@ feed:
   path: atom.xml
   limit: 20
   hub:
-  content:
+  # Ship full post content in the feed so feed-polling AI ingestion (e.g.
+  # Perplexity) gets real body text, not a 140-char teaser.
+  content: true
   content_limit: 140
   content_limit_delim: ' '
   order_by: -date
   icon: icon.png
-  autodiscovery: true
+  # The feed <link> is emitted explicitly in head.ejs; disable plugin injection
+  # to avoid a duplicate autodiscovery tag.
+  autodiscovery: false
 
 sitemap:
   path: sitemap.xml
@@ -137,6 +144,6 @@ markdown:
     # Replace space with a character
     separator: '-'
 
-robotstxt:
-  useragent: "*"
-  sitemap: https://tigercosmos.xyz/sitemap.xml
+# robots.txt is served as a static file from source/robots.txt (so we can
+# explicitly welcome AI answer-engine crawlers). The hexo-generator-robotstxt
+# plugin is disabled (removed from package.json) to avoid a duplicate route.

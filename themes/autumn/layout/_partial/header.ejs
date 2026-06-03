@@ -11,14 +11,24 @@
 
     <button class="ipad-menu menu">menu</button>
 
+    <% const onPost = (typeof is_post === 'function') ? is_post() : (page.layout === 'post'); %>
+    <% if (onPost) { %>
+    <%# On a post, the post title is the page's single <h1>; the site name is branding. %>
+    <p class="title" id="main-title">
+        <a href="<%- url_for_lang('/', page.lang) %>" class="logo">
+            <%= config.title %>
+        </a>
+    </p>
+    <% } else { %>
     <h1 class="title" id="main-title">
         <a href="<%- url_for_lang('/', page.lang) %>" class="logo">
             <%= config.title %>
         </a>
     </h1>
-    <h2 class="desc">
+    <% } %>
+    <p class="desc">
         <%= config.subtitle %>
-    </h2>
+    </p>
 
     <div class="links">
         <ul>

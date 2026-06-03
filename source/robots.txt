@@ -1,0 +1,68 @@
+# robots.txt for https://tigercosmos.xyz/
+#
+# Policy: welcome every crawler, including AI answer engines AND training bots.
+# A bot reads only its own most-specific User-agent group (it does NOT inherit
+# from "*"), so the AI search/fetch agents are listed explicitly. This is
+# defensive documentation of intent and keeps them allowed even if the wildcard
+# rule is tightened later.
+
+User-agent: *
+Allow: /
+
+# --- Classic search engines (also gate AI surfaces) ---
+# Googlebot gates Google Search AND AI Overviews / AI Mode — never block it.
+User-agent: Googlebot
+Allow: /
+
+# Bingbot grounds ChatGPT Search and Microsoft Copilot.
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# --- AI answer-engine: live retrieval / search-grounding (drive citations) ---
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# --- AI training crawlers (allowed: opted in to model training) ---
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+Sitemap: https://tigercosmos.xyz/sitemap.xml

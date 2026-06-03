@@ -11,6 +11,46 @@ background: 'url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.
 # SEO
 keywords: tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'
 
+# Default social-share / Open Graph image (absolute path under source/). Used
+# when a post has no image of its own. Ideal size is 1200x630; cover.png is
+# 736x421 — replace with a dedicated 1200x630 asset for best previews.
+og_image: /img/cover.png
+og_image_width: 736
+og_image_height: 421
+
+# Site logo used for schema.org Organization.logo
+logo: /img/cover.png
+
+# Author identity -> drives the JSON-LD Person node (E-E-A-T / authorship).
+# `sameAs` is the highest-leverage field: it lets AI answer engines and Google
+# resolve "is this the same An-Chi Liu" across the web. Sourced from /about/.
+author:
+  name: "Liu, An-Chi 劉安齊"
+  url: https://tigercosmos.xyz/about/
+  image: /img/selfie3.jpg
+  jobTitle: Software Engineer
+  description: "Software engineer based in Tokyo; writes about systems software, high-performance programming and open source."
+  knowsAbout:
+    - System software
+    - High-performance programming
+    - Parallel programming
+    - C++
+    - Rust
+    - Compilers
+    - Software engineering
+    - Open source
+  alumniOf:
+    - National Yang Ming Chiao Tung University
+    - National Taiwan University
+  sameAs:
+    - https://github.com/tigercosmos
+    - https://www.linkedin.com/in/liuanchi/
+    - https://www.facebook.com/CodingNeutrino/
+    - https://scholar.google.com/citations?user=i06mZ0sAAAAJ
+    - https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ
+    - https://twitter.com/tigercosmos
+    - https://www.threads.net/@liu_an_chi
+
 widgets:
   archive: enabled
   tag: enabled
