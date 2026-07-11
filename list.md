@@ -3,9 +3,9 @@
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
 - Total posts: 187
-- Posts with both EN+JA translations: 78
-- Missing EN translation files: 109
-- Missing JA translation files: 109
+- Posts with both EN+JA translations: 79
+- Missing EN translation files: 108
+- Missing JA translation files: 108
 - Source posts missing `translation_key`: 108
 
 ## Posts
@@ -161,7 +161,7 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [ ] `side-project.md` — Side Project—做自己想用的東西 (Sat Jun 06 2020 08:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
 - [x] `simple-pthread-usage.md` — 簡易 Pthreads 平行化範例與效能分析 (Thu Jul 02 2020 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [ ] `sir.md` — 傳染病 SIR 模型與機率模型介紹與簡易模擬 (Tue Mar 31 2020 11:07:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
-- [ ] `software-engineer/mid-dev-fight-1.md` — 中堅工程師奮鬥中（一）：開始成為公司的中堅力量 (Wed Apr 15 2026 23:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ✅, src:zh
+- [x] `software-engineer/mid-dev-fight-1.md` — 中堅工程師奮鬥中（一）：開始成為公司的中堅力量 (Sun Jul 12 2026 04:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `software-engineer/software-engineer-grow-up-1.md` — 新米工程師進修中（一）： 旅日軟體工程師在 Mujin 的職場初體驗 (Wed Feb 15 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `software-engineer/software-engineer-grow-up-2.md` — 新米工程師進修中（二）： 職場的社會化與生存 (Mon Nov 13 2023 23:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `software-engineer/software-engineer-grow-up-3.md` — 新米工程師進修中（三）：飛越性成長，成為開源專案維護者 (Sun Sep 29 2024 04:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
