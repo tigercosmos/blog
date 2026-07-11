@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
+    <meta name="keywords"
+        content="software engineer,japan,work,Japan,Mid-Level Engineer in the Fight," />
+    <meta name="description" content="This article shares my first reflections on becoming a mid-level engineer. After more than half a year at T2, I describe the mindset shifts I have experienced…" />
+    <title>Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company | Neutrino&#39;s Blog</title>
+    
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2026/07/software-engineer/mid-dev-fight-1/">
+        
+            <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/post/2026/07/software-engineer/mid-dev-fight-1/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2026/07/software-engineer/mid-dev-fight-1/">
+    
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company">
+    <meta property="og:description" content="This article shares my first reflections on becoming a mid-level engineer. After more than half a year at T2, I describe the mindset shifts I have experienced…">
+    <meta property="og:url" content="https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta property="og:locale:alternate" content="ja_JP">
+    
+    <meta property="og:image" content="https://github.com/user-attachments/assets/a258aec9-6261-4ecf-ba24-021e9b91535e">
+    
+    <meta property="og:image:alt" content="Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company">
+    
+    <meta property="article:published_time" content="2026-07-11T20:00:00.000Z">
+    <meta property="article:modified_time" content="2026-07-11T20:00:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="software engineer">
+    <meta property="article:tag" content="japan">
+    <meta property="article:tag" content="work">
+    <meta property="article:tag" content="Japan">
+    <meta property="article:tag" content="Mid-Level Engineer in the Fight">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company">
+    <meta name="twitter:description" content="This article shares my first reflections on becoming a mid-level engineer. After more than half a year at T2, I describe the mindset shifts I have experienced…">
+    <meta name="twitter:image" content="https://github.com/user-attachments/assets/a258aec9-6261-4ecf-ba24-021e9b91535e">
+    <meta name="twitter:image:alt" content="Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"en","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#primaryimage","url":"https://github.com/user-attachments/assets/a258aec9-6261-4ecf-ba24-021e9b91535e","contentUrl":"https://github.com/user-attachments/assets/a258aec9-6261-4ecf-ba24-021e9b91535e"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#webpage","url":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/","name":"Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#breadcrumb"},"inLanguage":"en","datePublished":"2026-07-11T20:00:00.000Z","dateModified":"2026-07-11T20:00:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#article","isPartOf":{"@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#webpage"},"headline":"Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company","name":"Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company","description":"This article shares my first reflections on becoming a mid-level engineer. After more than half a year at T2, I describe the mindset shifts I have experienced…","datePublished":"2026-07-11T20:00:00.000Z","dateModified":"2026-07-11T20:00:00.000Z","inLanguage":"en","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/en/post/2026/07/software-engineer/mid-dev-fight-1/#primaryimage"},"keywords":"software engineer, japan, work, Japan, Mid-Level Engineer in the Fight"}]}</script>
+
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    
+    
+    
+    <p class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </p>
+    
+    <p class="desc">
+        Code makes the world a better place
+    </p>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2026/07/software-engineer/mid-dev-fight-1/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/ja/post/2026/07/software-engineer/mid-dev-fight-1/" hreflang="ja" lang="ja">ja</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h1 class="post-title">
+        Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company
+    </h1>
+    
+    <ul class="post-date">
+        <li>
+            2026-07-12
+        </li>
+        
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2026/07/software-engineer/mid-dev-fight-1/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/ja/post/2026/07/software-engineer/mid-dev-fight-1/" hreflang="ja" lang="ja">ja</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Foreword"><a class="header-anchor" href="#Foreword">¶ </a>Foreword</h2>
+<p>I had already been promoted to a mid-level engineer when I was at Mujin. Later, I joined a friend to start a company; after that venture failed, I returned to engineering. I was also fortunate enough to find a position at <a target="_blank" rel="noopener" href="https://t2.auto/">T2, Inc</a>, an L4 autonomous-trucking company <sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>.</p>
+<p>This series corresponds to my previous series, <a href="/tags/%E6%96%B0%E7%B1%B3%E5%B7%A5%E7%A8%8B%E5%B8%AB%E9%80%B2%E4%BF%AE%E4%B8%AD/">“New Software Engineer in Training”</a>, and its “newcomer” (shinmai). After undergoing a period of refinement, I can now stand on my own and become a core member (chūken) of the company.</p>
+<p>I have always believed that documenting personal experiences can help many people. The previous series aimed to help students and newcomers understand what junior engineers are like. Going forward, I will use the <a href="/tags/%E4%B8%AD%E5%A0%85%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%A5%AE%E9%AC%A5%E4%B8%AD/">“Mid-Level Engineer in the Fight”</a> series to chronicle the journey from mid-level to senior <sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>, and I hope it can help engineers from the junior to mid-level stages.</p>
+<p>I have now been at T2 for eight months. As a “mid-level engineer,” I can tangibly make an impact on the company. I need to work closely with different teams; the projects I propose affect the whole company; and I also help share my team lead’s workload. The scope of my work is far beyond that of junior and early mid-level engineers. As one of the company’s core forces, leadership gives us substantial freedom and enough of a voice, because the company believes in our professional capabilities and needs to rely on us to complete the vast majority of its work. At any company, mid- and senior-level engineers are the main force.</p>
+<p><img src="https://github.com/user-attachments/assets/a258aec9-6261-4ecf-ba24-021e9b91535e" alt="My T2 colleagues"><br>
+(My colleagues and me at T2)</p>
+<h2 id="Development-speed"><a class="header-anchor" href="#Development-speed">¶ </a>Development speed</h2>
+<p>After several years of experience, together with AI assistance, being an independent and efficient developer has become second nature to me. For problems with clearly defined boundaries, such as “developing an autonomous-driving simulation map system that conforms to common standards” or “implementing polygon Boolean operations,” mid-level engineers can solve them very efficiently. With AI assistance, the efficiency can even reach three to five times what it was in the past.</p>
+<p>As mid-level engineers, we can handle independent projects well. For example, not long after joining T2, I realized that we had no QA platform. Our most important tests were all operated manually by integration engineers. This was not only inefficient, but also made QA impossible to scale. I therefore spent one or two months on analysis and proposals. After receiving my boss’s approval, I spent two weeks building the MVP. Around a month later, I began promoting it for company-wide use. My boss also came to understand the importance of the QA platform to the company, so the project began receiving more resources and additional development staff.</p>
+<p>However, when it comes to projects with broader scope, greater technical difficulty, more personnel and resources involved, and a closer connection to the company’s business—such as “developing an entirely new end-to-end simulation system”—mid-level engineers can feel overwhelmed. At that point, we still lack the ability to grasp the whole picture and coordinate many people, so we need senior engineers or even staff engineers to lead us.</p>
+<h2 id="Revenue-metrics"><a class="header-anchor" href="#Revenue-metrics">¶ </a>Revenue metrics</h2>
+<p>Junior engineers generally do not need to care much about whether what they build can make money. On one hand, the scope of their work is too small; on the other, they are primarily learning and mostly receive tasks passively. Mid-level engineers, however, need to start considering whether a task serves the company’s interests and helps its business. Places where money flows, or where money can be made, also offer more opportunities. In other words, learn to look at “revenue metrics” and get as close to “money” as possible.</p>
+<p>After joining T2, I was assigned to a new simulation team. No one knew what the team was supposed to do, so I spent considerable time researching, interviewing people, and trying to identify viable topics. A new team at a startup has too many possible topics, and most of them are interesting. In the end, though, I chose to start with a topic that could directly make money for the company and had a low barrier to entry: a QA testing platform. The results were also significant. The new project began gaining visibility in just one or two months and received more and more resources. In contrast, another topic that I also found very interesting—a full end-to-end simulation—was not suitable to take on because it was more difficult and had no direct connection to making money (which is highly counterintuitive for a self-driving company). It faced considerable resistance and was difficult to secure resources for.</p>
+<p>Projects that spend more money are usually more important too. Even if a project may not directly make money for the company, places with funding generally do not fare too badly. So either find a team or project where money is being spent, or find a way to make your own team or project one the company is willing to spend money on.</p>
+<h2 id="Influence"><a class="header-anchor" href="#Influence">¶ </a>Influence</h2>
+<p>At the junior level, you mostly build small features or small systems. You are merely an endpoint in a system, so your influence is very limited. After becoming a mid-level engineer, the projects you develop and own grow in scale. You also need to collaborate with more teams, becoming a node within a system that connects various subsystems. Once something is built, it gradually gains influence and increases the weight of each connection. When the number and weight of these connections reach a certain level, it becomes a highly important hub.</p>
+<p>A few months after I built the QA testing platform at T2, quite a few people in the company had begun using it and bringing more requests to me. Different company systems and functions gradually integrated with my platform, and I even had the opportunity to report directly to the entire engineering division.</p>
+<p>Influence has a compounding effect. When a few people think your product is good, word of mouth builds up and more people begin using it. Naturally, people come to you to collaborate, forming a positive cycle. When the QA platform first went online, I had to personally ask people one by one to give it a try. Now everyone uses it proactively. Whenever I enter the office, people will even come to me on their own to discuss how to expand its features. I interact with different departments every day and feel my influence growing. The process is tremendously rewarding.</p>
+<h2 id="Learning-and-growth"><a class="header-anchor" href="#Learning-and-growth">¶ </a>Learning and growth</h2>
+<p>As a startup, T2 is indeed quite chaotic, and I think that is also why I was hired at a high salary in the first place. In the short half-year since I joined, I have changed teams once and team leads twice. Together with constant changes in senior management and ongoing organizational restructuring, it can often leave people at a loss. But perhaps this is unavoidable at a startup. Every organizational change requires readjustment, and every change of team lead means rebuilding relationships. Wherever there are people, there is a social world. Understanding its rules and seeing through each person’s behavior and mindset are abilities I still lack.</p>
+<p>At the same time, the AI era is redefining what mid- and senior-level engineers should be. People may think that AI will inevitably make them more efficient and lead to better results, but that is not necessarily true. AI is only a tool. While AI speeds up problem solving, the truly difficult part is finding problems—especially valuable problems. The ability to make forward-looking judgments remains important in the AI era. AI also cannot replace the true core value of people: evaluating project value and the company’s interests, building connections between people, understanding customer needs, and so on. These are still abilities that must be accumulated slowly, step by step.</p>
+<blockquote>
+<p>I recommend reading @philhchen’s “<a target="_blank" rel="noopener" href="https://x.com/philhchen/status/2072793818945167475">Career advice in the age of AI </a>”</p>
+</blockquote>
+<p>Whether we stay at startups or live in an era of dramatic AI-driven change, we need to keep learning, growing, and looking for opportunities. At work, I work seriously and observe new opportunities; after work, I write open-source software to sharpen my AI development skills. The more educated I become and the older I get, the humbler I become, and the more I feel how small I am. In the current of the times, all I can do is keep improving and hope that one day I can truly become an outstanding person.</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>For the specific process of finding this job, see my earlier article, “<a href="/post/2025/10/japan/find-swe-job-in-japan-2025">My Experience Job Hunting as a Mid-Level Software Engineer in Japan and Taiwan in Fall 2025</a>.” <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>Because job levels differ from company to company, “mid-level” here is equivalent to Google’s L4, while “senior” is equivalent to Google’s L5. Therefore, mid-level engineers broadly refer to engineers at the L4 to L5 level. <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/software-engineer/">
+                software engineer
+            </a>,&nbsp;
+        
+            <a href="/en/tags/japan/">
+                japan
+            </a>,&nbsp;
+        
+            <a href="/en/tags/work/">
+                work
+            </a>,&nbsp;
+        
+            <a href="/en/tags/japan/">
+                Japan
+            </a>,&nbsp;
+        
+            <a href="/en/tags/mid-level-engineer-in-the-fight/">
+                Mid-Level Engineer in the Fight
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+<p class="post-end-line-small">
+    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
+    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
+</p>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Foreword"><span class="toc-text">Foreword</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Development-speed"><span class="toc-text">Development speed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Revenue-metrics"><span class="toc-text">Revenue metrics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Influence"><span class="toc-text">Influence</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Learning-and-growth"><span class="toc-text">Learning and growth</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2026/07/software-engineer/mid-dev-fight-1/">
+        Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2026/05/ai/ai-gen-book-experiment/">
+        Generating a Book with AI
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2026/02/ai/vibe-code-japanese-learning-app/">
+        How to Build a Fully Customized Japanese Learning App with AI
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/11/c++/std-string-advanced/">
+        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
+        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2026/">2026</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">34</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
