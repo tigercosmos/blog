@@ -6,8 +6,17 @@
     <% const seoImage = seo_og_image(page); %>
     <% const seoImageDims = seo_og_image_dims(page); %>
     <% const isPostPage = page.layout === 'post'; %>
-    <meta name="keywords"
-        content="<% if (page.tags) { %><% page.tags.forEach(function (tag) { %><% if (tag.name && tag.name.trim()) { %><%= tag.name %>,<% } else if (tag) { %><%= tag %>,<% } %><% }) %><% } else { %><%- theme.keywords %><% } %>" />
+    <% const seoKeywords = (function () {
+        const names = [];
+        if (page.tags && typeof page.tags.forEach === 'function') {
+            page.tags.forEach(function (tag) {
+                const n = (tag && tag.name) ? tag.name : tag;
+                if (n && String(n).trim()) names.push(String(n).trim());
+            });
+        }
+        return names.length ? names.join(', ') : (theme.keywords || '');
+    })(); %>
+    <meta name="keywords" content="<%= seoKeywords %>" />
     <meta name="description" content="<%= seoDesc %>" />
     <title><% if (page.title) { %><%= page.title %> | <%= config.title %><% } else { %><%= config.title %><% } %></title>
     <% const configuredLangs = (function () {
@@ -17,7 +26,6 @@
         return [String(config.language)];
     })(); %>
     <% const defaultLang = configuredLangs[0] || 'en'; %>
-    <% const hreflangLangs = configuredLangs.filter(function (lang) { return lang && lang !== 'default'; }); %>
     <% const pageLang = page.lang || defaultLang; %>
     <% function toSeoLang(lang) { return lang === 'jp' ? 'ja' : lang; } %>
     <% const translationEntries = translation_entries(page); %>
@@ -27,18 +35,6 @@
         <% }) %>
         <% const defaultEntry = translationEntries.find(function (entry) { return entry.isDefault; }) || translationEntries[0]; %>
         <link rel="alternate" hreflang="x-default" href="<%= defaultEntry.abs %>">
-    <% } else if (page.__index || page.archive || page.tag) { %>
-        <% const base = (config.url || '').replace(/\/$/, ''); %>
-        <% const currentUrlRaw = (typeof page.current_url === 'string') ? page.current_url : (page.path || ''); %>
-        <% const currentUrl = String(currentUrlRaw).replace(/^\/+/, ''); %>
-        <% let rel = currentUrl; %>
-        <% if (pageLang !== defaultLang && rel.startsWith(pageLang + '/')) rel = rel.slice(pageLang.length + 1); %>
-        <% hreflangLangs.forEach(function (lang) { %>
-            <% if (!lang) return; %>
-            <% const hrefPath = (lang === defaultLang ? '/' + rel : '/' + lang + '/' + rel).replace(/\/{2,}/g, '/'); %>
-            <link rel="alternate" hreflang="<%= toSeoLang(lang) %>" href="<%= base + hrefPath %>">
-        <% }) %>
-        <link rel="alternate" hreflang="x-default" href="<%= base + ('/' + rel).replace(/\/{2,}/g, '/') %>">
     <% } %>
 
     <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
@@ -82,6 +78,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     <%- css('css/style.css') %>
 
         <!-- highlight -->

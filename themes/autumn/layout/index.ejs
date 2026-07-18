@@ -1,7 +1,7 @@
 <%
     function getPostCover(post) {
         var content = post.content
-        var regex = /<img src="(\S+)"/
+        var regex = /<img\b[^>]*?\ssrc=["']([^"']+)["']/i
         var result = regex.exec(content)
 
         if (result && result[1]) {

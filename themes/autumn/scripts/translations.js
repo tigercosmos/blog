@@ -56,6 +56,24 @@ function getPostSlugPath(post, lang) {
   return stripped;
 }
 
+function routeExists(urlPath) {
+  if (typeof hexo === 'undefined' || !hexo.route || typeof hexo.route.get !== 'function') {
+    return true; // fail open if the router is unavailable
+  }
+  let key = String(urlPath).replace(/^\/+/, '');
+  if (key === '' || key.endsWith('/')) key += 'index.html';
+  const candidates = [key];
+  try {
+    const decoded = decodeURI(key);
+    if (decoded !== key) candidates.push(decoded);
+  } catch (e) { /* malformed URI, ignore */ }
+  try {
+    const encoded = encodeURI(key);
+    if (encoded !== key) candidates.push(encoded);
+  } catch (e) { /* ignore */ }
+  return candidates.some((candidate) => Boolean(hexo.route.get(candidate)));
+}
+
 function getListTranslationEntries(ctx, page) {
   if (!page || !(page.__index || page.archive || page.tag)) return [];
 
@@ -73,18 +91,24 @@ function getListTranslationEntries(ctx, page) {
   }
 
   const base = (ctx.config.url || '').replace(/\/$/, '');
-  return languages.map((lang) => {
-    const withPrefix = lang === defaultLang ? `/${relativePath}` : `/${lang}/${relativePath}`;
-    const path = withPrefix.replace(/\/{2,}/g, '/');
-    return {
-      lang,
-      path,
-      abs: `${base}${path}`,
-      title: page.title || '',
-      isCurrent: lang === pageLang,
-      isDefault: lang === defaultLang,
-    };
-  });
+  return languages
+    .map((lang) => {
+      const withPrefix = lang === defaultLang ? `/${relativePath}` : `/${lang}/${relativePath}`;
+      const path = withPrefix.replace(/\/{2,}/g, '/');
+      return {
+        lang,
+        path,
+        abs: `${base}${path}`,
+        title: page.title || '',
+        isCurrent: lang === pageLang,
+        isDefault: lang === defaultLang,
+      };
+    })
+    // Only keep languages whose list page actually exists — the i18n
+    // generators skip languages that have no matching posts, so fabricating
+    // a URL for every configured language would emit hreflang/switcher links
+    // that 404. Always keep the current page even if a route lookup misses.
+    .filter((entry) => entry.isCurrent || routeExists(entry.path));
 }
 
 hexo.extend.helper.register('translation_entries', function (page) {
@@ -96,15 +120,13 @@ hexo.extend.helper.register('translation_entries', function (page) {
 
   return entries.map((post) => {
     const lang = post.lang || defaultLang;
-    let path;
-    if (lang !== defaultLang && post.slug && post.date && post.date.format) {
-      const year = post.date.format('YYYY');
-      const month = post.date.format('MM');
-      const slugPath = getPostSlugPath(post, lang) || post.slug;
-      path = `/${lang}/post/${year}/${month}/${slugPath}/`;
-    } else {
-      path = this.url_for(post.path);
-    }
+    // Use the post's actual generated path. Hexo computes post.path from the
+    // same permalink/timezone rules it uses to write the file (via the
+    // post_permalink filter below), so it always matches the file on disk.
+    // Rebuilding the path from post.date instead drifts whenever a timezone
+    // rollover pushes the display month past the month baked into the path
+    // (e.g. 2026-02-28 23:42 +08:00 -> file at /2026/03/ but format('MM') -> 02).
+    const path = this.url_for(post.path);
     return {
       lang,
       path,
