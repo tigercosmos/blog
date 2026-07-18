@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="english,rust,rust taiwan,traditional chinese,localization," />
+    
+    <meta name="keywords" content="english, rust, rust taiwan, traditional chinese, localization" />
     <meta name="description" content="Record Rust Taiwan community’s work of translating the Rust website 紀錄 Rust 台灣社群將 Rust 官網翻譯成正體中文的過程 TL;DR I am glad to announce that the Traditional Chinese…" />
     <title>Localize the Rust Website to Traditional Chinese | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -64,6 +63,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -375,11 +383,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

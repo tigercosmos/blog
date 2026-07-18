@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="想法,研究所,交大資工所,資工,碩士,交大觀察與心得," />
+    
+    <meta name="keywords" content="想法, 研究所, 交大資工所, 資工, 碩士, 交大觀察與心得" />
     <meta name="description" content="（資工系館） 大學就有習慣每學期都記錄一下所見所聞在「台大觀察與心得」系列。現在來念交大資工了，於是就有新的系列「交大觀察與心得」，我想要研究所可以早早畢業，一學期一篇，希望不要寫超過四篇才好。 校園樣貌…" />
     <title>交大觀察與心得(一)：碩一上 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -77,6 +76,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -453,11 +461,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="想法,研究所,computer science,資工,資訊工程,大學,基本素養," />
+    
+    <meta name="keywords" content="想法, 研究所, computer science, 資工, 資訊工程, 大學, 基本素養" />
     <meta name="description" content="What skills should a CS undergraduate have upon graduation? What skills should a CS graduate student have after finishing a master’s program? Beyond what you…" />
     <title>Core Competencies for Computer Science Students | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -80,6 +79,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -462,11 +470,6 @@ Beyond what you learn in specialized courses, I want to seriously discuss the �
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

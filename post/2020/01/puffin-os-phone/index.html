@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="browser,browsers,puffin browser,puffin oS phone,cloudmosa," />
+    
+    <meta name="keywords" content="browser, browsers, puffin browser, puffin oS phone, cloudmosa" />
     <meta name="description" content="Puffin OS Phone 是台灣軟體開發商 CloudMosa 所研發，搭載其自家作業系統 Puffin OS 的低階智慧手機，CloudMosa 團隊開發的智慧手機將主打第三世界市場，以極低價的成本，藉由其在後端渲染瀏覽器 Puffin Browser…" />
     <title>深度分析 Puffin OS Phone—搶攻第三世界的智慧手機 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -64,6 +63,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -398,11 +406,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

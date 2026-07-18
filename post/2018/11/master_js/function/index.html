@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式,JavaScript,30 天 Javascript 從入門到進階,函式," />
+    
+    <meta name="keywords" content="程式, JavaScript, 30 天 Javascript 從入門到進階, 函式" />
     <meta name="description" content="函式 我們知道程式碼可以幫我們做很多事情，例如睡不著要數羊的時候，就讓程式跑個迴圈，一下就幾百幾千萬隻羊了。但是目前為止，所以工作都是被放在一起的，並且只能被執行一次。也就是說，假設我有三件工作，寫成程式碼可能會長這樣：" />
     <title>30 天 Javascript 從入門到進階：函式 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -65,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -670,11 +678,6 @@ Hi, Jenny
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'" />
+    
+    <meta name="keywords" content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, &#39;Liu, An-Chi&#39;, &#39;Neutrino\&#39;s Blog&#39;" />
     <meta name="description" content="誰是劉安齊 Who is Liu, An-Chi 哈囉！我是劉安齊，歡迎來到我的網站。我目前在日本東京擔任軟體工程師。平時以 ID @tigercosmos 活躍於開源社群。 我是台北人，畢業於國立陽明交大資工所（2022）以及國立臺灣大學生機系（2019）。…" />
     <title>About | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -56,6 +55,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 

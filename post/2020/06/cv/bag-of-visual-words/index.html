@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="python,電腦視覺,computer vision,bag of words,bag of visual words," />
+    
+    <meta name="keywords" content="python, 電腦視覺, computer vision, bag of words, bag of visual words" />
     <meta name="description" content="本篇介紹如何用 Bag of Visual Words (BoVW) 模型來做圖片辨識，先將取得圖片集的特徵篩選出有哪些群集，然後對每張照片根據其特徵得到他們的 Histogram，最後用分類器來辨識測試圖片屬於哪一種類的圖片。" />
     <title>使用 Bag of Visual Words 做圖片分類 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -76,6 +75,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -587,11 +595,6 @@ feature_clusters = get_clusters(images, 150, method=&quot;dsift&quot;)
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

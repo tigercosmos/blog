@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="想法,工作,公司,程式,臺灣金融科技公司," />
+    
+    <meta name="keywords" content="想法, 工作, 公司, 程式, 臺灣金融科技公司" />
     <meta name="description" content="&amp;#x9019;&amp;#x7BC7;&amp;#x6587;&amp;#x7AE0;&amp;#x7D00;&amp;#x9304;&amp;#x6211;&amp;#x5728;&amp;#x5927;&amp;#x4E8C;&amp;#x6642;&amp;#x65BC;&amp;#x81FA;&amp;#x7063;&amp;#x91D1;&amp;#x878D;&amp;#x79D1;&amp;#x6280;&amp;#x516C;&amp;#x53F8…" />
     <title>我在臺灣金融科技公司的那些日子 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -66,6 +65,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -395,11 +403,6 @@ CEO <span lang="ZH-TW">&#x8AC7;&#x597D;&#x8981;&#x628A;&#x5EFA;&#x7ACB;&#x5C08;&
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

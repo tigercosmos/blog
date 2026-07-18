@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="browser,browsers,c,pthread,parallel programming,效能分析,平行化,JavaScript,web worker,nodejs," />
+    
+    <meta name="keywords" content="browser, browsers, c, pthread, parallel programming, 效能分析, 平行化, JavaScript, web worker, nodejs" />
     <meta name="description" content="本記事では、Emscripten を使って C/C++ の Pthread を Web Worker と WebAssembly に変換する方法を紹介し、(1) ネイティブ C (2) Emscripten 生成の JS/WASM (3) JavaScript で直接書いた Web Worker の 3…" />
     <title>Emscripten で Pthread を JavaScript に変換し、性能を分析する | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -83,6 +82,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -674,11 +682,6 @@ real    0m0.350s
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

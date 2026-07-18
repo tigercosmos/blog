@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="docker,筆記," />
+    
+    <meta name="keywords" content="docker, 筆記" />
     <meta name="description" content="Docker 是一個輕量的虛擬環境。 取得 Docker Windows Windows 下裝可以直接裝 Docker，基本上就是去官網下載安裝檔安裝，可以參考官方教學。裝完後如果想要共享資料夾，要去 Docker 設定的地方「File Sharing」將之打算共享的硬碟勾選。 也可以用虛擬環境來操作，使用…" />
     <title>Docker 使用筆記 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -61,6 +60,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -385,11 +393,6 @@ $ docker run myimage:version1
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

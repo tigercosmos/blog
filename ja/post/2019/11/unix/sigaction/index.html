@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="unix,network programming,signal,sigaction," />
+    
+    <meta name="keywords" content="unix, network programming, signal, sigaction" />
     <meta name="description" content="Unix ではプロセス間通信の方法がいくつもあります。本記事では signal（シグナル）の簡単な使い方を紹介します。まずは Beej の紹介 を読むと良いです。名前のとおり、signal はプロセスが送受信する通知です。例えばシェルを使っているときに Ctrl-C でプログラムを中断できるのは、シェルが…" />
     <title>Unix における `sigaction` を使ったシグナルの例 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -77,6 +76,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -541,11 +549,6 @@ Tick #15.
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="台大,大学,考え,台大観察と所感,大気," />
+    
+    <meta name="keywords" content="台大, 大学, 考え, 台大観察と所感, 大気" />
     <meta name="description" content="台大で2学期を過ごして大学生活がより分かってきた反面、最初ほどの勢いはなくなってきました。今学期は履修が大きく変わり、前学期は22単位だったのに対して今学期は24単位を取りました。時間が過ぎるのも速く感じて、期中試験は「1週間に1科目」ペースで、それが1か月続きました。期中が終わって少しすると期末レポートが山のように…" />
     <title>台大観察と所感（2）：大気系2学期 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -78,6 +77,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -442,11 +450,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="寫書,程式設計原來不只有寫 CODE！,資工基本素養,暢銷書,如何寫書,出版書籍," />
+    
+    <meta name="keywords" content="寫書, 程式設計原來不只有寫 CODE！, 資工基本素養, 暢銷書, 如何寫書, 出版書籍" />
     <meta name="description" content="本文完整分享費時一年出版電腦技術書的心路歷程，鉅細靡遺說明出版一本書的各個流程和注意細節，最終《程式設計原來不只有寫 CODE！》在天瓏書局榮登月榜第一，正式晉級成為「暢銷書」的行列。" />
     <title>成為電腦技術書暢銷排行榜第一名有多難？《程式設計原來不只有寫 CODE！》歷時一年的寫書攻略大公開 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -65,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -468,11 +476,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

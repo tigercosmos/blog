@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式,JavaScript,陣列,30 天 Javascript 從入門到進階," />
+    
+    <meta name="keywords" content="程式, JavaScript, 陣列, 30 天 Javascript 從入門到進階" />
     <meta name="description" content="陣列 前一張在介紹迴圈時，提到一些例子，例如我有一百件褲子，要一件一件檢查。或是老師巡邏學校有好幾個班級。我們知道可以用迴圈的方式，一個一個把「東西」數過一遍，也就是遍歷一次，但迴圈是「方法」，我們必須準備好東西，才能使用方法。 這邊的東西就是指一百件褲子或是 20 個班級。我們需要用一個容器來儲存這些東西，在…" />
     <title>30 天 Javascript 從入門到進階：陣列 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -63,6 +62,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -598,11 +606,6 @@ FATAL ERROR: invalid array length Allocation failed - JavaScript heap out of mem
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,8 +10,8 @@
     
     
     
-    <meta name="keywords"
-        content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'" />
+    
+    <meta name="keywords" content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, &#39;Liu, An-Chi&#39;, &#39;Neutrino\&#39;s Blog&#39;" />
     <meta name="description" content="Liu, An-Chi&#39;s blog" />
     <title>Neutrino&#39;s Blog</title>
     
@@ -20,16 +20,13 @@
     
     
     
-    
-        
-            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/tags/gdb/">
         
             <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/tags/gdb/">
         
             <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/tags/gdb/">
         
         
-        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/tags/gdb/">
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/en/tags/gdb/">
     
 
     <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
@@ -43,7 +40,6 @@
     <meta property="og:description" content="Liu, An-Chi&#39;s blog">
     <meta property="og:url" content="https://tigercosmos.xyz/ja/tags/gdb/">
     <meta property="og:locale" content="ja_JP">
-    <meta property="og:locale:alternate" content="zh_TW">
     <meta property="og:locale:alternate" content="en_US">
     
     <meta property="og:image" content="https://tigercosmos.xyz/img/cover.png">
@@ -68,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -279,10 +284,6 @@
                     <span class="translation-current" aria-hidden="true">ja</span>
                 </button>
                 <div class="translation-menu" aria-label="Translation menu">
-                    
-                        
-                            <a class="translation-lang" href="/tags/gdb/" hreflang="zh" lang="zh">zh</a>
-                        
                     
                         
                             <a class="translation-lang" href="/en/tags/gdb/" hreflang="en" lang="en">en</a>

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="angular2,angular,鐵人賽,Angular 2 之 30 天邁向神乎其技之路," />
+    
+    <meta name="keywords" content="angular2, angular, 鐵人賽, Angular 2 之 30 天邁向神乎其技之路" />
     <meta name="description" content="&amp;#x524D;&amp;#x8A00;…" />
     <title>Angular 2 路由 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -65,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -478,11 +486,6 @@ return false;
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

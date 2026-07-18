@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式,JavaScript,30 天 Javascript 從入門到進階," />
+    
+    <meta name="keywords" content="程式, JavaScript, 30 天 Javascript 從入門到進階" />
     <meta name="description" content="環境建設與執行第一個程式 JS 可以當作獨立的程式直接運行，也可以跑在網頁上。本篇先介紹如何直接運行 JS 就好，因為要跑在網頁上，我們必須寫一份網頁出來，其中概念不只 JS，還必須懂 HTML，但這邊我們先了解 JS 就好，所以跑在網站上的方式待晚點再作介紹。" />
     <title>30 天 Javascript 從入門到進階：環境建設與執行第一個程式 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -62,6 +61,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -388,11 +396,6 @@ Hello World!
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

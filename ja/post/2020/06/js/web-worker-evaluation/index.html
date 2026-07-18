@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="browser,browsers,parallel programming,效能分析,平行化,JavaScript,web worker,nodejs,deno," />
+    
+    <meta name="keywords" content="browser, browsers, parallel programming, 效能分析, 平行化, JavaScript, web worker, nodejs, deno" />
     <meta name="description" content="本記事では、主要ブラウザ、NodeJS、Deno が平行プログラミング用途で Web Worker をどの程度サポートしているか、そして利用上の違いを簡単に評価します。結果として Chromium 系ブラウザは良好に対応している一方、Firefox が対応していない点は残念であり、JavaScript の…" />
     <title>ブラウザ・NodeJS・Deno における Web Worker の平行プログラミング対応評価 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -80,6 +79,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -611,11 +619,6 @@ undefined
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

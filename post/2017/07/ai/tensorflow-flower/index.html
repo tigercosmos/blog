@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="ai,tensorflow," />
+    
+    <meta name="keywords" content="ai, tensorflow" />
     <meta name="description" content="前言 最近機器學習、人工智慧、深度學習等等名詞非常夯，本篇用深度學習簡單實作一個可以辨識不同種類花朵的 Android App。第一部分是訓練圖片的模型，這時已經可以在電腦上作辨識了。第二部分是將第一部份訓練的模型放進 Android 裡面，實作手機辨識的部分。" />
     <title>使用 Tensorflow 開發花朵種類辨識 App | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -75,6 +74,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -493,11 +501,6 @@ $ cd tensorflow-for-poets-2
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

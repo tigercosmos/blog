@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="weather bot,氣象機器人,bottender,line bot," />
+    
+    <meta name="keywords" content="weather bot, 氣象機器人, bottender, line bot" />
     <meta name="description" content="Let’s build a weather bot! 簡介 沒有人會懷疑了解天氣的重要性，我們總是看氣象預報或查天氣來決定等下外出時要不要帶傘，衣服要穿多厚是否需要帶件外套，或是需不需要先擦防曬油戴一副墨鏡出門等等。 想查天氣的時候我想大部分人可能就是 Google 一下、上中央氣象局網站、使用…" />
     <title>來寫個氣象機器人吧！ | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -63,6 +62,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -580,11 +588,6 @@ server.listen(5000, () =&gt; &#123;
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

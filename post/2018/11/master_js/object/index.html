@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式,JavaScript,30 天 Javascript 從入門到進階,物件," />
+    
+    <meta name="keywords" content="程式, JavaScript, 30 天 Javascript 從入門到進階, 物件" />
     <meta name="description" content="物件 這個世界由各種不同的東西(Things)組成，我們身處的宇宙、太陽系、每天繞地球的月球，山海與花花草草。 有一部電影〈The Theory of…" />
     <title>30 天 Javascript 從入門到進階：物件 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -65,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -626,11 +634,6 @@ second 53
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

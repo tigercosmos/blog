@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'" />
+    
+    <meta name="keywords" content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, &#39;Liu, An-Chi&#39;, &#39;Neutrino\&#39;s Blog&#39;" />
     <meta name="description" content="Liu, An-Chi&#39;s blog" />
     <title>Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -68,6 +67,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -370,6 +378,10 @@
             </li>
         </ul>
         
+        <div class="post-cover">
+            <img src="https://user-images.githubusercontent.com/18013815/72660990-4b927a80-3a10-11ea-9b89-d6971cf200b1.png">
+        </div>
+        
                     <div class="post-content ">
                         <h2 id="Shell-紹介"><a class="header-anchor" href="#Shell-紹介">¶ </a>Shell 紹介</h2>
 <p>ローカルの Unix、Windows、あるいはサーバーへ接続するときでも、私たちは端末（Terminal）を開きます。ログイン直後に表示される画面が Shell で、開発者はここにコマンドを入力してプログラムを実行します。ある意味では、「端末を使う」ということは「Shell を使う」とほぼ同義に語られることもあります（厳密には元々の意味は一致しません）。Shell の詳細は英語版 Wikipedia の「<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/C_shell">C shell</a>」も参考になります。</p>
@@ -562,6 +574,10 @@
                 Liu, An-Chi 劉安齊
             </li>
         </ul>
+        
+        <div class="post-cover">
+            <img src="https://miro.medium.com/max/4122/0*Pvn4y7pOrW5BB_Yc.JPG">
+        </div>
         
                     <div class="post-content ">
                         <h3 id="『The-Clean-Coder』の感想・要約・補足"><a class="header-anchor" href="#『The-Clean-Coder』の感想・要約・補足">¶ </a>『The Clean Coder』の感想・要約・補足</h3>

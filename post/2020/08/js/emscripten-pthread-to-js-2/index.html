@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="browser,browsers,c,pthread,parallel programming,效能分析,平行化,algorithm,演算法,JavaScript,web worker,nodejs," />
+    
+    <meta name="keywords" content="browser, browsers, c, pthread, parallel programming, 效能分析, 平行化, algorithm, 演算法, JavaScript, web worker, nodejs" />
     <meta name="description" content="本文實驗 Pthread、Pthread 轉 JS + WASM 和純 JS，執行 Merge Sort 的效能。結果 Merge Sort 以 Pthread 版本跑最快，Emscripten 轉換的 WASM 其次，其中又以一般模式在陣列長度小時比較快，而 Proxy 模式在陣列長度大時有優勢，最後純 JS…" />
     <title>使用 Emscripten 將 Pthread 轉成 JavaScript 與效能分析 (2) — Merge Sort | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -83,6 +82,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -780,11 +788,6 @@ $ ./a.out
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

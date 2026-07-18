@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="unix,network programming,signal,sigaction," />
+    
+    <meta name="keywords" content="unix, network programming, signal, sigaction" />
     <meta name="description" content="Unix 中 processes 之間溝通有很多種，本篇介紹 signal 的簡易使用。可以先閱讀 Beej 的介紹。顧名思義，signal 就是程序發送和接受訊號，例如我們在使用 Shell 的時候，之所以 Ctrl-C 可以中斷程式執行，就是因為 Shell 捕捉到 Ctrl-C 發送的 SIGINT…" />
     <title>Example of Signals by `sigaction` in Unix | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -77,6 +76,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -541,11 +549,6 @@ Tick #15.
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

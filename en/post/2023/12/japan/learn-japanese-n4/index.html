@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="JLPT,Japan,Japanese,language learning," />
+    
+    <meta name="keywords" content="JLPT, Japan, Japanese, language learning" />
     <meta name="description" content="This post shares how I self-studied Japanese over the past three months to reach the JLPT N4 level." />
     <title>My Three-Month JLPT N4 Self-Study Experience | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -75,6 +74,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -438,11 +446,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

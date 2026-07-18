@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="工作,公司,面試," />
+    
+    <meta name="keywords" content="工作, 公司, 面試" />
     <meta name="description" content="&amp;#x7D00;&amp;#x9304;&amp;#x4E00;&amp;#x4E0B;&amp;#x6BCF;&amp;#x6B21;&amp;#x7684;&amp;#x9762;&amp;#x8A66;&amp;#x5FC3;&amp;#x5F97;&amp;#xFF0C;&amp;#x4E3B;&amp;#x8981;&amp;#x662F;&amp;#x5BEB;&amp;#x7576;&amp;#x4E0B;&amp;#x6211;&amp;#x7684…" />
     <title>紀錄面試經驗──Cepave | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -64,6 +63,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -380,11 +388,6 @@ HR <span lang="ZH-TW">&#x4F3C;&#x4E4E;&#x90FD;&#x8A72;&#x662F;&#x9019;&#x9EBC;&#
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

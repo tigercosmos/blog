@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式,JavaScript,30 天 Javascript 從入門到進階," />
+    
+    <meta name="keywords" content="程式, JavaScript, 30 天 Javascript 從入門到進階" />
     <meta name="description" content="自序 第一部：基本概念 簡易電腦概論 程式語言與 Javascript 簡介 環境建設與執行第一個程式 變數、資料型態以及算術運算式 條件判斷 迴圈 陣列 函式 物件 檔案讀寫 遞迴 位元運算 除錯技巧 物件導向概念 模組化與套件 同步與異步 Javascript 語法進階 JavaScript 遍歷 Array…" />
     <title>30 天 Javascript 從入門到進階：目錄 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -64,6 +63,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -419,11 +427,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

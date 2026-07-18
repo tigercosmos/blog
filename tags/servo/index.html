@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'" />
+    
+    <meta name="keywords" content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, &#39;Liu, An-Chi&#39;, &#39;Neutrino\&#39;s Blog&#39;" />
     <meta name="description" content="Liu, An-Chi&#39;s blog" />
     <title>Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -68,6 +67,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -320,6 +328,10 @@
             </li>
         </ul>
         
+        <div class="post-cover">
+            <img src="https://miro.medium.com/max/2400/0*pEiDFJWNkrT9c5md.jpg">
+        </div>
+        
                     <div class="post-content ">
                         <p><img class="dz t u gw ak" src="https://miro.medium.com/max/2400/0*pEiDFJWNkrT9c5md.jpg" role="presentation"><br/></p>
 <p>Your First Big OSS Project: Servo Browser</p>
@@ -347,6 +359,10 @@
             </li>
         </ul>
         
+        <div class="post-cover">
+            <img src="https://miro.medium.com/max/1920/0*1MIgNKX6H7wFYTGp.jpg">
+        </div>
+        
                     <div class="post-content ">
                         <h2 id="我都怎麼發-PR？"><a class="header-anchor" href="#我都怎麼發-PR？">¶ </a>我都怎麼發 PR？</h2>
 <p>開源專案中，如何找出問題，並解決他？</p>
@@ -373,6 +389,10 @@
                 Liu, An-Chi 劉安齊
             </li>
         </ul>
+        
+        <div class="post-cover">
+            <img src="https://miro.medium.com/max/2916/0*daP-rFRZjuTsI1mY.jpg">
+        </div>
         
                     <div class="post-content ">
                         <h2 id="踏入-Mozilla-Servo-兩個月的心得"><a class="header-anchor" href="#踏入-Mozilla-Servo-兩個月的心得">¶ </a>踏入 Mozilla Servo 兩個月的心得</h2>

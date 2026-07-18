@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="日本,仕事,ソフトウェアエンジニア,新米エンジニア修行中," />
+    
+    <meta name="keywords" content="日本, 仕事, ソフトウェアエンジニア, 新米エンジニア修行中" />
     <meta name="description" content="日本の Mujin で過ごした 2 つ目の半年を振り返り、半年間で感じたプレッシャー、消耗、そして成長について書きます。" />
     <title>新米エンジニア修行中（2）：職場の社会化とサバイバル | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -75,6 +74,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -440,11 +448,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

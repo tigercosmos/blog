@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'" />
+    
+    <meta name="keywords" content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, &#39;Liu, An-Chi&#39;, &#39;Neutrino\&#39;s Blog&#39;" />
     <meta name="description" content="特別推薦 我對資工的興趣產生 資工系所學生的基本素養 軟體工程師必修的三門課 我的學思歷程 台大觀察與心得 台大大學時期的各種心得 交大觀察與心得 在交大當碩士生期間的各種心得 國外生活 義大利交換期間 記錄了 2021/2022 在米蘭交換期間的心得 日本工作期間 記錄了 2022 開始去日本東京工作的各種心得…" />
     <title>Website Navigation | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -56,6 +55,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 

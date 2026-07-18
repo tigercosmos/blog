@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="python,電腦視覺,computer vision,image processing,image stitching,ransac,feature matching,key point," />
+    
+    <meta name="keywords" content="python, 電腦視覺, computer vision, image processing, image stitching, ransac, feature matching, key point" />
     <meta name="description" content="影像拼接是指將兩張相片根據重疊的部分，黏接合成一張一張新的相片。影像拼接的一種是找到兩張圖片中的關鍵點，根據關鍵點進行特徵匹配。做完特徵匹配後會使用兩張照片的關鍵點使用法 RANSAC 演算法算出兩張照片的 Homography，如此我們便能將兩張照片拼接在一起。" />
     <title>影像拼接 (Image Stitching) 基於特徵匹配 (Feature Matching) 和 RANSAC 演算法 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -79,6 +78,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -707,11 +715,6 @@ plot_matches(matches, total_img) # Good mathces
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

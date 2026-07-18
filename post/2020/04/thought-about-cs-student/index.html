@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="想法,研究所,computer science,資工,資訊工程,大學,基本素養," />
+    
+    <meta name="keywords" content="想法, 研究所, computer science, 資工, 資訊工程, 大學, 基本素養" />
     <meta name="description" content="一個資工系/所學生畢業該具備甚麼技能？一個資工所畢業的研究生該具備甚麼技能？ 除了專業科目所學的知識，我想好好來討論一下資工系所該具備的「基本素養」。" />
     <title>資工系所學生的基本素養 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -80,6 +79,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -462,11 +470,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

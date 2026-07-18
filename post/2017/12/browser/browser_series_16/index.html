@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="browser,瀏覽器,鐵人賽,來做個網路瀏覽器吧！," />
+    
+    <meta name="keywords" content="browser, 瀏覽器, 鐵人賽, 來做個網路瀏覽器吧！" />
     <meta name="description" content="本系列目錄 《來做個網路瀏覽器吧！》文章列表 前言 什麼是 Servo? Servo 是一款專為應用軟體和嵌入式應用而設計的現代化的高效能瀏覽器引擎 緣起 C++ 一直以來都是很棒的語言，尤其在處理低階的程式更是適合，但他畢竟也不是萬能的，事實上他在處理記憶體多程序時，會有安全性的疑慮，像是記憶體未如期清除。…" />
     <title>談談 Servo 專案 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -65,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -383,11 +391,6 @@ Servo 取代 Gecko</p>
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

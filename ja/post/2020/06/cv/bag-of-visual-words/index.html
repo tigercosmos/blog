@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="python,computer vision,bag of words,bag of visual words,image classification,kmeans,knn,svm," />
+    
+    <meta name="keywords" content="python, computer vision, bag of words, bag of visual words, image classification, kmeans, knn, svm" />
     <meta name="description" content="本記事では Bag of Visual Words（BoVW）モデルを用いた画像認識を解説します。特徴量からクラスタを構築し、各画像をクラスタ分布のヒストグラムとして表現し、分類器でテスト画像のクラスを推定します。" />
     <title>Bag of Visual Words（BoVW）による画像分類 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -79,6 +78,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -609,11 +617,6 @@ feature_clusters = get_clusters(images, 150, method=&quot;dsift&quot;)
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

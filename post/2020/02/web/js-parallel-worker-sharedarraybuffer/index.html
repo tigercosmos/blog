@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="平行化,web,JavaScript,web worker,SharedArrayBuffer,atomics," />
+    
+    <meta name="keywords" content="平行化, web, JavaScript, web worker, SharedArrayBuffer, atomics" />
     <meta name="description" content="JavaScript 是執行時只會用單執行緒，即便 JavaScript 大量使用並行（Concurrency）機制，像是各種 Event Handler，依舊還是只有一個執行緒，於是這樣大大限制計算的效能。解套辦法是在 JavaScript 上撰寫平行程式，使用 Web Worker、…" />
     <title>JavaScript 平行化使用 Web Worker、SharedArrayBuffer、Atomics | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -67,6 +66,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -678,11 +686,6 @@ const pi = step * sum;
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

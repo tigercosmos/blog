@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="c++,hash,std::hash,std::unordered_map,std::unordered_set," />
+    
+    <meta name="keywords" content="c++, hash, std::hash, std::unordered_map, std::unordered_set" />
     <meta name="description" content="This post briefly introduces how to use std::hash, including how to add hashing for custom types and use them in std::unordered_map or std::unordered_set." />
     <title>An Introduction to std::hash in C++ | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -76,6 +75,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -569,11 +577,6 @@ int main() &#123;
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

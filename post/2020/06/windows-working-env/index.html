@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="windows,工作環境," />
+    
+    <meta name="keywords" content="windows, 工作環境" />
     <meta name="description" content="每次看別人的 Windows 覺得很訝異。天啊！好用的工具怎麼在你電腦上都沒有？或是你竟然不知道可以這樣用？為此來介紹一下我的 Windows 工作環境長怎樣。" />
     <title>Windows 平台打造極致の程式開發工作環境 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -61,6 +60,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -375,11 +383,6 @@ $ jupyter notebook # 開啟
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="gpu,opencl,intel," />
+    
+    <meta name="keywords" content="gpu, opencl, intel" />
     <meta name="description" content="This post explains how to run OpenCL on an Intel GPU: compile the kernel ahead of time (AOT) and execute OpenCL using the precompiled kernel binary." />
     <title>How to Run OpenCL on an Intel GPU | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -74,6 +73,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -473,11 +481,6 @@ if (clError != CL_SUCCESS) &#123;
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="system software,measurement,bias,spec cpu," />
+    
+    <meta name="keywords" content="system software, measurement, bias, spec cpu" />
     <meta name="description" content="本論文は、実験が問題なく見えても初期設定によって誤ったデータを「何事もなく」得てしまう可能性があると指摘します。Unix システムでは、環境変数の設定や C++ コンパイラにおけるオブジェクトのリンク順序の違いが、結果に大きな差を生むことがあります。" />
     <title>私たちは誤差からどれだけ離れているのか——システムソフトウェア実験における測定バイアス | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -75,6 +74,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -454,11 +462,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

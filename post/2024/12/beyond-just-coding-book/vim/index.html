@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式設計原來不只有寫 CODE！,資工基本素養,vim,編輯器," />
+    
+    <meta name="keywords" content="程式設計原來不只有寫 CODE！, 資工基本素養, vim, 編輯器" />
     <meta name="description" content="本文摘自《程式設計原來不只有寫 CODE！》之〈Vim〉章節，介紹 Vim 編輯器的基本使用技巧，讓你在 Vim 操作環境下成功生存，並提升程式碼修改的效率。" />
     <title>每個工程師都應該懂的 Vim 基本技巧：《程式設計原來不只有寫 CODE！》之〈Vim〉章節 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -63,6 +62,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -499,11 +507,6 @@ database_password = my_secure_password
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

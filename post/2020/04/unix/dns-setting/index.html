@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="network,note,unix,dns,squid," />
+    
+    <meta name="keywords" content="network, note, unix, dns, squid" />
     <meta name="description" content="事情是這樣的，從昨天開始我實驗室的主機突然不能上網了，平常我都用那台當作 proxy，因為有時候查論文需要用交大 IP。然後我一開始以為是 Squid 出問題，在那邊弄了老半天設定，才發現問題好像也不是 Squid。接著我很震驚地發現，原來我可以 SSH 進主機，卻不能從他連出去。" />
     <title>Linux/Unix 用指令設定 DNS | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -78,6 +77,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -433,11 +441,6 @@ $ sudo apt update
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

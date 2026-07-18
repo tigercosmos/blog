@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="computer science,資工,程式,beginner,程式設計入門,學習指南," />
+    
+    <meta name="keywords" content="computer science, 資工, 程式, beginner, 程式設計入門, 學習指南" />
     <meta name="description" content="前言 相信很多人在這資訊爆炸的年代，也想參一咖來學點程式設計，對於理工學生來說，會寫程式就跟會講英文一樣重要，在處理科學數據往往都需要程式的輔助。對於商管文組學生，會寫程式也許不是必須，但是稍微懂程式卻很有幫助，不僅能懂工程師在想甚麼，對於日常文書處理也許也能寫個小程式簡化繁冗苦工。 我該如何開始學程式？…" />
     <title>程式設計入門—用對方法的學習指南 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -77,6 +76,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -489,11 +497,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="電腦動畫,computer animation,正向動力法,時間扭曲法,forward kinematics,time warping," />
+    
+    <meta name="keywords" content="電腦動畫, computer animation, 正向動力法, 時間扭曲法, forward kinematics, time warping" />
     <meta name="description" content="This post explains the principles and implementation of forward kinematics and time warping in computer animation. Forward kinematics is widely used in…" />
     <title>Forward Kinematics and Time Warping in Computer Animation | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -77,6 +76,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -510,11 +518,6 @@ auto new_angular_vec = ToDegree(ComputeEulerAngleXyz(ComputeRotMat(new_q)));
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

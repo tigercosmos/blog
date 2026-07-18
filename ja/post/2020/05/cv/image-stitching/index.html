@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="python,computer vision,image processing,image stitching,ransac,feature matching,keypoint,sift,homography," />
+    
+    <meta name="keywords" content="python, computer vision, image processing, image stitching, ransac, feature matching, keypoint, sift, homography" />
     <meta name="description" content="画像スティッチングは、重なり部分を手がかりに2枚の写真を位置合わせして1枚に合成する手法です。本記事では、特徴点検出→特徴マッチング→RANSACでホモグラフィ推定→射影変換による合成、という典型的な流れを解説します。" />
     <title>特徴点マッチングとRANSACによる画像スティッチング | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -80,6 +79,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -712,11 +720,6 @@ plot_matches(matches, total_img) # Good mathces
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="c++,small vector,vector,optimization," />
+    
+    <meta name="keywords" content="c++, small vector, vector, optimization" />
     <meta name="description" content="本記事では C++ における Small Vector の実装を簡単に紹介します。" />
     <title>C++ で Small Vector を実装する | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -75,6 +74,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -741,11 +749,6 @@ int main()
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="python,電腦視覺,computer vision,camera calibration,2D pattern," />
+    
+    <meta name="keywords" content="python, 電腦視覺, computer vision, camera calibration, 2D pattern" />
     <meta name="description" content="相機校正 (Camera Calibration) 是指取得相機的各種參數，包含 intrinsic parameters (相機本身參數) 和 extrinsic parameters (定向參數)。本文著重於 Zhengyou Zhang 在〈A Flexible New Technique for…" />
     <title>二維模式相機校正 (2D Pattern Camera Calibration) | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -76,6 +75,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -586,11 +594,6 @@ tvecs.append(t)
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="ai,deep learning,vgg16,c++,cuda,cudnn,cublas," />
+    
+    <meta name="keywords" content="ai, deep learning, vgg16, c++, cuda, cudnn, cublas" />
     <meta name="description" content="本記事では VGG16 を 2 つのバージョンで紹介します。1 つ目は CPU 上で動く純粋な C++ 実装、2 つ目は CUDA / cuDNN / cuBLAS を用いて GPU 上で動かす実装です。" />
     <title>VGG16 をスクラッチ実装する 2 つの方法：CPU 上の C++ と GPU 上の CUDA | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -78,6 +77,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -509,11 +517,6 @@ FC 1000 104 ms
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

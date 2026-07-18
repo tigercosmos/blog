@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="unix,network programming,mmap,shared memory,shared object," />
+    
+    <meta name="keywords" content="unix, network programming, mmap, shared memory, shared object" />
     <meta name="description" content="多数のプロセスがあり、共有データを扱うために shared memory（共有メモリ）を実装したい場合、shared memory を使って実現できます。shared memory の作成には mmap または System V の shmget を使えますが、Stack Overflow の回答「How to…" />
     <title>`mmap` を使って共有オブジェクトを作る | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -78,6 +77,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -525,11 +533,6 @@ void main() &#123;
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

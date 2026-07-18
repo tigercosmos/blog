@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="想法,高中,科學," />
+    
+    <meta name="keywords" content="想法, 高中, 科學" />
     <meta name="description" content="&amp;#x95DC;&amp;#x65BC;&amp;#x6210;&amp;#x7E3E;&amp;#x9019;&amp;#x4EF6;&amp;#x4E8B;&amp;#x60C5;&amp;#xFF0C;&amp;#x6211;&amp;#x60F3;&amp;#x53EF;&amp;#x80FD;&amp;#x5F88;&amp;#x591A;&amp;#x4EBA;&amp;#x5728;&amp;#x4E2D;&amp;#x5B78;&amp;#x6642…" />
     <title>我成績不好，該放棄科學嗎？ | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -64,6 +63,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -362,11 +370,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

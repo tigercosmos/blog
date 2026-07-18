@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="想法,大學,台大,台大觀察與心得,大氣," />
+    
+    <meta name="keywords" content="想法, 大學, 台大, 台大觀察與心得, 大氣" />
     <meta name="description" content="&amp;#x5728;&amp;#x53F0;&amp;#x5927;&amp;#x5FF5;&amp;#x66F8;&amp;#x5169;&amp;#x5B78;&amp;#x671F;&amp;#xFF0C;&amp;#x5C0D;&amp;#x5927;&amp;#x5B78;&amp;#x751F;&amp;#x6D3B;&amp;#x66F4;&amp;#x52A0;&amp;#x4E86;&amp;#x89E3;&amp;#xFF0C;&amp;#x537B…" />
     <title>台大觀察與心得(二)：大氣系第二學期 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -78,6 +77,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -523,11 +531,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

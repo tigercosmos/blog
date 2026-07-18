@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="servo,open source,開源,pull request," />
+    
+    <meta name="keywords" content="servo, open source, 開源, pull request" />
     <meta name="description" content="我都怎麼發 PR？ 開源專案中，如何找出問題，並解決他？ 開源專案的流程很簡單，看 issue 有甚麼，然後改 code，接著發 pull request，順利的話就會被 merge，成為一個 commit。開源，就是一直重複這些步驟。 發 issue 很簡單，你哪邊看不爽，不管是…" />
     <title>我都怎麼發 PR？ | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -63,6 +62,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -354,11 +362,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="browser,servo,open source,開源,瀏覽器,browsers," />
+    
+    <meta name="keywords" content="browser, servo, open source, 開源, 瀏覽器, browsers" />
     <meta name="description" content="Your First Big OSS Project: Servo Browser 前言 開放原始碼軟體，又稱開源軟體（Open Source Software），顧名思義是將軟體的原始碼公開。詳細介紹可以看維基百科介紹以及什麼是開源一文。…" />
     <title>你的第一份大型開源專案--Servo 瀏覽器 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -65,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -489,11 +497,6 @@ sudo apt install libssl-dev
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

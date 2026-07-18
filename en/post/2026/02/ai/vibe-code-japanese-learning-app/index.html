@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="ai,vibe coding,日文,app,日文學習," />
+    
+    <meta name="keywords" content="ai, vibe coding, 日文, app, 日文學習" />
     <meta name="description" content="This post shows how to use AI to build a Japanese learning tool tailored to you. We&#39;ll write a development plan, let the AI implement the app, and iterate…" />
     <title>How to Build a Fully Customized Japanese Learning App with AI | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -76,6 +75,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -536,11 +544,6 @@ Quiz modes include:
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

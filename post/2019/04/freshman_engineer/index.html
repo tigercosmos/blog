@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="software engineering,軟體工程師,the clean coder,programming,growing up,軟體工程," />
+    
+    <meta name="keywords" content="software engineering, 軟體工程師, the clean coder, programming, growing up, 軟體工程" />
     <meta name="description" content="The Clean Coder 心得、摘要與補充 前陣子把 《The Clean Coder》(中譯： 無瑕的程式碼 番外篇－專業程式設計師的生存之道) 看完，剛好可以回答一個網路上最常看到的問題之一： 菜鳥工程師與資深工程師的差別是甚麼？" />
     <title>菜鳥程式設計師的精進之路 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -77,6 +76,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -462,11 +470,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

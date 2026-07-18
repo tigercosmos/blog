@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式,JavaScript,30 天 Javascript 從入門到進階,自序," />
+    
+    <meta name="keywords" content="程式, JavaScript, 30 天 Javascript 從入門到進階, 自序" />
     <meta name="description" content="我一直都很喜歡寫文章，將技術、知識分享出去。隨著我自己不斷進步，不知不覺中，我寫的文章深度也越來越難，我認為這樣滿好的，畢竟越深的技術文越少人寫，有就越需要有人無私奉獻。我在網路上認識很多工程師，其中不乏技術圈內赫赫有名的專家，大家都是透過彼此分享來不斷進步。後來我發現認識的很多工程師們不僅平常有寫部落文，甚至許多都…" />
     <title>30 天 Javascript 從入門到進階：自序 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -65,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -344,11 +352,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

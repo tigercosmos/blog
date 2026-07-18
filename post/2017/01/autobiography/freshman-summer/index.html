@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式,專案,大學,台大,台大觀察與心得," />
+    
+    <meta name="keywords" content="程式, 專案, 大學, 台大, 台大觀察與心得" />
     <meta name="description" content="&amp;#x9019;&amp;#x7BC7;&amp;#x4E3B;&amp;#x8981;&amp;#x662F;&amp;#x63CF;&amp;#x8FF0;&amp;#x5927;&amp;#x4E00;&amp;#x4E0B;&amp;#x5B78;&amp;#x671F;&amp;#x5230;&amp;#x6691;&amp;#x5047;&amp;#x671F;&amp;#x9593;&amp;#x7684;&amp;#x5FC3;&amp;#x8DEF…" />
     <title>台大觀察與心得(三)：大一暑假 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -78,6 +77,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -471,11 +479,6 @@ Play </span><span style="font-family: , sans-serif;">&#x4E0A;&#xFF0C;&#x9700;&#x
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

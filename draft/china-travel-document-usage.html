@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="中國旅行證,中國,成都," />
+    
+    <meta name="keywords" content="中國旅行證, 中國, 成都" />
     <meta name="description" content="本文紀錄了從東京出發，拿中國旅行證到成都旅遊，使用到旅行證的各種大小事，實際測試旅行證可行性。" />
     <title>2024 持中國旅行證在中國成都旅行實測 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -54,6 +53,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -363,11 +371,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

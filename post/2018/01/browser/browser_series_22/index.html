@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="browser,瀏覽器,鐵人賽,來做個網路瀏覽器吧！," />
+    
+    <meta name="keywords" content="browser, 瀏覽器, 鐵人賽, 來做個網路瀏覽器吧！" />
     <meta name="description" content="本系列目錄 《來做個網路瀏覽器吧！》文章列表 前言 今天來談談瀏覽器的安全性連線，也就是講講 HTTPS 是甚麼以及怎麼做？ 老樣子我們又回到講解 Servo 的時候囉～ What? 相信大家瀏覽網站的時候常常會看到「綠色的?」，點擊一下他會告訴你是安全連線 以 Firefox 來說它就會告訴你： 當…" />
     <title>瀏覽器的安全連線（HTTPS）與實作 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -63,6 +62,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -426,11 +434,6 @@ pub fn create_http_connector(ssl_client: OpensslClient)
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

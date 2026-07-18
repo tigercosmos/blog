@@ -10,8 +10,8 @@
     
     
     
-    <meta name="keywords"
-        content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, 'Liu, An-Chi', 'Neutrino\'s Blog'" />
+    
+    <meta name="keywords" content="tigercosmos, 劉安齊, An-Chi Liu, 微中子, &#39;Liu, An-Chi&#39;, &#39;Neutrino\&#39;s Blog&#39;" />
     <meta name="description" content="Liu, An-Chi&#39;s blog" />
     <title>Neutrino&#39;s Blog</title>
     
@@ -19,17 +19,6 @@
     
     
     
-    
-    
-        
-            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/tags/來做個網路瀏覽器吧！/page/4/">
-        
-            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/tags/來做個網路瀏覽器吧！/page/4/">
-        
-            <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/tags/來做個網路瀏覽器吧！/page/4/">
-        
-        
-        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/tags/來做個網路瀏覽器吧！/page/4/">
     
 
     <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
@@ -43,8 +32,6 @@
     <meta property="og:description" content="Liu, An-Chi&#39;s blog">
     <meta property="og:url" content="https://tigercosmos.xyz/tags/%E4%BE%86%E5%81%9A%E5%80%8B%E7%B6%B2%E8%B7%AF%E7%80%8F%E8%A6%BD%E5%99%A8%E5%90%A7%EF%BC%81/page/4/">
     <meta property="og:locale" content="zh_TW">
-    <meta property="og:locale:alternate" content="en_US">
-    <meta property="og:locale:alternate" content="ja_JP">
     
     <meta property="og:image" content="https://tigercosmos.xyz/img/cover.png">
     <meta property="og:image:width" content="736">
@@ -68,6 +55,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -269,31 +265,6 @@
                 </a>
             </li>
             
-            
-            <li class="translation-switcher">
-                
-                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
-                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
-                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
-                    </svg>
-                    <span class="translation-current" aria-hidden="true">zh</span>
-                </button>
-                <div class="translation-menu" aria-label="Translation menu">
-                    
-                        
-                            <span class="translation-lang is-current" lang="zh">zh</span>
-                        
-                    
-                        
-                            <a class="translation-lang" href="/en/tags/來做個網路瀏覽器吧！/page/4/" hreflang="en" lang="en">en</a>
-                        
-                    
-                        
-                            <a class="translation-lang" href="/ja/tags/來做個網路瀏覽器吧！/page/4/" hreflang="ja" lang="ja">ja</a>
-                        
-                    
-                </div>
-            </li>
             
         </ul>
     </div>

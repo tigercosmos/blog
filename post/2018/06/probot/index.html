@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="probot,github app,bot," />
+    
+    <meta name="keywords" content="probot, github app, bot" />
     <meta name="description" content="Developing Github app via Probot on the rail at the first time. 前言 最近在開發氣象機器人的時候，為了要促進工作流程的效率，不得不加入 bot（機器人） 進來工作流程。所以就邊研究邊實做了一個，在此記下開發心得。" />
     <title>第一次 Probot 開發 Github App 就上手 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -62,6 +61,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -437,11 +445,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

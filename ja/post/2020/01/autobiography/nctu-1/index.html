@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="NYCU ICSE,考え,大学院,修士,コンピュータサイエンス,交大観察と所感," />
+    
+    <meta name="keywords" content="NYCU ICSE, 考え, 大学院, 修士, コンピュータサイエンス, 交大観察と所感" />
     <meta name="description" content="（資工系館） 学部の頃から、毎学期「見たこと・感じたこと」を「台大観察と所感」シリーズとして書き残す習慣がありました。今は交大（NCTU）の資工（CS）で学んでいるので、新しいシリーズ「交大観察と所感」を始めます。研究所はできるだけ早く卒業したいので、1学期につき1本、できれば4本以内で終わってほしいところです。…" />
     <title>交大観察と所感（1）：修士1年（1学期） | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -77,6 +76,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -456,11 +464,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

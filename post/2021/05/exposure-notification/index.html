@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="接觸通知系統,公共衛生,covid-19," />
+    
+    <meta name="keywords" content="接觸通知系統, 公共衛生, covid-19" />
     <meta name="description" content="近日衛服部公佈了「台灣社交距離」App，有鑑於該 App 完全沒提及技術細節，以及網路上各大新聞媒體報導也沒介紹，於是本文介紹該 App 背後的技術細節。" />
     <title>「台灣社交距離」App 背後技術原理：接觸通知系統與保護隱私的接觸追蹤技術 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -62,6 +61,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -380,11 +388,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

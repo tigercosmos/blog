@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="algorithm,red black tree,data structures," />
+    
+    <meta name="keywords" content="algorithm, red black tree, data structures" />
     <meta name="description" content="赤黒木の概要 赤黒木（Red-Black Tree）は特殊なデータ構造で、AVL 木と同様に自動で平衡を保つ機能を持ちます。 赤黒木には以下の性質があります： 各ノードは黒または赤のどちらか 根（root）は黒 すべての葉（leaf）は NIL であり黒 あるノードが赤なら、その子はすべて黒 root から…" />
     <title>赤黒木（Red-Black Tree, RBT）の紹介 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -74,6 +73,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -439,11 +447,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

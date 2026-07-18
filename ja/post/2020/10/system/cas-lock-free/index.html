@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="parallel programming,compare and swap,lock free,atomic," />
+    
+    <meta name="keywords" content="parallel programming, compare and swap, lock free, atomic" />
     <meta name="description" content="本記事では Compare-and-Swap（CAS）の原理を紹介し、CAS のオーバーヘッドがロックより小さくなり得ることを実験で示します。" />
     <title>Compare-and-Swap でロックフリーを実現する | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -77,6 +76,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -541,11 +549,6 @@ sys     0m0.000s
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

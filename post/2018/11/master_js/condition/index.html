@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="程式,JavaScript,30 天 Javascript 從入門到進階,條件判斷," />
+    
+    <meta name="keywords" content="程式, JavaScript, 30 天 Javascript 從入門到進階, 條件判斷" />
     <meta name="description" content="條件判斷 接下來介紹控制程式的方式之一，也就是條件判斷。 條件判斷顧名思義就是針對不同的條件來判斷要做出怎樣的結果。舉例來說，現在要採收水果，但我們只要取下已經成熟的水果，還沒熟的我們要讓他繼續成熟。 或是我們有更多條件，例如大於 500 公克的蘋果放到 A 籃子，介於 200 到 500 公克的蘋果放到 B…" />
     <title>30 天 Javascript 從入門到進階：條件判斷 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -65,6 +64,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -552,11 +560,6 @@ console.log(name); // OK
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

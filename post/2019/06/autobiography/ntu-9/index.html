@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="大學,台大,台大觀察與心得," />
+    
+    <meta name="keywords" content="大學, 台大, 台大觀察與心得" />
     <meta name="description" content="p.p1 {margin: 5px 0.0px 0.0px 0.0px; line-height: 38.0px; font: 16.0px &#39;PingFang TC&#39;; color: #000000; -webkit-text-stroke: #000000} p.p2 {margin: 0.0px 0.0px…" />
     <title>台大觀察與心得(九)：大四下＆登出 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -74,6 +73,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -463,11 +471,6 @@ Sides: <a target="_blank" rel="noopener" href="https://t.co/0X2enww7FC">https://
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

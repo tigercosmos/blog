@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="algorithm,演算法,red black tree,紅黑樹," />
+    
+    <meta name="keywords" content="algorithm, 演算法, red black tree, 紅黑樹" />
     <meta name="description" content="紅黑樹簡介 紅黑樹是一種特別的資料結構，他具有跟 AVL Tree 一樣可以自動平衡的功能。 一個紅黑樹具有一下特性： 每個 node 只有黑與紅 Root 必須是黑 每個葉子（leaf）是 NIL 且為黑 如果一個 node 是紅，那他的 child 都會是黑 每一條從 root 到 leaf 的路徑所包含的黑色…" />
     <title>紅黑樹（Red Black Tree）介紹 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -75,6 +74,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -444,11 +452,6 @@
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">

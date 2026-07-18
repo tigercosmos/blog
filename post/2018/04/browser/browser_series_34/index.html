@@ -10,11 +10,10 @@
     
     
     
-    <meta name="keywords"
-        content="browser,瀏覽器,鐵人賽,來做個網路瀏覽器吧！," />
+    
+    <meta name="keywords" content="browser, 瀏覽器, 鐵人賽, 來做個網路瀏覽器吧！" />
     <meta name="description" content="本系列目錄 《來做個網路瀏覽器吧！》文章列表 最近又看了一篇論文，覺得寫得很精彩所以決定來分享一下 原文標題：Web browser workload characterization for power management on HMP platforms 作者： Nadja Peters(1),…" />
     <title>&lt;論文&gt; 網頁瀏覽器在異質運算多核心處理器平台上電量管理的工作量描述 | Neutrino&#39;s Blog</title>
-    
     
     
     
@@ -63,6 +62,15 @@
 
     <!-- favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -426,11 +434,6 @@ eBay 的例子中，將最高時脈限制在 1.2GHz，消耗的功減少 34.6% �
         hljs.highlightBlock(block);
     });
 </script>
-
-<p class="post-end-line-small">
-    如果您覺得這篇文章有幫助，您可以 <a href="/donation/">贊助</a> 這個網站！
-    此外也可以去 <a href="/message">全站留言板</a> 來留言喔！
-</p>
 
         </main>
         <aside class="aside">
