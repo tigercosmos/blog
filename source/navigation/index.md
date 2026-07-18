@@ -23,6 +23,10 @@ date: 2020-04-30 00:00:00
     記錄了 2021/2022 在米蘭交換期間的心得
 2. **[日本工作期間](/tags/日本/)**
     記錄了 2022 開始去日本東京工作的各種心得
+3. **[新米工程師進修中](/tags/新米工程師進修中/)**
+    剛到日本成為新手工程師時期的成長心得
+4. **[中堅工程師奮鬥中](/tags/中堅工程師奮鬥中/)**
+    在日本工作進入中堅階段後的各種歷練與心得
 
 ## 系列文
 
@@ -45,13 +49,10 @@ date: 2020-04-30 00:00:00
 
 ## 標籤分類
 
-- [Unix/Linux](/tags/unix/)
-- [C++](/tags/c++/)
-- [網路技術](/tags/web/)
-- [瀏覽器](/tags/browser/)
-- [軟體工程師](/tags/軟體工程師/)
-- [電腦視覺](/tags/電腦視覺/)
-- [電腦動畫](/tags/電腦動畫/)
-- [演算法](/tags/algorithm/)
-- [開源](/tags/開源/)
-- 更多標籤可以參考側欄 Tags
+### 推薦標籤
+
+[瀏覽器](/tags/瀏覽器/) · [browser](/tags/browser/) · [C++](/tags/c/) · [JavaScript](/tags/javascript/) · [Python](/tags/python/) · [Rust](/tags/rust/) · [angular](/tags/angular/) · [relational database](/tags/relational-database/) · [平行程式](/tags/parallel-programming/) · [電腦視覺](/tags/computer-vision/) · [演算法](/tags/algorithm/) · [軟體工程師](/tags/軟體工程師/) · [machine learning](/tags/machine-learning/) · [開源](/tags/開源/) · [unix / linux](/tags/linux/) · [電腦動畫](/tags/電腦動畫/) · [日本](/tags/日本/) · [義大利](/tags/義大利/) · [效能分析](/tags/效能分析/)
+
+### 所有標籤
+
+<div class="all-tags-cloud"></div>
