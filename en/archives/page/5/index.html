@@ -314,6 +314,56 @@
     <article class="post">
         
         <h2 class="post-title">
+            <a href="/en/post/2020/09/system/debug-gdb/">
+                How to debug Rust via GDB
+            </a>
+        </h2>
+
+        <ul class="post-date">
+            <li>
+                September 21, 2020
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+                    <div class="post-content ">
+                        <h2 id="Introduction"><a class="header-anchor" href="#Introduction">¶ </a>Introduction</h2>
+<p>Big open source projects are huge, such as the Servo browser in Rust. I have counted the lines of code for you. There are almost a hundred thousand lines of code in the Servo project. To develop such a big project, knowing how to debug in a right way is very important, since you would like to find the bottleneck in a fast and efficient way.</p>
+<p>In this article, I will teach you some tips to use GDB developing and debugging your Rust code and the Servo project. The debug method can be also applied to C/C++ as well.</p>
+        <a href="/en/post/2020/09/system/debug-gdb/" class="more-link">Continue reading</a>
+        </div>
+    </article>
+    
+    <article class="post">
+        
+        <h2 class="post-title">
+            <a href="/en/post/2020/09/system/debug-gdb/">
+                How to Debug Rust via GDB
+            </a>
+        </h2>
+
+        <ul class="post-date">
+            <li>
+                September 21, 2020
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+                    <div class="post-content ">
+                        <h2 id="Introduction"><a class="header-anchor" href="#Introduction">¶ </a>Introduction</h2>
+<p>Big open source projects are huge, such as the Servo browser in Rust. I have counted the lines of code for you: there are almost a hundred thousand lines of code in the Servo project. To develop such a big project, knowing how to debug in the right way is very important, since you want to find the bottleneck quickly and efficiently.</p>
+<p>In this article, I will teach you some tips for using GDB to develop and debug your Rust code and the Servo project. The same debugging approach can also be applied to C/C++.</p>
+        <a href="/en/post/2020/09/system/debug-gdb/" class="more-link">Continue reading</a>
+        </div>
+    </article>
+    
+    <article class="post">
+        
+        <h2 class="post-title">
             <a href="/en/post/2020/08/system/measurement-bias/">
                 How Far Are We From Error? On Measurement Bias in Systems Experiments
             </a>
@@ -532,60 +582,6 @@
         </div>
     </article>
     
-    <article class="post">
-        
-        <h2 class="post-title">
-            <a href="/en/post/2020/07/autobiography/nctu-2/">
-                NCTU Observations and Reflections (2): First-Year Master&#39;s (Spring) — Coursework
-            </a>
-        </h2>
-
-        <ul class="post-date">
-            <li>
-                July 13, 2020
-            </li>
-            <li>
-                Liu, An-Chi 劉安齊
-            </li>
-        </ul>
-        
-        <div class="post-cover">
-            <img src="https://user-images.githubusercontent.com/18013815/87268897-3f3e3480-c4fe-11ea-8a64-06c486f64745.png">
-        </div>
-        
-                    <div class="post-content ">
-                        <h2 id="Preface"><a class="header-anchor" href="#Preface">¶ </a>Preface</h2>
-<p>This semester felt like the happiest semester I have had in the past two or three years. It was fulfilling: I took four courses, still participated in the Fine Arts Club, wrote quite a few posts, and found a research direction and topic. Studying CS really is a joyful thing. Broadly speaking, my M1 spring can be divided into three parts: coursework, the Fine Arts Club, and research. This post focuses on coursework.</p>
-        <a href="/en/post/2020/07/autobiography/nctu-2/" class="more-link">Continue reading</a>
-        </div>
-    </article>
-    
-    <article class="post">
-        
-        <h2 class="post-title">
-            <a href="/en/post/2020/07/js/emscripten-pthread-to-js/">
-                Converting Pthreads to JavaScript with Emscripten and Performance Analysis
-            </a>
-        </h2>
-
-        <ul class="post-date">
-            <li>
-                July 7, 2020
-            </li>
-            <li>
-                Liu, An-Chi 劉安齊
-            </li>
-        </ul>
-        
-                    <div class="post-content ">
-                        <h2 id="Introduction"><a class="header-anchor" href="#Introduction">¶ </a>Introduction</h2>
-<p>Emscripten is a tool that compiles C/C++ to WebAssembly. Under the hood it goes through LLVM. It supports compiling Pthreads: it turns them into JavaScript Web Workers plus WebAssembly. It can even translate OpenGL to WebGL, allowing programs to run in a browser with performance close to native.</p>
-<p>The focus of this post is exactly that: converting Pthreads into Web Workers + WebAssembly. I will take an example program and try the conversion in practice. Finding a good benchmark program is not easy, so I wrote a small parallel Pthread program to compute π as the test case.</p>
-<p>I will first walk through how to use Emscripten to convert Pthreads to JS. While following the official documentation, I ran into several pitfalls; I also record them here so you don’t fall into the same holes. Then I will compare performance for (1) native C code, (2) Emscripten-generated JS/WASM, and (3) a Web Worker implementation written directly in JavaScript.</p>
-        <a href="/en/post/2020/07/js/emscripten-pthread-to-js/" class="more-link">Continue reading</a>
-        </div>
-    </article>
-    
 
     <div class="pagination-bar" align=center>
         <ul class="pagination">
@@ -644,6 +640,18 @@
     
     
     <li>
+      <a href="/en/post/2026/11/autobiography/thirty-years-old/">
+        Standing Firm at Thirty
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2026/10/autonomous-driving/map-overview/">
+        An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo
+      </a>
+    </li>
+    
+    <li>
       <a href="/en/post/2026/07/software-engineer/mid-dev-fight-1/">
         Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company
       </a>
@@ -691,18 +699,6 @@
       </a>
     </li>
     
-    <li>
-      <a href="/en/post/2024/11/c++/std-string-advanced/">
-        C++ std::string Advanced: One Article to Get You Comfortable with Strings!
-      </a>
-    </li>
-    
-    <li>
-      <a href="/en/post/2024/09/software-engineer/software-engineer-grow-up-3/">
-        New Software Engineer in Training (3): Breakthrough Growth and Becoming an Open Source Maintainer
-      </a>
-    </li>
-    
   </ul>
 </div>
 
@@ -727,7 +723,7 @@
                 
     <h2>Archives</h2>
 
-    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2026/">2026</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">34</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2026/">2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">34</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
 
 
             </section>

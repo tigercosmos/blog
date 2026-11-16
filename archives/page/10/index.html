@@ -277,6 +277,65 @@
     <article class="post">
         
         <h2 class="post-title">
+            <a href="/post/2020/03/sir/">
+                傳染病 SIR 模型與機率模型介紹與簡易模擬
+            </a>
+        </h2>
+
+        <ul class="post-date">
+            <li>
+                March 31, 2020
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+        <div class="post-cover">
+            <img src="https://user-images.githubusercontent.com/18013815/78059251-1ca76600-73bc-11ea-8f2e-ee08af9d526a.png">
+        </div>
+        
+                    <div class="post-content ">
+                        <h2 id="1-簡介"><a class="header-anchor" href="#1-簡介">¶ </a>1. 簡介</h2>
+<p>最近武漢肺炎人心惶惶，有台大教授發表化學動力論來模擬傳染變化，而其實我高中時也做過類似的事，就是我的「<a href="/post/2015/07/infectious-disease/">傳染病之數學模型與個體導向模擬</a>」科展。啟發於科學人雜誌《虛擬城市：天花來了》，文中藉由科學模擬來進行流行病預測與防治，我覺得十分有趣，那陣子對伊波拉病毒想深入研究加上也覺得寫程式好玩，因此就做了那個科展，本篇大致將我高中時的科展報告重新整理。</p>
+<p>本文介紹 SIR 模型來做大尺度傳染病預測，同時也用機率函數來做個體導向的微觀尺度模擬，用兩種方式來模擬傳染病的擴散狀況。</p>
+<p>公共衛生對傳染病研究有很多理論模型，其中隔間模型（Compartmental Model）藉由假設整個人口被區分成幾個群體，並且在同一群體中所有個體皆有一樣的特性，藉由這幾個假設可以簡化傳染病的社學模型。</p>
+<p>在隔間模型中，易感受-感染者-康復者模型（SIR Model）是指由人口由易感受族群（Susceptible, $S$）、已感染族群（Infectious, $I$）、已康復族群（Recovered, $R$）三個部分組成的傳染病模型。模型假設傳染病可以藉由直接接觸傳染，並且每個人會隨機接觸其他人。模型中有兩個重要參數，分別是感染族群傳染給健康族群的傳染力（transmission rate）$β$，以及感染族群恢復的康復力（rate of recovered） $γ$。</p>
+<p>機率模型則是本文藉由分布函數去模擬個體互動是否造成感染的簡易模型。</p>
+        <a href="/post/2020/03/sir/" class="more-link">Continue reading</a>
+        </div>
+    </article>
+    
+    <article class="post">
+        
+        <h2 class="post-title">
+            <a href="/post/2020/03/docker-note/">
+                Docker 使用筆記
+            </a>
+        </h2>
+
+        <ul class="post-date">
+            <li>
+                March 4, 2020
+            </li>
+            <li>
+                Liu, An-Chi 劉安齊
+            </li>
+        </ul>
+        
+        <div class="post-cover">
+            <img src="https://user-images.githubusercontent.com/18013815/75844309-97f31780-5e10-11ea-9743-4c02a065cb5d.png">
+        </div>
+        
+                    <div class="post-content ">
+                        
+        <a href="/post/2020/03/docker-note/" class="more-link">Continue reading</a>
+        </div>
+    </article>
+    
+    <article class="post">
+        
+        <h2 class="post-title">
             <a href="/post/2020/02/browser/build-chromium-windows/">
                 在 Windows 上編譯 Chromium
             </a>
@@ -495,71 +554,6 @@
         </div>
     </article>
     
-    <article class="post">
-        
-        <h2 class="post-title">
-            <a href="/post/2019/12/cs-to-me/">
-                我對資工的興趣產生
-            </a>
-        </h2>
-
-        <ul class="post-date">
-            <li>
-                December 2, 2019
-            </li>
-            <li>
-                Liu, An-Chi 劉安齊
-            </li>
-        </ul>
-        
-        <div class="post-cover">
-            <img src="https://user-images.githubusercontent.com/18013815/69930803-ca366580-14ff-11ea-91c0-7d1e6c76c010.png">
-        </div>
-        
-                    <div class="post-content ">
-                        <p>我正在念交大資工所，我決定要走資工是一個漫長的過程，這篇故事想從最早開始講起，描述過往我對資工的興趣如何慢慢建立。每個人的故事都是獨一無二，但我的故事希望可以給別人一些靈感和借鏡。</p>
-        <a href="/post/2019/12/cs-to-me/" class="more-link">Continue reading</a>
-        </div>
-    </article>
-    
-    <article class="post">
-        
-        <h2 class="post-title">
-            <a href="/post/2019/11/algorithm/red-black-tree/">
-                紅黑樹（Red Black Tree）介紹
-            </a>
-        </h2>
-
-        <ul class="post-date">
-            <li>
-                November 27, 2019
-            </li>
-            <li>
-                Liu, An-Chi 劉安齊
-            </li>
-        </ul>
-        
-        <div class="post-cover">
-            <img src="https://user-images.githubusercontent.com/18013815/69704764-131ca180-112f-11ea-9897-ea561e87fc35.png">
-        </div>
-        
-                    <div class="post-content ">
-                        <h2 id="紅黑樹簡介"><a class="header-anchor" href="#紅黑樹簡介">¶ </a>紅黑樹簡介</h2>
-<p>紅黑樹是一種特別的資料結構，他具有跟 AVL Tree 一樣可以自動平衡的功能。</p>
-<p>一個紅黑樹具有一下特性：</p>
-<ul>
-<li>每個 node 只有黑與紅</li>
-<li>Root 必須是黑</li>
-<li>每個葉子（leaf）是 <code>NIL</code> 且為黑</li>
-<li>如果一個 node 是紅，那他的 child 都會是黑</li>
-<li>每一條從 root 到 leaf 的路徑所包含的黑色 node 數量都一樣</li>
-</ul>
-<p>遵循這樣的規則，可以確保在增加和刪除節點時，保持著樹的平衡狀態。紅黑數保證當 node 數量是 <code>n</code> 時，他的高度最多不會超過 <code>2log(n+1)</code>。</p>
-<p>在現實生活中，常常用來實作 set 和 dictionary，C++ 中的 <code>std::set</code> 和 <code>std::map</code> 背後正是紅黑樹。</p>
-        <a href="/post/2019/11/algorithm/red-black-tree/" class="more-link">Continue reading</a>
-        </div>
-    </article>
-    
 
     <div class="pagination-bar" align=center>
         <ul class="pagination">
@@ -618,6 +612,18 @@
     
     
     <li>
+      <a href="/post/2026/11/autobiography/thirty-years-old/">
+        三十而立
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2026/10/autonomous-driving/map-overview/">
+        自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo
+      </a>
+    </li>
+    
+    <li>
       <a href="/post/2026/07/software-engineer/mid-dev-fight-1/">
         中堅工程師奮鬥中（一）：開始成為公司的中堅力量
       </a>
@@ -665,18 +671,6 @@
       </a>
     </li>
     
-    <li>
-      <a href="/post/2025/06/software-engineer/software-engineer-grow-up-4/">
-        新米工程師進修中（四）：晉升中階工程師，辭職創業（完結篇）
-      </a>
-    </li>
-    
-    <li>
-      <a href="/post/2025/05/beyond-just-coding-book/writing-experience/">
-        成為電腦技術書暢銷排行榜第一名有多難？《程式設計原來不只有寫 CODE！》歷時一年的寫書攻略大公開
-      </a>
-    </li>
-    
   </ul>
 </div>
 
@@ -701,7 +695,7 @@
                 
     <h2>Archives</h2>
 
-    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">45</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">45</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
 
 
             </section>

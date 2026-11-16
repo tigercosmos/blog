@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+<html lang="zh">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
+    
+    <meta name="keywords" content="自動駕駛, 地圖, OpenDRIVE, Lanelet2, Apollo, Waymo" />
+    <meta name="description" content="以 CARLA Town03 為例，介紹四種自動駕駛地圖格式，並比較車道幾何、交通規則、格式轉換與檢視工具。" />
+    <title>自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo | Neutrino&#39;s Blog</title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/">
+        
+            <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/">
+    
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo">
+    <meta property="og:description" content="以 CARLA Town03 為例，介紹四種自動駕駛地圖格式，並比較車道幾何、交通規則、格式轉換與檢視工具。">
+    <meta property="og:url" content="https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:locale:alternate" content="ja_JP">
+    
+    <meta property="og:image" content="https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png">
+    
+    <meta property="og:image:alt" content="自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo">
+    
+    <meta property="article:published_time" content="2026-10-12T04:00:00.000Z">
+    <meta property="article:modified_time" content="2026-10-12T04:00:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="自動駕駛">
+    <meta property="article:tag" content="地圖">
+    <meta property="article:tag" content="OpenDRIVE">
+    <meta property="article:tag" content="Lanelet2">
+    <meta property="article:tag" content="Apollo">
+    <meta property="article:tag" content="Waymo">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo">
+    <meta name="twitter:description" content="以 CARLA Town03 為例，介紹四種自動駕駛地圖格式，並比較車道幾何、交通規則、格式轉換與檢視工具。">
+    <meta name="twitter:image" content="https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png">
+    <meta name="twitter:image:alt" content="自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"zh-TW","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#primaryimage","url":"https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png","contentUrl":"https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#webpage","url":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/","name":"自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#breadcrumb"},"inLanguage":"zh-TW","datePublished":"2026-10-12T04:00:00.000Z","dateModified":"2026-10-12T04:00:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#article","isPartOf":{"@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#webpage"},"headline":"自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo","name":"自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo","description":"以 CARLA Town03 為例，介紹四種自動駕駛地圖格式，並比較車道幾何、交通規則、格式轉換與檢視工具。","datePublished":"2026-10-12T04:00:00.000Z","dateModified":"2026-10-12T04:00:00.000Z","inLanguage":"zh-TW","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/#primaryimage"},"keywords":"自動駕駛, 地圖, OpenDRIVE, Lanelet2, Apollo, Waymo"}]}</script>
+
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    
+    
+    
+    <p class="title" id="main-title">
+        <a href="/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </p>
+    
+    <p class="desc">
+        Code makes the world a better place
+    </p>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">zh</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <span class="translation-lang is-current" lang="zh">zh</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2026/10/autonomous-driving/map-overview/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/ja/post/2026/10/autonomous-driving/map-overview/" hreflang="ja" lang="ja">ja</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h1 class="post-title">
+        自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo
+    </h1>
+    
+    <ul class="post-date">
+        <li>
+            2026-10-12
+        </li>
+        
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <span class="translation-lang is-current" lang="zh">zh</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2026/10/autonomous-driving/map-overview/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/ja/post/2026/10/autonomous-driving/map-overview/" hreflang="ja" lang="ja">ja</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="前言"><a class="header-anchor" href="#前言">¶ </a>前言</h2>
+<p>說到自動駕駛的地圖，大家可能聽過 OpenDRIVE、Lanelet2，或是 Apollo 的 HD Map。這些格式都可以記錄道路和車道，但如果把檔案打開來看，會發現裡面的資料長得差滿多的。有的用數學函數描述道路，有的把車道拆成左右兩條邊界，也有的直接把中心線和相鄰車道的 ID 全部列出來。</p>
+<p>那為什麼需要這麼多種格式呢？模擬器要產生道路，車上的規劃系統要判斷車子能往哪裡走，而行為預測模型需要知道道路配置，以及車輛、行人等交通參與者如何移動，所以各自需要的資訊也不同。本文用 CARLA 的 Town03 地圖，介紹 OpenDRIVE、Autoware 使用的 Lanelet2、Apollo HD Map，以及 Waymo Open Motion Dataset 的地圖結構，接著比較它們互相轉換時會遇到什麼問題。</p>
+<h2 id="自動駕駛地圖的內容"><a class="header-anchor" href="#自動駕駛地圖的內容">¶ </a>自動駕駛地圖的內容</h2>
+<p>我們平常用導航，大多只需要知道從 A 到 B 要走哪條路。但自動駕駛還需要知道自己在哪一條車道、車道有多寬、前面接哪條車道、能不能往左右變換車道，以及紅綠燈控制哪些車道等等，因此地圖需要記錄的資訊會細很多。</p>
+<p>這些資訊大致可以分成幾何（geometry）、拓樸（topology）和語意（semantics）。幾何基本上就是道路的形狀與位置，像是平面座標和高度；拓樸則是車道之間如何連接，例如前後接續和左右相鄰；語意代表的是車道類型、標線、速限與交通規則。舉例來說，兩條車道並排相鄰，描述的是它們在幾何上的位置關係；至於能不能變換車道，就還要看中間的標線是虛線還是實線，以及相關的交通規則。</p>
+<p>另外，自動駕駛也會使用點雲地圖做定位，模擬器則可能另外有建築物、樹木和路面材質。本文主要介紹道路與車道的資料格式，這些檔案並沒有包含整個模擬場景所需的模型與素材。</p>
+<h3 id="CARLA-Town03"><a class="header-anchor" href="#CARLA-Town03">¶ </a>CARLA Town03</h3>
+<p>為了比較格式差異，這邊使用同一份 Town03，把原始 OpenDRIVE 轉成另外三種格式。來源是 Scenic 專案收錄的 CARLA <code>Town03.xodr</code>，由 RoadRunner 產生，版本為 OpenDRIVE 1.4。Town03 有圓環、多車道路口，也有高低起伏的道路，適合拿來比較各種格式如何描述道路。</p>
+<p><img src="/img/autonomous-driving/map-overview/esmini_opendrive_town03.png" alt="esmini odrviewer 顯示 CARLA Town03 的 3D 道路"><br>
+（圖一：esmini odrviewer 直接讀取 Town03 OpenDRIVE 的畫面）</p>
+<p>圖一可以看到道路的高低變化，以及中央的圓環。這裡只載入道路地圖，沒有 CARLA 完整的城市模型，有些物件因為缺少外部模型，只會顯示簡化後的形狀。</p>
+<p>這份資料有 417 段 <code>driving</code> 車道，總長約 13.718 km，另外還有 12 段 <code>bidirectional</code> 車道、35 個路口、38 個紅綠燈物件與 73 處行人穿越道。紅綠燈共控制 112 段車道，取樣後的高度範圍約為 −0.87 到 8.51 m。這裡統計的是檔案中分段記錄的車道，同一條車道可能被切成好幾段，所以不能說整座城市有 417 條車道。</p>
+<p>四種格式的主要差異如下：</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>主要用途</th>
+<th>幾何表示</th>
+<th>車道連接關係</th>
+<th>檔案形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>道路設計與模擬器之間的資料交換</td>
+<td>參考線與寬度、海拔高度函數</td>
+<td>road、lane 與 junction 的 link</td>
+<td>XML，<code>.xodr</code></td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>路徑規劃與通行規則判斷</td>
+<td>左右邊界折線，也可有中心線</td>
+<td>由共用邊界、端點與規則建立路由圖</td>
+<td>OSM XML，<code>.osm</code></td>
+</tr>
+<tr>
+<td>Apollo HD Map</td>
+<td>Apollo 的路徑規劃、行車規劃與行為預測</td>
+<td>車道參考軌跡與左右邊界</td>
+<td>明確列出前後接續與左右相鄰車道</td>
+<td>Protobuf，<code>base_map.bin</code></td>
+</tr>
+<tr>
+<td>Waymo Open Motion</td>
+<td>行為預測與場景研究</td>
+<td>中心線、標線與路緣點列</td>
+<td>車道 ID 與點列索引範圍</td>
+<td>Scenario Protobuf，通常包在 TFRecord</td>
+</tr>
+</tbody>
+</table>
+<h2 id="OpenDRIVE"><a class="header-anchor" href="#OpenDRIVE">¶ </a>OpenDRIVE</h2>
+<p><a target="_blank" rel="noopener" href="https://www.asam.net/fileadmin/Standards/OpenDRIVE/ASAM_OpenDRIVE_BS_V1-7-0.html">OpenDRIVE</a> 是 ASAM 制定的道路資料標準，CARLA、esmini 等模擬工具都可以使用。它最基本的概念是道路參考線（reference line），每條 road 先定義一條參考線，再以這條線為基準，記錄各條車道與道路物件的位置。</p>
+<p>我們可以把參考線想成道路的基準。沿著線前進的距離叫 <code>s</code>，往左右偏移的距離叫 <code>t</code>，所以 <code>(s, t)</code> 就能表示道路上的位置。參考線不一定是某條車道的中心線，但我們可以以它為基準，用同一套座標來描述整條道路的形狀與位置。詳細定義可以看 <a target="_blank" rel="noopener" href="https://publications.pages.asam.net/standards/ASAM_OpenDRIVE/ASAM_OpenDRIVE_Specification/v1.8.1/specification/08_coordinate_systems/08_03_reference_line_coordinate_system.html">ASAM 的參考線座標說明</a>。</p>
+<p>參考線的平面形狀放在 <code>planView</code> 裡，可以把直線（line）、圓弧（arc）、緩和曲線（spiral）等接起來，組成一條參考線。車道則放在 <code>laneSection</code> 裡，用寬度函數描述。讀取工具沿著參考線計算座標，再往左右加上車道寬度，就可以得到車道邊界。因此 OpenDRIVE 不需要把每條車道的每個座標點都存起來。</p>
+<p>我們用 Town03 的 Road 8、第一個 lane section、<em>lane -1</em> 當範例。這是一段約 18.13 m 長、3.5 m 寬的直線車道，其寬度與外側標線的設定如下，其他屬性與子元素先省略：</p>
+<pre><code class="language-xml">&lt;lane id=&quot;-1&quot; type=&quot;driving&quot; level=&quot;false&quot;&gt;
+  &lt;width sOffset=&quot;0&quot; a=&quot;3.5&quot; b=&quot;0&quot; c=&quot;0&quot; d=&quot;0&quot; /&gt;
+  &lt;roadMark sOffset=&quot;0&quot; type=&quot;broken&quot; color=&quot;white&quot;
+            width=&quot;0.125&quot; laneChange=&quot;both&quot; /&gt;
+&lt;/lane&gt;
+</code></pre>
+<p><code>width</code> 的四個係數對應三次多項式 <code>w(ds) = a + b·ds + c·ds² + d·ds³</code>，其中 <code>ds</code> 是從這段 width 設定的起點算起的距離。這個例子只有 <code>a</code> 是 3.5，其他都是 0，因此整段車道的寬度固定為 3.5 m。如果道路逐漸變寬，就可以設定其他係數來描述變化。OpenDRIVE 也有使用 <code>border</code> 描述邊界的方式，Town03 這裡採用的是 <code>width</code>。</p>
+<p><code>roadMark</code> 表示這條右側車道的外側標線，<code>broken</code> 和 <code>white</code> 就是白色虛線，線寬為 0.125 m。這條車道內側靠近道路中央，對應的標線則要去看中央車道的設定。</p>
+<p>OpenDRIVE 的車道 ID 從中央的 0 開始，參考線左邊是 +1、+2，右邊是 −1、−2。以車道 ID −1 來說，不同道路或不同 lane section 裡面都可能有 −1，所以只知道 lane ID，還無法確定是哪條車道，也要知道它屬於哪條 road、哪個 section。正負號表示左右位置，行進方向還要搭配右側或左側通行、雙向車道等設定判斷。</p>
+<p>要知道車道前後接到哪裡，則需要讀取 road link、lane link，以及路口 junction 裡的 connection 和 laneLink。舉例來說，一條道路進入路口後可以直行或右轉，junction 會記錄對應的連接道路與車道，讀取程式再把這些資訊整理成可行駛的路網。</p>
+<p>OpenDRIVE 也能描述海拔高度（elevation）與橫坡（superelevation，又稱 bank angle）。海拔高度記錄道路沿途的高度，因此可以表示上坡、下坡；橫坡是道路橫向的傾斜，像是彎道內外側的高度差。Town03 的海拔高度有變化，但來源檔裡的 superelevation 係數全為 0。</p>
+<h2 id="Lanelet2"><a class="header-anchor" href="#Lanelet2">¶ </a>Lanelet2</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/LaneletPrimitives.md">Lanelet2</a> 是 Autoware 常用的地圖格式，其基本單位是 lanelet，可以想成左、右兩條折線（linestring）圍起來的一段可通行區域。同一段 lanelet 內，交通規則與能否變換車道的條件都要相同。如果到了某個位置，規則或條件變了，就要從那裡切成另一段 lanelet。</p>
+<p>Lanelet2 可以用 OSM XML 儲存，其中 <code>node</code> 是座標點，<code>way</code> 是一串 node 組成的折線，<code>relation</code> 則用來組合左右邊界和規則。注意這裡是沿用 OpenStreetMap 的檔案結構，資料內容仍然是我們自己的車道地圖。</p>
+<p>同樣是前面 Road 8 的 <em>lane −1</em>，轉成 Lanelet2 後會得到以下 relation：</p>
+<pre><code class="language-xml">&lt;relation id=&quot;47981&quot; visible=&quot;true&quot; version=&quot;1&quot;&gt;
+  &lt;member type=&quot;way&quot; ref=&quot;5356&quot; role=&quot;left&quot; /&gt;
+  &lt;member type=&quot;way&quot; ref=&quot;5377&quot; role=&quot;right&quot; /&gt;
+  &lt;tag k=&quot;type&quot; v=&quot;lanelet&quot; /&gt;
+  &lt;tag k=&quot;subtype&quot; v=&quot;road&quot; /&gt;
+  &lt;tag k=&quot;one_way&quot; v=&quot;yes&quot; /&gt;
+  &lt;tag k=&quot;participant:vehicle&quot; v=&quot;yes&quot; /&gt;
+  &lt;tag k=&quot;speed_limit&quot; v=&quot;80&quot; /&gt;
+&lt;/relation&gt;
+</code></pre>
+<p>可以看到 relation 47981 引用左邊的 way 5356 和右邊的 way 5377，再往 way 裡面找 node，才會得到實際座標。這份輸出的 node 有 <code>lat</code>、<code>lon</code>，並附上 <code>ele</code>、<code>local_x</code>、<code>local_y</code> 標籤，<code>ele</code> 記錄高度，<code>local_x</code> 和 <code>local_y</code> 則記錄區域座標。載入時要使用相符的投影設定，也要確認讀取工具是否會採用這些區域座標。</p>
+<p>這裡有一個轉換時很容易忽略的地方，就是相鄰車道應該共用同一個邊界物件。如果兩條車道中間是同一條白色虛線，兩個 lanelet 就應該引用同一條 way。假設我們各產生一條座標完全一樣的 way，畫出來不會有差別，但 Lanelet2 就可能判斷不出它們的相鄰關係。前後接續的 lanelet 也需要正確共用端點。</p>
+<p>不過，共用邊界不代表就能變換車道，還要看標線類型和交通規則。例如兩條車道雖然相鄰，中間卻隔著實線，就不能直接跨越實線變換車道。Lanelet2 的 <a target="_blank" rel="noopener" href="https://docs.ros.org/en/humble/p/lanelet2_routing/">routing graph</a> 就會區分哪些相鄰車道可以切換過去，哪些不行。我們也可以依汽車、自行車與行人的通行規則，分別建立路由圖。</p>
+<p>紅綠燈、停止線與路權則透過 regulatory element（交通規則物件）描述。比方說一盞紅綠燈控制三條車道，我們可以建立一個 relation 引用燈體和停止線，再讓三個 lanelet 都引用這個規則。這樣規則可以共用，也比較方便擴充。</p>
+<p><img src="/img/autonomous-driving/map-overview/josm_lanelet2_town03.png" alt="JOSM 套用 Lanelet2 樣式繪出的 Town03"><br>
+（圖二：JOSM 套用 Lanelet2 mapcss 樣式的 Town03）</p>
+<p>圖二是用 JOSM 畫出的結果，左右邊界、路口與圓環都能看到。JOSM 可以用來檢查與編輯 OSM 裡的物件，至於能不能規劃出從一條車道到另一條車道的路徑，則需要另外用 Lanelet2 的 routing graph 或目標系統測試。</p>
+<h2 id="Apollo-HD-Map"><a class="header-anchor" href="#Apollo-HD-Map">¶ </a>Apollo HD Map</h2>
+<p>Apollo HD Map 使用 Protocol Buffers（Protobuf）儲存地圖，一般會看到 <code>base_map.bin</code> 二進位檔，也可以輸出文字版 <code>base_map.txt</code> 方便檢查。它把車道的幾何與連接資訊放在 <a target="_blank" rel="noopener" href="https://github.com/ApolloAuto/apollo/blob/master/modules/common_msgs/map_msgs/map_lane.proto">Lane message</a> 裡，包括 <code>central_curve</code>、左右邊界、長度、速限，以及前後銜接的車道和左右相鄰車道。依照資料結構（schema）的定義，<code>central_curve</code> 是參考軌跡，不一定剛好在車道的幾何中心。</p>
+<p>我們前面的車道在這份輸出裡叫 <code>lane_8_0_-1</code>，把座標點省略後，可以看到以下關係：</p>
+<pre><code class="language-protobuf">id &#123; id: &quot;lane_8_0_-1&quot; &#125;
+speed_limit: 22.352
+predecessor_id &#123; id: &quot;lane_482_0_-1&quot; &#125;
+successor_id &#123; id: &quot;lane_1197_0_-3&quot; &#125;
+right_neighbor_forward_lane_id &#123; id: &quot;lane_8_0_-2&quot; &#125;
+left_neighbor_reverse_lane_id &#123; id: &quot;lane_8_0_1&quot; &#125;
+type: CITY_DRIVING
+turn: NO_TURN
+direction: FORWARD
+</code></pre>
+<p><code>predecessor_id</code> 和 <code>successor_id</code> 分別記錄前後銜接的車道 ID，右邊相鄰的是同向車道 <code>lane_8_0_-2</code>，左邊相鄰的則是對向車道 <code>lane_8_0_1</code>。可以發現前後車道和左右相鄰車道的 ID 都已經列好了，因此要找這條車道接到哪裡時，直接根據 ID 查詢就好，不需要再從邊界判斷車道之間的關係。不過在產生地圖時，就必須確保 ID 記錄的連接關係與車道的實際位置相符，修改道路時也要一起更新。</p>
+<p>Apollo 另外使用 <a target="_blank" rel="noopener" href="https://github.com/ApolloAuto/apollo/blob/master/modules/common_msgs/map_msgs/map_overlap.proto">overlap</a> 記錄車道與其他物件的關係，例如 lane 與紅綠燈、行人穿越道、junction 的關聯。overlap 會記錄物件 ID，以及對應 lane 上的 <code>s</code> 範圍，因此規劃系統就能知道這個物件影響車道的哪一段。</p>
+<p><img src="/img/autonomous-driving/map-overview/mapshow_apollo_town03.png" alt="Apollo 官方 mapshow 顯示 Town03 車道、號誌與行人穿越道"><br>
+（圖三：Apollo 官方 <a target="_blank" rel="noopener" href="http://mapshow.py">mapshow.py</a> 的 Town03 輸出）</p>
+<p>圖三中可以看到車道、號誌與行人穿越道。這份轉換保留 road、section、junction 的結構，總共輸出 1,400 個 Lane 和 1,210 個 overlap。Lane 包含 driving、sidewalk、shoulder、parking 等類型，所以數量比前面的 417 段 driving 車道多。</p>
+<p>使用 Apollo 地圖時需要注意 Protobuf schema 的版本與座標設定。這份輸出的 header 使用 <code>tmerc</code> 投影字串，座標單位是公尺，與其他地圖一起使用時仍然要確認原點和投影是否相同。</p>
+<h2 id="Waymo-Open-Motion"><a class="header-anchor" href="#Waymo-Open-Motion">¶ </a>Waymo Open Motion</h2>
+<p>這邊介紹的是 Waymo Open Motion Dataset（WOMD）的地圖資料，用於行為預測與場景研究。它使用 <a target="_blank" rel="noopener" href="https://github.com/waymo-research/waymo-open-dataset/blob/master/src/waymo_open_dataset/protos/scenario.proto">Scenario</a> 記錄地圖、交通參與者軌跡，以及不同時間點的號誌狀態。本文只轉換道路資料，沒有產生車輛軌跡，因此輸出的 Scenario 只有地圖資料，燈號狀態也都設為未知。</p>
+<p>Waymo 的地圖放在 <code>map_features</code> 裡，裡面的每個 feature 都有自己的 ID，像是車道中心線 <code>LaneCenter</code>、標線 <code>RoadLine</code>、路緣 <code>RoadEdge</code> 和行人穿越道 <code>Crosswalk</code>，都是各自獨立的物件。我們可以在 <a target="_blank" rel="noopener" href="https://github.com/waymo-research/waymo-open-dataset/blob/master/src/waymo_open_dataset/protos/map.proto">map.proto</a> 裡看到完整的定義。它沒有 OpenDRIVE 那種 road 和 lane section 階層，車道主要用中心線點列來描述。</p>
+<p>車道左右邊界則由 <code>BoundarySegment</code> 記錄，並引用代表標線或路緣的 feature。前面 Road 8 的 lane −1，在這份輸出中對應 feature 103，左邊界的資料如下：</p>
+<pre><code class="language-protobuf">left_boundaries &#123;
+  lane_start_index: 0
+  lane_end_index: 19
+  boundary_feature_id: 100051
+  boundary_type: TYPE_SOLID_SINGLE_YELLOW
+&#125;
+</code></pre>
+<p>這段的意思是，車道中心線第 0 到第 19 個點，其左側邊界對應 feature 100051。要取得邊界座標，就去讀這個 feature 的點列。描述左右相鄰車道的關係時，也會分別記錄這條車道與相鄰車道的點列索引範圍，所以兩條車道只有部分路段相鄰時，也可以分段描述。</p>
+<p>這次轉換沿著道路約每隔 1 m 取樣一次，範例裡的實際間距約為 0.954 m。一般來說，取樣越密就能保留越多道路形狀的細節，不過需要儲存的點數也會變多，檔案自然就會變大。</p>
+<p><img src="/img/autonomous-driving/map-overview/tactics2d_waymo_town03.jpg" alt="Tactics2D 直接讀取 Town03 Waymo Scenario 的地圖畫面"><br>
+（圖四：Tactics2D 讀取 Town03 Scenario TFRecord 的畫面）</p>
+<p>圖四只顯示道路，沒有車輛，因為這份 Scenario 沒有軌跡資料。這次輸出共包含 429 條車道中心線、665 條標線、32 段路緣和 73 處行人穿越道，這 429 條中心線分別來自 417 段 driving 車道和 12 段 bidirectional 車道。Tactics2D 畫的是 XY 平面，若要觀察高度，可以看官方 <code>plot_maps</code> 產生的 Plotly 圖。</p>
+<p>Waymo 有記錄車道前後如何連接，以及同向的相鄰車道，但道路階層與交通規則不像前面幾種格式那麼完整，而且有些車道沒有左右邊界。如果要把它拿來產生完整的道路模型，就需要補齊這些資訊。這裡討論的是 WOMD 公開資料的結構，並不代表 Waymo 車上使用的完整地圖。</p>
+<h2 id="紅綠燈的表示方式"><a class="header-anchor" href="#紅綠燈的表示方式">¶ </a>紅綠燈的表示方式</h2>
+<p>除了車道，紅綠燈也是自動駕駛地圖需要記錄的重要資訊。OpenDRIVE 記錄 signal 在道路上的位置，再用 signalReference 與 validity 指定哪些車道受號誌控制；Lanelet2 讓 lanelet 引用紅綠燈的 regulatory element；Apollo 則透過 Signal 和 overlap 記錄號誌與車道的對應關係。</p>
+<p>Waymo 比較特別，它會記錄每個時間點，各條車道對應的燈號狀態。Scenario 的 <code>dynamic_map_states</code> 裡有 <code>TrafficSignalLaneState</code>，記錄號誌控制的 lane ID、燈號狀態和停止點 <code>stop_point</code>。也就是說，這邊記錄的是某個時間點、某條車道的燈號狀態，至於燈體的位置與形狀則沒有另外存起來。</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>號誌資料</th>
+<th>如何對應到受號誌控制的車道</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>signal 的位置與屬性</td>
+<td>signalReference、validity</td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>燈體與停止線的 regulatory element</td>
+<td>lanelet 引用規則 relation</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td>Signal 的燈體、子燈與停止線</td>
+<td>Signal 與 Lane 的 overlap</td>
+</tr>
+<tr>
+<td>Waymo Scenario</td>
+<td>各時間點的燈號與停止點</td>
+<td>TrafficSignalLaneState 的 lane ID</td>
+</tr>
+</tbody>
+</table>
+<p>Town03 的 OpenDRIVE 沒有記錄紅、黃、綠燈隨時間切換的資料，所以這次 Waymo 輸出只在時間 0 記錄受號誌控制的車道和停止點，所有燈號都是 <code>LANE_STATE_UNKNOWN</code>。如果後續要模擬車子遇到紅燈停下來，就還需要提供號誌時相或其他控制資料。</p>
+<h2 id="地圖格式轉換"><a class="header-anchor" href="#地圖格式轉換">¶ </a>地圖格式轉換</h2>
+<p>看完這幾種資料結構，可以發現轉換格式時有不少資訊需要重新整理。OpenDRIVE 的寬度函數不能直接放進 Lanelet2 的 way 裡，必須先算出邊界座標；Apollo 要求明確的前後車道 ID，就要把 OpenDRIVE 的道路和路口連接整理好；Waymo 的邊界透過 feature ID 引用，還要算出對應的中心線索引範圍。</p>
+<p>這次轉換的三種格式都使用同一份 OpenDRIVE 解析結果。我們先沿參考線取樣，再套用 lane offset、寬度、海拔高度與橫坡，取得中心線和左右邊界。接著整理車道連接、號誌控制與行人穿越道，再分別寫成三種格式。</p>
+<h3 id="單位與標線"><a class="header-anchor" href="#單位與標線">¶ </a>單位與標線</h3>
+<p>我們先看速限。Road 8 在原始檔案中記錄的速限是 50 mph，三種輸出分別是：</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>輸出的速限</th>
+<th>單位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lanelet2</td>
+<td><code>speed_limit=&quot;80&quot;</code></td>
+<td>km/h，這次輸出只保留整數</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td><code>speed_limit: 22.352</code></td>
+<td>m/s</td>
+</tr>
+<tr>
+<td>Waymo</td>
+<td><code>speed_limit_mph: 50.0</code></td>
+<td>mph，欄位型別是 double</td>
+</tr>
+</tbody>
+</table>
+<p>同一個速限，在不同格式裡可能使用不同單位，因此轉換時不能直接照抄數字。不保留小數也會造成一些誤差，像是 50 mph 約為 80.4672 km/h，這份 Lanelet2 輸出就沒有保留小數部分。</p>
+<p>標線也有類似的問題。Road 8 的 OpenDRIVE 中央標線是 <code>solid solid</code> 黃線，但範例轉出後，Lanelet2 只留下 solid 標籤，Apollo 是 <code>SOLID_YELLOW</code>，Waymo 則是 <code>TYPE_SOLID_SINGLE_YELLOW</code>。也就是說，這條邊界原本是雙黃線，轉換後卻少了這項資訊。Apollo 和 Waymo 其實都有雙黃線型別，所以這個問題要回頭檢查轉換時取用了哪條邊界，以及標線的對應方式。</p>
+<h3 id="轉換後的資料量"><a class="header-anchor" href="#轉換後的資料量">¶ </a>轉換後的資料量</h3>
+<p>這次各格式保留的車道類型也不同。Lanelet2 輸出了 driving、sidewalk 和行人穿越道，沒有輸出 parking、shoulder；Apollo 保留的類型較多；Waymo 的車道中心線則只輸出 driving 和 bidirectional。這些差異取決於這次轉換程式保留了哪些資料。例如 Lanelet2 還有 Area，也能擴充規則，因此還可以記錄更多內容。</p>
+<p>各檔案的大小如下，這裡用 1 MB = 1,000,000 bytes 計算：</p>
+<table>
+<thead>
+<tr>
+<th>檔案</th>
+<th>大小</th>
+<th>內容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE XML</td>
+<td>4.59 MB</td>
+<td>原始道路參數與物件</td>
+</tr>
+<tr>
+<td>Lanelet2 OSM XML</td>
+<td>10.80 MB</td>
+<td>46,765 個 node、1,564 個 way、848 個 relation</td>
+</tr>
+<tr>
+<td>Apollo 二進位</td>
+<td>11.27 MB</td>
+<td>1,400 個 Lane、1,210 個 overlap</td>
+</tr>
+<tr>
+<td>Apollo 文字版</td>
+<td>43.31 MB</td>
+<td>同一份 Apollo 地圖以文字格式儲存</td>
+</tr>
+<tr>
+<td>Waymo TFRecord</td>
+<td>1.27 MB</td>
+<td>1,199 個 map feature，不含軌跡</td>
+</tr>
+</tbody>
+</table>
+<p>可以看到 Lanelet2 與 Apollo 的檔案都比原始 OpenDRIVE 大，其主要原因是把道路形狀轉成一串座標點後，要儲存的座標變多了；另外同樣是 Apollo 地圖，文字版也比二進位版大很多。Waymo 的檔案最小，但也少了道路階層和部分車道類型，因此這張表只能比較這次輸出的大小，還無法據此判斷哪種格式的儲存效率最好。</p>
+<h3 id="反向轉換"><a class="header-anchor" href="#反向轉換">¶ </a>反向轉換</h3>
+<p>那轉出來的地圖能不能再轉回 OpenDRIVE 呢？可以重新產生一份，但要還原原本的道路參數就很困難了。以圓弧來說，取樣之後我們只剩下一串座標點，再去擬合時就不一定能得到原本的圓弧參數，此外 road 和 lane section 的切分方式也可能需要重新決定。</p>
+<p>Lanelet2 和 Apollo 都有邊界折線，所以幾何比較容易對應，不過仍然要處理各自的結構。Apollo 轉 Lanelet2 時，要把相鄰車道重複儲存的邊界合併成同一條 way；Lanelet2 轉 Apollo 時，則要建立 road、section 和 overlap。至於通行對象的限制、自訂的交通規則，以及各格式特有的物件，也可能找不到可以直接對應的欄位。</p>
+<p>從 Waymo 轉回其他格式會更麻煩，因為有些車道沒有邊界，也沒有道路階層與燈體位置。如果從中心線往兩側產生邊界，並把車道寬度設成固定值，這個寬度就是額外假設的，產生的道路不一定跟原本相同。需要這樣處理時，最好把合成的資料標記起來，方便後面檢查。</p>
+<p>因此實務上最好保留原始地圖，再以這份地圖為基礎轉成其他格式。來源是 OpenDRIVE 就留著描述道路的函數，來源是 Lanelet2 就留著共用物件和規則，之後要改地圖時也從原始資料修改，避免來回轉換幾次後，很多資訊都找不回來。</p>
+<h2 id="地圖檢視與驗證"><a class="header-anchor" href="#地圖檢視與驗證">¶ </a>地圖檢視與驗證</h2>
+<p>轉完地圖之後，可以先用檢視器（viewer）看一下結果。這邊整理原網站 2026-10-10 的檢視紀錄，桌面版與輕量的檢視工具主要在 macOS arm64 上執行，Apollo 8 Dreamview 則跑在 Linux 後端，再從 Mac 的瀏覽器連線：</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>工具</th>
+<th>Town03 的結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>esmini odrviewer</td>
+<td>顯示 3D 道路</td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>JOSM + Lanelet2 樣式、Tactics2D</td>
+<td>成功顯示道路</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td><a target="_blank" rel="noopener" href="http://mapshow.py">mapshow.py</a>、Apollo 8 Dreamview</td>
+<td>顯示車道、號誌與行人穿越道</td>
+</tr>
+<tr>
+<td>Waymo</td>
+<td>官方 plot_maps、Tactics2D</td>
+<td>成功顯示地圖；Tactics2D 只顯示 XY</td>
+</tr>
+</tbody>
+</table>
+<p>檔案本身也有做檢查：Lanelet2 檢查 XML 物件及其引用關係；Apollo 檢查二進位檔能否解析，以及轉成文字再轉回來後，資料是否一致；Waymo 則檢查 TFRecord CRC、反序列化和索引範圍。這樣可以檢查出 ID 重複、引用的物件不存在或索引超出範圍等問題，但如果是標線對應錯誤，或是把不能變換車道的地方當成可以變換車道，就還需要另外的測試才能發現。</p>
+<p>如果要把地圖交給規劃系統，還要測試指定車種是否能沿著規劃的路徑通行、有沒有錯誤地允許車輛跨越實線變換車道，以及紅綠燈是否對應到正確的車道。尤其高架道路在平面圖上也可能交叉，海拔高度和投影就要一起檢查，否則畫面看起來很正常，規劃出的路徑卻可能錯接到不同高度的道路。</p>
+<h2 id="結論"><a class="header-anchor" href="#結論">¶ </a>結論</h2>
+<p>本文用同一份 Town03 介紹四種自動駕駛地圖格式。OpenDRIVE 主要用參考線與函數描述道路，Lanelet2 用左右邊界組成 lanelet 並搭配交通規則，Apollo 把車道幾何與連接關係明確存起來，Waymo Open Motion 則用 map feature 和時間序列描述場景。</p>
+<p>如果想更熟悉這些格式，可以從本文的 Road 8 範例開始，對照它在四種檔案裡的邊界、速限和相鄰車道。真的要做格式轉換時，則要注意單位、共用物件和來源缺少的資訊，轉完也記得用實際要使用地圖的系統，檢查道路形狀與路徑規劃的結果。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/tags/%E8%87%AA%E5%8B%95%E9%A7%95%E9%A7%9B/">
+                自動駕駛
+            </a>,&nbsp;
+        
+            <a href="/tags/%E5%9C%B0%E5%9C%96/">
+                地圖
+            </a>,&nbsp;
+        
+            <a href="/tags/opendrive/">
+                OpenDRIVE
+            </a>,&nbsp;
+        
+            <a href="/tags/lanelet2/">
+                Lanelet2
+            </a>,&nbsp;
+        
+            <a href="/tags/apollo/">
+                Apollo
+            </a>,&nbsp;
+        
+            <a href="/tags/waymo/">
+                Waymo
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8B%95%E9%A7%95%E9%A7%9B%E5%9C%B0%E5%9C%96%E7%9A%84%E5%85%A7%E5%AE%B9"><span class="toc-text">自動駕駛地圖的內容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CARLA-Town03"><span class="toc-text">CARLA Town03</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OpenDRIVE"><span class="toc-text">OpenDRIVE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lanelet2"><span class="toc-text">Lanelet2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Apollo-HD-Map"><span class="toc-text">Apollo HD Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Waymo-Open-Motion"><span class="toc-text">Waymo Open Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%85%E7%B6%A0%E7%87%88%E7%9A%84%E8%A1%A8%E7%A4%BA%E6%96%B9%E5%BC%8F"><span class="toc-text">紅綠燈的表示方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%B0%E5%9C%96%E6%A0%BC%E5%BC%8F%E8%BD%89%E6%8F%9B"><span class="toc-text">地圖格式轉換</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%96%AE%E4%BD%8D%E8%88%87%E6%A8%99%E7%B7%9A"><span class="toc-text">單位與標線</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%89%E6%8F%9B%E5%BE%8C%E7%9A%84%E8%B3%87%E6%96%99%E9%87%8F"><span class="toc-text">轉換後的資料量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E8%BD%89%E6%8F%9B"><span class="toc-text">反向轉換</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%B0%E5%9C%96%E6%AA%A2%E8%A6%96%E8%88%87%E9%A9%97%E8%AD%89"><span class="toc-text">地圖檢視與驗證</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%90%E8%AB%96"><span class="toc-text">結論</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/post/2026/11/autobiography/thirty-years-old/">
+        三十而立
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2026/10/autonomous-driving/map-overview/">
+        自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2026/07/software-engineer/mid-dev-fight-1/">
+        中堅工程師奮鬥中（一）：開始成為公司的中堅力量
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2026/05/ai/ai-gen-book-experiment/">
+        使用 AI 生成一本書
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2026/02/ai/vibe-code-japanese-learning-app/">
+        如何使用 AI 打造一個完全客製化的日語學習 App
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025 秋季日本與台灣中階軟體工程師求職經驗分享
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Pointcloud Projection on 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2025/09/book-report/steve-jobs/">
+        《賈伯斯傳》讀後隨筆
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2025/09/shopify/pricing-method/">
+        Shopify Pricing 踩雷紀錄：Managed Pricing &amp; Manual Pricing 那邊設定？
+      </a>
+    </li>
+    
+    <li>
+      <a href="/post/2025/08/startup/datra-1/">
+        Datra AI 創業紀錄
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">45</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a><span class="archive-list-count">58</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/">2017</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/">2016</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/">2015</a><span class="archive-list-count">3</span></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

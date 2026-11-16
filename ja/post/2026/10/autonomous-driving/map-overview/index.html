@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+<html lang="ja">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
+    
+    <meta name="keywords" content="OpenDRIVE, Lanelet2, Apollo, Waymo, 自動運転, 地図" />
+    <meta name="description" content="CARLA Town03 を例に、4 種類の自動運転地図フォーマットを紹介し、車線の幾何、交通ルール、フォーマット変換、ビューアを比較します。" />
+    <title>自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo | Neutrino&#39;s Blog</title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/">
+        
+            <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/">
+    
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo">
+    <meta property="og:description" content="CARLA Town03 を例に、4 種類の自動運転地図フォーマットを紹介し、車線の幾何、交通ルール、フォーマット変換、ビューアを比較します。">
+    <meta property="og:url" content="https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    
+    <meta property="og:image" content="https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png">
+    
+    <meta property="og:image:alt" content="自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo">
+    
+    <meta property="article:published_time" content="2026-10-12T04:00:00.000Z">
+    <meta property="article:modified_time" content="2026-10-12T04:00:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="OpenDRIVE">
+    <meta property="article:tag" content="Lanelet2">
+    <meta property="article:tag" content="Apollo">
+    <meta property="article:tag" content="Waymo">
+    <meta property="article:tag" content="自動運転">
+    <meta property="article:tag" content="地図">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo">
+    <meta name="twitter:description" content="CARLA Town03 を例に、4 種類の自動運転地図フォーマットを紹介し、車線の幾何、交通ルール、フォーマット変換、ビューアを比較します。">
+    <meta name="twitter:image" content="https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png">
+    <meta name="twitter:image:alt" content="自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"ja","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#primaryimage","url":"https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png","contentUrl":"https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#webpage","url":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/","name":"自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#breadcrumb"},"inLanguage":"ja","datePublished":"2026-10-12T04:00:00.000Z","dateModified":"2026-10-12T04:00:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#article","isPartOf":{"@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#webpage"},"headline":"自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo","name":"自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo","description":"CARLA Town03 を例に、4 種類の自動運転地図フォーマットを紹介し、車線の幾何、交通ルール、フォーマット変換、ビューアを比較します。","datePublished":"2026-10-12T04:00:00.000Z","dateModified":"2026-10-12T04:00:00.000Z","inLanguage":"ja","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/#primaryimage"},"keywords":"OpenDRIVE, Lanelet2, Apollo, Waymo, 自動運転, 地図"}]}</script>
+
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/ja/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    
+    
+    
+    <p class="title" id="main-title">
+        <a href="/ja/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </p>
+    
+    <p class="desc">
+        Code makes the world a better place
+    </p>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">ja</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2026/10/autonomous-driving/map-overview/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/en/post/2026/10/autonomous-driving/map-overview/" hreflang="en" lang="en">en</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="ja">ja</span>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h1 class="post-title">
+        自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo
+    </h1>
+    
+    <ul class="post-date">
+        <li>
+            2026-10-12
+        </li>
+        
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2026/10/autonomous-driving/map-overview/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/en/post/2026/10/autonomous-driving/map-overview/" hreflang="en" lang="en">en</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="ja">ja</span>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="はじめに"><a class="header-anchor" href="#はじめに">¶ </a>はじめに</h2>
+<p>自動運転の地図といえば、OpenDRIVE、Lanelet2、あるいは Apollo の HD Map を聞いたことがあるかもしれません。これらのフォーマットはいずれも道路と車線を記録できますが、ファイルを開いて見てみると、中のデータの姿はかなり違っていることが分かります。数学関数で道路を記述するものもあれば、車線を左右 2 本の境界に分けるものもあり、中心線と隣接車線の ID をすべてそのまま列挙するものもあります。</p>
+<p>では、なぜこれほど多くのフォーマットが必要なのでしょうか。シミュレータは道路を生成しなければならず、車両上のプランニングシステムは車がどこへ進めるのかを判断しなければならず、行動予測モデルは道路の構成と、車両や歩行者などの交通参加者がどのように動くのかを知る必要があります。そのため、それぞれが必要とする情報も異なります。本記事では CARLA の Town03 マップを使って、OpenDRIVE、Autoware が使用する Lanelet2、Apollo HD Map、そして Waymo Open Motion Dataset の地図構造を紹介し、続いてそれらを相互に変換するときにどのような問題に直面するのかを比較します。</p>
+<h2 id="自動運転地図の内容"><a class="header-anchor" href="#自動運転地図の内容">¶ </a>自動運転地図の内容</h2>
+<p>普段ナビを使うとき、私たちはたいてい A から B までどの道を通ればよいかが分かれば十分です。しかし自動運転では、自分がどの車線にいるのか、車線の幅はどれくらいか、前方でどの車線につながるのか、左右に車線変更できるのか、信号機がどの車線を制御しているのか、といったことまで知る必要があります。そのため、地図が記録すべき情報はずっと細かくなります。</p>
+<p>これらの情報は、おおまかに幾何（geometry）、トポロジー（topology）、セマンティクス（semantics）に分けられます。幾何は基本的に道路の形状と位置のことで、平面座標や高さなどがこれにあたります。トポロジーは車線同士がどのようにつながっているかで、例えば前後の接続や左右の隣接です。セマンティクスは車線の種類、区画線、制限速度、交通ルールを表します。例えば、2 本の車線が並んで隣接しているというのは、幾何上の位置関係を述べているにすぎません。車線変更ができるかどうかは、さらにその間の区画線が破線なのか実線なのか、そして関連する交通ルールを見なければなりません。</p>
+<p>また、自動運転では自己位置推定のために点群地図も使いますし、シミュレータには建物、樹木、路面のマテリアルが別途ある場合もあります。本記事では主に道路と車線のデータフォーマットを紹介します。これらのファイルには、シミュレーションシーン全体に必要なモデルやアセットは含まれていません。</p>
+<h3 id="CARLA-Town03"><a class="header-anchor" href="#CARLA-Town03">¶ </a>CARLA Town03</h3>
+<p>フォーマットの違いを比較するため、ここでは同じ Town03 を使い、元の OpenDRIVE を他の 3 種類のフォーマットに変換します。ソースは Scenic プロジェクトに収録されている CARLA の <code>Town03.xodr</code> で、RoadRunner によって生成されたもので、バージョンは OpenDRIVE 1.4 です。Town03 にはラウンドアバウトや多車線の交差点があり、起伏のある道路もあるので、各フォーマットが道路をどのように記述するかを比較するのに適しています。</p>
+<p><img src="/img/autonomous-driving/map-overview/esmini_opendrive_town03.png" alt="esmini odrviewer で表示した CARLA Town03 の 3D 道路"><br>
+（図1：esmini odrviewer で Town03 の OpenDRIVE を直接読み込んだ画面）</p>
+<p>図1 では、道路の高低の変化と、中央のラウンドアバウトが確認できます。ここでは道路地図だけを読み込んでおり、CARLA の完全な都市モデルはありません。一部のオブジェクトは外部モデルがないため、簡略化された形状でしか表示されません。</p>
+<p>このデータには 417 区間の <code>driving</code> 車線があり、総延長は約 13.718 km です。そのほかに 12 区間の <code>bidirectional</code> 車線、35 個の交差点、38 個の信号機オブジェクト、73 か所の横断歩道があります。信号機は合計 112 区間の車線を制御しており、サンプリング後の高さの範囲はおよそ −0.87 から 8.51 m です。ここで集計しているのは、ファイル中で区間ごとに記録されている車線です。同じ 1 本の車線がいくつもの区間に分割されていることがあるため、街全体に 417 本の車線があるとは言えません。</p>
+<p>4 種類のフォーマットの主な違いは次のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>フォーマット</th>
+<th>主な用途</th>
+<th>幾何の表現</th>
+<th>車線の接続関係</th>
+<th>ファイル形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>道路設計とシミュレータ間のデータ交換</td>
+<td>参照線と、幅・標高の関数</td>
+<td>road、lane、junction の link</td>
+<td>XML、<code>.xodr</code></td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>経路計画と通行ルールの判定</td>
+<td>左右境界のポリライン。中心線を持つことも可能</td>
+<td>共有境界、端点、ルールからルーティンググラフを構築</td>
+<td>OSM XML、<code>.osm</code></td>
+</tr>
+<tr>
+<td>Apollo HD Map</td>
+<td>Apollo の経路計画、走行計画、行動予測</td>
+<td>車線の参照軌跡と左右境界</td>
+<td>前後に接続する車線と左右の隣接車線を明示的に列挙</td>
+<td>Protobuf、<code>base_map.bin</code></td>
+</tr>
+<tr>
+<td>Waymo Open Motion</td>
+<td>行動予測とシナリオ研究</td>
+<td>中心線、区画線、道路端の点列</td>
+<td>車線 ID と点列のインデックス範囲</td>
+<td>Scenario Protobuf、通常は TFRecord に格納</td>
+</tr>
+</tbody>
+</table>
+<h2 id="OpenDRIVE"><a class="header-anchor" href="#OpenDRIVE">¶ </a>OpenDRIVE</h2>
+<p><a target="_blank" rel="noopener" href="https://www.asam.net/fileadmin/Standards/OpenDRIVE/ASAM_OpenDRIVE_BS_V1-7-0.html">OpenDRIVE</a> は ASAM が策定した道路データの標準規格で、CARLA や esmini などのシミュレーションツールで使用できます。その最も基本的な概念は道路の参照線（reference line）です。各 road はまず 1 本の参照線を定義し、その線を基準として、各車線や道路オブジェクトの位置を記録します。</p>
+<p>参照線は道路の基準だと考えることができます。線に沿って進んだ距離を <code>s</code>、左右へオフセットした距離を <code>t</code> と呼ぶので、<code>(s, t)</code> で道路上の位置を表すことができます。参照線は必ずしもどれかの車線の中心線であるとは限りませんが、これを基準にして、同じ一つの座標系で道路全体の形状と位置を記述することができます。詳しい定義は <a target="_blank" rel="noopener" href="https://publications.pages.asam.net/standards/ASAM_OpenDRIVE/ASAM_OpenDRIVE_Specification/v1.8.1/specification/08_coordinate_systems/08_03_reference_line_coordinate_system.html">ASAM の参照線座標系の説明</a>を参照してください。</p>
+<p>参照線の平面形状は <code>planView</code> の中に置かれ、直線（line）、円弧（arc）、緩和曲線（spiral）などをつなぎ合わせて 1 本の参照線を構成できます。車線は <code>laneSection</code> の中に置かれ、幅の関数で記述されます。読み込みツールは参照線に沿って座標を計算し、そこから左右に車線幅を加えることで、車線の境界を得ることができます。そのため OpenDRIVE では、各車線のすべての座標点を保存しておく必要がありません。</p>
+<p>Town03 の Road 8、最初の lane section、<em>lane -1</em> を例にします。これは長さ約 18.13 m、幅 3.5 m の直線車線で、その幅と外側の区画線の設定は次のとおりです。その他の属性と子要素はひとまず省略します。</p>
+<pre><code class="language-xml">&lt;lane id=&quot;-1&quot; type=&quot;driving&quot; level=&quot;false&quot;&gt;
+  &lt;width sOffset=&quot;0&quot; a=&quot;3.5&quot; b=&quot;0&quot; c=&quot;0&quot; d=&quot;0&quot; /&gt;
+  &lt;roadMark sOffset=&quot;0&quot; type=&quot;broken&quot; color=&quot;white&quot;
+            width=&quot;0.125&quot; laneChange=&quot;both&quot; /&gt;
+&lt;/lane&gt;
+</code></pre>
+<p><code>width</code> の 4 つの係数は 3 次多項式 <code>w(ds) = a + b·ds + c·ds² + d·ds³</code> に対応しており、<code>ds</code> はこの width 設定の始点から測った距離です。この例では <code>a</code> だけが 3.5 で、その他はすべて 0 なので、車線全体の幅は 3.5 m で一定です。道路が徐々に広がっていく場合は、他の係数を設定してその変化を記述できます。OpenDRIVE には <code>border</code> を使って境界を記述する方法もありますが、Town03 のここでは <code>width</code> が採用されています。</p>
+<p><code>roadMark</code> はこの右側車線の外側の区画線を表しており、<code>broken</code> と <code>white</code> はつまり白の破線で、線幅は 0.125 m です。この車線の内側は道路中央に近い側で、対応する区画線については中央車線の設定を見る必要があります。</p>
+<p>OpenDRIVE の車線 ID は中央の 0 から始まり、参照線の左側が +1、+2、右側が −1、−2 となります。車線 ID −1 を例に取ると、異なる道路や異なる lane section の中にそれぞれ −1 が存在しうるので、lane ID が分かるだけではどの車線なのかを特定できず、それがどの road、どの section に属しているのかも知る必要があります。正負の符号は左右の位置を表しており、進行方向はさらに右側通行か左側通行か、双方向車線かといった設定と合わせて判断しなければなりません。</p>
+<p>車線の前後がどこにつながっているかを知るには、road link、lane link、そして交差点 junction の中の connection と laneLink を読み取る必要があります。例えば、ある道路が交差点に入ったあと直進も右折もできる場合、junction が対応する接続道路と車線を記録しており、読み込みプログラムがそれらの情報を走行可能な道路ネットワークへと整理します。</p>
+<p>OpenDRIVE は標高（elevation）と横断勾配（superelevation、bank angle とも呼ばれます）も記述できます。標高は道路に沿った高さを記録するので、上り坂や下り坂を表現できます。横断勾配は道路の横方向の傾きで、カーブの内側と外側の高低差などがこれにあたります。Town03 の標高には変化がありますが、ソースファイル中の superelevation の係数はすべて 0 です。</p>
+<h2 id="Lanelet2"><a class="header-anchor" href="#Lanelet2">¶ </a>Lanelet2</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/LaneletPrimitives.md">Lanelet2</a> は Autoware でよく使われる地図フォーマットで、その基本単位は lanelet です。これは左右 2 本のポリライン（linestring）で囲まれた、通行可能な一区間だと考えることができます。同じ 1 つの lanelet の中では、交通ルールも車線変更が可能かどうかの条件も同じでなければなりません。ある位置でルールや条件が変わる場合は、そこで切って別の lanelet にする必要があります。</p>
+<p>Lanelet2 は OSM XML で保存できます。その中で <code>node</code> は座標点、<code>way</code> は一連の node からなるポリライン、<code>relation</code> は左右の境界やルールを組み合わせるために使われます。ここでは OpenStreetMap のファイル構造を流用しているだけで、データの内容はあくまで私たち自身の車線地図であることに注意してください。</p>
+<p>先ほどと同じ Road 8 の <em>lane −1</em> を Lanelet2 に変換すると、次の relation が得られます。</p>
+<pre><code class="language-xml">&lt;relation id=&quot;47981&quot; visible=&quot;true&quot; version=&quot;1&quot;&gt;
+  &lt;member type=&quot;way&quot; ref=&quot;5356&quot; role=&quot;left&quot; /&gt;
+  &lt;member type=&quot;way&quot; ref=&quot;5377&quot; role=&quot;right&quot; /&gt;
+  &lt;tag k=&quot;type&quot; v=&quot;lanelet&quot; /&gt;
+  &lt;tag k=&quot;subtype&quot; v=&quot;road&quot; /&gt;
+  &lt;tag k=&quot;one_way&quot; v=&quot;yes&quot; /&gt;
+  &lt;tag k=&quot;participant:vehicle&quot; v=&quot;yes&quot; /&gt;
+  &lt;tag k=&quot;speed_limit&quot; v=&quot;80&quot; /&gt;
+&lt;/relation&gt;
+</code></pre>
+<p>relation 47981 が左側の way 5356 と右側の way 5377 を参照しており、さらに way の中の node をたどって初めて実際の座標が得られることが分かります。この出力の node には <code>lat</code>、<code>lon</code> があり、<code>ele</code>、<code>local_x</code>、<code>local_y</code> のタグが付いています。<code>ele</code> は高さを、<code>local_x</code> と <code>local_y</code> はローカル座標を記録しています。読み込む際には一致する投影設定を使う必要があり、読み込みツールがこれらのローカル座標を採用するかどうかも確認しなければなりません。</p>
+<p>ここに、変換時にとても見落としやすい点が一つあります。それは、隣接する車線は同じ境界オブジェクトを共有すべきだということです。2 本の車線の間にあるのが同じ 1 本の白い破線であれば、2 つの lanelet は同じ way を参照すべきです。仮に座標がまったく同じ way をそれぞれ 1 本ずつ生成したとすると、描画結果に違いは出ませんが、Lanelet2 はそれらの隣接関係を判定できなくなる可能性があります。前後に連なる lanelet も、端点を正しく共有する必要があります。</p>
+<p>ただし、境界を共有しているからといって車線変更ができるとは限らず、区画線の種類と交通ルールも見なければなりません。例えば 2 本の車線が隣接していても、その間が実線で隔てられていれば、実線をまたいでそのまま車線変更することはできません。Lanelet2 の <a target="_blank" rel="noopener" href="https://docs.ros.org/en/humble/p/lanelet2_routing/">routing graph</a> は、どの隣接車線へは移れて、どの隣接車線へは移れないのかを区別します。また、自動車、自転車、歩行者それぞれの通行ルールに応じて、ルーティンググラフを別々に構築することもできます。</p>
+<p>信号機、停止線、優先権は regulatory element（交通ルールオブジェクト）を通じて記述します。例えば 1 基の信号機が 3 本の車線を制御している場合、灯器と停止線を参照する relation を 1 つ作成し、3 つの lanelet すべてにそのルールを参照させることができます。こうすればルールを共有でき、拡張もしやすくなります。</p>
+<p><img src="/img/autonomous-driving/map-overview/josm_lanelet2_town03.png" alt="JOSM に Lanelet2 スタイルを適用して描画した Town03"><br>
+（図2：JOSM に Lanelet2 の mapcss スタイルを適用した Town03）</p>
+<p>図2 は JOSM で描画した結果で、左右の境界、交差点、ラウンドアバウトがすべて確認できます。JOSM は OSM 内のオブジェクトの確認と編集に使えますが、ある車線から別の車線までの経路を計画できるかどうかについては、別途 Lanelet2 の routing graph や対象システムでテストする必要があります。</p>
+<h2 id="Apollo-HD-Map"><a class="header-anchor" href="#Apollo-HD-Map">¶ </a>Apollo HD Map</h2>
+<p>Apollo HD Map は Protocol Buffers（Protobuf）を使って地図を保存します。一般的には <code>base_map.bin</code> というバイナリファイルを目にしますが、確認しやすいようにテキスト版の <code>base_map.txt</code> を出力することもできます。車線の幾何と接続情報は <a target="_blank" rel="noopener" href="https://github.com/ApolloAuto/apollo/blob/master/modules/common_msgs/map_msgs/map_lane.proto">Lane message</a> の中に置かれており、<code>central_curve</code>、左右の境界、長さ、制限速度、そして前後に接続する車線と左右の隣接車線が含まれます。データ構造（schema）の定義によれば、<code>central_curve</code> は参照軌跡であり、必ずしも車線の幾何学的な中心にちょうど位置するとは限りません。</p>
+<p>先ほどの車線は、この出力では <code>lane_8_0_-1</code> という名前になっています。座標点を省略すると、次のような関係が見えます。</p>
+<pre><code class="language-protobuf">id &#123; id: &quot;lane_8_0_-1&quot; &#125;
+speed_limit: 22.352
+predecessor_id &#123; id: &quot;lane_482_0_-1&quot; &#125;
+successor_id &#123; id: &quot;lane_1197_0_-3&quot; &#125;
+right_neighbor_forward_lane_id &#123; id: &quot;lane_8_0_-2&quot; &#125;
+left_neighbor_reverse_lane_id &#123; id: &quot;lane_8_0_1&quot; &#125;
+type: CITY_DRIVING
+turn: NO_TURN
+direction: FORWARD
+</code></pre>
+<p><code>predecessor_id</code> と <code>successor_id</code> はそれぞれ前後に接続する車線の ID を記録しており、右側に隣接しているのは同方向の車線 <code>lane_8_0_-2</code>、左側に隣接しているのは対向車線 <code>lane_8_0_1</code> です。前後の車線と左右の隣接車線の ID がすでにすべて列挙されていることが分かります。そのため、この車線がどこにつながっているかを調べたいときは、ID をもとにそのまま検索すればよく、境界から車線同士の関係を改めて判定する必要はありません。ただし地図を生成する際には、ID で記録された接続関係が車線の実際の位置と一致していることを保証しなければならず、道路を修正するときにも合わせて更新する必要があります。</p>
+<p>Apollo はこれとは別に <a target="_blank" rel="noopener" href="https://github.com/ApolloAuto/apollo/blob/master/modules/common_msgs/map_msgs/map_overlap.proto">overlap</a> を使って、車線と他のオブジェクトとの関係を記録します。例えば lane と信号機、横断歩道、junction との関連です。overlap はオブジェクトの ID と、対応する lane 上の <code>s</code> の範囲を記録するので、プランニングシステムはそのオブジェクトが車線のどの区間に影響するのかを知ることができます。</p>
+<p><img src="/img/autonomous-driving/map-overview/mapshow_apollo_town03.png" alt="Apollo 公式の mapshow で表示した Town03 の車線、信号、横断歩道"><br>
+（図3：Apollo 公式 <a target="_blank" rel="noopener" href="http://mapshow.py">mapshow.py</a> による Town03 の出力）</p>
+<p>図3 では、車線、信号、横断歩道が確認できます。この変換では road、section、junction の構造を保持しており、合計で 1,400 個の Lane と 1,210 個の overlap を出力しています。Lane には driving、sidewalk、shoulder、parking などの種類が含まれるため、先ほどの 417 区間の driving 車線よりも数が多くなっています。</p>
+<p>Apollo の地図を使う際は、Protobuf schema のバージョンと座標設定に注意が必要です。この出力の header は <code>tmerc</code> の投影文字列を使用しており、座標の単位はメートルです。他の地図と一緒に使う場合は、やはり原点と投影が同じかどうかを確認しなければなりません。</p>
+<h2 id="Waymo-Open-Motion"><a class="header-anchor" href="#Waymo-Open-Motion">¶ </a>Waymo Open Motion</h2>
+<p>ここで紹介するのは Waymo Open Motion Dataset（WOMD）の地図データで、行動予測とシナリオ研究に用いられます。これは <a target="_blank" rel="noopener" href="https://github.com/waymo-research/waymo-open-dataset/blob/master/src/waymo_open_dataset/protos/scenario.proto">Scenario</a> を使って、地図、交通参加者の軌跡、そして各時刻における信号の状態を記録します。本記事では道路データだけを変換し、車両の軌跡は生成していないため、出力される Scenario には地図データしかなく、信号の状態もすべて不明に設定しています。</p>
+<p>Waymo の地図は <code>map_features</code> の中に置かれ、その中の各 feature はそれぞれ自分の ID を持っています。車線中心線の <code>LaneCenter</code>、区画線の <code>RoadLine</code>、道路端の <code>RoadEdge</code>、横断歩道の <code>Crosswalk</code> などは、いずれもそれぞれ独立したオブジェクトです。完全な定義は <a target="_blank" rel="noopener" href="https://github.com/waymo-research/waymo-open-dataset/blob/master/src/waymo_open_dataset/protos/map.proto">map.proto</a> で確認できます。OpenDRIVE のような road と lane section の階層はなく、車線は主に中心線の点列で記述されます。</p>
+<p>車線の左右の境界は <code>BoundarySegment</code> によって記録され、区画線や道路端を表す feature を参照します。先ほどの Road 8 の lane −1 は、この出力では feature 103 に対応しており、左側境界のデータは次のとおりです。</p>
+<pre><code class="language-protobuf">left_boundaries &#123;
+  lane_start_index: 0
+  lane_end_index: 19
+  boundary_feature_id: 100051
+  boundary_type: TYPE_SOLID_SINGLE_YELLOW
+&#125;
+</code></pre>
+<p>この部分の意味は、車線中心線の 0 番目から 19 番目までの点について、その左側の境界が feature 100051 に対応している、ということです。境界の座標を取得するには、その feature の点列を読みに行きます。左右の隣接車線との関係を記述するときにも、この車線と隣接車線それぞれの点列のインデックス範囲が記録されるので、2 本の車線が一部の区間でしか隣接していない場合でも、区間ごとに記述できます。</p>
+<p>今回の変換では、道路に沿っておよそ 1 m ごとに 1 回サンプリングしており、例の中での実際の間隔は約 0.954 m です。一般的に言って、サンプリングが密であるほど道路形状の細部を多く残せますが、保存しなければならない点数も増え、ファイルも当然大きくなります。</p>
+<p><img src="/img/autonomous-driving/map-overview/tactics2d_waymo_town03.jpg" alt="Tactics2D で Town03 の Waymo Scenario を直接読み込んだ地図画面"><br>
+（図4：Tactics2D で Town03 の Scenario TFRecord を読み込んだ画面）</p>
+<p>図4 には道路だけが表示され、車両はありません。この Scenario には軌跡データがないからです。今回の出力には合計で 429 本の車線中心線、665 本の区画線、32 区間の道路端、73 か所の横断歩道が含まれており、この 429 本の中心線は、それぞれ 417 区間の driving 車線と 12 区間の bidirectional 車線に由来します。Tactics2D が描画するのは XY 平面なので、高さを観察したい場合は、公式の <code>plot_maps</code> が生成する Plotly の図を見るとよいでしょう。</p>
+<p>Waymo は車線の前後がどのようにつながっているか、および同方向の隣接車線を記録していますが、道路の階層や交通ルールはここまでのフォーマットほど完全ではなく、しかも一部の車線には左右の境界がありません。これを使って完全な道路モデルを生成したい場合は、これらの情報を補う必要があります。ここで議論しているのは WOMD の公開データの構造であり、Waymo の車両上で使われている完全な地図を表しているわけではありません。</p>
+<h2 id="信号機の表現方法"><a class="header-anchor" href="#信号機の表現方法">¶ </a>信号機の表現方法</h2>
+<p>車線のほかに、信号機も自動運転地図が記録すべき重要な情報です。OpenDRIVE は signal の道路上の位置を記録し、さらに signalReference と validity でどの車線が信号に制御されるかを指定します。Lanelet2 は lanelet に信号機の regulatory element を参照させます。Apollo は Signal と overlap を通じて、信号と車線の対応関係を記録します。</p>
+<p>Waymo は少し特殊で、各時刻における、各車線に対応する灯火の状態を記録します。Scenario の <code>dynamic_map_states</code> の中には <code>TrafficSignalLaneState</code> があり、信号が制御する lane ID、灯火の状態、停止点 <code>stop_point</code> を記録します。つまり、ここで記録されているのは、ある時刻における、ある車線の灯火の状態であり、灯器の位置や形状については別途保存されていません。</p>
+<table>
+<thead>
+<tr>
+<th>フォーマット</th>
+<th>信号データ</th>
+<th>信号に制御される車線への対応付け方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>signal の位置と属性</td>
+<td>signalReference、validity</td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>灯器と停止線の regulatory element</td>
+<td>lanelet がルールの relation を参照</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td>Signal の灯器、個々の信号灯（Subsignal）、停止線</td>
+<td>Signal と Lane の overlap</td>
+</tr>
+<tr>
+<td>Waymo Scenario</td>
+<td>各時刻の灯火と停止点</td>
+<td>TrafficSignalLaneState の lane ID</td>
+</tr>
+</tbody>
+</table>
+<p>Town03 の OpenDRIVE は、赤・黄・青の灯火が時間とともに切り替わるデータを記録していないため、今回の Waymo 出力では時刻 0 にのみ、信号に制御される車線と停止点を記録しており、すべての灯火は <code>LANE_STATE_UNKNOWN</code> です。今後、車が赤信号で停止する様子をシミュレーションしたい場合は、さらに信号の現示やその他の制御データを与える必要があります。</p>
+<h2 id="地図フォーマットの変換"><a class="header-anchor" href="#地図フォーマットの変換">¶ </a>地図フォーマットの変換</h2>
+<p>これらのデータ構造を見てくると、フォーマットを変換する際には、整理し直さなければならない情報が少なくないことが分かります。OpenDRIVE の幅の関数は Lanelet2 の way にそのまま入れることができず、先に境界の座標を計算しなければなりません。Apollo は前後の車線の ID を明示することを要求するので、OpenDRIVE の道路と交差点の接続をきちんと整理する必要があります。Waymo の境界は feature ID を通じて参照されるため、対応する中心線のインデックス範囲も計算しなければなりません。</p>
+<p>今回変換した 3 種類のフォーマットは、すべて同じ OpenDRIVE の解析結果を使っています。まず参照線に沿ってサンプリングし、次に lane offset、幅、標高、横断勾配を適用して、中心線と左右の境界を取得します。続いて車線の接続、信号制御、横断歩道を整理し、それから 3 種類のフォーマットにそれぞれ書き出します。</p>
+<h3 id="単位と区画線"><a class="header-anchor" href="#単位と区画線">¶ </a>単位と区画線</h3>
+<p>まず制限速度を見てみましょう。Road 8 が元のファイルで記録している制限速度は 50 mph で、3 種類の出力はそれぞれ次のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>フォーマット</th>
+<th>出力された制限速度</th>
+<th>単位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lanelet2</td>
+<td><code>speed_limit=&quot;80&quot;</code></td>
+<td>km/h。今回の出力は整数のみを保持</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td><code>speed_limit: 22.352</code></td>
+<td>m/s</td>
+</tr>
+<tr>
+<td>Waymo</td>
+<td><code>speed_limit_mph: 50.0</code></td>
+<td>mph。フィールドの型は double</td>
+</tr>
+</tbody>
+</table>
+<p>同じ制限速度でも、フォーマットによって使う単位が異なることがあるため、変換時に数字をそのまま書き写すことはできません。小数を保持しないことでも多少の誤差が生じます。例えば 50 mph は約 80.4672 km/h ですが、この Lanelet2 出力は小数部分を保持していません。</p>
+<p>区画線にも似たような問題があります。Road 8 の OpenDRIVE の中央の区画線は <code>solid solid</code> の黄色線ですが、例を変換したあとでは、Lanelet2 には solid のタグだけが残り、Apollo は <code>SOLID_YELLOW</code>、Waymo は <code>TYPE_SOLID_SINGLE_YELLOW</code> になっています。つまり、この境界はもともと二重の黄色線だったのに、変換後にはその情報が欠けてしまっているのです。Apollo と Waymo には実際にはどちらにも二重黄色線の型があるので、この問題については、変換時にどの境界を取ってきたのか、そして区画線の対応付けの方法を、立ち戻って確認する必要があります。</p>
+<h3 id="変換後のデータ量"><a class="header-anchor" href="#変換後のデータ量">¶ </a>変換後のデータ量</h3>
+<p>今回、各フォーマットが保持している車線の種類も異なります。Lanelet2 は driving、sidewalk、横断歩道を出力し、parking と shoulder は出力していません。Apollo は比較的多くの種類を保持しています。Waymo の車線中心線は driving と bidirectional の車線についてのみ出力しています。これらの違いは、今回の変換プログラムがどのデータを保持したかによって決まります。例えば Lanelet2 には Area もあり、ルールを拡張することもできるので、さらに多くの内容を記録することも可能です。</p>
+<p>各ファイルのサイズは次のとおりです。ここでは 1 MB = 1,000,000 bytes として計算しています。</p>
+<table>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>サイズ</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE XML</td>
+<td>4.59 MB</td>
+<td>元の道路パラメータとオブジェクト</td>
+</tr>
+<tr>
+<td>Lanelet2 OSM XML</td>
+<td>10.80 MB</td>
+<td>46,765 個の node、1,564 個の way、848 個の relation</td>
+</tr>
+<tr>
+<td>Apollo バイナリ</td>
+<td>11.27 MB</td>
+<td>1,400 個の Lane、1,210 個の overlap</td>
+</tr>
+<tr>
+<td>Apollo テキスト版</td>
+<td>43.31 MB</td>
+<td>同じ Apollo 地図をテキスト形式で保存したもの</td>
+</tr>
+<tr>
+<td>Waymo TFRecord</td>
+<td>1.27 MB</td>
+<td>1,199 個の map feature、軌跡は含まない</td>
+</tr>
+</tbody>
+</table>
+<p>Lanelet2 と Apollo のファイルはどちらも元の OpenDRIVE より大きいことが分かります。その主な理由は、道路形状を一連の座標点に変換すると、保存すべき座標が増えるからです。また、同じ Apollo の地図でも、テキスト版はバイナリ版よりずっと大きくなっています。Waymo のファイルが最も小さいですが、道路の階層や一部の車線の種類が欠けてもいるので、この表で比較できるのは今回の出力のサイズだけであり、これをもとにどのフォーマットの保存効率が最も良いかを判断することはまだできません。</p>
+<h3 id="逆方向の変換"><a class="header-anchor" href="#逆方向の変換">¶ </a>逆方向の変換</h3>
+<p>では、変換して出てきた地図を、もう一度 OpenDRIVE に戻すことはできるのでしょうか。新しく 1 つ生成し直すことはできますが、元の道路パラメータを復元するとなると、とても難しくなります。円弧を例に取ると、サンプリングしたあとには一連の座標点しか残っておらず、そこからフィッティングし直しても、元の円弧パラメータが得られるとは限りません。加えて、road と lane section の分割の仕方も、改めて決め直す必要が出てくるかもしれません。</p>
+<p>Lanelet2 と Apollo にはどちらも境界のポリラインがあるので、幾何は比較的対応付けやすいのですが、それでもそれぞれの構造を処理しなければなりません。Apollo から Lanelet2 へ変換するときは、隣接車線が重複して保存している境界を、同じ 1 本の way に統合する必要があります。Lanelet2 から Apollo へ変換するときは、road、section、overlap を構築しなければなりません。さらに、通行対象の制限、独自の交通ルール、各フォーマット固有のオブジェクトについても、直接対応付けられるフィールドが見つからない可能性があります。</p>
+<p>Waymo から他のフォーマットへ戻すのはさらに厄介です。一部の車線には境界がなく、道路の階層も灯器の位置もないからです。中心線から両側に境界を生成し、車線幅を固定値に設定した場合、その幅は追加で仮定したものであり、生成された道路が元と同じであるとは限りません。このような処理が必要なときは、合成したデータに印を付けておき、あとで確認しやすくしておくのがよいでしょう。</p>
+<p>したがって実務上は、元の地図を保持しておき、その地図をもとに他のフォーマットへ変換するのが最善です。ソースが OpenDRIVE なら道路を記述する関数を残しておき、ソースが Lanelet2 なら共有オブジェクトとルールを残しておきます。あとで地図を変更するときにも元のデータから修正するようにして、何度か行ったり来たり変換しているうちに多くの情報が取り戻せなくなってしまう、という事態を避けます。</p>
+<h2 id="地図の表示と検証"><a class="header-anchor" href="#地図の表示と検証">¶ </a>地図の表示と検証</h2>
+<p>地図を変換し終えたら、まずビューア（viewer）で結果を見てみるとよいでしょう。ここでは元サイトの 2026-10-10 の表示記録を整理します。デスクトップ版と軽量な表示ツールは主に macOS arm64 上で実行し、Apollo 8 Dreamview は Linux のバックエンドで動かして、Mac のブラウザから接続しました。</p>
+<table>
+<thead>
+<tr>
+<th>フォーマット</th>
+<th>ツール</th>
+<th>Town03 の結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>esmini odrviewer</td>
+<td>3D 道路を表示</td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>JOSM + Lanelet2 スタイル、Tactics2D</td>
+<td>道路の表示に成功</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td><a target="_blank" rel="noopener" href="http://mapshow.py">mapshow.py</a>、Apollo 8 Dreamview</td>
+<td>車線、信号、横断歩道を表示</td>
+</tr>
+<tr>
+<td>Waymo</td>
+<td>公式 plot_maps、Tactics2D</td>
+<td>地図の表示に成功。Tactics2D は XY のみ表示</td>
+</tr>
+</tbody>
+</table>
+<p>ファイルそのものについても検査を行いました。Lanelet2 は XML オブジェクトとその参照関係を検査し、Apollo はバイナリファイルを解析できるかどうか、およびテキストに変換してから再び戻したあとでデータが一致しているかどうかを検査し、Waymo は TFRecord の CRC、デシリアライズ、インデックス範囲を検査しました。これによって、ID の重複、参照先のオブジェクトが存在しない、インデックスが範囲外になっている、といった問題を検出できます。しかし、区画線の対応付けの誤りや、車線変更できない場所を車線変更できるものとして扱ってしまっているような場合は、さらに別のテストをしなければ発見できません。</p>
+<p>地図をプランニングシステムに渡すのであれば、指定した車種が計画された経路に沿って通行できるかどうか、実線をまたいで車線変更することを誤って車両に許可していないかどうか、そして信号機が正しい車線に対応付けられているかどうかもテストしなければなりません。特に高架道路は平面図上で交差して見えることもあるので、標高と投影も合わせて検査する必要があります。そうしないと、画面上はごく正常に見えるのに、計画された経路が高さの異なる道路に誤ってつながってしまうおそれがあります。</p>
+<h2 id="まとめ"><a class="header-anchor" href="#まとめ">¶ </a>まとめ</h2>
+<p>本記事では、同じ Town03 を使って 4 種類の自動運転地図フォーマットを紹介しました。OpenDRIVE は主に参照線と関数で道路を記述し、Lanelet2 は左右の境界で lanelet を構成して交通ルールと組み合わせ、Apollo は車線の幾何と接続関係を明示的に保存し、Waymo Open Motion は map feature と時系列でシーンを記述します。</p>
+<p>これらのフォーマットにもっと慣れたい場合は、本記事の Road 8 の例から始めて、4 種類のファイルの中での境界、制限速度、隣接車線を見比べてみるとよいでしょう。実際にフォーマット変換を行う際には、単位、共有オブジェクト、そしてソースに欠けている情報に注意し、変換し終えたら、実際にその地図を使うシステムで、道路の形状と経路計画の結果を確認することも忘れないでください。</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/ja/tags/opendrive/">
+                OpenDRIVE
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/lanelet2/">
+                Lanelet2
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/apollo/">
+                Apollo
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/waymo/">
+                Waymo
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/%E8%87%AA%E5%8B%95%E9%81%8B%E8%BB%A2/">
+                自動運転
+            </a>,&nbsp;
+        
+            <a href="/ja/tags/%E5%9C%B0%E5%9B%B3/">
+                地図
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB"><span class="toc-text">はじめに</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8B%95%E9%81%8B%E8%BB%A2%E5%9C%B0%E5%9B%B3%E3%81%AE%E5%86%85%E5%AE%B9"><span class="toc-text">自動運転地図の内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CARLA-Town03"><span class="toc-text">CARLA Town03</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OpenDRIVE"><span class="toc-text">OpenDRIVE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lanelet2"><span class="toc-text">Lanelet2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Apollo-HD-Map"><span class="toc-text">Apollo HD Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Waymo-Open-Motion"><span class="toc-text">Waymo Open Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E6%A9%9F%E3%81%AE%E8%A1%A8%E7%8F%BE%E6%96%B9%E6%B3%95"><span class="toc-text">信号機の表現方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%B0%E5%9B%B3%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E3%81%AE%E5%A4%89%E6%8F%9B"><span class="toc-text">地図フォーマットの変換</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%98%E4%BD%8D%E3%81%A8%E5%8C%BA%E7%94%BB%E7%B7%9A"><span class="toc-text">単位と区画線</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%89%E6%8F%9B%E5%BE%8C%E3%81%AE%E3%83%87%E3%83%BC%E3%82%BF%E9%87%8F"><span class="toc-text">変換後のデータ量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%86%E6%96%B9%E5%90%91%E3%81%AE%E5%A4%89%E6%8F%9B"><span class="toc-text">逆方向の変換</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%B0%E5%9B%B3%E3%81%AE%E8%A1%A8%E7%A4%BA%E3%81%A8%E6%A4%9C%E8%A8%BC"><span class="toc-text">地図の表示と検証</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-text">まとめ</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/ja/post/2026/11/autobiography/thirty-years-old/">
+        三十にして立つ
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2026/10/autonomous-driving/map-overview/">
+        自動運転の地図フォーマット紹介：OpenDRIVE、Lanelet2、Apollo、Waymo
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2026/07/software-engineer/mid-dev-fight-1/">
+        中堅エンジニア奮闘中（一）：会社の中核を担い始める
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2026/05/ai/ai-gen-book-experiment/">
+        AI で 1 冊の本を生成する
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2026/02/ai/vibe-code-japanese-learning-app/">
+        AIで完全に自分好みの日本語学習アプリを作る方法
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        2025年秋 日本と台湾でのミドルSWE転職活動の記録
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        C++で3D点群を2D画像へ投影する
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        新米エンジニア修行中（4）：中堅エンジニアに昇格、退職して起業（完結編）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2025/02/algorithm/bts-tree-delete/">
+        二分探索木のノード削除を図解する（LeetCode 450: Delete Node in a BST）
+      </a>
+    </li>
+    
+    <li>
+      <a href="/ja/post/2024/12/c++/hash/">
+        C++ の std::hash 入門
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2026/">2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2020/">2020</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2019/">2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/ja/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>

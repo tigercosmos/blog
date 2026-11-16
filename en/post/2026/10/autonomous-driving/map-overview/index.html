@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    
+    
+    
+    
+    
+    
+    <meta name="keywords" content="OpenDRIVE, Lanelet2, Apollo, Waymo, autonomous driving, map" />
+    <meta name="description" content="Using CARLA Town03 as an example, this article introduces four autonomous driving map formats and compares their lane geometry, traffic rules, format…" />
+    <title>An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo | Neutrino&#39;s Blog</title>
+    
+    
+    
+    
+    
+    
+        
+            <link rel="alternate" hreflang="zh" href="https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/">
+        
+            <link rel="alternate" hreflang="en" href="https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/">
+        
+            <link rel="alternate" hreflang="ja" href="https://tigercosmos.xyz/ja/post/2026/10/autonomous-driving/map-overview/">
+        
+        
+        <link rel="alternate" hreflang="x-default" href="https://tigercosmos.xyz/post/2026/10/autonomous-driving/map-overview/">
+    
+
+    <!-- canonical + crawl directives (large previews for Discover / AI surfaces) -->
+    <link rel="canonical" href="https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Neutrino&#39;s Blog">
+    <meta property="og:title" content="An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo">
+    <meta property="og:description" content="Using CARLA Town03 as an example, this article introduces four autonomous driving map formats and compares their lane geometry, traffic rules, format…">
+    <meta property="og:url" content="https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta property="og:locale:alternate" content="ja_JP">
+    
+    <meta property="og:image" content="https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png">
+    
+    <meta property="og:image:alt" content="An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo">
+    
+    <meta property="article:published_time" content="2026-10-12T04:00:00.000Z">
+    <meta property="article:modified_time" content="2026-10-12T04:00:00.000Z">
+    <meta property="article:author" content="Liu, An-Chi 劉安齊">
+    <meta property="article:tag" content="OpenDRIVE">
+    <meta property="article:tag" content="Lanelet2">
+    <meta property="article:tag" content="Apollo">
+    <meta property="article:tag" content="Waymo">
+    <meta property="article:tag" content="autonomous driving">
+    <meta property="article:tag" content="map">
+    
+    
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo">
+    <meta name="twitter:description" content="Using CARLA Town03 as an example, this article introduces four autonomous driving map formats and compares their lane geometry, traffic rules, format…">
+    <meta name="twitter:image" content="https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png">
+    <meta name="twitter:image:alt" content="An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo">
+
+    <!-- Atom feed autodiscovery -->
+    <link rel="alternate" type="application/atom+xml" title="Neutrino&#39;s Blog" href="/atom.xml">
+
+    <!-- Structured data: schema.org JSON-LD @graph (WebSite/Organization/Person, plus BlogPosting on posts) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://tigercosmos.xyz/#website","url":"https://tigercosmos.xyz/","name":"Neutrino's Blog","description":"Liu, An-Chi's blog","inLanguage":"en","publisher":{"@id":"https://tigercosmos.xyz/#organization"}},{"@type":"Organization","@id":"https://tigercosmos.xyz/#organization","name":"Neutrino's Blog","url":"https://tigercosmos.xyz/","logo":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/cover.png","contentUrl":"https://tigercosmos.xyz/img/cover.png"},"founder":{"@id":"https://tigercosmos.xyz/about/#person"},"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"Person","@id":"https://tigercosmos.xyz/about/#person","name":"Liu, An-Chi 劉安齊","url":"https://tigercosmos.xyz/about/","image":{"@type":"ImageObject","url":"https://tigercosmos.xyz/img/selfie3.jpg","contentUrl":"https://tigercosmos.xyz/img/selfie3.jpg"},"jobTitle":"Software Engineer","description":"Software engineer based in Tokyo; writes about systems software, high-performance programming and open source.","knowsAbout":["System software","High-performance programming","Parallel programming","C++","Rust","Compilers","Software engineering","Open source"],"alumniOf":["National Yang Ming Chiao Tung University","National Taiwan University"],"sameAs":["https://github.com/tigercosmos","https://www.linkedin.com/in/liuanchi/","https://www.facebook.com/CodingNeutrino/","https://scholar.google.com/citations?user=i06mZ0sAAAAJ","https://www.youtube.com/channel/UCe_3sYrCsZyo9WAGd0s6vRQ","https://twitter.com/tigercosmos","https://www.threads.net/@liu_an_chi"]},{"@type":"ImageObject","@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#primaryimage","url":"https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png","contentUrl":"https://tigercosmos.xyz/img/autonomous-driving/map-overview/esmini_opendrive_town03.png"},{"@type":"WebPage","@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#webpage","url":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/","name":"An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo","isPartOf":{"@id":"https://tigercosmos.xyz/#website"},"primaryImageOfPage":{"@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#primaryimage"},"breadcrumb":{"@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#breadcrumb"},"inLanguage":"en","datePublished":"2026-10-12T04:00:00.000Z","dateModified":"2026-10-12T04:00:00.000Z"},{"@type":"BreadcrumbList","@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tigercosmos.xyz/"},{"@type":"ListItem","position":2,"name":"An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo"}]},{"@type":"BlogPosting","@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#article","isPartOf":{"@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#webpage"},"mainEntityOfPage":{"@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#webpage"},"headline":"An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo","name":"An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo","description":"Using CARLA Town03 as an example, this article introduces four autonomous driving map formats and compares their lane geometry, traffic rules, format…","datePublished":"2026-10-12T04:00:00.000Z","dateModified":"2026-10-12T04:00:00.000Z","inLanguage":"en","author":{"@id":"https://tigercosmos.xyz/about/#person"},"publisher":{"@id":"https://tigercosmos.xyz/#organization"},"image":{"@id":"https://tigercosmos.xyz/en/post/2026/10/autonomous-driving/map-overview/#primaryimage"},"keywords":"OpenDRIVE, Lanelet2, Apollo, Waymo, autonomous driving, map"}]}</script>
+
+    <!-- favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Apply saved theme before first paint to avoid a dark-mode flash on navigation -->
+    <script>
+        (function () {
+            try {
+                document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            } catch (e) {}
+        })();
+    </script>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+        <!-- highlight -->
+        <link id="hljs-light" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-light.min.css" />
+        <link id="hljs-dark" rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/atom-one-dark.min.css" disabled />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+        <script>
+            // Dark mode functionality
+            function toggleDarkMode() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update toggle button
+                const toggle = document.getElementById('theme-toggle');
+                toggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                
+                // Toggle syntax highlighting theme
+                toggleSyntaxHighlighting(newTheme);
+            }
+
+            // Toggle syntax highlighting theme
+            function toggleSyntaxHighlighting(theme) {
+                const lightTheme = document.getElementById('hljs-light');
+                const darkTheme = document.getElementById('hljs-dark');
+                
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
+
+            // Initialize theme on page load
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const html = document.documentElement;
+                html.setAttribute('data-theme', savedTheme);
+                
+                const toggle = document.getElementById('theme-toggle');
+                if (toggle) {
+                    toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                }
+                
+                // Initialize syntax highlighting
+                toggleSyntaxHighlighting(savedTheme);
+            }
+
+            window.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                const [
+                    mainTitle,
+                    mobileMenu,
+                    mobileMainTitle,
+                    mobileMenuBtn,
+                    ipadMenuBtn,
+                    aside,
+                    closeBtn,
+                ] = getEle(
+                    '#main-title',
+                    '.mobile-menu',
+                    '.mobile-menu h3',
+                    '.mobile-menu button',
+                    '.ipad-menu',
+                    'aside',
+                    'aside .close',
+                )
+                const io = new IntersectionObserver(entries => {
+                    if (entries[0].intersectionRatio <= 0) {
+                        mobileMainTitle.classList.remove('invisibile')
+                    } else {
+                        mobileMainTitle.classList.add('invisibile')
+                    }
+                })
+                io.observe(mainTitle)
+
+                clickToggleAside(mobileMenuBtn)
+                clickToggleAside(ipadMenuBtn)
+                clickToggleAside(closeBtn, false)
+
+                const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+                if (isMenuVisible) document.body.style.background = 'none'
+
+                function getEle(...args) {
+                    return args.map(arg => document.querySelector(arg))
+                }
+
+                function clickToggleAside(btn, show = true) {
+                    btn.addEventListener('click', function () {
+                        if (show) {
+                            aside.style.display = 'block'
+                        } else {
+                            aside.style.display = 'none'
+                        }
+                    })
+                }
+            })
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MGLC34ST00"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-MGLC34ST00');
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async>
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
+            tex2jax: { inlineMath: [ ["$", "$"], ["\\(","\\)"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno",skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']},
+            TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
+            messageStyle: "none"
+        }); 
+
+        MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<meta name="generator" content="Hexo 5.4.2"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+        <header class="header">
+    
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) var(--bg-color)">
+        <h3 class="invisibile">
+            <a href="/en/" class="logo">
+                Neutrino&#39;s Blog
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    
+    
+    
+    <p class="title" id="main-title">
+        <a href="/en/" class="logo">
+            Neutrino&#39;s Blog
+        </a>
+    </p>
+    
+    <p class="desc">
+        Code makes the world a better place
+    </p>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="/about">
+                    About
+                </a>
+            </li>
+            
+            <li>
+                <a href="/navigation">
+                    Navigation
+                </a>
+            </li>
+            
+            <li>
+                <a href="/books">
+                    Books
+                </a>
+            </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    RSS
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                    🌙
+                </a>
+            </li>
+            
+            
+            <li class="translation-switcher">
+                
+                <button class="translation-button" type="button" aria-label="Translations" title="Translations">
+                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                        <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm7.94 9h-3.15a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11ZM12 4.08A13.4 13.4 0 0 1 13.89 11H10.1A13.4 13.4 0 0 1 12 4.08ZM4.06 13h3.15a15.46 15.46 0 0 0 1.31 5.04A8.03 8.03 0 0 1 4.06 13ZM7.21 11H4.06A8.03 8.03 0 0 1 8.52 5.96 15.46 15.46 0 0 0 7.21 11ZM12 19.92A13.4 13.4 0 0 1 10.1 13h3.79A13.4 13.4 0 0 1 12 19.92ZM15.48 18.04A15.46 15.46 0 0 0 16.79 13h3.15A8.03 8.03 0 0 1 15.48 18.04ZM16.79 11a15.46 15.46 0 0 0-1.31-5.04A8.03 8.03 0 0 1 19.94 11Z"></path>
+                    </svg>
+                    <span class="translation-current" aria-hidden="true">en</span>
+                </button>
+                <div class="translation-menu" aria-label="Translation menu">
+                    
+                        
+                            <a class="translation-lang" href="/post/2026/10/autonomous-driving/map-overview/" hreflang="zh" lang="zh">zh</a>
+                        
+                    
+                        
+                            <span class="translation-lang is-current" lang="en">en</span>
+                        
+                    
+                        
+                            <a class="translation-lang" href="/ja/post/2026/10/autonomous-driving/map-overview/" hreflang="ja" lang="ja">ja</a>
+                        
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+
+        <main class="main">
+            <article class="post">
+    
+    
+    
+    <h1 class="post-title">
+        An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo
+    </h1>
+    
+    <ul class="post-date">
+        <li>
+            2026-10-12
+        </li>
+        
+        <li>
+            Liu, An-Chi 劉安齊
+        </li>
+        
+        
+        <li class="post-languages">
+            <span class="post-languages-label">Lang</span>
+            
+                
+                    <a class="translation-lang" href="/post/2026/10/autonomous-driving/map-overview/" hreflang="zh" lang="zh">zh</a>
+                
+                ,
+            
+                
+                    <span class="translation-lang is-current" lang="en">en</span>
+                
+                ,
+            
+                
+                    <a class="translation-lang" href="/ja/post/2026/10/autonomous-driving/map-overview/" hreflang="ja" lang="ja">ja</a>
+                
+                
+            
+            <span class="post-languages-note">
+                (original ZH, translation powered by AI)
+            </span>
+        </li>
+        
+    </ul>
+    <div class="post-content">
+        <h2 id="Foreword"><a class="header-anchor" href="#Foreword">¶ </a>Foreword</h2>
+<p>When it comes to maps for autonomous driving, you may have heard of OpenDRIVE, Lanelet2, or Apollo’s HD Map. All of these formats can record roads and lanes, but if you open the files and take a look, you will find that the data inside looks quite different. Some describe roads with mathematical functions, some split a lane into a left and a right boundary, and others directly list the centerline together with the IDs of all adjacent lanes.</p>
+<p>So why do we need so many formats? A simulator has to generate roads, the planning system on the vehicle has to decide where the vehicle can go, and a behavior prediction model needs to know the road layout as well as how traffic participants such as vehicles and pedestrians move, so the information each of them needs is different. This article uses CARLA’s Town03 map to introduce OpenDRIVE, Lanelet2 as used by Autoware, Apollo HD Map, and the map structure of the Waymo Open Motion Dataset, and then compares the problems that arise when converting between them.</p>
+<h2 id="What-an-Autonomous-Driving-Map-Contains"><a class="header-anchor" href="#What-an-Autonomous-Driving-Map-Contains">¶ </a>What an Autonomous Driving Map Contains</h2>
+<p>When we use navigation in daily life, we mostly only need to know which roads to take from A to B. Autonomous driving, however, also needs to know which lane the vehicle is in, how wide the lane is, which lane it connects to ahead, whether it can change lanes to the left or right, which lanes a traffic light controls, and so on, so the information a map has to record is much more detailed.</p>
+<p>This information can be roughly divided into geometry, topology, and semantics. Geometry is basically the shape and position of the road, such as planar coordinates and height; topology is how lanes are connected to each other, such as predecessor/successor connections and left/right adjacency; semantics represents lane types, lane markings, speed limits, and traffic rules. For example, two lanes lying side by side describes their positional relationship in terms of geometry; whether a lane change is allowed between them additionally depends on whether the marking in between is a broken line or a solid line, as well as on the relevant traffic rules.</p>
+<p>In addition, autonomous driving also uses point cloud maps for localization, and simulators may separately have buildings, trees, and road surface materials. This article mainly introduces the data formats for roads and lanes; these files do not contain the models and assets required for the entire simulation scene.</p>
+<h3 id="CARLA-Town03"><a class="header-anchor" href="#CARLA-Town03">¶ </a>CARLA Town03</h3>
+<p>To compare the differences between formats, we use the same Town03 here and convert the original OpenDRIVE into the other three formats. The source is the CARLA <code>Town03.xodr</code> included in the Scenic project, which was generated by RoadRunner and is in OpenDRIVE version 1.4. Town03 has a roundabout, multi-lane intersections, and roads with elevation changes, which makes it suitable for comparing how each format describes roads.</p>
+<p><img src="/img/autonomous-driving/map-overview/esmini_opendrive_town03.png" alt="3D roads of CARLA Town03 displayed in esmini odrviewer"><br>
+(Figure 1: esmini odrviewer reading the Town03 OpenDRIVE directly)</p>
+<p>In Figure 1 you can see the elevation changes of the roads as well as the roundabout in the center. Only the road map is loaded here, without CARLA’s complete city model, and some objects are displayed only as simplified shapes because their external models are missing.</p>
+<p>This data has 417 <code>driving</code> lane segments with a total length of about 13.718 km, plus 12 <code>bidirectional</code> lane segments, 35 junctions, 38 traffic light objects, and 73 pedestrian crossings. The traffic lights control 112 lane segments in total, and the sampled height ranges from about −0.87 to 8.51 m. What is counted here is the lanes as recorded segment by segment in the file; the same lane may be cut into several segments, so we cannot say that the whole city has 417 lanes.</p>
+<p>The main differences among the four formats are as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Main purpose</th>
+<th>Geometry representation</th>
+<th>Lane connectivity</th>
+<th>File form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>Data exchange between road design and simulators</td>
+<td>Reference line plus width and elevation functions</td>
+<td>Links of road, lane, and junction</td>
+<td>XML, <code>.xodr</code></td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>Route planning and traffic rule evaluation</td>
+<td>Left and right boundary polylines, optionally with a centerline</td>
+<td>Routing graph built from shared boundaries, endpoints, and rules</td>
+<td>OSM XML, <code>.osm</code></td>
+</tr>
+<tr>
+<td>Apollo HD Map</td>
+<td>Apollo’s routing, motion planning, and behavior prediction</td>
+<td>Lane reference trajectory and left/right boundaries</td>
+<td>Predecessor/successor and left/right neighbor lanes listed explicitly</td>
+<td>Protobuf, <code>base_map.bin</code></td>
+</tr>
+<tr>
+<td>Waymo Open Motion</td>
+<td>Behavior prediction and scenario research</td>
+<td>Point sequences of centerlines, road lines, and road edges</td>
+<td>Lane IDs and point-sequence index ranges</td>
+<td>Scenario Protobuf, usually wrapped in TFRecord</td>
+</tr>
+</tbody>
+</table>
+<h2 id="OpenDRIVE"><a class="header-anchor" href="#OpenDRIVE">¶ </a>OpenDRIVE</h2>
+<p><a target="_blank" rel="noopener" href="https://www.asam.net/fileadmin/Standards/OpenDRIVE/ASAM_OpenDRIVE_BS_V1-7-0.html">OpenDRIVE</a> is a road data standard defined by ASAM, and simulation tools such as CARLA and esmini can all use it. Its most fundamental concept is the road reference line: each road first defines a reference line, and then the positions of each lane and road object are recorded relative to that line.</p>
+<p>We can think of the reference line as the baseline of the road. The distance traveled along the line is called <code>s</code>, and the lateral offset to the left or right is called <code>t</code>, so <code>(s, t)</code> can represent a position on the road. The reference line is not necessarily the centerline of some lane, but we can take it as the baseline and use a single coordinate system to describe the shape and position of the whole road. For the detailed definition, see <a target="_blank" rel="noopener" href="https://publications.pages.asam.net/standards/ASAM_OpenDRIVE/ASAM_OpenDRIVE_Specification/v1.8.1/specification/08_coordinate_systems/08_03_reference_line_coordinate_system.html">ASAM’s explanation of the reference line coordinate system</a>.</p>
+<p>The planar shape of the reference line is placed in <code>planView</code>, where lines, arcs, spirals (transition curves), and so on can be joined together to form one reference line. Lanes are placed in <code>laneSection</code> and described with width functions. A reader computes coordinates along the reference line and then adds the lane widths to the left and right to obtain the lane boundaries. Therefore, OpenDRIVE does not need to store every coordinate point of every lane.</p>
+<p>Let us use Road 8 of Town03, its first lane section, and <em>lane -1</em> as an example. This is a straight lane about 18.13 m long and 3.5 m wide. Its width and outer road mark settings are as follows, with other attributes and child elements omitted for now:</p>
+<pre><code class="language-xml">&lt;lane id=&quot;-1&quot; type=&quot;driving&quot; level=&quot;false&quot;&gt;
+  &lt;width sOffset=&quot;0&quot; a=&quot;3.5&quot; b=&quot;0&quot; c=&quot;0&quot; d=&quot;0&quot; /&gt;
+  &lt;roadMark sOffset=&quot;0&quot; type=&quot;broken&quot; color=&quot;white&quot;
+            width=&quot;0.125&quot; laneChange=&quot;both&quot; /&gt;
+&lt;/lane&gt;
+</code></pre>
+<p>The four coefficients of <code>width</code> correspond to the cubic polynomial <code>w(ds) = a + b·ds + c·ds² + d·ds³</code>, where <code>ds</code> is the distance measured from the start of this width entry. In this example only <code>a</code> is 3.5 and the others are all 0, so the width of the whole lane is fixed at 3.5 m. If the road gradually widens, the other coefficients can be set to describe the change. OpenDRIVE also has a way of describing boundaries using <code>border</code>; Town03 uses <code>width</code> here.</p>
+<p><code>roadMark</code> represents the outer marking of this right-side lane; <code>broken</code> and <code>white</code> mean a white broken line, and the line width is 0.125 m. The inner side of this lane is next to the center of the road, and for the corresponding marking we have to look at the settings of the center lane.</p>
+<p>OpenDRIVE lane IDs start from 0 at the center; the left side of the reference line is +1, +2, and the right side is −1, −2. Taking lane ID −1 as an example, different roads or different lane sections may each have a −1, so knowing only the lane ID is not enough to determine which lane it is; we also need to know which road and which section it belongs to. The sign indicates the left/right position, while the driving direction additionally has to be determined together with settings such as right-hand or left-hand traffic and bidirectional lanes.</p>
+<p>To know where a lane connects to ahead and behind, we need to read the road link, the lane link, and the connection and laneLink inside the junction. For example, after a road enters an intersection it may go straight or turn right; the junction records the corresponding connecting roads and lanes, and the reading program then organizes this information into a drivable road network.</p>
+<p>OpenDRIVE can also describe elevation and superelevation (also called bank angle). Elevation records the height along the road, so it can represent uphill and downhill sections; superelevation is the lateral tilt of the road, such as the height difference between the inner and outer sides of a curve. The elevation of Town03 varies, but the superelevation coefficients in the source file are all 0.</p>
+<h2 id="Lanelet2"><a class="header-anchor" href="#Lanelet2">¶ </a>Lanelet2</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/LaneletPrimitives.md">Lanelet2</a> is a map format commonly used by Autoware. Its basic unit is the lanelet, which can be thought of as a drivable section enclosed by a left and a right polyline (linestring). Within a single lanelet, the traffic rules and the conditions for whether lane changes are allowed must all be the same. If the rules or conditions change at some position, the lanelet has to be cut there into another lanelet.</p>
+<p>Lanelet2 can be stored as OSM XML, in which a <code>node</code> is a coordinate point, a <code>way</code> is a polyline made up of a sequence of nodes, and a <code>relation</code> is used to combine left and right boundaries and rules. Note that this merely reuses the file structure of OpenStreetMap; the data content is still our own lane map.</p>
+<p>For the same <em>lane −1</em> of Road 8 from earlier, converting to Lanelet2 gives the following relation:</p>
+<pre><code class="language-xml">&lt;relation id=&quot;47981&quot; visible=&quot;true&quot; version=&quot;1&quot;&gt;
+  &lt;member type=&quot;way&quot; ref=&quot;5356&quot; role=&quot;left&quot; /&gt;
+  &lt;member type=&quot;way&quot; ref=&quot;5377&quot; role=&quot;right&quot; /&gt;
+  &lt;tag k=&quot;type&quot; v=&quot;lanelet&quot; /&gt;
+  &lt;tag k=&quot;subtype&quot; v=&quot;road&quot; /&gt;
+  &lt;tag k=&quot;one_way&quot; v=&quot;yes&quot; /&gt;
+  &lt;tag k=&quot;participant:vehicle&quot; v=&quot;yes&quot; /&gt;
+  &lt;tag k=&quot;speed_limit&quot; v=&quot;80&quot; /&gt;
+&lt;/relation&gt;
+</code></pre>
+<p>We can see that relation 47981 references way 5356 on the left and way 5377 on the right, and only by going further into the ways to look up the nodes do we get the actual coordinates. The nodes in this output have <code>lat</code> and <code>lon</code>, and come with the tags <code>ele</code>, <code>local_x</code>, and <code>local_y</code>; <code>ele</code> records the height, while <code>local_x</code> and <code>local_y</code> record local coordinates. When loading, a matching projection setting must be used, and we also need to confirm whether the reading tool actually adopts these local coordinates.</p>
+<p>There is one thing here that is very easy to overlook during conversion: adjacent lanes should share the same boundary object. If there is one and the same white broken line between two lanes, the two lanelets should reference the same way. Suppose we instead generate one way for each with exactly the same coordinates; the rendered result will look no different, but Lanelet2 may fail to determine that they are adjacent. Lanelets that follow one another also need to share their endpoints correctly.</p>
+<p>However, sharing a boundary does not mean a lane change is possible; it also depends on the marking type and the traffic rules. For example, even though two lanes are adjacent, if they are separated by a solid line, a vehicle cannot simply cross the solid line to change lanes. Lanelet2’s <a target="_blank" rel="noopener" href="https://docs.ros.org/en/humble/p/lanelet2_routing/">routing graph</a> distinguishes which adjacent lanes can be switched to and which cannot. We can also build separate routing graphs according to the traffic rules for cars, bicycles, and pedestrians.</p>
+<p>Traffic lights, stop lines, and right of way are described through regulatory elements (traffic rule objects). For instance, if one traffic light controls three lanes, we can create a relation that references the light and the stop line, and then have all three lanelets reference this rule. This way the rule can be shared, and it is also easier to extend.</p>
+<p><img src="/img/autonomous-driving/map-overview/josm_lanelet2_town03.png" alt="Town03 drawn in JOSM with the Lanelet2 style applied"><br>
+(Figure 2: Town03 in JOSM with the Lanelet2 mapcss style applied)</p>
+<p>Figure 2 is the result drawn with JOSM, in which the left and right boundaries, the intersections, and the roundabout are all visible. JOSM can be used to inspect and edit the objects in the OSM file; as for whether a route can be planned from one lane to another, that needs to be tested separately with Lanelet2’s routing graph or with the target system.</p>
+<h2 id="Apollo-HD-Map"><a class="header-anchor" href="#Apollo-HD-Map">¶ </a>Apollo HD Map</h2>
+<p>Apollo HD Map stores maps using Protocol Buffers (Protobuf). You will generally see the binary file <code>base_map.bin</code>, and a text version <code>base_map.txt</code> can also be exported for easier inspection. It puts the geometry and connectivity information of a lane in the <a target="_blank" rel="noopener" href="https://github.com/ApolloAuto/apollo/blob/master/modules/common_msgs/map_msgs/map_lane.proto">Lane message</a>, including <code>central_curve</code>, the left and right boundaries, the length, the speed limit, as well as the predecessor and successor lanes and the left and right neighbor lanes. According to the definition of the data structure (schema), <code>central_curve</code> is a reference trajectory and is not necessarily located exactly at the geometric center of the lane.</p>
+<p>Our lane from earlier is called <code>lane_8_0_-1</code> in this output. With the coordinate points omitted, we can see the following relationships:</p>
+<pre><code class="language-protobuf">id &#123; id: &quot;lane_8_0_-1&quot; &#125;
+speed_limit: 22.352
+predecessor_id &#123; id: &quot;lane_482_0_-1&quot; &#125;
+successor_id &#123; id: &quot;lane_1197_0_-3&quot; &#125;
+right_neighbor_forward_lane_id &#123; id: &quot;lane_8_0_-2&quot; &#125;
+left_neighbor_reverse_lane_id &#123; id: &quot;lane_8_0_1&quot; &#125;
+type: CITY_DRIVING
+turn: NO_TURN
+direction: FORWARD
+</code></pre>
+<p><code>predecessor_id</code> and <code>successor_id</code> record the IDs of the preceding and following lanes respectively; the neighbor on the right is the same-direction lane <code>lane_8_0_-2</code>, while the neighbor on the left is the opposite-direction lane <code>lane_8_0_1</code>. Notice that the IDs of the predecessor/successor lanes and of the left/right neighbor lanes are all already listed, so to find where this lane connects to, we can simply look it up by ID without having to infer the relationships between lanes from their boundaries. However, when generating the map we must ensure that the connectivity recorded by the IDs matches the actual positions of the lanes, and they must also be updated together whenever a road is modified.</p>
+<p>Apollo additionally uses <a target="_blank" rel="noopener" href="https://github.com/ApolloAuto/apollo/blob/master/modules/common_msgs/map_msgs/map_overlap.proto">overlap</a> to record the relationships between lanes and other objects, for example the association of a lane with a traffic light, a pedestrian crossing, or a junction. An overlap records the object IDs as well as the <code>s</code> range on the corresponding lane, so the planning system can know which part of the lane is affected by the object.</p>
+<p><img src="/img/autonomous-driving/map-overview/mapshow_apollo_town03.png" alt="Town03 lanes, signals, and pedestrian crossings displayed by Apollo's official mapshow"><br>
+(Figure 3: Town03 output of Apollo’s official <a target="_blank" rel="noopener" href="http://mapshow.py">mapshow.py</a>)</p>
+<p>In Figure 3 you can see the lanes, signals, and pedestrian crossings. This conversion preserves the road, section, and junction structure, and outputs a total of 1,400 Lanes and 1,210 overlaps. Lanes include types such as driving, sidewalk, shoulder, and parking, so their number is larger than the 417 driving lane segments mentioned earlier.</p>
+<p>When using an Apollo map, you need to pay attention to the version of the Protobuf schema and to the coordinate settings. The header of this output uses a <code>tmerc</code> projection string and the coordinate unit is meters; when using it together with other maps, you still have to confirm that the origin and the projection are the same.</p>
+<h2 id="Waymo-Open-Motion"><a class="header-anchor" href="#Waymo-Open-Motion">¶ </a>Waymo Open Motion</h2>
+<p>What is introduced here is the map data of the Waymo Open Motion Dataset (WOMD), which is used for behavior prediction and scenario research. It uses a <a target="_blank" rel="noopener" href="https://github.com/waymo-research/waymo-open-dataset/blob/master/src/waymo_open_dataset/protos/scenario.proto">Scenario</a> to record the map, the trajectories of traffic participants, and the signal states at different points in time. This article converts only the road data and does not generate vehicle trajectories, so the output Scenario contains only map data, and the signal states are all set to unknown.</p>
+<p>Waymo’s map is placed in <code>map_features</code>, in which every feature has its own ID; things like the lane centerline <code>LaneCenter</code>, the road marking <code>RoadLine</code>, the road edge <code>RoadEdge</code>, and the pedestrian crossing <code>Crosswalk</code> are each independent objects. We can see the complete definitions in <a target="_blank" rel="noopener" href="https://github.com/waymo-research/waymo-open-dataset/blob/master/src/waymo_open_dataset/protos/map.proto">map.proto</a>. It does not have the road and lane section hierarchy that OpenDRIVE has, and lanes are mainly described by point sequences of centerlines.</p>
+<p>The left and right boundaries of a lane are recorded by <code>BoundarySegment</code>, which references a feature representing a road line or a road edge. Lane −1 of Road 8 from earlier corresponds to feature 103 in this output, and the data for its left boundary is as follows:</p>
+<pre><code class="language-protobuf">left_boundaries &#123;
+  lane_start_index: 0
+  lane_end_index: 19
+  boundary_feature_id: 100051
+  boundary_type: TYPE_SOLID_SINGLE_YELLOW
+&#125;
+</code></pre>
+<p>What this means is that for points 0 through 19 of the lane centerline, the left boundary corresponds to feature 100051. To get the boundary coordinates, we go and read the point sequence of that feature. When describing the relationship with left and right neighbor lanes, the point-sequence index ranges of this lane and of the neighbor lane are also recorded separately, so even when two lanes are adjacent only along part of their length, this can be described segment by segment.</p>
+<p>This conversion samples roughly once every 1 m along the road, and the actual spacing in the example is about 0.954 m. Generally speaking, the denser the sampling, the more detail of the road shape can be preserved, but the number of points to store also increases, and the file naturally becomes larger.</p>
+<p><img src="/img/autonomous-driving/map-overview/tactics2d_waymo_town03.jpg" alt="Map view of Tactics2D reading the Town03 Waymo Scenario directly"><br>
+(Figure 4: Tactics2D reading the Town03 Scenario TFRecord)</p>
+<p>Figure 4 shows only roads and no vehicles, because this Scenario has no trajectory data. This output contains a total of 429 lane centerlines, 665 road lines, 32 road edge segments, and 73 pedestrian crossings; the 429 centerlines come from the 417 driving lane segments and the 12 bidirectional lane segments respectively. Tactics2D draws the XY plane; if you want to observe height, you can look at the Plotly figure generated by the official <code>plot_maps</code>.</p>
+<p>Waymo does record how lanes connect ahead and behind, as well as same-direction neighbor lanes, but the road hierarchy and traffic rules are not as complete as in the previous formats, and some lanes have no left or right boundaries. If you want to use it to generate a complete road model, this information has to be filled in. What is discussed here is the structure of the publicly released WOMD data, and it does not represent the complete map used on Waymo’s vehicles.</p>
+<h2 id="How-Traffic-Lights-Are-Represented"><a class="header-anchor" href="#How-Traffic-Lights-Are-Represented">¶ </a>How Traffic Lights Are Represented</h2>
+<p>Besides lanes, traffic lights are also important information that an autonomous driving map needs to record. OpenDRIVE records the position of a signal on the road, and then uses signalReference and validity to specify which lanes are controlled by the signal; Lanelet2 has lanelets reference the regulatory element of the traffic light; Apollo records the correspondence between signals and lanes through Signal and overlap.</p>
+<p>Waymo is rather special: it records the signal state corresponding to each lane at every point in time. The <code>dynamic_map_states</code> of a Scenario contains <code>TrafficSignalLaneState</code>, which records the lane ID controlled by the signal, the signal state, and the stop point <code>stop_point</code>. In other words, what is recorded here is the signal state of a certain lane at a certain point in time, whereas the position and shape of the light itself are not stored separately.</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Signal data</th>
+<th>How it maps to the lanes controlled by the signal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>Position and attributes of the signal</td>
+<td>signalReference, validity</td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>Regulatory element of the light and the stop line</td>
+<td>Lanelets reference the rule relation</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td>The light, its subsignals, and the stop line of a Signal</td>
+<td>Overlap between Signal and Lane</td>
+</tr>
+<tr>
+<td>Waymo Scenario</td>
+<td>Signal state and stop point at each point in time</td>
+<td>Lane ID of TrafficSignalLaneState</td>
+</tr>
+</tbody>
+</table>
+<p>The OpenDRIVE of Town03 does not record data on how the red, yellow, and green lights switch over time, so this Waymo output records the signal-controlled lanes and stop points only at time 0, and all signal states are <code>LANE_STATE_UNKNOWN</code>. If we later want to simulate a vehicle stopping at a red light, signal phases or other control data will additionally have to be provided.</p>
+<h2 id="Map-Format-Conversion"><a class="header-anchor" href="#Map-Format-Conversion">¶ </a>Map Format Conversion</h2>
+<p>Having looked at these data structures, we can see that quite a lot of information needs to be reorganized when converting between formats. OpenDRIVE’s width functions cannot be put directly into a Lanelet2 way; the boundary coordinates must be computed first. Apollo requires explicit predecessor and successor lane IDs, so the road and junction connections of OpenDRIVE have to be sorted out. Waymo’s boundaries are referenced through feature IDs, and the corresponding centerline index ranges also have to be computed.</p>
+<p>All three formats converted this time use the same OpenDRIVE parsing result. We first sample along the reference line, then apply the lane offset, width, elevation, and superelevation to obtain the centerlines and the left and right boundaries. Next we organize the lane connections, signal control, and pedestrian crossings, and then write them out in each of the three formats.</p>
+<h3 id="Units-and-Lane-Markings"><a class="header-anchor" href="#Units-and-Lane-Markings">¶ </a>Units and Lane Markings</h3>
+<p>Let us first look at the speed limit. The speed limit recorded for Road 8 in the original file is 50 mph, and the three outputs are respectively:</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Output speed limit</th>
+<th>Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lanelet2</td>
+<td><code>speed_limit=&quot;80&quot;</code></td>
+<td>km/h; this output keeps only the integer</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td><code>speed_limit: 22.352</code></td>
+<td>m/s</td>
+</tr>
+<tr>
+<td>Waymo</td>
+<td><code>speed_limit_mph: 50.0</code></td>
+<td>mph; the field type is double</td>
+</tr>
+</tbody>
+</table>
+<p>The same speed limit may use different units in different formats, so the number cannot simply be copied over during conversion. Dropping the decimals also introduces some error: 50 mph is about 80.4672 km/h, and this Lanelet2 output did not keep the fractional part.</p>
+<p>Lane markings have a similar problem. The center marking of Road 8 in OpenDRIVE is a <code>solid solid</code> yellow line, but after the example is converted, Lanelet2 keeps only the solid tag, Apollo has <code>SOLID_YELLOW</code>, and Waymo has <code>TYPE_SOLID_SINGLE_YELLOW</code>. In other words, this boundary was originally a double yellow line, but this piece of information is lost after conversion. Apollo and Waymo actually both have a double yellow line type, so for this problem we need to go back and check which boundary was taken during conversion, as well as how the markings are mapped.</p>
+<h3 id="Data-Volume-After-Conversion"><a class="header-anchor" href="#Data-Volume-After-Conversion">¶ </a>Data Volume After Conversion</h3>
+<p>The lane types preserved by each format this time also differ. Lanelet2 output driving, sidewalk, and pedestrian crossings, without parking or shoulder; Apollo preserved more types; and for Waymo, lane centerlines were output only for driving and bidirectional lanes. These differences depend on which data this particular conversion program preserved. For example, Lanelet2 also has Area and can be extended with rules, so it could record even more content.</p>
+<p>The sizes of the files are as follows, calculated here with 1 MB = 1,000,000 bytes:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Size</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE XML</td>
+<td>4.59 MB</td>
+<td>Original road parameters and objects</td>
+</tr>
+<tr>
+<td>Lanelet2 OSM XML</td>
+<td>10.80 MB</td>
+<td>46,765 nodes, 1,564 ways, 848 relations</td>
+</tr>
+<tr>
+<td>Apollo binary</td>
+<td>11.27 MB</td>
+<td>1,400 Lanes, 1,210 overlaps</td>
+</tr>
+<tr>
+<td>Apollo text version</td>
+<td>43.31 MB</td>
+<td>The same Apollo map stored in text format</td>
+</tr>
+<tr>
+<td>Waymo TFRecord</td>
+<td>1.27 MB</td>
+<td>1,199 map features, without trajectories</td>
+</tr>
+</tbody>
+</table>
+<p>We can see that the Lanelet2 and Apollo files are both larger than the original OpenDRIVE; the main reason is that after converting the road shape into a sequence of coordinate points, there are more coordinates to store. Also, for the very same Apollo map, the text version is much larger than the binary version. The Waymo file is the smallest, but it also lacks the road hierarchy and some lane types, so this table can only compare the sizes of this particular output, and we cannot yet judge from it which format has the best storage efficiency.</p>
+<h3 id="Reverse-Conversion"><a class="header-anchor" href="#Reverse-Conversion">¶ </a>Reverse Conversion</h3>
+<p>So can the converted map be converted back to OpenDRIVE? A new file can be generated, but restoring the original road parameters is very difficult. Take an arc as an example: after sampling, all we have left is a sequence of coordinate points, and fitting them again will not necessarily yield the original arc parameters; in addition, how roads and lane sections are split may also have to be decided anew.</p>
+<p>Lanelet2 and Apollo both have boundary polylines, so the geometry is comparatively easy to map, but their respective structures still have to be handled. When converting Apollo to Lanelet2, the boundaries stored redundantly by adjacent lanes have to be merged into the same way; when converting Lanelet2 to Apollo, roads, sections, and overlaps have to be created. As for restrictions on which participants may pass, custom traffic rules, and objects specific to each format, there may also be no field they can be mapped to directly.</p>
+<p>Converting from Waymo back to other formats is even more troublesome, because some lanes have no boundaries, and there is no road hierarchy or light position either. If boundaries are generated on both sides from the centerline and the lane width is set to a fixed value, that width is an extra assumption, and the generated road is not necessarily the same as the original. When this kind of handling is needed, it is best to mark the synthesized data so that it is easier to check later.</p>
+<p>Therefore, in practice it is best to keep the original map and convert to other formats based on it. If the source is OpenDRIVE, keep the functions that describe the roads; if the source is Lanelet2, keep the shared objects and rules. When the map needs to be changed later, make the changes in the original data too, rather than in a converted copy, to avoid a situation where a lot of information can no longer be recovered after converting back and forth a few times.</p>
+<h2 id="Map-Viewing-and-Validation"><a class="header-anchor" href="#Map-Viewing-and-Validation">¶ </a>Map Viewing and Validation</h2>
+<p>After converting a map, you can first take a look at the result with a viewer. Here I summarize the viewing records from the original website dated 2026-10-10. The desktop and lightweight viewing tools were mainly run on macOS arm64, while Apollo 8 Dreamview ran on a Linux backend and was accessed from a browser on the Mac:</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Tool</th>
+<th>Result for Town03</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenDRIVE</td>
+<td>esmini odrviewer</td>
+<td>Displays 3D roads</td>
+</tr>
+<tr>
+<td>Lanelet2</td>
+<td>JOSM + Lanelet2 style, Tactics2D</td>
+<td>Roads displayed successfully</td>
+</tr>
+<tr>
+<td>Apollo</td>
+<td><a target="_blank" rel="noopener" href="http://mapshow.py">mapshow.py</a>, Apollo 8 Dreamview</td>
+<td>Displays lanes, signals, and pedestrian crossings</td>
+</tr>
+<tr>
+<td>Waymo</td>
+<td>Official plot_maps, Tactics2D</td>
+<td>Map displayed successfully; Tactics2D shows only XY</td>
+</tr>
+</tbody>
+</table>
+<p>The files themselves were also checked: for Lanelet2, the XML objects and their reference relationships were checked; for Apollo, whether the binary file can be parsed, and whether the data stays consistent after converting it to text and back; for Waymo, the TFRecord CRC, deserialization, and index ranges. This can catch problems such as duplicate IDs, references to nonexistent objects, or out-of-range indices, but if the markings are mapped incorrectly, or a place where lane changes are not allowed is treated as one where they are, separate tests are still needed to discover it.</p>
+<p>If the map is to be handed to a planning system, we also have to test whether the specified vehicle type can travel along the planned route, whether vehicles are wrongly allowed to cross a solid line to change lanes, and whether the traffic lights are mapped to the correct lanes. Elevated roads in particular may cross each other on a planar map, so elevation and projection must be checked together; otherwise the picture may look perfectly normal while the planned route is wrongly connected to a road at a different height.</p>
+<h2 id="Conclusion"><a class="header-anchor" href="#Conclusion">¶ </a>Conclusion</h2>
+<p>This article used the same Town03 to introduce four autonomous driving map formats. OpenDRIVE mainly describes roads with reference lines and functions, Lanelet2 composes lanelets from left and right boundaries combined with traffic rules, Apollo explicitly stores lane geometry and connectivity, and Waymo Open Motion describes scenes with map features and time series.</p>
+<p>If you want to become more familiar with these formats, you can start from the Road 8 example in this article and compare its boundaries, speed limit, and neighbor lanes across the four kinds of files. When you actually do format conversion, pay attention to units, shared objects, and information missing from the source, and after converting, remember to check the road shapes and the route planning results with the system that will actually use the map.</p>
+
+    </div>
+    
+
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_banner', {'link_url': this.href});">
+        <picture>
+            <!-- For screens wider than 600px -->
+            <source media="(min-width: 600px)" srcset="/img/new-book-banner.png" class="new-book-banner-image">
+            
+            <!-- Default image for smaller screens -->
+            <img src="/img/new-book-banner-small.png" alt="《程式設計原來不只有寫 CODE！》新書橫幅廣告" class="new-book-banner-image">
+        </picture>
+    </a>
+
+   
+    <div class="post-tag">
+        tags:&nbsp;
+        
+            <a href="/en/tags/opendrive/">
+                OpenDRIVE
+            </a>,&nbsp;
+        
+            <a href="/en/tags/lanelet2/">
+                Lanelet2
+            </a>,&nbsp;
+        
+            <a href="/en/tags/apollo/">
+                Apollo
+            </a>,&nbsp;
+        
+            <a href="/en/tags/waymo/">
+                Waymo
+            </a>,&nbsp;
+        
+            <a href="/en/tags/autonomous-driving/">
+                autonomous driving
+            </a>,&nbsp;
+        
+            <a href="/en/tags/map/">
+                map
+            </a>,&nbsp;
+        
+    </div>
+    
+<script>
+    hljs.configure({
+        useBR: false
+    });
+    document.querySelectorAll('.code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+</script>
+
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+<h2>About Me</h2>
+<img alt="my photo" width="80%" src="/img/selfie3.jpg">
+<div class="about">
+  Liu, An-Chi 劉安齊<br>
+  Software Engineer<br>
+  @tigercosmos
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>新書上市</h2>
+    <a href="/books/beyond-just-coding-book.html" onclick="gtag('event', 'click_book_side', {'link_url': this.href});">
+        <img alt="新書推廣：《程式設計原來不只有寫 CODE！銜接學校與職場的五堂軟體開發實習課》" width="100%" src="/img/new-book-banner-small.png">
+    </a>
+
+            </section>
+            
+                <section class="aside-section">
+                    <h2>TOC</h2>
+<div class="toc-container">
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Foreword"><span class="toc-text">Foreword</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-an-Autonomous-Driving-Map-Contains"><span class="toc-text">What an Autonomous Driving Map Contains</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CARLA-Town03"><span class="toc-text">CARLA Town03</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OpenDRIVE"><span class="toc-text">OpenDRIVE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lanelet2"><span class="toc-text">Lanelet2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Apollo-HD-Map"><span class="toc-text">Apollo HD Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Waymo-Open-Motion"><span class="toc-text">Waymo Open Motion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-Traffic-Lights-Are-Represented"><span class="toc-text">How Traffic Lights Are Represented</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map-Format-Conversion"><span class="toc-text">Map Format Conversion</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Units-and-Lane-Markings"><span class="toc-text">Units and Lane Markings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Data-Volume-After-Conversion"><span class="toc-text">Data Volume After Conversion</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reverse-Conversion"><span class="toc-text">Reverse Conversion</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map-Viewing-and-Validation"><span class="toc-text">Map Viewing and Validation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+</div>
+                </section>
+            
+            <section class="aside-section">
+                
+<div class="recent-post">
+  <h2>Recent Posts</h2>
+  <ul>
+    
+    
+    
+    <li>
+      <a href="/en/post/2026/11/autobiography/thirty-years-old/">
+        Standing Firm at Thirty
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2026/10/autonomous-driving/map-overview/">
+        An Introduction to Autonomous Driving Map Formats: OpenDRIVE, Lanelet2, Apollo, and Waymo
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2026/07/software-engineer/mid-dev-fight-1/">
+        Mid-Level Engineer in the Fight (1): Beginning to Become a Core Force in the Company
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2026/05/ai/ai-gen-book-experiment/">
+        Generating a Book with AI
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2026/02/ai/vibe-code-japanese-learning-app/">
+        How to Build a Fully Customized Japanese Learning App with AI
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/japan/find-swe-job-in-japan-2025/">
+        My 2025 Fall Mid-Level SWE Job Hunt in Japan and Taiwan
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/10/cv/3d-pointcloud-project-to-2d-image/">
+        3D Point Cloud Projection onto a 2D Image in C++
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/06/software-engineer/software-engineer-grow-up-4/">
+        New Software Engineer in Training (4): Promoted to Mid-Level Engineer, Quitting to Start a Company (Finale)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2025/02/algorithm/bts-tree-delete/">
+        Deleting a Node in a Binary Search Tree (LeetCode 450: Delete Node in a BST)
+      </a>
+    </li>
+    
+    <li>
+      <a href="/en/post/2024/12/c++/hash/">
+        An Introduction to std::hash in C++
+      </a>
+    </li>
+    
+  </ul>
+</div>
+
+
+            </section>
+            <section class="aside-section">
+                
+<h2>Search</h2>
+<input class="search-input" type="text" placeholder="Search on Google">
+<script>
+    const input = document.getElementsByClassName("search-input");
+    input[0].addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            window.open("https://www.google.com/search?&q=site%3Atigercosmos.xyz+" + input[0].value);
+        }
+    });
+</script>
+
+            </section>
+            <section class="aside-section">
+                
+    <h2>Archives</h2>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2026/">2026</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2025/">2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2024/">2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2023/">2023</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2022/">2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2021/">2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2020/">2020</a><span class="archive-list-count">34</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2019/">2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2018/">2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2017/">2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/en/archives/2016/">2016</a><span class="archive-list-count">2</span></li></ul>
+
+
+            </section>
+        </aside>
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+
+</html>
