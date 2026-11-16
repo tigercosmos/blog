@@ -2,8 +2,8 @@
 
 This file is generated. Re-run `node scripts/generate-translation-list.js` after adding translations.
 
-- Total posts: 187
-- Posts with both EN+JA translations: 79
+- Total posts: 189
+- Posts with both EN+JA translations: 81
 - Missing EN translation files: 108
 - Missing JA translation files: 108
 - Source posts missing `translation_key`: 108
@@ -35,6 +35,8 @@ This file is generated. Re-run `node scripts/generate-translation-list.js` after
 - [x] `autobiography/ntu-life-7.md` — 台大觀察與心得(七)：大三寒假與大三下 (Sat Jul 14 2018 11:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `autobiography/ntu-life-8.md` — 台大觀察與心得(八)：大四上 (Mon Jan 14 2019 09:33:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [x] `autobiography/second-semester-in-NTU.md` — 台大觀察與心得(二)：大氣系第二學期 (Fri Jul 22 2016 13:06:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
+- [x] `autobiography/thirty-years-old.md` — 三十而立 (Sun Nov 15 2026 11:01:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
+- [x] `autonomous-driving/map-overview.md` — 自動駕駛地圖格式介紹：OpenDRIVE、Lanelet2、Apollo 與 Waymo (Mon Oct 12 2026 12:00:00 GMT+0900 (Japan Standard Time)) — EN ✅, JA ✅, key ✅, src:zh
 - [ ] `beyond-just-coding-book/newcomer.md` — 那一個夏天，女孩無法忘卻的軟體實習經歷 (Sat Dec 28 2024 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
 - [ ] `beyond-just-coding-book/preface.md` — 每個軟體工程師都該具備的資工基本素養：《程式設計原來不只有寫 CODE！》之〈序〉 (Wed Dec 25 2024 01:00:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
 - [ ] `beyond-just-coding-book/tcpdump.md` — 使用 tcpdump 分析網路封包 (Fri Jan 03 2025 00:30:00 GMT+0900 (Japan Standard Time)) — EN ⬜, JA ⬜, key ⬜
